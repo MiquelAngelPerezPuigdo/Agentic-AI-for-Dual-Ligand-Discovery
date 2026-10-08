@@ -29,7 +29,7 @@ The thesis benchmark motivates repeated mechanism-informed scoring, but its dual
 
 ## Before the competition: resolve hardware and analytics
 
-Use the [HTE configuration checklist](hte-questions.md) to obtain the remaining facts. Record them in a campaign-specific copy of `hte_inputs/campaign.json`. Keep that copy, inventory, calibration, protocol exports and run logs together.
+Use the [HTE configuration checklist](hte-questions.md) to obtain the remaining facts. The [start-here guide](start-here.md) explains responsibilities and hidden API-key entry; [rehearsal results](rehearsal-results.md) document the fake feedback loop. Record confirmed facts in a campaign-specific copy of `hte_inputs/campaign.json`. Keep that copy, inventory, calibration, protocol exports and run logs together.
 
 HTEL publicly lists a Thermo Vanquish Horizon Duo with ISQ-EM, tandem column operation, and a DAD detector. UZH's Chromeleon page lists `LC-ISQ-HTL-01`. The exact two-minute method, quantification wavelength, retention times, injection volume and export headers are not public. Prefer a validated DAD calibration for yield and use MS to confirm peak identity. Naphthalene may be unsuitable for HESI quantification: do not assume an MS internal-standard signal. [HTEL equipment](https://www.chem.uzh.ch/en/research/services/htel/Equipment.html), [Chromeleon instruments](https://www.chem.uzh.ch/en/research/services/massspec/Open-access_LC-and_GC-MS_with_Chromeleon.html).
 

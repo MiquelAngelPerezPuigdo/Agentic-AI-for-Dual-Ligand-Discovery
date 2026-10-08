@@ -1,7 +1,7 @@
 {
-  "created_utc": "2026-10-08T23:21:02.754767+00:00",
+  "created_utc": "2026-10-08T23:35:46.656519+00:00",
   "tests": {
-    "tests": 27,
+    "tests": 28,
     "failures": 0,
     "errors": 0,
     "skipped": 0
@@ -42,5 +42,33 @@
   "physical_bench_validation_complete": false,
   "provisional_schedule_minutes": 729,
   "competition_limit_minutes": 720,
-  "second_round_dcm": "ambient evaporation during first hold; dry endpoint check; no heater drying or substrate redose"
+  "second_round_dcm": "ambient evaporation during first hold; dry endpoint check; no heater drying or substrate redose",
+  "offline_lc_feedback_rehearsal": {
+    "synthetic_only": true,
+    "paid_api_calls": 0,
+    "actual_lm_embeddings": {
+      "pairs": 465,
+      "dimensions": 768
+    },
+    "round1_pairs": 65,
+    "round1_reference_wells": 1,
+    "first_round_qc_pass": true,
+    "feedback_samples": 66,
+    "remaining_pairs_scored": 400,
+    "round2_pairs": 10,
+    "no_pair_repeats": true,
+    "no_substrate_redose": true,
+    "incomplete_export_ignored": true,
+    "duplicate_event_ignored": true,
+    "optional_gollum_check": {
+      "synthetic_only": true,
+      "valid_synthetic_pair_priors": 61,
+      "acquisition_rows": 465,
+      "all_acquisition_values_finite": true,
+      "actual_upstream_optimizer_executed": true,
+      "language_model_weights_finetuned": false,
+      "used_for_second_round_selection": false
+    },
+    "mocked_requests": 10
+  }
 }

@@ -62,6 +62,9 @@ def main():
     m.add_argument("--output", required=True)
     demo = commands.add_parser("demo")
     demo.add_argument("--output", required=True)
+    rehearsal = commands.add_parser("rehearse-loop", help="Offline watcher/scoring rehearsal; no API key or paid calls")
+    rehearsal.add_argument("--output", required=True)
+    rehearsal.add_argument("--embeddings", default="hte_inputs/pair_embeddings_t5-base.npz")
     args = parser.parse_args()
     try:
         if args.command == "import-inventory":
@@ -71,6 +74,10 @@ def main():
         if args.command == "demo":
             from .demo import run
             print(run(args.output, args.inventory, args.config))
+            return
+        if args.command == "rehearse-loop":
+            from .rehearsal import run
+            print(run(args.output, args.inventory, args.config, args.evidence, args.embeddings))
             return
         config = read_json(args.config)
         inv = load_inventory(args.inventory)
