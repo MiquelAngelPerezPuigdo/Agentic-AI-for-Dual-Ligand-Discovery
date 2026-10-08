@@ -2,7 +2,7 @@
 
 Local OT-2 experiment planning and LC-to-LLM iteration for Pd-catalyzed desulfonylative fluorination. The campaign searches 465 pairs from 31 ligands using repeated mechanism-informed Claude scoring and diversity across language-model embeddings.
 
-Start with the [operator runbook](docs/hte-runbook.md) and [HTE configuration checklist](docs/hte-questions.md).
+Start with [organizer questions and first-batch setup](docs/start-here.md), the [operator runbook](docs/hte-runbook.md) and [HTE configuration checklist](docs/hte-questions.md).
 
 ## Campaign
 
@@ -26,6 +26,7 @@ python -m pip install -e '.[sources,test,analytics]'
 python -m pip install -r requirements-gollum.txt
 python -m pytest -q
 python -m hte.cli demo --output output/rehearsal
+python -m hte.cli rehearse-loop --output output/fake-first-loop
 ```
 
 The optional ML dependencies support rebuilding embeddings and the measured-prior GoLLuM adapter. Precomputed real T5-base embeddings for all 465 pairs are included, so initial selection does not require downloading model weights. [Tested package versions](requirements-hte-tested.txt) document the local acceptance environment.
@@ -37,15 +38,13 @@ python -m hte.cli score --output output/round1-scoring
 python -m hte.cli design --ranking output/round1-scoring/ranking.csv \
   --embeddings hte_inputs/pair_embeddings_t5-base.npz \
   --output output/round1-design.csv
-python -m hte.cli export --design output/round1-design.csv \
-  --output output/round1-review
 ```
 
-See the runbook for calibration, export adapters, the LC watcher, stock quantities, pipetting settings and live configuration. Keep API keys and experimental outputs outside version control.
+The [first-batch script](scripts/first-batch.zsh) combines hidden key entry and these two steps. After confirming the hardware configuration, see the runbook for protocol/stock exports, calibration, the LC watcher, pipetting settings and live operation. Keep API keys and experimental outputs outside version control.
 
 ## Validation status
 
-The local acceptance exercise passed **27 tests**, including OT-2 simulation, LC calibration/QC, MOCCA raw-DAD integration on synthetic data, the GoLLuM adapter and mocked Claude requests. [Validation record](software_validation.json).
+The local acceptance exercise passed **28 tests**, including OT-2 simulation, LC calibration/QC, MOCCA raw-DAD integration on synthetic data, the GoLLuM adapter and a complete watcher/scoring rehearsal with mocked Claude responses. [Validation record](software_validation.json), [rehearsal results](docs/rehearsal-results.md).
 
 `demo/` contains **synthetic chemistry results and selections**. Its protocols refuse physical execution. No real Claude scoring campaign or physical robot run has been performed.
 

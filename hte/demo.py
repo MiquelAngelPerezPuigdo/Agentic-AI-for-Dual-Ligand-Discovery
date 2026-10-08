@@ -26,8 +26,8 @@ def fixtures(config, dosing):
     return cal, peaks
 
 
-def run(output, inventory_path, config_path="hte_inputs/campaign.json"):
-    out = new_output(output)
+def synthetic_config(config_path):
+    """Synthetic method and simulation hardware; never suitable for physical execution."""
     config = read_json(config_path)
     config["demo"] = True
     config["design"]["require_lm_embeddings"] = False
@@ -38,6 +38,12 @@ def run(output, inventory_path, config_path="hte_inputs/campaign.json"):
         references={name: {"retention_time_min": rt, "window_min": 0.05}
                     for name, rt in [("substrate", 0.4), ("product", 0.9), ("internal_standard", 1.5)]},
         quantification_limit_uM={"substrate": 10, "product": 10}, missing_analyte_policy="censor")
+    return config
+
+
+def run(output, inventory_path, config_path="hte_inputs/campaign.json"):
+    out = new_output(output)
+    config = synthetic_config(config_path)
     write_json(out/"campaign.json", config)
     inventory = load_inventory(inventory_path, confirmed=True)
     pairs = candidates(inventory)
