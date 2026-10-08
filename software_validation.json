@@ -1,7 +1,7 @@
 {
-  "created_utc": "2026-10-08T23:35:46.656519+00:00",
+  "created_utc": "2026-10-08T23:45:35.294980+00:00",
   "tests": {
-    "tests": 28,
+    "tests": 33,
     "failures": 0,
     "errors": 0,
     "skipped": 0
@@ -69,6 +69,20 @@
       "language_model_weights_finetuned": false,
       "used_for_second_round_selection": false
     },
-    "mocked_requests": 10
+    "mocked_requests": 10,
+    "prompt_caching_enabled": true,
+    "live_cache_hits_verified": false
+  },
+  "prompt_caching": {
+    "enabled_by_default": true,
+    "ttl": "1h",
+    "explicit_cached_blocks": "fixed chemistry/ligand/literature context and shared measured feedback",
+    "uncached_block": "shuffled candidate IDs",
+    "stable_schemas_tested": true,
+    "first_response_warms_each_schema_without_extra_paid_call": true,
+    "cache_usage_and_mixed_ttl_cost_accounting_tested": true,
+    "budget_assumes_all_requests_miss_cache": true,
+    "live_cache_hits_verified": false,
+    "paid_api_calls": 0
   }
 }

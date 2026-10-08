@@ -94,6 +94,9 @@ def main():
             feedback = observations(read_csv(args.observations)) if args.observations else []
             score_candidates(config, inv, pairs, read_json(args.evidence), feedback, args.output)
             print(Path(args.output)/"ranking.csv")
+            cache = read_json(Path(args.output)/"cache_summary.json")
+            print(f"Prompt cache: {cache['status']}; {cache['cache_hit_requests']}/{cache['requests']} "
+                  f"requests reported hits, {cache['cache_read_input_tokens']} cached read tokens")
         elif args.command == "design":
             from .design import consensus_select, make_design, pair_features
             from .adapters import load_embeddings

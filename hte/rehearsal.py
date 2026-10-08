@@ -15,7 +15,7 @@ from .design import consensus_select, make_design
 from .inventory import candidates, load_inventory
 from .io import new_output, read_csv, read_json, write_csv, write_json
 from .protocols import export
-from .scoring import score_candidates
+from .scoring import prompt_cache_settings, score_candidates
 from .workflow import watch
 
 
@@ -86,7 +86,9 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
             return SimpleNamespace(input_tokens=1000)
 
         def stream(self, **kwargs):
-            payload = json.loads(kwargs["messages"][0]["content"])
+            payload = {}
+            for block in kwargs["messages"][0]["content"]:
+                payload.update(json.loads(block["text"]))
             calls.append({"candidates": len(payload["candidate_ids"]),
                           "feedback_samples": len(payload["measured_results"]),
                           "includes_reference": any(row["kind"] == "single"
@@ -132,6 +134,8 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
     if len(next_dosing) != 10 or not no_repeats or not no_redose:
         raise ValueError("Rehearsal next batch violated campaign constraints")
     report = {"synthetic_only": True, "paid_api_calls": 0, "physical_execution_allowed": False,
+              "prompt_caching_enabled": prompt_cache_settings(scoring_config["llm"])["enabled"],
+              "live_cache_hits_verified": False,
               "actual_lm_embeddings": {"pairs": len(features), "dimensions": features.shape[1]},
               "mocked_requests": calls, "round1_pairs": len(tested), "round1_reference_wells": 1,
               "first_round_qc_pass": read_json(iteration/"analysis/qc_report.json")["batch_qc_pass"],
@@ -140,6 +144,8 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
               "no_substrate_redose": no_redose, "incomplete_export_ignored": not ignored,
               "duplicate_event_ignored": replay == state and len(calls) == after,
               "next_dosing_csv": str((iteration/"next_dosing.csv").relative_to(out)),
+              "cache_summaries": ["initial_scoring/cache_summary.json",
+                                  str((iteration/"scoring/cache_summary.json").relative_to(out))],
               "result_interpretation": "Synthetic yields and mocked rankings validate data flow only."}
     write_json(out/"rehearsal_report.json", report)
     return out/"rehearsal_report.json"
