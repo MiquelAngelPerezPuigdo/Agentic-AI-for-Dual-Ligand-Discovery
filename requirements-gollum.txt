@@ -1,0 +1,6 @@
+# Optional; prepare and validate before the competition, separately from the robot runtime.
+# Attributed upstream optimizer utilities are vendored in hte/vendor (Apache-2.0).
+torch>=2.3,<3
+botorch>=0.12,<1
+gpytorch>=1.13,<2
+transformers>=4.43,<5

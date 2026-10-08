@@ -1,0 +1,11 @@
+round,sample_id,well,substrate_umol,sm_DCM_ul,evaporation
+2,R2-001,A1,5.0,20.0,ambient during round-one hold; verify dryness before catalysts
+2,R2-002,B1,5.0,20.0,ambient during round-one hold; verify dryness before catalysts
+2,R2-003,C1,5.0,20.0,ambient during round-one hold; verify dryness before catalysts
+2,R2-004,D1,5.0,20.0,ambient during round-one hold; verify dryness before catalysts
+2,R2-005,E1,5.0,20.0,ambient during round-one hold; verify dryness before catalysts
+2,R2-006,F1,5.0,20.0,ambient during round-one hold; verify dryness before catalysts
+2,R2-007,G1,5.0,20.0,ambient during round-one hold; verify dryness before catalysts
+2,R2-008,H1,5.0,20.0,ambient during round-one hold; verify dryness before catalysts
+2,R2-009,A2,5.0,20.0,ambient during round-one hold; verify dryness before catalysts
+2,R2-010,B2,5.0,20.0,ambient during round-one hold; verify dryness before catalysts

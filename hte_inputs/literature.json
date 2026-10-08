@@ -1,0 +1,29 @@
+{
+  "source": "Chemical Science 2025, DOI 10.1039/D5SC00912J, supplied SI Table S2, page S35",
+  "source_url": "https://www.rsc.org/suppdata/d5/sc/d5sc00912j/d5sc00912j1.pdf",
+  "substrate": "pyridine-2-sulfonyl fluoride / PyFluor, product 2-fluoropyridine",
+  "interpretation": "Single-ligand published yields at the paper's high-temperature conditions. Table S2 must not be merged with main-text Table 1, which uses differing precatalysts/conditions. Not measurements at 95 C; not pair-training data. Use as qualitative mechanistic prior only.",
+  "published_general_conditions": "General SI procedure: Pd2(dba)3 5 mol% complex (10 mol% Pd atoms), ligand 20 mol%, toluene 0.2 M, 150 C, generally 18 h. PyFluor tBuBrettPhos example run 4 h. Table S2 itself does not specify every row's time/precatalyst separately.",
+  "air_precedent": "SI S30: sealed PyFluor reaction with Pd2(dba)3 and tBuBrettPhos, toluene 0.1 M, 150 C, 4 h, 71% 19F NMR yield under air. This does not establish performance of Pd(COD)(DQ) at 95 C.",
+  "yields": [
+    {"name": "XPhos", "cas": "564483-18-7", "yield_percent": 1},
+    {"name": "SPhos", "cas": "657408-07-6", "yield_percent": 1},
+    {"name": "RuPhos", "cas": "787618-22-8", "yield_percent": 1},
+    {"name": "Trimesityl phosphine", "cas": "23897-15-6", "yield_percent": 0},
+    {"name": "CataCXium ABn", "cas": "395116-70-8", "yield_percent": 3},
+    {"name": "t-BuBrettPhos", "cas": "1160861-53-9", "yield_percent": 77},
+    {"name": "vBRIDP", "cas": "384842-25-5", "yield_percent": 0},
+    {"name": "BrettPhos", "cas": "1070663-78-3", "yield_percent": 14},
+    {"name": "RockPhos", "cas": "1262046-34-3", "yield_percent": 63},
+    {"name": "t-BuDavePhos", "cas": "224311-49-3", "yield_percent": 0},
+    {"name": "Me4t-BuXPhos", "cas": "857356-94-6", "yield_percent": 72},
+    {"name": "AdJohnPhos", "cas": "224311-55-1", "yield_percent": 1},
+    {"name": "AdBrettPhos", "cas": "1160861-59-5", "yield_percent": 78},
+    {"name": "OTIPS DalPhos", "cas": "1384966-55-5", "yield_percent": 0},
+    {"name": "AlPhos", "cas": "1805783-60-1", "yield_percent": 62},
+    {"name": "MorDalPhos", "cas": "1237588-12-3", "yield_percent": 77},
+    {"name": "MeDalPhos", "cas": "1219080-77-9", "yield_percent": 22},
+    {"name": "Me3OMe-t-BuXPhos", "cas": "1359986-21-2", "yield_percent": 61}
+  ],
+  "thesis_method": "Repository src/prompts.py: supplied mechanism -> ligand properties -> complete scores; config.py sets five repetitions. Dual-ligand benchmark src/ligand_data.py concerns decarbonylative Suzuki coupling. Its ligand-relay analogy motivates hypotheses but cannot supply yields or a proven fluorination relay mechanism."
+}

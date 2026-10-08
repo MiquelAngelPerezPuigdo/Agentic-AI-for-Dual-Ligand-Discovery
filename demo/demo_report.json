@@ -1,0 +1,25 @@
+{
+  "synthetic_only": true,
+  "api_calls": 0,
+  "robot_execution_allowed": false,
+  "round1_pairs": 65,
+  "round1_reference_wells": 1,
+  "round2_pairs": 10,
+  "round1_qc_pass": true,
+  "round2_qc_pass": true,
+  "no_pair_repeats": true,
+  "round2_substrate_redosed": false,
+  "schedule": {
+    "reaction_minutes": 480,
+    "lc_minutes": 152.0,
+    "overhead_minutes": 97.0,
+    "injections": 90,
+    "minimum_reaction_plus_lc_minutes": 632.0,
+    "calibration_minutes_hidden_in_reaction": 28.0,
+    "serial_total_minutes": 729.0,
+    "deadline_minutes": 720,
+    "remaining_minutes": -9.0,
+    "fits_serial_estimate": false,
+    "assumptions": "Full cycle time, serial round-one analysis before round-two decision; no unvalidated overlap."
+  }
+}

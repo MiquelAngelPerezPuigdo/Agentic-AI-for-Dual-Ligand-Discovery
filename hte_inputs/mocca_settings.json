@@ -1,0 +1,12 @@
+{
+  "baseline_model": "flatfit",
+  "minimum_time_min": 0.05,
+  "maximum_time_min": 2,
+  "minimum_wavelength_nm": 210,
+  "maximum_wavelength_nm": 400,
+  "quantification_wavelength_nm": 254,
+  "minimum_peak_height": 1,
+  "minimum_relative_height": 0.01,
+  "minimum_deconvolution_r2": 0.995,
+  "max_components": 4
+}

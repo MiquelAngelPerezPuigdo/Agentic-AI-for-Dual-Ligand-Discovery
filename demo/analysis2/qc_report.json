@@ -1,0 +1,26 @@
+{
+  "calibration": {
+    "substrate": {
+      "slope": 0.0009999999999999998,
+      "intercept": 1.6658020976161188e-16,
+      "r2": 1.0,
+      "minimum_uM": 0.0,
+      "maximum_uM": 6000.0,
+      "mean_is_area": 10000.0
+    },
+    "product": {
+      "slope": 0.0009999999999999998,
+      "intercept": 1.6658020976161188e-16,
+      "r2": 1.0,
+      "minimum_uM": 0.0,
+      "maximum_uM": 6000.0,
+      "mean_is_area": 10000.0
+    }
+  },
+  "samples": 10,
+  "rejected": 0,
+  "batch_qc_pass": true,
+  "method_id": "SYNTHETIC_2MIN",
+  "channel": "SYNTHETIC_UV",
+  "quantification": "Calibrated detector response; area percent is not yield."
+}
