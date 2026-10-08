@@ -15,7 +15,7 @@ The offline first-feedback-loop rehearsal completed successfully. All chemistry 
 | Repeated completion event | Ignored; no additional scoring calls |
 | Physical protocol generation by watcher | Disabled because bench validations remain incomplete |
 | Optional GoLLuM execution | Actual attributed upstream optimizer, real embeddings, 61 uncensored synthetic pair priors, 465 finite acquisition values |
-| Local acceptance suite | 28 passed, zero failures/errors/skips |
+| Local acceptance suite | 33 passed, zero failures/errors/skips |
 
 The optional GoLLuM check did not change the second-round design. Its local GP adapter trained a projection over frozen embeddings, keeping the language-model weights unchanged.
 

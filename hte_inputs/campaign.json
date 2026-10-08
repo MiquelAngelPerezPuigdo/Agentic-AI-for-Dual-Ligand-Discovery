@@ -104,6 +104,13 @@
     "budget_usd": 20,
     "input_usd_per_million": 5,
     "output_usd_per_million": 25,
+    "prompt_cache": {
+      "enabled": true,
+      "ttl": "1h",
+      "read_multiplier": 0.1,
+      "write_5m_multiplier": 1.25,
+      "write_1h_multiplier": 2.0
+    },
     "data_sharing_confirmed": true
   },
   "analytics": {

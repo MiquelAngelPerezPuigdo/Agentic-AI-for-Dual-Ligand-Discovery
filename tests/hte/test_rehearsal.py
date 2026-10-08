@@ -20,6 +20,8 @@ def test_offline_loop_scores_feedback_without_network_or_repeated_events(tmp_pat
                       ROOT/"hte_inputs/literature.json", ROOT/"hte_inputs/pair_embeddings_t5-base.npz")
     report = read_json(report_path)
     assert report["paid_api_calls"] == 0 and not report["physical_execution_allowed"]
+    assert report["prompt_caching_enabled"] and not report["live_cache_hits_verified"]
+    assert all((report_path.parent/path).exists() for path in report["cache_summaries"])
     assert report["actual_lm_embeddings"] == {"pairs": 465, "dimensions": 768}
     assert len(report["mocked_requests"]) == 10
     initial = [r for r in report["mocked_requests"] if r["feedback_samples"] == 0]

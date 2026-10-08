@@ -52,6 +52,8 @@ export ANTHROPIC_API_KEY
 
 The first-batch script keeps a prompted key in its own process; it does not save it to disk or set it in the parent terminal. Real model access is checked before scoring, and access failures stop the campaign without silently selecting another model.
 
+[Prompt caching](prompt-caching.md) is already enabled for both rounds. Shared context uses a one-hour lifetime, and the score command prints the provider-reported cache status. Inspect `scoring/cache_summary.json` for read/write tokens and estimated cost. No additional key setting is needed.
+
 ## Fake first feedback loop
 
 Install the test dependencies if they are not present, then run:

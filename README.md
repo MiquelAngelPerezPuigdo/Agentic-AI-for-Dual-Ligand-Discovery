@@ -42,9 +42,11 @@ python -m hte.cli design --ranking output/round1-scoring/ranking.csv \
 
 The [first-batch script](scripts/first-batch.zsh) combines hidden key entry and these two steps. After confirming the hardware configuration, see the runbook for protocol/stock exports, calibration, the LC watcher, pipetting settings and live operation. Keep API keys and experimental outputs outside version control.
 
+[Anthropic prompt caching](docs/prompt-caching.md) is enabled by default in both rounds, with a one-hour lifetime and provider-reported usage/cost records in `cache_summary.json`.
+
 ## Validation status
 
-The local acceptance exercise passed **28 tests**, including OT-2 simulation, LC calibration/QC, MOCCA raw-DAD integration on synthetic data, the GoLLuM adapter and a complete watcher/scoring rehearsal with mocked Claude responses. [Validation record](software_validation.json), [rehearsal results](docs/rehearsal-results.md).
+The local acceptance exercise passed **33 tests**, including OT-2 simulation, LC calibration/QC, MOCCA raw-DAD integration on synthetic data, the GoLLuM adapter and a complete watcher/scoring rehearsal with mocked Claude responses. [Validation record](software_validation.json), [rehearsal results](docs/rehearsal-results.md).
 
 `demo/` contains **synthetic chemistry results and selections**. Its protocols refuse physical execution. No real Claude scoring campaign or physical robot run has been performed.
 
