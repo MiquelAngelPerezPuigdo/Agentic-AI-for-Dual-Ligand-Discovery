@@ -1,0 +1,37 @@
+reagent,name,solvent,stock_mM,round1_consumption_ul,round2_reserve_ul,dead_ul,prepare_ul,mass_mg,source_slot,source_well,on_deck_ul,source_capacity_ul,capacity_ok
+L01,MorDal Phos,toluene,30,0.0,0.0,100,100,1.390938,1,A1,100,1400,True
+L02,racBINAP,toluene,30,21.0,0.0,100,140,2.6152896,1,B1,130,1400,True
+L03,RockPhos,toluene,30,11.0,0.0,100,120,1.6873416,1,C1,120,1400,True
+L04,Alphos,toluene,30,0.0,0.0,100,100,2.445219,1,D1,100,1400,True
+L05,AdBrettPhos,toluene,30,0.0,0.0,100,100,1.922799,1,A2,100,1400,True
+L06,Me4t-BuXPhos,toluene,30,0.0,0.0,100,100,1.442283,1,B2,100,1400,True
+L07,AdJohnPhos,toluene,30,0.0,0.0,100,100,1.363914,1,C2,100,1400,True
+L08,t-BuDave Phos,toluene,30,11.0,0.0,100,120,1.2293243999999999,1,D2,120,1400,True
+L09,Xantphos,toluene,30,11.0,0.0,100,120,2.0830751999999997,1,A3,120,1400,True
+L10,OTIPS DalPhos,toluene,30,11.0,0.0,100,120,1.9831824000000002,1,B3,120,1400,True
+L11,Me3OMe-t-BuXPhos,toluene,30,21.0,0.0,100,140,2.086392,1,C3,130,1400,True
+L12,VBRIDP,toluene,30,0.0,0.0,100,100,1.015425,1,D3,100,1400,True
+L13,Trimesityl phosphine,toluene,30,0.0,0.0,100,100,1.165605,1,A4,100,1400,True
+L14,CataCXium ABn,toluene,30,0.0,0.0,100,100,1.177701,1,B4,100,1400,True
+L15,dppb,toluene,30,11.0,0.0,100,120,1.535328,1,C4,120,1400,True
+L16,dcypf,toluene,30,11.0,0.0,100,120,2.0828987999999997,1,D4,120,1400,True
+L17,t-BuBrettPhos,toluene,30,21.0,0.0,100,140,2.035761,1,A5,130,1400,True
+L18,dtbpf,toluene,30,0.0,0.0,100,100,1.423293,1,B5,100,1400,True
+L19,dppp,toluene,30,21.0,0.0,100,140,1.7323026,1,C5,130,1400,True
+L20,dppf,toluene,30,11.0,0.0,100,120,1.9958075999999998,1,D5,120,1400,True
+L21,Xphos,toluene,30,11.0,0.0,100,120,1.7162244,1,A6,120,1400,True
+L22,RuPhos,toluene,30,11.0,0.0,100,120,1.6799256,1,B6,120,1400,True
+L23,SPhos,toluene,30,0.0,0.0,100,100,1.231614,1,C6,100,1400,True
+L24,BrettPhos,toluene,30,21.0,0.0,100,140,2.2544801999999997,1,D6,130,1400,True
+L25,MeDalPhos,toluene,30,0.0,0.0,100,100,1.264827,4,A1,100,1400,True
+L26,Taniaphos SL-T001-2,toluene,30,0.0,0.0,100,100,2.062755,4,B1,100,1400,True
+L27,tris(3-chlorophenyl)phosphine,toluene,30,0.0,0.0,100,100,1.096881,4,C1,100,1400,True
+L28,BippyPhos,toluene,30,0.0,0.0,100,100,1.519902,4,D1,100,1400,True
+L29,meCgPPh,toluene,30,0.0,0.0,100,100,0.876945,4,A2,100,1400,True
+L30,N-XantPhos,toluene,30,11.0,0.0,100,120,1.9856376,4,B2,120,1400,True
+L31,Trixie Phos,toluene,30,0.0,0.0,100,100,1.19559,4,C2,100,1400,True
+substrate_DCM,substrate_DCM,DCM,250,0.0,0,1000,1000,40.29,2,A1,1000,14500,True
+Pd,Pd,toluene,60,101.0,0.0,1000,1160,26.36448,2,A2,1110,14500,True
+toluene,toluene,toluene,,209.0,0,1000,1320,,2,A3,1210,14500,True
+workup,workup,"1:1 water/acetonitrile, 1% v/v formic acid; naphthalene IS in workup only",1,509.0000000000001,0,1000,1770,0.22686089999999998,2,A4,1510,14500,True
+LC_diluent,LC_diluent,"1:1 water/acetonitrile, 1% v/v formic acid; NO naphthalene",,1808.9999999999977,0,1000,3720,,2,A5,2810,14500,True

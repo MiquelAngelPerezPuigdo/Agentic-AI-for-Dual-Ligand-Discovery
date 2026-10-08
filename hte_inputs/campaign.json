@@ -1,0 +1,157 @@
+{
+  "demo": false,
+  "chemistry": {
+    "substrate": "pyridine-2-sulfonyl fluoride / PyFluor",
+    "substrate_smiles": "FS(C1=NC=CC=C1)(=O)=O",
+    "product_smiles": "FC1=NC=CC=C1",
+    "substrate_molecular_weight_g_mol": 161.16,
+    "substrate_molarity_M": 0.1,
+    "reaction_volume_ul": 50,
+    "ligand_a_mol_percent": 6,
+    "ligand_b_mol_percent": 6,
+    "pd_mol_percent": 12,
+    "pd_identity": "Pd(COD)(DQ), CAS 86228-59-3, one Pd atom per complex",
+    "pd_molecular_weight_g_mol": 378.8,
+    "temperature_C": 95,
+    "reaction_minutes": 240,
+    "thermal_equilibration_minutes": 0,
+    "rpm": 500,
+    "atmosphere": "air; ligand stocks prepared in glovebox",
+    "additives": []
+  },
+  "design": {
+    "round1_total": 66,
+    "round2_total": 10,
+    "round1_controls": [
+      {
+        "kind": "single",
+        "ligand_a": "L17",
+        "ligand_b": "",
+        "pair_id": ""
+      }
+    ],
+    "round2_controls": [],
+    "objective": "calibrated product yield; conversion retained as diagnostic",
+    "consensus_weight_llm": 0.5,
+    "minimum_llm_percentile": 0.25,
+    "exploration_backend": "lm_diversity_initialization",
+    "require_lm_embeddings": true,
+    "seed": 20261009,
+    "round2_predosed": true
+  },
+  "liquids": {
+    "substrate_stock_mM": 250,
+    "ligand_stock_mM": 30,
+    "pd_stock_mM": 60,
+    "workup_ul": 50,
+    "aliquot_ul": 20,
+    "diluent_ul": 180,
+    "workup_composition": "1:1 water/acetonitrile, 1% v/v formic acid; naphthalene IS in workup only",
+    "mix_rpm": 500,
+    "naphthalene_workup_mM": 1,
+    "naphthalene_molecular_weight_g_mol": 128.17,
+    "lc_diluent_composition": "1:1 water/acetonitrile, 1% v/v formic acid; NO naphthalene"
+  },
+  "robot": {
+    "p20": "p20_single_gen2",
+    "p300": "p300_multi_gen2",
+    "heater_slot": 10,
+    "reaction_labware": null,
+    "reaction_definition_path": null,
+    "reaction_working_volume_ul": 200,
+    "lc_labware": "nest_96_wellplate_2ml_deep",
+    "lc_definition_path": null,
+    "lc_working_volume_ul": 2000,
+    "heater_adapter": "opentrons_universal_flat_adapter"
+  },
+  "pipetting": {
+    "aspirate_height_mm": 1,
+    "dispense_above_top_mm": 2,
+    "surplus_ul": 1,
+    "air_gap_ul": 2,
+    "minimum_p20_ul": 2,
+    "prewet_cycles": 2,
+    "post_aspirate_seconds": 0.5,
+    "post_dispense_seconds": 0.5,
+    "p20_aspirate_ul_s": 4,
+    "p20_dispense_ul_s": 8,
+    "p300_aspirate_ul_s": 15,
+    "p300_dispense_ul_s": 30,
+    "reuse_tips": true
+  },
+  "stock_preparation": {
+    "assay_fractions": {},
+    "margin_factor": 1.5,
+    "tube_dead_ul": 100,
+    "reservoir_dead_ul": 1000,
+    "tube_max_fill_ul": 1400,
+    "reservoir_max_fill_ul": 14500
+  },
+  "evaporation": {
+    "temperature_C": 37,
+    "rpm": 300,
+    "minutes": 10,
+    "round2_method": "Ambient DCM evaporation during first reaction; verify dry endpoint before catalyst dosing"
+  },
+  "llm": {
+    "model": "claude-opus-4-8",
+    "repeats": 5,
+    "seed": 20261009,
+    "batch_size": 465,
+    "max_output_tokens": 20000,
+    "workers": 2,
+    "timeout_seconds": 240,
+    "budget_usd": 20,
+    "input_usd_per_million": 5,
+    "output_usd_per_million": 25,
+    "data_sharing_confirmed": true
+  },
+  "analytics": {
+    "instrument_public_listing": "Thermo Vanquish Horizon Duo + ISQ-EM; DAD 190-680 nm; confirm actual instrument with HTEL",
+    "software_public_listing": "Chromeleon; HTEL instrument listed as LC-ISQ-HTL-01; confirm export with HTEL",
+    "method_id": null,
+    "channel": null,
+    "calibration_mode": "internal_standard",
+    "internal_standard": "naphthalene",
+    "internal_standard_final_uM": 50,
+    "internal_standard_area_tolerance_fraction": 0.3,
+    "minimum_calibration_r2": 0.995,
+    "quantification_limit_uM": {
+      "substrate": null,
+      "product": null
+    },
+    "negative_concentration_tolerance_uM": 1,
+    "yield_tolerance_percent": 5,
+    "mass_balance_tolerance_fraction": 0.1,
+    "blank_max_product_umol": 0.01,
+    "maximum_rejected_fraction": 0,
+    "references": null,
+    "column_mapping": null,
+    "export_sheet": null,
+    "missing_analyte_policy": "reject"
+  },
+  "timing": {
+    "deadline_minutes": 720,
+    "injection_cycle_minutes": 2,
+    "additional_injections": 14,
+    "calibration_injections_during_round1_reaction": 14,
+    "dosing_total_minutes": 30,
+    "evaporation_total_minutes": 10,
+    "heat_ramp_total_minutes": 12,
+    "cooling_total_minutes": 12,
+    "workup_total_minutes": 20,
+    "decision_minutes": 8,
+    "other_minutes": 5
+  },
+  "validation": {
+    "chemistry_confirmed": true,
+    "plate_adapter_seal_validated": false,
+    "solvent_pipetting_validated": false,
+    "heating_and_evaporation_validated": false,
+    "homogeneous_sampling_validated": false,
+    "lc_calibration_validated": false,
+    "local_app_simulation_passed": false,
+    "round2_ambient_evaporation_validated": false,
+    "noncontact_tip_reuse_validated": false
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "method_id": "REPLACE_WITH_VALIDATED_METHOD",
+  "samples": [
+    {"sample_id": "R1-001", "raw_path": "raw/R1-001.csv"}
+  ]
+}

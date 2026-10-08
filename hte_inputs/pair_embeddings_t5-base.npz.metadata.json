@@ -1,0 +1,9 @@
+{
+  "model": "google-t5/t5-base",
+  "revision": "a9723ea7f1b39c1eae772870f3b547bf6ef7e6c1",
+  "pairs": 465,
+  "dimensions": 768,
+  "inventory_digest": "0e5021ec567d89ac82b35d001dcb036e2685a50d3688f8115a9c24f42de9b413",
+  "method": "mean masked token pooling; mean of both ligand orders; frozen T5 encoder",
+  "template_conditions": "PyFluor 0.1 M, toluene, 95 C, 6+6 mol% ligands, 12 mol% Pd"
+}

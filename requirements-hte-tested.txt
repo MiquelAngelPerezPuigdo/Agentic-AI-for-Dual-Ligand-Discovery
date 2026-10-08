@@ -1,0 +1,16 @@
+# Versions used for the Python 3.12 acceptance exercise (2026-10-09).
+# Install the editable project separately: python -m pip install -e .
+# Optional adapters/embedding rebuilds account for the ML packages below.
+anthropic==0.125.0
+numpy==1.26.4
+rdkit==2026.3.6
+openpyxl==3.1.5
+pypdf==6.19.0
+pytest==9.1.1
+opentrons==8.8.2
+opentrons-shared-data==8.8.2
+mocca2==0.1.18
+torch==2.14.1
+transformers==4.57.6
+botorch==0.18.1
+gpytorch==1.15.2

@@ -1,0 +1,1150 @@
+[
+  {
+    "stage": "assembly",
+    "reagent": "L02",
+    "source_slot": 1,
+    "source_well": "B1",
+    "destination_slot": 3,
+    "destination_wells": [
+      "B1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "assembly",
+    "reagent": "L02",
+    "source_slot": 1,
+    "source_well": "B1",
+    "destination_slot": 3,
+    "destination_wells": [
+      "D1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 10.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "assembly",
+    "reagent": "L03",
+    "source_slot": 1,
+    "source_well": "C1",
+    "destination_slot": 3,
+    "destination_wells": [
+      "F1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "assembly",
+    "reagent": "L08",
+    "source_slot": 1,
+    "source_well": "D2",
+    "destination_slot": 3,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "assembly",
+    "reagent": "L09",
+    "source_slot": 1,
+    "source_well": "A3",
+    "destination_slot": 3,
+    "destination_wells": [
+      "A1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "assembly",
+    "reagent": "L10",
+    "source_slot": 1,
+    "source_well": "B3",
+    "destination_slot": 3,
+    "destination_wells": [
+      "H1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "assembly",
+    "reagent": "L11",
+    "source_slot": 1,
+    "source_well": "C3",
+    "destination_slot": 3,
+    "destination_wells": [
+      "B1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "assembly",
+    "reagent": "L11",
+    "source_slot": 1,
+    "source_well": "C3",
+    "destination_slot": 3,
+    "destination_wells": [
+      "C1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 10.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "assembly",
+    "reagent": "L15",
+    "source_slot": 1,
+    "source_well": "C4",
+    "destination_slot": 3,
+    "destination_wells": [
+      "E1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "assembly",
+    "reagent": "L16",
+    "source_slot": 1,
+    "source_well": "D4",
+    "destination_slot": 3,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "assembly",
+    "reagent": "L17",
+    "source_slot": 1,
+    "source_well": "A5",
+    "destination_slot": 3,
+    "destination_wells": [
+      "G1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "assembly",
+    "reagent": "L17",
+    "source_slot": 1,
+    "source_well": "A5",
+    "destination_slot": 3,
+    "destination_wells": [
+      "H1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 10.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "assembly",
+    "reagent": "L19",
+    "source_slot": 1,
+    "source_well": "C5",
+    "destination_slot": 3,
+    "destination_wells": [
+      "A1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "assembly",
+    "reagent": "L19",
+    "source_slot": 1,
+    "source_well": "C5",
+    "destination_slot": 3,
+    "destination_wells": [
+      "C1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 10.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "assembly",
+    "reagent": "L20",
+    "source_slot": 1,
+    "source_well": "D5",
+    "destination_slot": 3,
+    "destination_wells": [
+      "E1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "assembly",
+    "reagent": "L21",
+    "source_slot": 1,
+    "source_well": "A6",
+    "destination_slot": 3,
+    "destination_wells": [
+      "G1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "assembly",
+    "reagent": "L22",
+    "source_slot": 1,
+    "source_well": "B6",
+    "destination_slot": 3,
+    "destination_wells": [
+      "D1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "assembly",
+    "reagent": "L24",
+    "source_slot": 1,
+    "source_well": "D6",
+    "destination_slot": 3,
+    "destination_wells": [
+      "F1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "assembly",
+    "reagent": "L24",
+    "source_slot": 1,
+    "source_well": "D6",
+    "destination_slot": 3,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 10.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "assembly",
+    "reagent": "L30",
+    "source_slot": 4,
+    "source_well": "B2",
+    "destination_slot": 3,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "assembly",
+    "reagent": "toluene",
+    "source_slot": 2,
+    "source_well": "A3",
+    "destination_slot": 3,
+    "destination_wells": [
+      "A1",
+      "B1",
+      "C1",
+      "D1",
+      "E1",
+      "F1",
+      "G1",
+      "H1"
+    ],
+    "volume_ul_per_channel": 20.0,
+    "aspirated_ul_per_channel": 21.0,
+    "pipette": "p300",
+    "channels": 8,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "assembly",
+    "reagent": "toluene",
+    "source_slot": 2,
+    "source_well": "A3",
+    "destination_slot": 3,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "assembly",
+    "reagent": "toluene",
+    "source_slot": 2,
+    "source_well": "A3",
+    "destination_slot": 3,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 10.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "assembly",
+    "reagent": "toluene",
+    "source_slot": 2,
+    "source_well": "A3",
+    "destination_slot": 3,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 10.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "assembly",
+    "reagent": "toluene",
+    "source_slot": 2,
+    "source_well": "A3",
+    "destination_slot": 3,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 10.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "assembly",
+    "reagent": "Pd",
+    "source_slot": 2,
+    "source_well": "A2",
+    "destination_slot": 3,
+    "destination_wells": [
+      "A1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "assembly",
+    "reagent": "Pd",
+    "source_slot": 2,
+    "source_well": "A2",
+    "destination_slot": 3,
+    "destination_wells": [
+      "B1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 10.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "assembly",
+    "reagent": "Pd",
+    "source_slot": 2,
+    "source_well": "A2",
+    "destination_slot": 3,
+    "destination_wells": [
+      "C1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 10.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "assembly",
+    "reagent": "Pd",
+    "source_slot": 2,
+    "source_well": "A2",
+    "destination_slot": 3,
+    "destination_wells": [
+      "D1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 10.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "assembly",
+    "reagent": "Pd",
+    "source_slot": 2,
+    "source_well": "A2",
+    "destination_slot": 3,
+    "destination_wells": [
+      "E1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 10.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "assembly",
+    "reagent": "Pd",
+    "source_slot": 2,
+    "source_well": "A2",
+    "destination_slot": 3,
+    "destination_wells": [
+      "F1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 10.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "assembly",
+    "reagent": "Pd",
+    "source_slot": 2,
+    "source_well": "A2",
+    "destination_slot": 3,
+    "destination_wells": [
+      "G1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 10.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "assembly",
+    "reagent": "Pd",
+    "source_slot": 2,
+    "source_well": "A2",
+    "destination_slot": 3,
+    "destination_wells": [
+      "H1"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 10.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "assembly",
+    "reagent": "Pd",
+    "source_slot": 2,
+    "source_well": "A2",
+    "destination_slot": 3,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 10.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "assembly",
+    "reagent": "Pd",
+    "source_slot": 2,
+    "source_well": "A2",
+    "destination_slot": 3,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 10.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "workup",
+    "reagent": "workup",
+    "source_slot": 2,
+    "source_well": "A4",
+    "destination_slot": 3,
+    "destination_wells": [
+      "A1",
+      "B1",
+      "C1",
+      "D1",
+      "E1",
+      "F1",
+      "G1",
+      "H1"
+    ],
+    "volume_ul_per_channel": 50.0,
+    "aspirated_ul_per_channel": 51.0,
+    "pipette": "p300",
+    "channels": 8,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "workup",
+    "reagent": "workup",
+    "source_slot": 2,
+    "source_well": "A4",
+    "destination_slot": 3,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 16.666666666666668,
+    "aspirated_ul_per_channel": 17.666666666666668,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "workup",
+    "reagent": "workup",
+    "source_slot": 2,
+    "source_well": "A4",
+    "destination_slot": 3,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 16.666666666666668,
+    "aspirated_ul_per_channel": 16.666666666666668,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "workup",
+    "reagent": "workup",
+    "source_slot": 2,
+    "source_well": "A4",
+    "destination_slot": 3,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 16.666666666666668,
+    "aspirated_ul_per_channel": 16.666666666666668,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "workup",
+    "reagent": "workup",
+    "source_slot": 2,
+    "source_well": "A4",
+    "destination_slot": 3,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 16.666666666666668,
+    "aspirated_ul_per_channel": 16.666666666666668,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "workup",
+    "reagent": "workup",
+    "source_slot": 2,
+    "source_well": "A4",
+    "destination_slot": 3,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 16.666666666666668,
+    "aspirated_ul_per_channel": 16.666666666666668,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "workup",
+    "reagent": "workup",
+    "source_slot": 2,
+    "source_well": "A4",
+    "destination_slot": 3,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 16.666666666666668,
+    "aspirated_ul_per_channel": 16.666666666666668,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "A1",
+      "B1",
+      "C1",
+      "D1",
+      "E1",
+      "F1",
+      "G1",
+      "H1"
+    ],
+    "volume_ul_per_channel": 180.0,
+    "aspirated_ul_per_channel": 181.0,
+    "pipette": "p300",
+    "channels": 8,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 17.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": true
+  },
+  {
+    "stage": "dilution",
+    "reagent": "LC_diluent",
+    "source_slot": 2,
+    "source_well": "A5",
+    "destination_slot": 6,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 16.363636363636363,
+    "aspirated_ul_per_channel": 16.363636363636363,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": true,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "sampling",
+    "reagent": "reaction_samples",
+    "source_slot": 3,
+    "source_well": "A1",
+    "destination_slot": 6,
+    "destination_wells": [
+      "A1",
+      "B1",
+      "C1",
+      "D1",
+      "E1",
+      "F1",
+      "G1",
+      "H1"
+    ],
+    "volume_ul_per_channel": 20.0,
+    "aspirated_ul_per_channel": 21.0,
+    "pipette": "p300",
+    "channels": 8,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "sampling",
+    "reagent": "R2-009",
+    "source_slot": 3,
+    "source_well": "A2",
+    "destination_slot": 6,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "sampling",
+    "reagent": "R2-009",
+    "source_slot": 3,
+    "source_well": "A2",
+    "destination_slot": 6,
+    "destination_wells": [
+      "A2"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "sampling",
+    "reagent": "R2-010",
+    "source_slot": 3,
+    "source_well": "B2",
+    "destination_slot": 6,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": false
+  },
+  {
+    "stage": "sampling",
+    "reagent": "R2-010",
+    "source_slot": 3,
+    "source_well": "B2",
+    "destination_slot": 6,
+    "destination_wells": [
+      "B2"
+    ],
+    "volume_ul_per_channel": 10.0,
+    "aspirated_ul_per_channel": 11.0,
+    "pipette": "p20",
+    "channels": 1,
+    "retained_tip_from_previous": false,
+    "retain_tip_for_next": false
+  }
+]
