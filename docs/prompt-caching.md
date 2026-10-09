@@ -12,17 +12,17 @@ Prompt caching is enabled by default for both scoring campaigns. The API key and
 }
 ```
 
-The one-hour lifetime accommodates long reasoning responses. The second campaign begins after the first reaction and LC sequence, so it normally writes a new cache entry. This does not preserve the initial cache across the four-hour reaction.
+The one-hour lifetime allows repeats and queued requests to reuse the shared input. The second campaign begins after the first reaction and LC sequence, so it normally writes a new cache entry. This does not preserve the initial cache across the four-hour reaction.
 
 ## Request layout
 
 The fixed system instruction is followed by three user content blocks:
 
-1. Fixed reaction conditions, objective, all ligand IDs/names/SMILES, the explicit pair catalog, and CAS-matched single-ligand SI evidence (unreported values are null), with an explicit `cache_control` breakpoint.
+1. Fixed reaction conditions, objective, all ligand IDs/names/SMILES, the explicit pair catalog, and CAS-matched single-ligand SI yields with a brief condition label (unreported values are null), with an explicit `cache_control` breakpoint.
 2. The complete measured feedback shared by the campaign's repeats, with another explicit breakpoint.
 3. The shuffled candidate IDs and exact candidate count, with no cache breakpoint.
 
-The fixed blocks are serialized identically across repeats. Output-schema property ordering is canonical and remains identical for the same candidate cohort: schema changes can invalidate Anthropic's prompt cache. With smaller configured batches, cohorts stay fixed and their internal candidate order is shuffled independently for each repeat. The default still scores all 465 first-round candidates, or all 400 remaining second-round candidates, in each request.
+The current prompt requests scores only and explicitly disables extended thinking. Changing the prompt, schema or thinking configuration creates a different cache prefix, so old v3 cache entries are not reused. The fixed blocks are serialized identically across repeats. Output-schema property ordering is canonical and remains identical for the same candidate cohort: schema changes can invalidate Anthropic's prompt cache. With smaller configured batches, cohorts stay fixed and their internal candidate order is shuffled independently for each repeat. The default still scores all 465 first-round candidates, or all 400 remaining second-round candidates, in each request.
 
 The first real scoring response for each schema completes before its followers are submitted. It warms the cache without an additional paid warm-up request. Subsequent scoring requests can run in parallel. All five responses remain separately generated; previous scores or assistant answers are not supplied as cached context.
 
@@ -40,6 +40,6 @@ After each campaign, inspect `scoring/cache_summary.json`:
 
 The score command prints the cache status and hit counts. Cache summary costs estimate the returned responses using the configured rates; SDK retries whose usage is not returned cannot be itemized. The budget preflight reserves for them.
 
-The mocked tests and offline rehearsal verify request layout, stable schemas, scheduling and accounting. Separate live four-pair smoke tests verified provider-reported reuse; the v3 second request read 12,911 cached tokens, as recorded in the [rehearsal evidence](rehearsal-results.md). **Live provider cache hits require a real API run** and are not established by the rehearsal. Anthropic documents a 1,024-token minimum for Opus 4.8; the normal full-inventory context is intended to exceed that threshold.
+The mocked tests and offline rehearsal verify request layout, stable schemas, scheduling and accounting. Separate live four-pair smoke tests verified provider-reported reuse; the current v4 second request read 5,174 cached tokens, as recorded in the [rehearsal evidence](rehearsal-results.md). **Live provider cache hits require a real API run** and are not established by the rehearsal. Anthropic documents a 1,024-token minimum for Opus 4.8; the normal full-inventory context is intended to exceed that threshold.
 
 Primary references: [Anthropic prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching), [structured-output cache invalidation](https://platform.claude.com/docs/en/build-with-claude/structured-outputs#prompt-modification-and-token-costs).

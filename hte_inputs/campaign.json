@@ -3,6 +3,7 @@
   "chemistry": {
     "substrate": "pyridine-2-sulfonyl fluoride / PyFluor",
     "substrate_smiles": "FS(C1=NC=CC=C1)(=O)=O",
+    "product": "2-fluoropyridine",
     "product_smiles": "FC1=NC=CC=C1",
     "substrate_molecular_weight_g_mol": 161.16,
     "substrate_molarity_M": 0.1,
@@ -108,7 +109,7 @@
     "repeats": 5,
     "seed": 20261009,
     "batch_size": 465,
-    "max_output_tokens": 20000,
+    "max_output_tokens": 10000,
     "workers": 2,
     "timeout_seconds": 240,
     "budget_usd": 20,

@@ -1,5 +1,5 @@
 {
-  "created_utc": "2026-10-09T06:50:34.198741+00:00",
+  "created_utc": "2026-10-09T07:25:52.464962+00:00",
   "tests": {
     "tests": 46,
     "errors": 0,
@@ -35,8 +35,8 @@
     "dimensions": 768,
     "actual_model_inference": true
   },
-  "claude_paid_calls": 4,
-  "claude_api_request_contract_test": "real Opus 4.8 smoke tests (four pairs, two repeats each); prompt v3 checked live; full initial selection not run",
+  "claude_paid_calls": 6,
+  "claude_api_request_contract_test": "three live Opus 4.8 smoke tests (four pairs, two repeats each); scores-only prompt v4 with thinking disabled checked live; full initial selection not run",
   "physical_robot_runs": 0,
   "real_chemistry_yields_available": false,
   "physical_bench_validation_complete": false,
@@ -77,14 +77,14 @@
   "prompt_caching": {
     "enabled_by_default": true,
     "ttl": "1h",
-    "explicit_cached_blocks": "fixed chemistry/ligand/literature context and shared measured feedback",
+    "explicit_cached_blocks": "fixed chemistry/ligand identities/single-ligand yields and shared measured feedback",
     "uncached_block": "shuffled candidate IDs",
     "stable_schemas_tested": true,
     "first_response_warms_each_schema_without_extra_paid_call": true,
     "cache_usage_and_mixed_ttl_cost_accounting_tested": true,
     "budget_assumes_all_requests_miss_cache": true,
     "live_cache_hits_verified": true,
-    "paid_api_calls": 4,
+    "paid_api_calls": 6,
     "live_verification_scope": "four-pair smoke requests; not a full 465-pair campaign"
   },
   "preloaded_internal_standard": {
@@ -117,23 +117,25 @@
     "environment_takes_precedence": true,
     "scoring_and_feedback_use_file": true,
     "mocked_key_loading_and_no_output_leak_tested": true,
-    "live_key_not_used": true
+    "live_key_not_used": false
   },
   "live_claude_smoke_checks": {
     "model": "claude-opus-4-8",
     "initial_prompt_version": 2,
-    "current_prompt_version": 3,
+    "current_prompt_version": 4,
     "pairs_per_test": 4,
     "repeats_per_test": 2,
-    "total_generation_requests": 4,
-    "current_prompt_cache_read_tokens": 12911,
-    "current_prompt_cost_usd": 0.1914355,
-    "combined_estimated_cost_usd": 0.34532250000000003,
+    "total_generation_requests": 6,
+    "current_prompt_cache_read_tokens": 5174,
+    "current_prompt_cost_usd": 0.056997000000000006,
+    "combined_estimated_cost_usd": 0.40231950000000005,
     "full_first_batch_generated": false,
-    "real_chemistry_data_used": false
+    "real_chemistry_data_used": false,
+    "extended_thinking_disabled": true,
+    "response_contains_only_text": true
   },
   "scoring_prompt": {
-    "version": 3,
+    "version": 4,
     "ligand_ids_names_and_smiles": 31,
     "explicit_pair_catalog": 465,
     "extracted_same_substrate_SI_rows": 18,
@@ -141,12 +143,18 @@
     "SI_page": "S35",
     "SI_table": "S2",
     "source_visually_checked": true,
-    "hypothesis_max_words": 200,
     "exact_output_keys": [
-      "hypothesis",
       "scores"
     ],
     "preview_matches_SDK_request_tested": true,
-    "strict_response_contract_tested": true
+    "strict_response_contract_tested": true,
+    "substrate_name": "pyridine-2-sulfonyl fluoride (PyFluor)",
+    "product_name": "2-fluoropyridine",
+    "ligand_cooperativity_explicit": true,
+    "literature_narrative_in_API_input": false,
+    "extended_thinking_disabled": true,
+    "max_output_tokens": 10000,
+    "full_campaign_token_count": 35647,
+    "full_campaign_conservative_bound_usd": 6.2647
   }
 }

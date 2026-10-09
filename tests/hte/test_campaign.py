@@ -314,7 +314,7 @@ def test_paid_call_schema_resume_and_cap(cfg, inventory, tmp_path, monkeypatch):
         stop_reason = "end_turn"
         usage = SimpleNamespace(model_dump=lambda: {"input_tokens": 1000,"output_tokens":100})
         def __init__(self, schema):
-            self.content = [SimpleNamespace(type="text", text=json.dumps({"hypothesis":"fixture", "scores":{key:42 for key in schema["properties"]["scores"]["required"]}}))]
+            self.content = [SimpleNamespace(type="text", text=json.dumps({"scores":{key:42 for key in schema["properties"]["scores"]["required"]}}))]
         def model_dump(self):
             return {"id":self.id,"synthetic":True}
     class Stream:
@@ -328,7 +328,7 @@ def test_paid_call_schema_resume_and_cap(cfg, inventory, tmp_path, monkeypatch):
             self.messages=self
         def count_tokens(self, **kwargs): return SimpleNamespace(input_tokens=1000)
         def stream(self, **kwargs):
-            assert kwargs["thinking"] == {"type":"adaptive"}
+            assert kwargs["thinking"] == {"type":"disabled"}
             calls.append(kwargs)
             return Stream(Response(kwargs["output_config"]["format"]["schema"]))
     monkeypatch.setattr(anthropic,"Anthropic",Client)

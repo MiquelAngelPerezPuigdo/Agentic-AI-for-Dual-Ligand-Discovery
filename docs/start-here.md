@@ -43,7 +43,7 @@ cp anthropic.key.example anthropic.key
 zsh scripts/first-batch.zsh
 ```
 
-The script uses the local key file and runs five real scoring calls over the 465 pairs, followed by the 50/50 score/diversity selection. Its output is `output/first-batch-<timestamp>/first_batch.csv`: **65 pair assignments plus one L17 tBuBrettPhos reference**, including well and sample IDs. Scoring files preserve hypotheses, individual scores, token usage and the cost preflight. These are paid calls within the configured estimated $20 campaign cap. No key belongs in a committed file or chat message.
+The script uses the local key file and runs five real scoring calls over the 465 pairs, followed by the 50/50 score/diversity selection. Its output is `output/first-batch-<timestamp>/first_batch.csv`: **65 pair assignments plus one L17 tBuBrettPhos reference**, including well and sample IDs. Scoring files preserve the exact prompts, individual scores, token usage and the cost preflight. Responses contain scores only; extended thinking is disabled. These are paid calls within the configured estimated $20 campaign cap. No key belongs in a committed file or chat message.
 
 The first batch can be selected before the organizers finalize hardware and LC details. Protocol/stock exports use the confirmed campaign configuration as described in the runbook. Do not use the synthetic demo ranking for experiments.
 
