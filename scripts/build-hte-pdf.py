@@ -7,6 +7,7 @@ from datetime import date, datetime
 import hashlib
 from html import escape
 import json
+import posixpath
 from pathlib import Path
 import sys
 from urllib.parse import urlparse
@@ -101,7 +102,11 @@ def inline(tokens, table=False):
             local = next((i for i, (name, _) in enumerate(CHAPTERS, 1) if name == filename), None)
             target = f"#chapter-{local}" if local and not urlparse(target).scheme else target
             if not urlparse(target).scheme and not target.startswith("#"):
-                target = REPO+"/blob/main/"+target.lstrip("./")
+                parsed = urlparse(target)
+                path = posixpath.normpath(posixpath.join("docs", parsed.path))
+                target = REPO+"/blob/main/"+path
+                if parsed.query: target += "?"+parsed.query
+                if parsed.fragment: target += "#"+parsed.fragment
             output.append('<link href="'+escape(target, quote=True)+'" color="#087E8B">'+inline(children, table)+"</link>")
         elif kind == "inline_html": output.append(raw)
         else: raise ValueError(f"Unsupported Markdown inline type: {kind}; add support before rebuilding")
@@ -242,8 +247,8 @@ def build(output, edition):
                   Paragraph("Generated quantities from the real selected campaign take precedence over the synthetic demo. This handbook includes the procedures and outstanding decisions; it does not supply unmeasured geometry or analytical settings.", sheet["small"]),
                   PageBreak(), Paragraph("Contents", sheet["chapter"])])
     toc = TableOfContents()
-    toc.levelStyles = [ParagraphStyle("toc0", fontName="HTE-Bold", fontSize=9.6, leading=13, spaceBefore=7, textColor=BLUE),
-                       ParagraphStyle("toc1", fontName="HTE", fontSize=8.8, leading=12, leftIndent=14, firstLineIndent=0, textColor=GRAY)]
+    toc.levelStyles = [ParagraphStyle("toc0", fontName="HTE-Bold", fontSize=9.6, leading=13, spaceBefore=6, textColor=BLUE),
+                       ParagraphStyle("toc1", fontName="HTE", fontSize=8.8, leading=11.5, leftIndent=14, firstLineIndent=0, textColor=GRAY)]
     story.append(toc)
     parser = mistune.create_markdown(renderer="ast", plugins=["table"])
     for number, (filename, title) in enumerate(CHAPTERS, 1):

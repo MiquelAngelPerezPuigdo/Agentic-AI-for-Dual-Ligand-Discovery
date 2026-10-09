@@ -111,7 +111,9 @@ python -m hte.cli design --ranking output/hte-round1-scoring/ranking.csv \
   --output output/hte-round1-design.csv
 ```
 
-Five calls independently score every pair after shuffled candidate ordering, using the mechanism, ligand structures and published single-ligand evidence. Structured output rejects incomplete, duplicate or nonnumeric scores. Raw responses, usage, hypotheses and repeated scores are retained. The protocol never changes temperature, loadings, solvent or the inventory based on an LLM suggestion.
+Five calls independently score every pair after shuffled candidate ordering. The [scoring prompt guide](scoring-prompt.md) lists all 31 IDs/names/SMILES and 18 CAS-matched SI Table S2 yields. It organizes the task into mechanism, ligand requirements, complementarity, evidence use and an exact JSON contract. The 13 unreported SI values remain unknown. An explicit catalog maps every pair ID to its constituent ligand IDs.
+
+Run `python -m hte.cli preview-prompts --output output/prompt-review` to inspect the exact requests without API calls. Paid scoring saves the same readable prompts and request JSON beside each response. The parser requires exactly `hypothesis` and `scores`, a hypothesis of at most 200 words, and one finite numeric 0-100 score for every requested ID. It rejects missing/duplicate/extra IDs, numeric strings, nulls and booleans. Raw responses, usage, hypotheses and repeated scores are retained. The protocol never changes temperature, loadings, solvent or the inventory based on an LLM suggestion.
 
 [Prompt caching](prompt-caching.md) is enabled by default with a one-hour TTL in both rounds. Shared chemistry context and measured feedback are cached; shuffled candidate IDs remain outside the cached prefix. Stable schemas and a first scoring response before parallel followers preserve reuse. Each scoring directory contains `cache_summary.json` and response cost breakdowns; inspect the provider's read counters to verify live hits. Cache expiry across the reaction requires a fresh write in round two. The budget preflight includes the write premium and assumes no cache hits.
 

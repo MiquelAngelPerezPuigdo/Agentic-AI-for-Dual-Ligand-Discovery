@@ -1,9 +1,9 @@
 {
-  "created_utc": "2026-10-09T00:35:13.318503+00:00",
+  "created_utc": "2026-10-09T06:50:34.198741+00:00",
   "tests": {
-    "tests": 42,
-    "failures": 0,
+    "tests": 46,
     "errors": 0,
+    "failures": 0,
     "skipped": 0
   },
   "versions": {
@@ -35,8 +35,8 @@
     "dimensions": 768,
     "actual_model_inference": true
   },
-  "claude_paid_calls": 0,
-  "claude_api_request_contract_test": "mocked client only; real access/inference requires operator key",
+  "claude_paid_calls": 4,
+  "claude_api_request_contract_test": "real Opus 4.8 smoke tests (four pairs, two repeats each); prompt v3 checked live; full initial selection not run",
   "physical_robot_runs": 0,
   "real_chemistry_yields_available": false,
   "physical_bench_validation_complete": false,
@@ -83,8 +83,9 @@
     "first_response_warms_each_schema_without_extra_paid_call": true,
     "cache_usage_and_mixed_ttl_cost_accounting_tested": true,
     "budget_assumes_all_requests_miss_cache": true,
-    "live_cache_hits_verified": false,
-    "paid_api_calls": 0
+    "live_cache_hits_verified": true,
+    "paid_api_calls": 4,
+    "live_verification_scope": "four-pair smoke requests; not a full 465-pair campaign"
   },
   "preloaded_internal_standard": {
     "identity": "naphthalene",
@@ -117,5 +118,35 @@
     "scoring_and_feedback_use_file": true,
     "mocked_key_loading_and_no_output_leak_tested": true,
     "live_key_not_used": true
+  },
+  "live_claude_smoke_checks": {
+    "model": "claude-opus-4-8",
+    "initial_prompt_version": 2,
+    "current_prompt_version": 3,
+    "pairs_per_test": 4,
+    "repeats_per_test": 2,
+    "total_generation_requests": 4,
+    "current_prompt_cache_read_tokens": 12911,
+    "current_prompt_cost_usd": 0.1914355,
+    "combined_estimated_cost_usd": 0.34532250000000003,
+    "full_first_batch_generated": false,
+    "real_chemistry_data_used": false
+  },
+  "scoring_prompt": {
+    "version": 3,
+    "ligand_ids_names_and_smiles": 31,
+    "explicit_pair_catalog": 465,
+    "extracted_same_substrate_SI_rows": 18,
+    "unreported_SI_rows_left_unknown": 13,
+    "SI_page": "S35",
+    "SI_table": "S2",
+    "source_visually_checked": true,
+    "hypothesis_max_words": 200,
+    "exact_output_keys": [
+      "hypothesis",
+      "scores"
+    ],
+    "preview_matches_SDK_request_tested": true,
+    "strict_response_contract_tested": true
   }
 }

@@ -47,6 +47,8 @@ The script uses the local key file and runs five real scoring calls over the 465
 
 The first batch can be selected before the organizers finalize hardware and LC details. Protocol/stock exports use the confirmed campaign configuration as described in the runbook. Do not use the synthetic demo ranking for experiments.
 
+Review the [structured prompt and SI evidence](scoring-prompt.md) before scoring. To inspect the exact current API requests without a key or paid calls, run `python -m hte.cli preview-prompts --output output/prompt-review`. Scoring also saves the exact request JSON and a readable prompt beside every response.
+
 The later watcher can read the same `anthropic.key` file. As an alternative, set the key for a terminal with hidden input:
 
 ```zsh

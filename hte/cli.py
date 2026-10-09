@@ -20,6 +20,9 @@ def main():
     s = commands.add_parser("score")
     s.add_argument("--output", required=True)
     s.add_argument("--observations")
+    preview = commands.add_parser("preview-prompts", help="Export exact scoring prompts; no key or API calls")
+    preview.add_argument("--output", required=True)
+    preview.add_argument("--observations")
     d = commands.add_parser("design")
     d.add_argument("--ranking", required=True)
     d.add_argument("--embeddings")
@@ -88,6 +91,11 @@ def main():
             print({"ligands": len(inv), "pairs": len(pairs), "unresolved_identities": [k for k,v in inv.items() if v["identity_confirmed"] != "true"],
                    "missing_bench_validation": [k for k in required_validations(config) if config["validation"].get(k) is not True],
                    "schedule": schedule(config)})
+        elif args.command == "preview-prompts":
+            from .scoring import export_prompt_preview
+            from .analytics import observations
+            feedback = observations(read_csv(args.observations)) if args.observations else []
+            print(export_prompt_preview(config, inv, pairs, read_json(args.evidence), feedback, args.output))
         elif args.command == "score":
             from .scoring import score_candidates
             from .analytics import observations
