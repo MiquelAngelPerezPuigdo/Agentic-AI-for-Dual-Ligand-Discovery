@@ -16,7 +16,7 @@ This package screens 65 distinct ligand pairs plus one tBuBrettPhos reference, t
 | Reference | L17 tBuBrettPhos, 0.60 µmol / 12 mol% total ligand; same Pd and conditions |
 | Temperature / hold | 95 °C / 240 minutes after the module reaches the setpoint |
 | Atmosphere | Reaction assembly under air; ligand stocks prepared/stored in glovebox |
-| Additional reagents | No base, additive, or external fluoride source |
+| Additional reagents | 0.050 µmol naphthalene analytical IS added with SM; no base or external fluoride source |
 | Round 1 | 65 pairs + 1 reference = 66 wells |
 | Round 2 | 10 untested pairs; no reaction repeats or additional controls |
 | Objective | Calibrated product yield; conversion is diagnostic |

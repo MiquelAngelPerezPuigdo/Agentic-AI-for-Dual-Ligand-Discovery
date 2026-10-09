@@ -1,0 +1,43 @@
+name: HTE PDF handbook
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/*.md'
+      - 'hte/**'
+      - 'hte_inputs/campaign.json'
+      - 'hte_inputs/calibration_template.csv'
+      - 'hte_inputs/ligands.csv'
+      - 'software_validation.json'
+      - 'scripts/build-hte-pdf.py'
+      - 'pyproject.toml'
+      - '.github/workflows/handbook.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  handbook:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Install PDF dependencies
+        run: python -m pip install 'reportlab>=4.4,<5' 'mistune>=3.1,<4' 'pypdf>=5,<7'
+      - name: Build handbook from current sources
+        run: python scripts/build-hte-pdf.py
+      - name: Verify source and PDF hashes
+        run: python scripts/build-hte-pdf.py --check
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: HTE-operator-handbook
+          path: |
+            output/pdf/HTE-operator-handbook.pdf
+            output/pdf/HTE-operator-handbook.build.json
+          if-no-files-found: error
+          retention-days: 90
