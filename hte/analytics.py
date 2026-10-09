@@ -44,23 +44,32 @@ def fit_calibration(config, rows):
         raise ValueError("Choose a validated external or internal-standard calibration")
     models = {}
     for analyte in ("substrate", "product"):
-        points = [row for row in rows if row["analyte"] == analyte]
+        all_points = [row for row in rows if row["analyte"] == analyte]
+        if any(row.get("role", "calibration") not in ("calibration", "check") for row in all_points):
+            raise ValueError("Calibration row role must be calibration or check")
+        points = [row for row in all_points if row.get("role", "calibration") == "calibration"]
+        checks = [row for row in all_points if row.get("role") == "check"]
         if len(points) < 3:
             raise ValueError(f"At least three calibration measurements required for {analyte}")
-        x, y, is_areas = [], [], []
-        for row in points:
+
+        def measurement(row):
             if row["method_id"] != settings["method_id"] or row["channel"] != settings["channel"]:
                 raise ValueError("Calibration method/channel mismatch")
-            x.append(finite(row["concentration_uM"], "calibration concentration", 0))
+            concentration = finite(row["concentration_uM"], "calibration concentration", 0)
             area = finite(row["area"], "calibration area", 0)
+            is_area = None
             if mode == "internal_standard":
                 is_area = finite(row["internal_standard_area"], "calibration IS area", 1e-12)
                 is_conc = finite(row["internal_standard_concentration_uM"], "IS concentration", 1e-12)
                 if abs(is_conc-settings["internal_standard_final_uM"]) > 1e-6:
                     raise ValueError("Calibration and sample IS concentrations must match in the final LC vial")
                 area /= is_area
-                is_areas.append(is_area)
-            y.append(area)
+            return concentration, area, is_area
+
+        measurements = [measurement(row) for row in points]
+        x = [value[0] for value in measurements]
+        y = [value[1] for value in measurements]
+        is_areas = [value[2] for value in measurements if value[2] is not None]
         if len(set(x)) < 3:
             raise ValueError(f"Three distinct calibration concentrations required for {analyte}")
         x, y = np.asarray(x), np.asarray(y)
@@ -71,9 +80,23 @@ def fit_calibration(config, rows):
         r2 = 1-float(np.sum((y-(slope*x+intercept))**2))/ss_total if ss_total else 0
         if r2 < settings["minimum_calibration_r2"]:
             raise ValueError(f"Calibration R2 for {analyte}: {r2:.5f} below acceptance threshold")
+        check_results = []
+        if checks:
+            tolerance = finite(settings.get("calibration_check_tolerance_fraction", 0.15), "calibration check tolerance", 0, 1)
+            for row in checks:
+                expected, signal, _ = measurement(row)
+                if expected <= 0 or not x.min() <= expected <= x.max():
+                    raise ValueError("Independent calibration checks must be positive and inside the fitted range")
+                measured = float((signal-intercept)/slope)
+                relative_error = abs(measured-expected)/expected
+                if relative_error > tolerance:
+                    raise ValueError(f"Independent calibration check failed for {analyte}: {relative_error:.1%} error")
+                check_results.append({"sample_id": row.get("sample_id", ""), "expected_uM": expected,
+                                      "measured_uM": measured, "relative_error": relative_error})
         models[analyte] = {"slope": float(slope), "intercept": float(intercept), "r2": r2,
                            "minimum_uM": float(x.min()), "maximum_uM": float(x.max()),
-                           "mean_is_area": float(np.mean(is_areas)) if is_areas else None}
+                           "mean_is_area": float(np.mean(is_areas)) if is_areas else None,
+                           "fit_measurements": len(points), "independent_checks": check_results}
     return models
 
 
@@ -114,6 +137,12 @@ def analyze(config, dosing, peaks, calibration, output):
     ids = [r["sample_id"] for r in dosing]
     if len(ids) != len(set(ids)):
         raise ValueError("Duplicate dosing sample IDs")
+    if settings["calibration_mode"] == "internal_standard":
+        for dose in dosing:
+            if "internal_standard_final_uM" in dose:
+                value = finite(dose["internal_standard_final_uM"], "dosing final IS concentration", 1e-12)
+                if abs(value-settings["internal_standard_final_uM"]) > 1e-6:
+                    raise ValueError("Dosing plan and calibration use different final IS concentrations")
     groups = defaultdict(list)
     for row in peaks:
         if row["sample_id"] not in ids:

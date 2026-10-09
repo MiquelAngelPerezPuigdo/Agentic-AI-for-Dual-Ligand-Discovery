@@ -1,7 +1,7 @@
 {
-  "created_utc": "2026-10-08T23:45:35.294980+00:00",
+  "created_utc": "2026-10-09T00:09:49.715632+00:00",
   "tests": {
-    "tests": 33,
+    "tests": 39,
     "failures": 0,
     "errors": 0,
     "skipped": 0
@@ -71,7 +71,8 @@
     },
     "mocked_requests": 10,
     "prompt_caching_enabled": true,
-    "live_cache_hits_verified": false
+    "live_cache_hits_verified": false,
+    "no_internal_standard_redose": true
   },
   "prompt_caching": {
     "enabled_by_default": true,
@@ -84,5 +85,28 @@
     "budget_assumes_all_requests_miss_cache": true,
     "live_cache_hits_verified": false,
     "paid_api_calls": 0
+  },
+  "preloaded_internal_standard": {
+    "identity": "naphthalene",
+    "substrate_stock_mM": 250,
+    "naphthalene_stock_mM": 2.5,
+    "dose_ul": 20,
+    "is_umol_per_well": 0.05,
+    "prepare_ul": 5000,
+    "storage_container": "capped 20 mL glass vial",
+    "deck_source": "slot 2 reservoir A1",
+    "lc_diluent_source": "slot 2 reservoir A5; no added IS",
+    "final_lc_is_uM": 50,
+    "is_amounts_and_no_redose_tested": true,
+    "dilution_consistency_tested": true,
+    "five_nonzero_analyte_calibration_levels_uM": [
+      100,
+      500,
+      1000,
+      2500,
+      6000
+    ],
+    "independent_calibration_checks_excluded_from_fit": true,
+    "physical_retention_and_compatibility_validated": false
   }
 }

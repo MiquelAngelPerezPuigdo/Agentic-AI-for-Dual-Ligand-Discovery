@@ -13,7 +13,9 @@ def fixtures(config, dosing):
     cal = []
     for name in ("substrate", "product"):
         for concentration in (0, 100, 500, 1000, 2500, 5000, 6000):
-            cal.append({"analyte": name, "concentration_uM": concentration, "area": concentration*10,
+            role = "check" if concentration == 5000 else "calibration"
+            cal.append({"sample_id": f"SYNTHETIC_CAL_{name}_{concentration}", "role": role,
+                        "analyte": name, "concentration_uM": concentration, "area": concentration*10,
                         "internal_standard_area": 10000, "internal_standard_concentration_uM": 50,
                         "method_id": "SYNTHETIC_2MIN", "channel": "SYNTHETIC_UV"})
     peaks = []

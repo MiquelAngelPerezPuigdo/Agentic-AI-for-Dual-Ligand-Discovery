@@ -6,7 +6,7 @@ Send the organizers the [HTE configuration checklist](hte-questions.md) and give
 
 1. **Reaction hardware:** Which sealed glass-vial array, insert and seal can they supply and securely mount on the OT-2 heater-shaker? Ask for the measured labware JSON, validated 95 °C heating/shaking/sealing, actual thermal lag and a second vial array for predosing round two. Para-Dox 104960 is a candidate, with compatibility pending.
 2. **LC method and data:** Ask for the exact method, measured full two-minute injection cycle, quantitative channel/wavelength, retention times, injection volume and a representative CSV/XLSX export. Include well/sample mapping, failed injections, nondetections and an end-of-sequence signal. Raw DAD data are needed only for optional MOCCA processing.
-3. **Extraction and calibration:** Confirm recovery and homogeneous sampling from the toluene/water/ACN mixture, acceptable dilution/concentration, calibration and naphthalene suitability, and the LC plate/seal. Schedule standards and calibration while the first reaction runs.
+3. **Extraction and calibration:** Confirm recovery and homogeneous sampling from the toluene/water/ACN mixture, acceptable dilution/concentration, calibration and naphthalene suitability, and the LC plate/seal. Validate naphthalene added with SM through drying/heating before treating its area as a yield reference. Schedule five nonzero analyte levels at fixed IS, blanks and independent checks while the first reaction runs; use the [stock and calibration instructions](stocks-and-calibration.md).
 4. **Stocks and liquid handling:** Confirm identity/assay, solubility of every proposed stock, glovebox stock preparation, containers/dead volumes, solvent pipetting and acceptable source-dedicated tip reuse. Validate aspiration heights and the dry endpoint for ambient second-round DCM evaporation.
 5. **Time and access:** Request a timed rehearsal, continuous LC availability, local OT-2 App access, a shaker for the analytical plate and a workstation allowed to contact Anthropic. Stock preparation and initial selection are outside the clock; the final ten analyses end it.
 
@@ -17,11 +17,11 @@ The chemistry and two-minute analyses already occupy 632 of 720 minutes. The com
 | Stage | Operator action | Software handoff |
 |---|---|---|
 | Before the clock | Confirm equipment/method, prepare stocks in the glovebox, calibrate handling and rehearse | Campaign configuration; real first-batch selection; printed stock and deck-load CSVs |
-| First assembly | Dose 66 substrate wells, remove DCM, add ligands/Pd/toluene, seal and begin the four-hour hold | Local first-round dosing/reaction protocol |
-| During first hold | Measure authentic standards/calibration; predose ten second-round substrate wells and allow ambient DCM evaporation | Calibration CSV and ten-well predose manifest |
+| First assembly | Dose combined SM/IS into 66 wells, remove DCM, add ligands/Pd/toluene, seal and begin the four-hour hold | Local first-round dosing/reaction protocol |
+| During first hold | Measure authentic standards/calibration; predose ten second-round SM/IS wells and allow ambient DCM evaporation | Calibration CSV and ten-well predose manifest |
 | First workup and LC | Cool, work up, dilute and measure all 66 samples; publish the complete export | Local workup protocol; peak CSV plus completion marker |
 | Decision | Review QC and the ten new pair assignments | Watcher produces `next_design.csv` and `next_dosing.csv` |
-| Second assembly | Verify predosed wells are dry; add the selected catalysts and toluene, seal and hold four hours | Local second-round protocol; substrate is not dosed again |
+| Second assembly | Verify predosed wells are dry; add the selected catalysts and toluene, seal and hold four hours | Local second-round protocol; substrate and IS are not dosed again |
 | Final workup and LC | Work up and measure all ten samples; stop the clock | Final calibrated results and logs |
 
 The runbook supplies the details and stop points. Exact glass hardware, extraction and analytical settings are still pending; they must be resolved before physical execution.

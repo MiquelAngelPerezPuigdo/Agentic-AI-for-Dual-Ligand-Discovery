@@ -131,8 +131,12 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
     tested = {row["pair_id"] for row in design if row["kind"] == "pair"}
     no_repeats = not tested.intersection(row["pair_id"] for row in next_dosing)
     no_redose = all(float(row["sm_DCM_ul"]) == 0 for row in next_dosing)
+    no_is_redose = all(float(row["naphthalene_added_with_substrate_umol"]) == 0 and
+                       float(row["naphthalene_workup_umol"]) == 0 for row in next_dosing)
     if len(next_dosing) != 10 or not no_repeats or not no_redose:
         raise ValueError("Rehearsal next batch violated campaign constraints")
+    if config["liquids"].get("naphthalene_addition_stage") == "substrate_stock" and not no_is_redose:
+        raise ValueError("Rehearsal redosed the preloaded internal standard")
     report = {"synthetic_only": True, "paid_api_calls": 0, "physical_execution_allowed": False,
               "prompt_caching_enabled": prompt_cache_settings(scoring_config["llm"])["enabled"],
               "live_cache_hits_verified": False,
@@ -141,7 +145,8 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
               "first_round_qc_pass": read_json(iteration/"analysis/qc_report.json")["batch_qc_pass"],
               "feedback_samples": len(results), "remaining_pairs_scored": 465-len(tested),
               "round2_pairs": len(next_dosing), "no_pair_repeats": no_repeats,
-              "no_substrate_redose": no_redose, "incomplete_export_ignored": not ignored,
+              "no_substrate_redose": no_redose, "no_internal_standard_redose": no_is_redose,
+              "incomplete_export_ignored": not ignored,
               "duplicate_event_ignored": replay == state and len(calls) == after,
               "next_dosing_csv": str((iteration/"next_dosing.csv").relative_to(out)),
               "cache_summaries": ["initial_scoring/cache_summary.json",

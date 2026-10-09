@@ -6,12 +6,12 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 
-from hte.analytics import analyze, observations, validate_completion
+from hte.analytics import analyze, fit_calibration, observations, validate_completion
 from hte.demo import run
 from hte.design import consensus_select, make_design, pair_features
 from hte.inventory import candidates, load_inventory
 from hte.io import object_digest, read_csv, read_json
-from hte.planning import dosing_rows, schedule, stock_plan, transfer_operations, validate_config
+from hte.planning import dosing_rows, required_validations, schedule, stock_plan, transfer_operations, validate_config
 from hte.scoring import aggregate, parse_scores, score_candidates
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -51,6 +51,10 @@ def test_two_rounds_and_reference_stoichiometry(demo, cfg, inventory):
     assert not {r["pair_id"] for r in first}.intersection(r["pair_id"] for r in second)
     for r in rows:
         assert r["substrate_umol"] == 5
+        assert r["naphthalene_total_umol"] == pytest.approx(0.05)
+        assert r["naphthalene_added_with_substrate_umol"] == pytest.approx(0.05)
+        assert r["naphthalene_predosed_umol"] == r["naphthalene_workup_umol"] == 0
+        assert r["internal_standard_final_uM"] == pytest.approx(50)
         assert r["pd_umol"] == pytest.approx(0.6)
         assert r["ligand_a_umol"]+r["ligand_b_umol"] == pytest.approx(0.6)
         assert r["ligand_a_ul"]+r["ligand_b_ul"]+r["pd_ul"]+r["toluene_ul"] == 50
@@ -58,7 +62,14 @@ def test_two_rounds_and_reference_stoichiometry(demo, cfg, inventory):
     assert ref["ligand_a"] == "L17" and ref["ligand_a_ul"] == 20 and ref["ligand_b_ul"] == 0
     second_rows = dosing_rows(cfg, inventory, second)
     assert all(r["sm_DCM_ul"] == 0 and r["substrate_predosed_umol"] == 5 for r in second_rows)
-    assert [r["well"] for r in read_csv(demo/"round1/round2_predose.csv")] == [r["well"] for r in second]
+    assert all(r["naphthalene_predosed_umol"] == pytest.approx(0.05) and
+               r["naphthalene_added_with_substrate_umol"] == r["naphthalene_workup_umol"] == 0 for r in second_rows)
+    manifest = read_csv(demo/"round1/round2_predose.csv")
+    assert [r["well"] for r in manifest] == [r["well"] for r in second]
+    assert all(float(r["naphthalene_predosed_umol"]) == pytest.approx(0.05) for r in manifest)
+    deck_stock = next(r for r in read_csv(demo/"round1/deck_loads.csv") if r["reagent"] == "substrate_DCM")
+    assert float(deck_stock["naphthalene_stock_mM"]) == 2.5
+    assert float(deck_stock["load_ul"]) == 2540
 
 
 @pytest.mark.parametrize("reuse", [True, False])
@@ -80,8 +91,15 @@ def test_tip_capacity_source_ledger_and_predose(demo, cfg, inventory, reuse):
     assert all(r["prepare_ul"] >= r["round1_consumption_ul"]+r["round2_reserve_ul"]+r["dead_ul"] for r in plan)
     assert "NO naphthalene" in next(r for r in plan if r["reagent"] == "LC_diluent")["solvent"]
     workup=next(r for r in plan if r["reagent"] == "workup")
-    assert workup["stock_mM"] == 1
-    assert workup["mass_mg"] == pytest.approx(workup["prepare_ul"]*0.12817/1000)
+    assert workup["stock_mM"] == 0
+    assert workup["mass_mg"] == 0
+    mixed = next(r for r in plan if r["reagent"] == "substrate_DCM")
+    assert mixed["prepare_ul"] == 5000
+    assert mixed["mass_mg"] == pytest.approx(201.45)
+    assert mixed["naphthalene_stock_mM"] == 2.5
+    assert mixed["naphthalene_mass_mg"] == pytest.approx(1.602125)
+    assert mixed["source_slot"] == 2 and mixed["source_well"] == "A1"
+    assert "glass" in mixed["storage_container"]
 
 
 def test_consensus_all_wells_combine_ranks(demo, inventory):
@@ -109,6 +127,67 @@ def test_real_export_requires_bench_validation(cfg):
     cfg["pipetting"]["reuse_tips"] = False
     with pytest.raises(ValueError, match="Bench"):
         validate_config(cfg, live=True)
+
+
+def test_preloaded_is_bench_validation_is_required(cfg):
+    cfg["demo"] = False
+    cfg["pipetting"]["reuse_tips"] = False
+    for key in required_validations(cfg):
+        cfg["validation"][key] = key != "pre_reaction_internal_standard_validated"
+    with pytest.raises(ValueError, match="pre_reaction_internal_standard_validated"):
+        validate_config(cfg, live=True)
+    cfg["validation"]["pre_reaction_internal_standard_validated"] = True
+    validate_config(cfg, live=True)
+
+
+def test_combined_stock_assays_apply_to_each_solute(demo, cfg, inventory):
+    cfg["stock_preparation"]["assay_fractions"] = {"substrate_DCM": 0.95, "naphthalene": 0.98}
+    rows = dosing_rows(cfg, inventory, read_csv(demo/"round1_design.csv"))
+    mixed = next(r for r in stock_plan(cfg, inventory, transfer_operations(cfg, inventory, rows))
+                 if r["reagent"] == "substrate_DCM")
+    assert mixed["mass_mg"] == pytest.approx(201.45/0.95)
+    assert mixed["naphthalene_mass_mg"] == pytest.approx(1.602125/0.98)
+
+
+def test_combined_stock_rejects_duplicate_is_in_workup(cfg):
+    cfg["liquids"]["naphthalene_workup_mM"] = 1
+    with pytest.raises(ValueError, match="zero workup IS"):
+        validate_config(cfg)
+
+
+def test_greater_sample_dilution_changes_both_analyte_and_is(cfg, demo, inventory):
+    cfg["liquids"].update(aliquot_ul=5, diluent_ul=195)
+    with pytest.raises(ValueError, match="final IS concentration"):
+        validate_config(cfg)
+    cfg["analytics"]["internal_standard_final_uM"] = 12.5
+    rows = dosing_rows(cfg, inventory, read_csv(demo/"round1_design.csv"))
+    assert all(r["internal_standard_final_uM"] == pytest.approx(12.5) for r in rows)
+    ops = transfer_operations(cfg, inventory, rows)
+    assert all(op["pipette"] == "p20" for op in ops if op["stage"] == "sampling")
+    assert all(op["source_well"] == "A5" and op["volume_ul_per_channel"] == 195
+               for op in ops if op["stage"] == "dilution" and op["pipette"] == "p300")
+
+
+def test_calibration_checks_are_held_out_of_fit(demo, cfg):
+    cal = read_csv(demo/"calibration.csv")
+    baseline = fit_calibration(cfg, cal)
+    assert all(model["fit_measurements"] == 6 and len(model["independent_checks"]) == 1
+               for model in baseline.values())
+    check = next(r for r in cal if r["analyte"] == "product" and r["role"] == "check")
+    check["area"] = float(check["area"])*1.1
+    shifted = fit_calibration(cfg, cal)
+    assert shifted["product"]["slope"] == baseline["product"]["slope"]
+    assert shifted["product"]["independent_checks"][0]["relative_error"] == pytest.approx(0.1)
+    check["area"] = float(check["area"])*2
+    with pytest.raises(ValueError, match="Independent calibration check failed"):
+        fit_calibration(cfg, cal)
+
+
+def test_analysis_rejects_dosing_calibration_is_mismatch(demo, cfg, tmp_path):
+    doses = read_csv(demo/"round1/dosing.csv")
+    doses[0]["internal_standard_final_uM"] = 12.5
+    with pytest.raises(ValueError, match="different final IS concentrations"):
+        analyze(cfg, doses, read_csv(demo/"round1_peaks.csv"), read_csv(demo/"calibration.csv"), tmp_path)
 
 
 def test_ready_manifest_rejects_mutated_export(demo, cfg, tmp_path):

@@ -83,10 +83,10 @@ def main():
         inv = load_inventory(args.inventory)
         pairs = candidates(inv)
         if args.command == "check":
-            from .planning import schedule, validate_config, VALIDATIONS
+            from .planning import schedule, validate_config, required_validations
             validate_config(config)
             print({"ligands": len(inv), "pairs": len(pairs), "unresolved_identities": [k for k,v in inv.items() if v["identity_confirmed"] != "true"],
-                   "missing_bench_validation": [k for k in VALIDATIONS if not config["validation"].get(k)],
+                   "missing_bench_validation": [k for k in required_validations(config) if config["validation"].get(k) is not True],
                    "schedule": schedule(config)})
         elif args.command == "score":
             from .scoring import score_candidates

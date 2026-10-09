@@ -15,7 +15,8 @@ Public HTEL equipment listings identify Vanquish Horizon Duo, ISQ-EM and DAD, an
 ## Calibration and sample compatibility
 
 - Schedule authentic standards, calibration series, blanks and checks during the first reaction hold.
-- Validate extraction/recovery, analyte stability and phase homogeneity after adding 50 µL of 1:1 water/ACN with 1% formic acid and 1 mM naphthalene to 50 µL reaction mixture.
+- Validate extraction/recovery, analyte stability and phase homogeneity after adding 50 µL of 1:1 water/ACN with 1% formic acid, without extra IS, to 50 µL reaction mixture.
+- Verify retention/recovery and chemical compatibility of 0.050 µmol naphthalene added with SM before DCM evaporation, including both dry-down methods and the 95 °C hold. Confirm the five nonzero analyte calibration levels, fixed 50 µM IS and independent-check acceptance; see the [stock and calibration instructions](stocks-and-calibration.md).
 - Confirm the proposed 20 µL aliquot into 180 µL diluent is appropriate: nominal maximum product concentration is 5 mM and naphthalene is 50 µM.
 - Confirm final matrix, dilution, injection concentration, plate/seal, minimum volume and any filtration or centrifugation.
 
@@ -32,7 +33,8 @@ The Para-Dox Gen II 104960 is a candidate with 1 mL inserts and a standard micro
 ## Stocks and solvent delivery
 
 - Bottle/COA identities and assay values for all ligands, Pd(COD)(DQ) and substrate.
-- Homogeneous 250 mM substrate/DCM, 30 mM ligand/toluene and 60 mM Pd/toluene stocks at dispensing temperature.
+- Homogeneous combined 250 mM substrate + 2.5 mM naphthalene in DCM, 30 mM ligand/toluene and 60 mM Pd/toluene stocks at dispensing temperature.
+- Confirm the capped 20 mL glass preparation vial for the 5 mL SM/IS stock and short DCM contact compatibility of the on-deck 15 mL reservoir channel. Keep a separate channel for LC dilution solvent.
 - Glovebox preparation/storage for ligands, labeled stocks and sufficient capped reserves.
 - Source containers, dead volumes, aspiration/dispense heights and validated organic-solvent delivery settings.
 - p20 single GEN2 and p300 eight-channel GEN2 configuration; source-dedicated noncontact tip reuse only after validation, with fresh sample tips.

@@ -17,6 +17,12 @@
     "thermal_equilibration_minutes": 0,
     "rpm": 500,
     "atmosphere": "air; ligand stocks prepared in glovebox",
+    "preloaded_internal_standard": {
+      "identity": "naphthalene",
+      "smiles": "c1ccc2ccccc2c1",
+      "mol_percent_relative_to_substrate": 1,
+      "addition_stage": "substrate_stock"
+    },
     "additives": []
   },
   "design": {
@@ -46,9 +52,11 @@
     "workup_ul": 50,
     "aliquot_ul": 20,
     "diluent_ul": 180,
-    "workup_composition": "1:1 water/acetonitrile, 1% v/v formic acid; naphthalene IS in workup only",
+    "workup_composition": "1:1 water/acetonitrile, 1% v/v formic acid; NO naphthalene",
     "mix_rpm": 500,
-    "naphthalene_workup_mM": 1,
+    "naphthalene_addition_stage": "substrate_stock",
+    "naphthalene_substrate_stock_mM": 2.5,
+    "naphthalene_workup_mM": 0,
     "naphthalene_molecular_weight_g_mol": 128.17,
     "lc_diluent_composition": "1:1 water/acetonitrile, 1% v/v formic acid; NO naphthalene"
   },
@@ -85,7 +93,9 @@
     "tube_dead_ul": 100,
     "reservoir_dead_ul": 1000,
     "tube_max_fill_ul": 1400,
-    "reservoir_max_fill_ul": 14500
+    "reservoir_max_fill_ul": 14500,
+    "substrate_min_prepare_ul": 5000,
+    "substrate_storage_container": "20 mL glass vial with a DCM-compatible PTFE-faced closure; capped off-deck reserve"
   },
   "evaporation": {
     "temperature_C": 37,
@@ -123,6 +133,7 @@
     "internal_standard_final_uM": 50,
     "internal_standard_area_tolerance_fraction": 0.3,
     "minimum_calibration_r2": 0.995,
+    "calibration_check_tolerance_fraction": 0.15,
     "quantification_limit_uM": {
       "substrate": null,
       "product": null
@@ -159,6 +170,7 @@
     "lc_calibration_validated": false,
     "local_app_simulation_passed": false,
     "round2_ambient_evaporation_validated": false,
-    "noncontact_tip_reuse_validated": false
+    "noncontact_tip_reuse_validated": false,
+    "pre_reaction_internal_standard_validated": false
   }
 }
