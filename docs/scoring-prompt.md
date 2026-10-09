@@ -74,6 +74,16 @@ Higher scores mean more promising relative product-yield performance. A score is
 
 Software aggregates five repeats into `ranking.csv` (`pair_id`, `mean_score`, `score_sd`, `scoring_calls`). Round one combines that ranking with embedding diversity at 50/50 and assigns 65 pairs plus the L17 reference. Round two selects ten new pairs using the feedback-based LLM ranking and exports `next_design.csv` and `next_dosing.csv`. Repeated-score SD measures model variability. One single-ligand reference supports a comparison against that reference; demonstrating cooperativity experimentally would also require appropriate constituent controls.
 
+## How GoLLuM-inspired embeddings and Claude form the first batch
+
+Claude supplies performance preference: five independent scores for each of 465 pairs are averaged and ranked. Our T5-base language-model embeddings supply exploration: each pair's ligand names, SMILES and fixed reaction context become a 768-dimensional vector, averaged across both ligand orders. This adapts GoLLuM's representation and initialization approach. The [upstream initializer](https://github.com/schwallergroup/gollum/blob/main/src/gollum/initialization/initializers.py) operates on input representations without pair yields. We do not need a trained GoLLuM yield model to initialize the campaign.
+
+Each greedy choice uses `0.5 * Claude_rank_percentile + 0.5 * diversity_rank_percentile`. Diversity initially measures distance from the embedding centroid and subsequently minimum distance from selected pairs. Both signals contribute to each selected pair; this is not two separate lists of experiments.
+
+The selector must cover **all 31 ligands within the 65 pair wells** before ordinary filling. While coverage is incomplete, it prefers pairs introducing two uncovered ligands where eligible, then uses the same consensus score to choose between them. The usual 0.25 Claude percentile floor is retained where possible; coverage overrides it when necessary. Each override is explicit in `*.selection.csv`. A separate `*.ligand_coverage.csv` lists every ligand and its pair-well count. The L17 reference does not count toward pair coverage, and no extra wells are added. The requirement is enforced by software after scoring, so Claude continues to return only performance scores.
+
+The actual GoLLuM optimizer was exercised on synthetic observations as a historical adapter check. It is outside this campaign: after first-round yields arrive, Claude alone scores/selects the second batch; no GoLLuM surrogate is trained or consulted. The full real initial ranking remains to be generated.
+
 ## Inspect or re-extract without inference
 
 Export exact requests into a fresh directory:

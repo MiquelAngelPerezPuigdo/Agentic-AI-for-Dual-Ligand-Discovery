@@ -16,4 +16,5 @@ python -m hte.cli design --ranking "$campaign/scoring/ranking.csv" \
   --embeddings hte_inputs/pair_embeddings_t5-base.npz \
   --output "$campaign/first_batch.csv"
 printf 'First batch: %s\n' "$campaign/first_batch.csv"
+printf 'Ligand coverage: %s\n' "$campaign/first_batch.csv.ligand_coverage.csv"
 printf 'Scores and request records: %s\n' "$campaign/scoring"

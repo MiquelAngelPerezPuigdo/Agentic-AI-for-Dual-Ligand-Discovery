@@ -2,16 +2,18 @@
 
 Local OT-2 experiment planning and LC-to-LLM iteration for Pd-catalyzed desulfonylative fluorination. The campaign searches 465 pairs from 31 ligands using repeated Claude performance scoring with potential ligand cooperativity and diversity across language-model embeddings.
 
-Start with [organizer questions and first-batch setup](docs/start-here.md), the [operator runbook](docs/hte-runbook.md) and [HTE configuration checklist](docs/hte-questions.md).
+For HTE staff, use the **[two-page action checklist](docs/HTE-staff-checklist.pdf)**. Its [editable source](docs/hte-staff-checklist.md) contains setup, deck loads, calibration preparation and the run sequence.
 
-The [HTE PDF handbook](docs/HTE-operator-handbook.pdf) combines the operator instructions, stock/calibration plan and checklist. Its [editable sources and rebuild command](docs/updating-the-handbook.md) let us refresh it as the pipeline changes.
+Project setup and unresolved decisions are in [start here](docs/start-here.md) and the [HTE configuration checklist](docs/hte-questions.md).
+
+The [full reference handbook](docs/HTE-operator-handbook.pdf) preserves the detailed procedures and explanations. Its [editable sources and rebuild command](docs/updating-the-handbook.md) let us refresh it as the pipeline changes.
 
 ## Campaign
 
 - Round 1: 65 distinct ligand pairs and one tBuBrettPhos single-ligand reference.
 - Round 2: 10 new pairs selected after the first LC results arrive.
 - Fixed conditions: 5 µmol substrate, 50 µL toluene, 0.1 M, 95 °C for four hours, 6 mol% of each ligand and 12 mol% Pd(COD)(DQ).
-- Initial selection combines Claude ranking and T5 embedding diversity at 50/50. The iterative selection uses Claude scoring informed by calibrated first-round results.
+- Initial selection combines Claude ranking and T5 embedding diversity at 50/50, with mandatory coverage of all 31 ligands in the 65 pair wells. After first-round yields arrive, the iterative selection uses only Claude scoring informed by those results; GoLLuM is not used for round two.
 - Generated handoffs include dosing CSVs, stock preparation, exact deck loads, LC sequences and local Opentrons Python protocols.
 - A local watcher validates complete LC exports, calculates yields and creates the next dosing plan. Robot operation uses the local Opentrons App.
 
@@ -33,7 +35,7 @@ python -m hte.cli demo --output output/rehearsal
 python -m hte.cli rehearse-loop --output output/fake-first-loop
 ```
 
-The optional ML dependencies support rebuilding embeddings and the measured-prior GoLLuM adapter. Precomputed real T5-base embeddings for all 465 pairs are included, so initial selection does not require downloading model weights. [Tested package versions](requirements-hte-tested.txt) document the local acceptance environment.
+The optional ML dependencies support rebuilding embeddings and historical adapter validation; the campaign uses GoLLuM-inspired embeddings only for initialization. Precomputed real T5-base embeddings for all 465 pairs are included, so initial selection does not require downloading model weights. [Tested package versions](requirements-hte-tested.txt) document the local acceptance environment.
 
 To score and select the first batch, set `ANTHROPIC_API_KEY` through a local secret mechanism, then run:
 
@@ -54,7 +56,7 @@ The [scoring prompt guide](docs/scoring-prompt.md) lists every ligand ID, name, 
 
 ## Validation status
 
-The local acceptance exercise passed **46 tests**, including OT-2 simulation, combined SM/IS dosing and dilution, LC calibration/QC with independent checks, MOCCA raw-DAD integration on synthetic data, the GoLLuM adapter and a complete watcher/scoring rehearsal with mocked Claude responses. [Validation record](software_validation.json), [rehearsal results](docs/rehearsal-results.md).
+The local acceptance exercise passed **54 tests**, including OT-2 simulation, combined SM/IS dosing and dilution, LC calibration/QC with independent checks, MOCCA raw-DAD integration on synthetic data, the GoLLuM adapter and a complete watcher/scoring rehearsal with mocked Claude responses. [Validation record](software_validation.json), [rehearsal results](docs/rehearsal-results.md).
 
 `demo/` contains **synthetic chemistry results and selections**. Its protocols refuse physical execution. Three live Opus 4.8 smoke tests (four pairs, two repeats each) passed. The current v4 prompt returns scores only with extended thinking disabled; provider-reported cache reuse was verified. Combined estimated test cost was $0.4023. The full first-round selection still needs to be run; physical bench validation remains open.
 

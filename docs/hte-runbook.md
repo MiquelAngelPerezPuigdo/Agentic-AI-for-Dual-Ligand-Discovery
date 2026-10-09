@@ -91,7 +91,11 @@ python -m hte.cli embeddings --model google-t5/t5-base --download \
   --output output/hte-embeddings/rebuilt.npz
 ```
 
-With no measured pair data, first-round exploration uses distance from previously selected LM embeddings. Each greedy choice combines Claude rank percentile and diversity rank percentile at 0.5/0.5, with a Claude percentile floor of 0.25. These are explicit tunable settings, not chemically calibrated probabilities. Every selected well uses both signals; there is no 32/33 split. `*.selection.csv` records the selection trace. Conditions are randomized across the occupied wells, in column-major order, to use full eight-well columns efficiently.
+With no measured pair yields, GoLLuM contributes its language-model representation approach rather than a trained yield model. Our frozen T5-base encoder embeds the names, SMILES and reaction context for all 465 pairs; averaging both ligand orders makes each representation symmetric. Claude independently scores every pair five times. Software converts the mean scores to rank percentiles, then combines 50% Claude rank and 50% embedding-diversity rank at each greedy selection. Initial diversity uses distance from the embedding centroid; later diversity uses minimum distance from selected pairs. These ranks are selection preferences, not calibrated chemical probabilities. Initialization needs no measured pair yields: [upstream initializers](https://github.com/schwallergroup/gollum/blob/main/src/gollum/initialization/initializers.py) select from input representations. After round one, only Claude receives measured feedback and selects ten new pairs; GoLLuM is not used again.
+
+**All 31 ligands must appear in at least one of the 65 first-round pair wells.** The L17 single-ligand reference does not satisfy this pair-coverage requirement. Coverage is secured first: eligible pairs that introduce two unseen ligands are preferred where possible, and the same 50/50 consensus chooses between them. Once all ligands are represented, ordinary consensus filling completes the 65 pairs. The usual Claude percentile floor is 0.25; a coverage choice may go below that floor when necessary, and its override is recorded. This requirement adds no wells, singles or repeats.
+
+`*.selection.csv` records the two ranks, coverage phase, newly covered ligand IDs and any floor override. `*.ligand_coverage.csv` lists each ID/name and number of pair wells; verify 31 covered and no zero counts before stock preparation. The metadata also records coverage and overrides. Design creation, dosing export and LC feedback processing reject missing required ligands. Keep `design.require_all_ligands_in_round1_pairs = true` in the campaign configuration. Conditions are randomized across occupied wells in column-major order to use full eight-well columns efficiently.
 
 Store the Claude key on the operator workstation. Copy `anthropic.key.example` to `anthropic.key` in the repository root and replace the single placeholder line with the raw key, without quotes or an `ANTHROPIC_API_KEY=` prefix. Scoring and the watcher automatically read this file when run from the repository root. The file is ignored by Git and excluded from this handoff. It must not appear in a protocol, CSV, notebook output or committed file.
 
@@ -130,7 +134,7 @@ python -m hte.cli export --design output/hte-round1-design.csv \
   --output output/hte-round1-review
 ```
 
-Print `stock_preparation.csv`, `deck_loads.csv`, `dosing.csv`, `round2_predose.csv`, `lc_sequence.csv` and `tip_budget.json`. **Use that campaign's generated quantities**, not the synthetic demo's quantities. `stock_preparation.csv` specifies total solution to prepare; `deck_loads.csv` specifies how much to place at each source for each protocol. The remaining prepared stock stays capped off deck. Source capacities are checked; large solvent reserves are not all loaded into a single well.
+Verify the first-batch ligand coverage CSV, then print `stock_preparation.csv`, `deck_loads.csv`, `dosing.csv`, `round2_predose.csv`, `lc_sequence.csv` and `tip_budget.json`. **Use that campaign's generated quantities**, not the synthetic demo's quantities. `stock_preparation.csv` specifies total solution to prepare; `deck_loads.csv` specifies how much to place at each source for each protocol. The remaining prepared stock stays capped off deck. Source capacities are checked; large solvent reserves are not all loaded into a single well.
 
 The stock planner includes first-round consumption, tip surplus, a conservative reserve for any ligand to be selected throughout round two, 50% extra usable stock and dead volume. Default dead volumes are 100 µL per 1.5 mL tube and 1,000 µL per reservoir well. These are provisional aspiration allowances and need measurement with the actual source geometry. The second-round substrate is already included in first-round stock consumption. Keep enough fresh tips/racks for the printed budget plus contingency; a source-dedicated reuse setting must be validated before physical execution.
 
@@ -285,7 +289,7 @@ python -m hte.cli analyze --dosing output/hte-round2/dosing.csv \
   --calibration output/hte-calibration.csv --output output/hte-final-analysis
 ```
 
-## Optional MOCCA and measured-prior GoLLuM tools
+## Optional MOCCA integration
 
 HTE's standard integrated peak exports are the default analytics path. MOCCA2 is available when **raw HPLC-DAD time × wavelength data** can be exported, with authentic standards processed through the same pipeline. It does not reconstruct chromatograms from peak-area CSVs and does not process ISQ MS spectra. Native Chromeleon raw data are not assumed to match MOCCA's parsers. Provide a supported raw export or a verified conversion to the time/wavelength matrix format used by the tested adapter. [MOCCA2 documentation](https://bayer-group.github.io/MOCCA/).
 
@@ -298,12 +302,6 @@ python -m hte.cli mocca --manifest path/to/raw_manifest.json \
 
 This calls actual MOCCA baseline correction, peak detection and Fraser–Suzuki deconvolution, reports physical time integrals at the selected wavelength, and marks unresolved peaks as QC failures. Test cases use synthetic raw DAD data. Calibration areas must be generated with exactly the same preprocessing/units, not copied from Chromeleon if their integration definitions differ. Confirm the required detector channel matches the adapter's emitted name, e.g. `MOCCA_DAD_254nm`.
 
-The optional `gollum` command requires at least three valid, uncensored same-condition pair measurements. It uses attributed upstream GoLLuM optimizer utilities and a local GP-trained projection over frozen LM embeddings; language-model weights are not fine-tuned. Upstream utility files are vendored with notice because the tested upstream wheel omitted those subpackages. This variant is not part of the user-approved all-LLM second round. Keep it for future comparisons with enough data:
-
-```bash
-python -m hte.cli gollum --embeddings hte_inputs/pair_embeddings_t5-base.npz \
-  --priors path/to/same_condition_pair_results.csv --output output/hte-acquisition.csv
-```
 
 ## Timing and validation record
 

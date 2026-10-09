@@ -1,6 +1,6 @@
 # Start here: organizers, HTE operators and the first batch
 
-Send the organizers the [HTE configuration checklist](hte-questions.md) and give the experimental operators the [complete runbook](hte-runbook.md). The checklist requests the unresolved facts; the runbook explains stock preparation, deck loading, each reaction/analysis stage and the automated decision.
+Send the organizers the [HTE configuration checklist](hte-questions.md) and give the experimental operators the **[two-page staff checklist](HTE-staff-checklist.pdf)**. The [complete runbook](hte-runbook.md) remains a technical reference. The checklist requests the unresolved facts; the runbook explains stock preparation, deck loading, each reaction/analysis stage and the automated decision.
 
 ## What to ask the organizers
 
@@ -24,7 +24,7 @@ The chemistry and two-minute analyses already occupy 632 of 720 minutes. The com
 | Second assembly | Verify predosed wells are dry; add the selected catalysts and toluene, seal and hold four hours | Local second-round protocol; substrate and IS are not dosed again |
 | Final workup and LC | Work up and measure all ten samples; stop the clock | Final calibrated results and logs |
 
-The runbook supplies the details and stop points. Exact glass hardware, extraction and analytical settings are still pending; they must be resolved before physical execution.
+Staff follow the short checklist; the runbook supplies the detailed reference. Exact glass hardware, extraction and analytical settings are still pending; they must be resolved before physical execution.
 
 ## Where to put the Claude API key
 
@@ -43,7 +43,7 @@ cp anthropic.key.example anthropic.key
 zsh scripts/first-batch.zsh
 ```
 
-The script uses the local key file and runs five real scoring calls over the 465 pairs, followed by the 50/50 score/diversity selection. Its output is `output/first-batch-<timestamp>/first_batch.csv`: **65 pair assignments plus one L17 tBuBrettPhos reference**, including well and sample IDs. Scoring files preserve the exact prompts, individual scores, token usage and the cost preflight. Responses contain scores only; extended thinking is disabled. These are paid calls within the configured estimated $20 campaign cap. No key belongs in a committed file or chat message.
+The script uses the local key file and runs five real scoring calls over the 465 pairs, followed by the 50/50 score/diversity selection. Its output is `output/first-batch-<timestamp>/first_batch.csv`: **65 pair assignments plus one L17 tBuBrettPhos reference**, including well and sample IDs. All 31 ligands must occur in the pair wells; the single reference does not count toward coverage. `first_batch.csv.ligand_coverage.csv` lists each ligand and its pair-well count, and the selection trace flags any coverage-driven Claude-cutoff override. Scoring files preserve the exact prompts, individual scores, token usage and the cost preflight. Responses contain scores only; extended thinking is disabled. These are paid calls within the configured estimated $20 campaign cap. No key belongs in a committed file or chat message.
 
 The first batch can be selected before the organizers finalize hardware and LC details. Protocol/stock exports use the confirmed campaign configuration as described in the runbook. Do not use the synthetic demo ranking for experiments.
 
@@ -77,4 +77,4 @@ The report verifies 66 first-round measurements reach the scorer, only 400 untes
 
 Real T5-base inference generated the included 465 × 768 pair embeddings, averaging both ligand orders. Initial selection uses those embeddings for diversity, following the language-model representation idea that motivated GoLLuM. With no measured pair yields, it does not fit a yield model.
 
-The attributed upstream GoLLuM optimizer has been executed with a local GP-trained projection over frozen embeddings and synthetic observations. This adapter keeps the original language-model weights frozen; it is not the full upstream fine-tuning pipeline. It is optional and is not used to decide the approved all-LLM second round. The runbook documents how to run it later on valid same-condition pair measurements.
+The attributed upstream GoLLuM optimizer has been executed with a local GP-trained projection over frozen embeddings and synthetic observations. This adapter keeps the original language-model weights frozen; it is not the full upstream fine-tuning pipeline. It is optional and is not used to decide the approved all-LLM second round. For this campaign, GoLLuM is used only as inspiration for embedding-based initialization. After the first yields arrive, Claude alone scores/selects the second round; no GoLLuM yield model is trained or consulted.

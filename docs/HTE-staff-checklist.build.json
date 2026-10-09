@@ -1,0 +1,22 @@
+{
+  "edition_date": "2026-10-09",
+  "edition_timezone": "Europe/Zurich",
+  "source_sha256": "48034229994762b9fd8363f0122885843316c4c6107788738b164814430c962f",
+  "sources": {
+    "docs/hte-staff-checklist.md": "1a1c7ef3f3ddc5351b1966c54f1e594abf450bd5526e91f6d17bbd5cec2259ff",
+    "docs/stocks-and-calibration.md": "576b437556959af785038fea4b2d808359667531a5445f33017e405feef21efa",
+    "hte_inputs/campaign.json": "9c284208234111d0efc35573df6927c9ab8c7f8d669987cee9369930acb5f9f7",
+    "hte_inputs/calibration_template.csv": "a97fe52a403e31f33b13fb070b01472947366969236116203da9ab4a17cf6c49",
+    "hte_inputs/ligands.csv": "a24c186b814eaeb8b5950e7a059e21b8df001764e83b19f127a3da179f4a5876",
+    "software_validation.json": "92fb6a8b4b9c3fb3cdf99481db81a759ca64bcf5852afa145dbdb0f02ce0c761",
+    "scripts/build-hte-pdf.py": "908d6e375a4aa1f20309597b230909275feda680b5563dd773538518621a0d98",
+    "hte/planning.py": "22ff637ccf315d1ced2089ba67fbb8fe1c9114827cacfae5bbcab3fa5edb943c",
+    "hte/io.py": "1a14023cd2aba6dc159edd1a8d5f1a8e6ea176f3e7cbd68a3d7837fb4bd297dc"
+  },
+  "pdf_sha256": "e078d079a6c0fa0f594bac482a4cf4597be02433f2b4e531a0baa7ca1c61e0cf",
+  "pages": 2,
+  "editable_master": "docs/hte-staff-checklist.md; rebuild with scripts/build-hte-pdf.py --staff",
+  "private_email_included": false,
+  "api_calls": 0,
+  "staff_only": true
+}

@@ -40,6 +40,7 @@
     "round2_controls": [],
     "objective": "calibrated product yield; conversion retained as diagnostic",
     "consensus_weight_llm": 0.5,
+    "require_all_ligands_in_round1_pairs": true,
     "minimum_llm_percentile": 0.25,
     "exploration_backend": "lm_diversity_initialization",
     "require_lm_embeddings": true,

@@ -2,7 +2,7 @@
 from pathlib import Path
 
 from .analytics import analyze, complete_export, validate_completion
-from .design import consensus_select, make_design, pair_features
+from .design import consensus_select, ligand_coverage, make_design, pair_features, round1_required_ligands
 from .inventory import candidates, load_inventory
 from .io import new_output, read_json, write_csv, write_json
 from .planning import schedule
@@ -53,10 +53,12 @@ def run(output, inventory_path, config_path="hte_inputs/campaign.json"):
     ranking = [{"pair_id": c["pair_id"], "mean_score": (i*37 % 101), "score_sd": 1, "scoring_calls": 5}
                for i, c in enumerate(pairs)]
     write_csv(out/"SYNTHETIC_ranking.csv", ranking)
-    selection, trace = consensus_select(pairs, ranking, pair_features(inventory, pairs), 65)
+    selection, trace = consensus_select(pairs, ranking, pair_features(inventory, pairs), 65,
+                                       required_ligands=round1_required_ligands(config, inventory))
     write_csv(out/"selection.csv", trace)
     design1 = make_design(config, inventory, pairs, ranking, selection, 1)
     write_csv(out/"round1_design.csv", design1)
+    write_csv(out/"round1_ligand_coverage.csv", ligand_coverage(inventory, design1))
     dose1 = export(config, inventory, design1, out/"round1")
     cal, peaks = fixtures(config, dose1)
     write_csv(out/"calibration.csv", cal)

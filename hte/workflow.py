@@ -5,7 +5,7 @@ import time
 from pathlib import Path
 
 from .analytics import analyze, observations, validate_completion
-from .design import make_design
+from .design import make_design, validate_round1_coverage
 from .inventory import candidates
 from .io import digest, object_digest, read_csv, read_json, write_csv, write_json
 from .planning import dosing_rows
@@ -20,6 +20,7 @@ def iterate(config, inventory, evidence, dosing_path, peaks_path, ready_path, ca
     dosing = read_csv(dosing_path)
     if {r["round"] for r in dosing} != {"1"} or len(dosing) != config["design"]["round1_total"]:
         raise ValueError("Iteration requires the entire configured first round")
+    validate_round1_coverage(config, inventory, dosing)
     if config["design"].get("round2_controls") is None:
         raise ValueError("Specify round-two controls, or [] for ten new pairs")
     inputs = {"config": object_digest(config), "inventory": object_digest(inventory), "evidence": object_digest(evidence),

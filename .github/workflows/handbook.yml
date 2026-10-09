@@ -31,13 +31,19 @@ jobs:
         run: python -m pip install 'reportlab>=4.4,<5' 'mistune>=3.1,<4' 'pypdf>=5,<7'
       - name: Build handbook from current sources
         run: python scripts/build-hte-pdf.py
+      - name: Build two-page staff checklist
+        run: python scripts/build-hte-pdf.py --staff
       - name: Verify source and PDF hashes
-        run: python scripts/build-hte-pdf.py --check
+        run: |
+          python scripts/build-hte-pdf.py --check
+          python scripts/build-hte-pdf.py --staff --check
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: HTE-operator-handbook
           path: |
             output/pdf/HTE-operator-handbook.pdf
             output/pdf/HTE-operator-handbook.build.json
+            output/pdf/HTE-staff-checklist.pdf
+            output/pdf/HTE-staff-checklist.build.json
           if-no-files-found: error
           retention-days: 90
