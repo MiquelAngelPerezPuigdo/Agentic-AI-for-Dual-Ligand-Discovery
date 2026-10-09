@@ -1,20 +1,38 @@
 {
   "calibration": {
     "substrate": {
-      "slope": 0.0009999999999999998,
-      "intercept": 1.6658020976161188e-16,
+      "slope": 0.0010000000000000002,
+      "intercept": 1.537943019548547e-16,
       "r2": 1.0,
       "minimum_uM": 0.0,
       "maximum_uM": 6000.0,
-      "mean_is_area": 10000.0
+      "mean_is_area": 10000.0,
+      "fit_measurements": 6,
+      "independent_checks": [
+        {
+          "sample_id": "SYNTHETIC_CAL_substrate_5000",
+          "expected_uM": 5000.0,
+          "measured_uM": 4999.999999999999,
+          "relative_error": 1.8189894035458566e-16
+        }
+      ]
     },
     "product": {
-      "slope": 0.0009999999999999998,
-      "intercept": 1.6658020976161188e-16,
+      "slope": 0.0010000000000000002,
+      "intercept": 1.537943019548547e-16,
       "r2": 1.0,
       "minimum_uM": 0.0,
       "maximum_uM": 6000.0,
-      "mean_is_area": 10000.0
+      "mean_is_area": 10000.0,
+      "fit_measurements": 6,
+      "independent_checks": [
+        {
+          "sample_id": "SYNTHETIC_CAL_product_5000",
+          "expected_uM": 5000.0,
+          "measured_uM": 4999.999999999999,
+          "relative_error": 1.8189894035458566e-16
+        }
+      ]
     }
   },
   "samples": 66,

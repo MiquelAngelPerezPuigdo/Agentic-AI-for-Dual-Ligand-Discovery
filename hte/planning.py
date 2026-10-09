@@ -11,6 +11,33 @@ VALIDATIONS = ["chemistry_confirmed", "plate_adapter_seal_validated", "solvent_p
                "lc_calibration_validated", "local_app_simulation_passed", "round2_ambient_evaporation_validated"]
 
 
+def required_validations(config):
+    required = [*VALIDATIONS]
+    if config["pipetting"].get("reuse_tips"):
+        required.append("noncontact_tip_reuse_validated")
+    if config["liquids"].get("naphthalene_addition_stage") == "substrate_stock":
+        required.append("pre_reaction_internal_standard_validated")
+    return required
+
+
+def internal_standard_amounts(config, substrate_umol):
+    liquid = config["liquids"]
+    stage = liquid.get("naphthalene_addition_stage", "workup")
+    stock_mM = finite(liquid.get("naphthalene_substrate_stock_mM", 0), "substrate-stock IS concentration", 0)
+    workup_mM = finite(liquid["naphthalene_workup_mM"], "workup IS concentration", 0)
+    if stage not in ("substrate_stock", "workup"):
+        raise ValueError("Naphthalene addition stage must be substrate_stock or workup")
+    if stage == "substrate_stock" and (stock_mM <= 0 or workup_mM != 0):
+        raise ValueError("Combined substrate/IS stock requires positive stock IS and zero workup IS")
+    if stage == "workup" and (stock_mM != 0 or workup_mM <= 0):
+        raise ValueError("Workup IS requires zero substrate-stock IS and positive workup IS")
+    preloaded = substrate_umol*stock_mM/liquid["substrate_stock_mM"]
+    workup = workup_mM*liquid["workup_ul"]/1000
+    extract_ul = config["chemistry"]["reaction_volume_ul"]+liquid["workup_ul"]
+    final_uM = (preloaded+workup)*1e6/extract_ul*liquid["aliquot_ul"]/(liquid["aliquot_ul"]+liquid["diluent_ul"])
+    return preloaded, workup, final_uM
+
+
 def validate_config(config, live=False):
     c, liquid = config["chemistry"], config["liquids"]
     for name in ("substrate_molarity_M", "reaction_volume_ul", "ligand_a_mol_percent",
@@ -29,9 +56,16 @@ def validate_config(config, live=False):
         finite(config["pipetting"][name], name, 0)
     if not isinstance(config["pipetting"]["prewet_cycles"], int) or not 0 <= config["pipetting"]["prewet_cycles"] <= 5:
         raise ValueError("Choose 0-5 prewet cycles")
-    final_is = liquid["naphthalene_workup_mM"]*1000*liquid["workup_ul"]/(c["reaction_volume_ul"]+liquid["workup_ul"])*liquid["aliquot_ul"]/(liquid["aliquot_ul"]+liquid["diluent_ul"])
+    n0 = c["substrate_molarity_M"]*c["reaction_volume_ul"]
+    preloaded_is, _, final_is = internal_standard_amounts(config, n0)
     if config["analytics"]["calibration_mode"] == "internal_standard" and abs(final_is-config["analytics"]["internal_standard_final_uM"]) > 1e-6:
-        raise ValueError("Configured final IS concentration differs from the quench/dilution volumes")
+        raise ValueError("Configured final IS concentration differs from the dosing/workup/dilution amounts")
+    if liquid.get("naphthalene_addition_stage") == "substrate_stock":
+        standard = c.get("preloaded_internal_standard", {})
+        if standard.get("identity") != "naphthalene" or standard.get("addition_stage") != "substrate_stock":
+            raise ValueError("Record the preloaded naphthalene in the chemistry context for LLM scoring")
+        if abs(finite(standard.get("mol_percent_relative_to_substrate"), "preloaded IS mol%", 0)-preloaded_is/n0*100) > 1e-6:
+            raise ValueError("Chemistry context and combined-stock naphthalene loading differ")
     if live and config["pipetting"].get("reuse_tips") and not config["validation"].get("noncontact_tip_reuse_validated"):
         raise ValueError("Validate source-dedicated noncontact tip reuse before live export")
     if config["robot"]["heater_slot"] != 10:
@@ -48,7 +82,7 @@ def validate_config(config, live=False):
     if live:
         if config.get("demo"):
             raise ValueError("Demo protocol cannot be exported for live use")
-        missing = [name for name in VALIDATIONS if config["validation"].get(name) is not True]
+        missing = [name for name in required_validations(config) if config["validation"].get(name) is not True]
         if missing:
             raise ValueError("Bench decisions/validation required: " + ", ".join(missing))
         for key in ("reaction_labware", "lc_labware", "heater_adapter"):
@@ -104,6 +138,9 @@ def dosing_rows(config, inventory, design):
         v_pd = n_pd / stocks["pd_stock_mM"] * 1000
         predosed = int(d["round"]) == 2 and config["design"].get("round2_predosed", False)
         v_sm = 0 if predosed else n_substrate / stocks["substrate_stock_mM"] * 1000
+        preloaded_is, workup_is, final_is = internal_standard_amounts(config, n_substrate)
+        if config["analytics"]["calibration_mode"] == "internal_standard" and final_is <= 0:
+            raise ValueError("Combined substrate/IS dosing does not add IS to a reaction blank; define a separate validated blank preparation")
         v_tol = c["reaction_volume_ul"] - v_a - v_b - v_pd
         if v_tol < -1e-8:
             raise ValueError("Stocks are too dilute to fit in the final reaction volume")
@@ -112,6 +149,11 @@ def dosing_rows(config, inventory, design):
         row = {**d, "well": well, "substrate_umol": n_substrate, "pd_umol": n_pd,
                "ligand_a_umol": n_a, "ligand_b_umol": n_b, "sm_DCM_ul": v_sm,
                "substrate_predosed_umol": n_substrate if predosed else 0,
+               "naphthalene_total_umol": preloaded_is+workup_is,
+               "naphthalene_added_with_substrate_umol": 0 if predosed else preloaded_is,
+               "naphthalene_predosed_umol": preloaded_is if predosed else 0,
+               "naphthalene_workup_umol": workup_is,
+               "internal_standard_final_uM": final_is,
                "ligand_a_ul": v_a, "ligand_b_ul": v_b, "pd_ul": v_pd,
                "toluene_ul": max(0, v_tol), "reaction_volume_ul": c["reaction_volume_ul"],
                "temperature_C": c["temperature_C"], "reaction_minutes": c["reaction_minutes"],
@@ -237,6 +279,9 @@ def stock_plan(config, inventory, operations, reserve_round2=True):
             reserve = 0  # Round-two substrate is already included in round-one operations.
         dead = config["stock_preparation"]["reservoir_dead_ul"]
         prepare = math.ceil(((usage[key] + reserve) * margin + dead) / 10) * 10
+        if key == "substrate_DCM":
+            prepare = max(prepare, finite(config["stock_preparation"].get("substrate_min_prepare_ul", 0),
+                                          "minimum substrate stock preparation", 0))
         concentration_mM = liquid[concentration] if concentration else ""
         mw = c.get("pd_molecular_weight_g_mol") if key == "Pd" else c.get("substrate_molecular_weight_g_mol") if key == "substrate_DCM" else liquid["naphthalene_molecular_weight_g_mol"] if key == "workup" else None
         records.append({"reagent": key, "name": key, "solvent": solvent, "stock_mM": concentration_mM,
@@ -247,6 +292,15 @@ def stock_plan(config, inventory, operations, reserve_round2=True):
                         "on_deck_ul": math.ceil((usage[key] + dead)/10)*10,
                         "source_capacity_ul": config["stock_preparation"]["reservoir_max_fill_ul"],
                         "capacity_ok": usage[key] + dead <= config["stock_preparation"]["reservoir_max_fill_ul"]})
+    # The mixture is one reservoir source; report its second solute separately.
+    for record in records:
+        mixed = record["reagent"] == "substrate_DCM" and liquid.get("naphthalene_addition_stage") == "substrate_stock"
+        record["naphthalene_stock_mM"] = liquid.get("naphthalene_substrate_stock_mM", 0) if mixed else ""
+        record["naphthalene_mass_mg"] = corrected_mass("naphthalene", liquid["naphthalene_substrate_stock_mM"]*
+            record["prepare_ul"]*liquid["naphthalene_molecular_weight_g_mol"]/1e6) if mixed else ""
+        record["storage_container"] = config["stock_preparation"].get("substrate_storage_container", "") if mixed else ""
+        if mixed:
+            record["name"] = "Starting material + naphthalene internal standard"
     return records
 
 

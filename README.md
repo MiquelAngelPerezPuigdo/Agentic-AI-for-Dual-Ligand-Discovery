@@ -15,6 +15,8 @@ Start with [organizer questions and first-batch setup](docs/start-here.md), the 
 
 The ten second-round substrate wells are predosed during the first reaction and allowed to evaporate DCM at ambient temperature, with a dry endpoint check before catalyst addition. Calibration measurements can run during the first four-hour hold.
 
+The [combined-stock and calibration plan](docs/stocks-and-calibration.md) uses one DCM stock with 250 mM SM and 2.5 mM naphthalene, a separate reservoir channel for LC dilution solvent, and five nonzero analyte calibration levels at fixed IS concentration. Pre-reaction IS retention and compatibility require HTE validation.
+
 ## Install and verify
 
 Use Python 3.12 on the operator workstation:
@@ -46,7 +48,7 @@ The [first-batch script](scripts/first-batch.zsh) combines hidden key entry and 
 
 ## Validation status
 
-The local acceptance exercise passed **33 tests**, including OT-2 simulation, LC calibration/QC, MOCCA raw-DAD integration on synthetic data, the GoLLuM adapter and a complete watcher/scoring rehearsal with mocked Claude responses. [Validation record](software_validation.json), [rehearsal results](docs/rehearsal-results.md).
+The local acceptance exercise passed **39 tests**, including OT-2 simulation, combined SM/IS dosing and dilution, LC calibration/QC with independent checks, MOCCA raw-DAD integration on synthetic data, the GoLLuM adapter and a complete watcher/scoring rehearsal with mocked Claude responses. [Validation record](software_validation.json), [rehearsal results](docs/rehearsal-results.md).
 
 `demo/` contains **synthetic chemistry results and selections**. Its protocols refuse physical execution. No real Claude scoring campaign or physical robot run has been performed.
 

@@ -31,8 +31,11 @@ def test_offline_loop_scores_feedback_without_network_or_repeated_events(tmp_pat
     assert all(r["candidates"] == 400 and r["includes_reference"] for r in feedback)
     assert report["first_round_qc_pass"] and report["incomplete_export_ignored"]
     assert report["duplicate_event_ignored"] and report["no_pair_repeats"] and report["no_substrate_redose"]
+    assert report["no_internal_standard_redose"]
     next_dosing = report_path.parent/report["next_dosing_csv"]
     rows = read_csv(next_dosing)
     assert len(rows) == 10 and all(float(r["sm_DCM_ul"]) == 0 for r in rows)
+    assert all(float(r["naphthalene_predosed_umol"]) == 0.05 and
+               float(r["naphthalene_added_with_substrate_umol"]) == 0 for r in rows)
     assert not (next_dosing.parent/"protocols").exists()
     assert os.environ["ANTHROPIC_API_KEY"] == "synthetic_existing_key"

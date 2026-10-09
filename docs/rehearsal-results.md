@@ -11,11 +11,13 @@ The offline first-feedback-loop rehearsal completed successfully. All chemistry 
 | Feedback scoring request contract | Five mocked requests, each receiving all 66 results and scoring 400 untested pairs |
 | Next dosing CSV | Ten new pair assignments with no pair repeats |
 | Predosed substrate | All ten second-round substrate doses remain zero |
+| Predosed internal standard | 0.050 µmol naphthalene per well retained in the plan; no second substrate/IS stock or workup IS dose |
+| Calibration | Five nonzero levels plus an IS-containing blank per analyte; independent checks excluded from each fit |
 | Incomplete LC export | Ignored until the completion marker was published |
 | Repeated completion event | Ignored; no additional scoring calls |
 | Physical protocol generation by watcher | Disabled because bench validations remain incomplete |
 | Optional GoLLuM execution | Actual attributed upstream optimizer, real embeddings, 61 uncensored synthetic pair priors, 465 finite acquisition values |
-| Local acceptance suite | 33 passed, zero failures/errors/skips |
+| Local acceptance suite | 39 passed, zero failures/errors/skips |
 
 The optional GoLLuM check did not change the second-round design. Its local GP adapter trained a projection over frozen embeddings, keeping the language-model weights unchanged.
 

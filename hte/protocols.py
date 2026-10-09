@@ -99,7 +99,7 @@ def run(protocol: protocol_api.ProtocolContext):
             protocol.pause("HTE: verify DCM dry-down endpoint under the approved ventilation SOP. Wait for safe handling temperature before moving. Uncover ligand, toluene and Pd sources for assembly; preserve unused volatile sources under validated covers. Resume only when dry, cooled and required sources accessible. The timer does not prove dryness.")
             off_heater()
         else:
-            protocol.pause("Round two: use the ten substrate wells predosed by round one. Verify sample mapping, 5 umol substrate per well, and complete ambient DCM evaporation before adding catalysts. Do not add substrate again.")
+            protocol.pause("Round two: use the ten wells predosed by round one. Verify sample mapping, substrate/IS amounts in round2_predose.csv, and complete ambient DCM evaporation before adding catalysts. Do not add the substrate/IS stock again.")
         transfer_stage("assembly")
         protocol.pause("Seal every reaction well using the validated toluene-compatible 95 C seal. Check seal and clamp before resuming. Retain source stocks capped. Prepare assay standards while reactions run.")
         onto_heater()
@@ -124,7 +124,10 @@ def run(protocol: protocol_api.ProtocolContext):
         off_heater()
         protocol.comment("Start workup protocol with the cooled reaction plate in slot 3. Preserve all sample IDs and well positions.")
     else:
-        protocol.pause("Reaction plate must be cooled and in slot 3. Open seal under HTE SOP. Confirm homogeneous extraction method and workup reagent, including the approved internal standard when used.")
+        is_instruction = ("Naphthalene was added with substrate; use IS-free workup and LC diluent."
+                          if CONFIG["liquids"].get("naphthalene_addition_stage") == "substrate_stock"
+                          else "Use the configured naphthalene concentration in the workup reagent.")
+        protocol.pause("Reaction plate must be cooled and in slot 3. Open seal under HTE SOP. Confirm homogeneous extraction method and workup composition. " + is_instruction)
         transfer_stage("workup")
         onto_heater()
         hs.set_and_wait_for_shake_speed(CONFIG["liquids"]["mix_rpm"])
@@ -177,7 +180,8 @@ def export(config, inventory, design, output, live=False):
             if r["reagent"] in use:
                 deck.append({"protocol": stage, "reagent": r["reagent"], "source_slot": r["source_slot"],
                              "source_well": r["source_well"], "load_ul": math_ceil10(use[r["reagent"]] + r["dead_ul"]),
-                             "stock_mM": r["stock_mM"], "solvent": r["solvent"]})
+                             "stock_mM": r["stock_mM"], "naphthalene_stock_mM": r["naphthalene_stock_mM"],
+                             "solvent": r["solvent"]})
     write_csv(output / "deck_loads.csv", deck)
     write_json(output / "operations.json", ops)
     write_json(output / "tip_budget.json", tip_budget(ops))
@@ -187,6 +191,7 @@ def export(config, inventory, design, output, live=False):
         n0 = config["chemistry"]["substrate_molarity_M"]*config["chemistry"]["reaction_volume_ul"]
         write_csv(output/"round2_predose.csv", [{"round": 2, "sample_id": f"R2-{i:03d}", "well": well,
                   "substrate_umol": n0, "sm_DCM_ul": n0/config["liquids"]["substrate_stock_mM"]*1000,
+                  "naphthalene_predosed_umol": n0*config["liquids"].get("naphthalene_substrate_stock_mM", 0)/config["liquids"]["substrate_stock_mM"],
                   "evaporation": "ambient during round-one hold; verify dryness before catalysts"}
                   for i, well in enumerate(wells()[:config["design"]["round2_total"]], 1)])
     for stage in ("dose_and_react", "workup"):
