@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .io import atomic_text, digest, write_csv, write_json
-from .planning import dosing_rows, stock_plan, tip_budget, transfer_operations, validate_config
+from .io import atomic_text, digest, new_output, object_digest, write_csv, write_json
+from .planning import dosing_rows, stock_plan, tip_budget, transfer_operations, validate_config, validate_dosing
 
 
 RUNTIME = '''
@@ -140,7 +140,7 @@ def run(protocol: protocol_api.ProtocolContext):
 '''
 
 
-def export(config, inventory, design, output, live=False):
+def export(config, inventory, design, output, live=False, history=None):
     validate_config(config, live=live)
     definitions = {}
     from .io import read_json
@@ -153,6 +153,13 @@ def export(config, inventory, design, output, live=False):
     if not config["robot"].get("heater_adapter"):
         raise ValueError("Supply the exact heater adapter before exporting a simulation")
     rows = dosing_rows(config, inventory, design)
+    if int(rows[0]["round"]) == 2:
+        if live and not history:
+            raise ValueError("Live round-two export requires the first-round dosing history to exclude repeats and verify predoses")
+        if history:
+            from .design import validate_design
+            validate_dosing(config, inventory, history)
+            validate_design(config, inventory, design, history)
     ops = transfer_operations(config, inventory, rows)
     stocks = stock_plan(config, inventory, ops, reserve_round2=int(rows[0]["round"]) == 1)
     if any(not r["capacity_ok"] for r in stocks):
@@ -162,10 +169,7 @@ def export(config, inventory, design, output, live=False):
         bad = [key for key in used if key and inventory[key]["identity_confirmed"] != "true"]
         if bad:
             raise ValueError("Ligand identities unresolved: " + ", ".join(bad))
-    output = Path(output)
-    if (output/"export_manifest.json").exists():
-        raise ValueError("Protocol export already exists; use a new output directory")
-    output.mkdir(parents=True, exist_ok=True)
+    output = new_output(output)
     write_csv(output / "dosing.csv", rows)
     write_csv(output / "stock_preparation.csv", stocks)
     # Different source loads for dose vs workup. Common reservoir stock bottles stay off deck.
@@ -202,7 +206,9 @@ def export(config, inventory, design, output, live=False):
         atomic_text(output / f"{stage}.py", prefix + runtime)
     write_json(output / "export_manifest.json", {
         "live": live, "sample_ids": [r["sample_id"] for r in rows],
-        "files": {name: digest(output/name) for name in ["dosing.csv", "deck_loads.csv", "dose_and_react.py", "workup.py"]}})
+        "config_digest": object_digest(config), "inventory_digest": object_digest(inventory),
+        "design_digest": object_digest(design), "history_digest": object_digest(history) if history else None,
+        "files": {path.name: digest(path) for path in sorted(output.iterdir()) if path.is_file()}})
     return rows
 
 

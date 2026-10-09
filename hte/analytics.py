@@ -7,6 +7,38 @@ import numpy as np
 from .io import digest, finite, object_digest, read_csv, read_json, write_csv, write_json
 
 
+def validate_analytics_settings(config):
+    settings = config["analytics"]
+    if not settings.get("method_id") or not settings.get("channel") or not settings.get("references"):
+        raise ValueError("Configure LC method, detector channel and authentic-standard retention references")
+    if settings["calibration_mode"] not in ("external", "internal_standard"):
+        raise ValueError("Choose a validated external or internal-standard calibration")
+    if settings.get("missing_analyte_policy") not in ("reject", "censor"):
+        raise ValueError("missing_analyte_policy must be reject or censor")
+    for key in ("minimum_calibration_r2", "maximum_rejected_fraction"):
+        finite(settings[key], key, 0, 1)
+    for key in ("negative_concentration_tolerance_uM", "yield_tolerance_percent",
+                "mass_balance_tolerance_fraction", "blank_max_product_umol"):
+        finite(settings[key], key, 0)
+    if settings["calibration_mode"] == "internal_standard":
+        finite(settings["internal_standard_final_uM"], "final IS concentration", 1e-12)
+        finite(settings["internal_standard_area_tolerance_fraction"], "IS area tolerance", 0, 1)
+    needed = ["substrate", "product"]+(["internal_standard"] if settings["calibration_mode"] == "internal_standard" else [])
+    references = settings["references"]
+    for name in ("substrate", "product"):
+        finite(settings["quantification_limit_uM"][name], name+" LOQ", 0.000001)
+    for name in needed:
+        if name not in references:
+            raise ValueError(f"Missing authentic-standard retention reference: {name}")
+        finite(references[name]["retention_time_min"], name+" retention time", 0)
+        finite(references[name]["window_min"], name+" RT window", 1e-6)
+    for i, a in enumerate(needed):
+        for b in needed[i+1:]:
+            if abs(references[a]["retention_time_min"]-references[b]["retention_time_min"]) <= references[a]["window_min"]+references[b]["window_min"]:
+                raise ValueError(f"Overlapping retention windows: {a}, {b}")
+    return needed
+
+
 def normalize_export(config, input_path, output):
     """Normalize vendor headers using the explicit HTE mapping, without guessing a detector."""
     path = Path(input_path)
@@ -19,6 +51,7 @@ def normalize_export(config, input_path, output):
         if not headers or any(h is None for h in headers) or len(headers) != len(set(headers)):
             raise ValueError("Missing or duplicate spreadsheet export headers")
         raw = [dict(zip(headers, row)) for row in iterator if any(x is not None for x in row)]
+        workbook.close()
     elif path.suffix.lower() == ".csv":
         raw = read_csv(path)
     else:
@@ -33,7 +66,12 @@ def normalize_export(config, input_path, output):
     for r in raw:
         if any(mapping[key] not in r for key in required):
             raise ValueError("A mapped column is missing from the export")
-        normalized.append({key: r[column] for key, column in mapping.items()})
+        row = {key: r[column] for key, column in mapping.items()}
+        if any(row[key] in (None, "") for key in required):
+            raise ValueError("A required mapped value is missing from the export")
+        normalized.append(row)
+    if not normalized:
+        raise ValueError("Integrated export contains no peak rows")
     write_csv(output, normalized)
 
 
@@ -42,6 +80,15 @@ def fit_calibration(config, rows):
     mode = settings["calibration_mode"]
     if mode not in ("external", "internal_standard"):
         raise ValueError("Choose a validated external or internal-standard calibration")
+    if not rows or any(row["analyte"] not in ("substrate", "product") for row in rows):
+        raise ValueError("Calibration requires only explicit substrate/product analyte labels")
+    requirements = settings.get("calibration_requirements", {})
+    minimum_levels = requirements.get("minimum_nonzero_levels", 3)
+    minimum_checks = requirements.get("minimum_independent_checks", 1)
+    if type(minimum_levels) is not int or minimum_levels < 2 or type(minimum_checks) is not int or minimum_checks < 1:
+        raise ValueError("Calibration level/check requirements must be positive integer counts")
+    if not isinstance(requirements.get("require_zero_blank", True), bool):
+        raise ValueError("require_zero_blank must be true or false")
     models = {}
     for analyte in ("substrate", "product"):
         all_points = [row for row in rows if row["analyte"] == analyte]
@@ -49,6 +96,11 @@ def fit_calibration(config, rows):
             raise ValueError("Calibration row role must be calibration or check")
         points = [row for row in all_points if row.get("role", "calibration") == "calibration"]
         checks = [row for row in all_points if row.get("role") == "check"]
+        ids = [row.get("sample_id") for row in all_points]
+        if any(not key for key in ids) or len(ids) != len(set(ids)):
+            raise ValueError(f"Calibration sample IDs must be present and unique within {analyte}")
+        if len(checks) < minimum_checks:
+            raise ValueError(f"At least {minimum_checks} independent calibration check required for {analyte}")
         if len(points) < 3:
             raise ValueError(f"At least three calibration measurements required for {analyte}")
 
@@ -70,6 +122,10 @@ def fit_calibration(config, rows):
         x = [value[0] for value in measurements]
         y = [value[1] for value in measurements]
         is_areas = [value[2] for value in measurements if value[2] is not None]
+        if len({value for value in x if value > 0}) < minimum_levels:
+            raise ValueError(f"At least {minimum_levels} distinct nonzero calibration levels required for {analyte}")
+        if requirements.get("require_zero_blank", True) and 0 not in x:
+            raise ValueError(f"A measured zero-analyte calibration blank is required for {analyte}")
         if len(set(x)) < 3:
             raise ValueError(f"Three distinct calibration concentrations required for {analyte}")
         x, y = np.asarray(x), np.asarray(y)
@@ -116,6 +172,18 @@ def validate_completion(ready_path, peaks_path, dosing_path, config):
     return ready
 
 
+def read_completed_inputs(config, dosing_path, peaks_path, ready_path, calibration_path):
+    """Read a complete event once; reject files replaced during ingestion."""
+    paths = {"dosing": dosing_path, "peaks": peaks_path, "ready": ready_path,
+             "calibration": calibration_path}
+    hashes = {name: digest(path) for name, path in paths.items()}
+    validate_completion(ready_path, peaks_path, dosing_path, config)
+    tables = {name: read_csv(paths[name]) for name in ("dosing", "peaks", "calibration")}
+    if any(digest(path) != hashes[name] for name, path in paths.items()):
+        raise ValueError("LC input changed during ingestion; publish a stable complete export")
+    return tables, hashes
+
+
 def complete_export(config, peaks_path, dosing_path, output):
     """Operator invokes this only after confirming every expected injection finished."""
     dosing = read_csv(dosing_path)
@@ -132,8 +200,9 @@ def complete_export(config, peaks_path, dosing_path, output):
 
 def analyze(config, dosing, peaks, calibration, output):
     settings = config["analytics"]
-    if not settings.get("method_id") or not settings.get("channel") or not settings.get("references"):
-        raise ValueError("Configure LC method, detector channel and authentic-standard retention references")
+    needed = validate_analytics_settings(config)
+    if not dosing:
+        raise ValueError("Cannot analyze an empty dosing batch")
     ids = [r["sample_id"] for r in dosing]
     if len(ids) != len(set(ids)):
         raise ValueError("Duplicate dosing sample IDs")
@@ -160,17 +229,6 @@ def analyze(config, dosing, peaks, calibration, output):
     if any(loq[name] > models[name]["maximum_uM"] for name in loq):
         raise ValueError("LOQ must lie within the calibration range")
     references = settings["references"]
-    needed = ["substrate", "product"] + (["internal_standard"] if settings["calibration_mode"] == "internal_standard" else [])
-    for name in needed:
-        if name not in references:
-            raise ValueError(f"Missing authentic-standard retention reference: {name}")
-        finite(references[name]["retention_time_min"], name+" retention time", 0)
-        finite(references[name]["window_min"], name+" RT window", 1e-6)
-    # Ambiguous method windows must be fixed before samples are quantified.
-    for i, a in enumerate(needed):
-        for b in needed[i+1:]:
-            if abs(references[a]["retention_time_min"]-references[b]["retention_time_min"]) <= references[a]["window_min"]+references[b]["window_min"]:
-                raise ValueError(f"Overlapping retention windows: {a}, {b}")
     results = []
     for dose in dosing:
         flags, areas, censored = [], {}, {}

@@ -52,7 +52,7 @@ def load_embeddings(path, inventory, candidates):
         if list(saved["pair_ids"]) != [c["pair_id"] for c in candidates]:
             raise ValueError("Embedding candidate order mismatch")
         x = saved["features"].copy()
-    if x.ndim != 2 or not np.isfinite(x).all():
+    if x.ndim != 2 or len(x) != len(candidates) or not x.shape[1] or not np.isfinite(x).all():
         raise ValueError("Invalid embeddings")
     return x
 
@@ -108,6 +108,9 @@ def process_mocca(manifest_path, settings, output):
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
     rows = []
+    sample_ids = [sample["sample_id"] for sample in manifest["samples"]]
+    if not sample_ids or len(sample_ids) != len(set(sample_ids)):
+        raise ValueError("MOCCA manifest sample IDs must be nonempty and unique")
     import re
     for sample in manifest["samples"]:
         if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,80}", sample["sample_id"]):
@@ -127,7 +130,8 @@ def process_mocca(manifest_path, settings, output):
             for component in getattr(peak, "components", []):
                 # Physical integral corrects MOCCA's sample-count sum for the actual time grid.
                 times = chromatogram.time[peak.left:peak.left+len(component.concentration)]
-                area = float(np.trapz(component.concentration*component.spectrum[index], times))
+                integrate = np.trapezoid if hasattr(np, "trapezoid") else np.trapz
+                area = float(integrate(component.concentration*component.spectrum[index], times))
                 rows.append({"sample_id": sample["sample_id"], "retention_time_min": float(chromatogram.time[component.elution_time]),
                              "area": area, "channel": f"MOCCA_DAD_{actual_wavelength:g}nm", "method_id": manifest["method_id"],
                              "qc_flag": "ok" if peak.resolved else "unresolved_deconvolution"})

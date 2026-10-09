@@ -12,10 +12,18 @@
     "R2-009",
     "R2-010"
   ],
+  "config_digest": "73230bb433263ffb83a82efbd87bb06127a5f82b583b2918d2b99d4630005aea",
+  "inventory_digest": "0e5021ec567d89ac82b35d001dcb036e2685a50d3688f8115a9c24f42de9b413",
+  "design_digest": "257e261a45354d148bed1eb4aa219c918c71824063cd5d16f6d9094e19654b7f",
+  "history_digest": null,
   "files": {
-    "dosing.csv": "813663b2b7b87a90a315c69d2a6940a980b2ec8c56ae409339e5deb4a6272d1e",
-    "deck_loads.csv": "e16bc53cac1b9d0e891d1f373858030f0cc4131be8e45f3790a4c08bcb0fa388",
-    "dose_and_react.py": "a525ae6c00f46c6c355fca96bbd6b19110d8b55080c3587d15b2ffbd7ff5108f",
-    "workup.py": "dc83221fc86c1e521696635e67bf7bb9d3d459626af8231a09315a451dce02cd"
+    "deck_loads.csv": "41e2429d274614bf08ca60185d9d0ed5bda832c4435bb63750bc08a605a50f23",
+    "dose_and_react.py": "10982fb830aac9d804bb084d6900660a62cdac9dff8bf471a5ae361af8d08dfc",
+    "dosing.csv": "123048ae967afbc90502439641d621b19c4e85267e3a2480663f537b68f9b496",
+    "lc_sequence.csv": "5327e8319aa3240575dc1e580dec253c0ba80bcdf38157d49c7f811451bd92fc",
+    "operations.json": "1b083c06cf4fc23161b36fbe70b69b22209dd3679be281c8f3706bca7867972a",
+    "stock_preparation.csv": "6bb52f34523e6b1f7e1291e525c42ef4a84ed82292576c62541341bc62dc8aca",
+    "tip_budget.json": "b0cd68fc96adbc97317cb88f76b684f2d89626231f20ef445735a12af6f66448",
+    "workup.py": "f0acbe2af6607b69d60c8926a4a315e63b74083dc0caf1cfea1788bfea70f0bf"
   }
 }

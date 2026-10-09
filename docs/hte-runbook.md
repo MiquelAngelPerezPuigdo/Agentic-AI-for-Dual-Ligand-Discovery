@@ -29,7 +29,14 @@ The thesis benchmark motivates repeated mechanism-informed scoring, but its dual
 
 ## Before the competition: resolve hardware and analytics
 
-Use the [HTE configuration checklist](hte-questions.md) to obtain the remaining facts. The [start-here guide](start-here.md) explains responsibilities and hidden API-key entry; [rehearsal results](rehearsal-results.md) document the fake feedback loop. Record confirmed facts in a campaign-specific copy of `hte_inputs/campaign.json`. Keep that copy, inventory, calibration, protocol exports and run logs together.
+Use the [HTE configuration checklist](hte-questions.md) to obtain the remaining facts. The [start-here guide](start-here.md) explains responsibilities and hidden API-key entry; [rehearsal results](rehearsal-results.md) document the fake feedback loop. Record confirmed facts in a campaign-specific copy of `hte_inputs/campaign.json`. Keep that copy, inventory, calibration, protocol exports and run logs together. The production commands below use `local_data/campaign.json`; create it once and edit it as HTE confirms the settings:
+
+```bash
+mkdir -p local_data
+cp hte_inputs/campaign.json local_data/campaign.json
+```
+
+Do not recopy the template over a configured campaign. Initial selection can run with provisional hardware fields; live protocol export requires the released configuration.
 
 HTEL publicly lists a Thermo Vanquish Horizon Duo with ISQ-EM, tandem column operation, and a DAD detector. UZH's Chromeleon page lists `LC-ISQ-HTL-01`. The exact two-minute method, quantification wavelength, retention times, injection volume and export headers are not public. Prefer a validated DAD calibration for yield and use MS to confirm peak identity. Naphthalene may be unsuitable for HESI quantification: do not assume an MS internal-standard signal. [HTEL equipment](https://www.chem.uzh.ch/en/research/services/htel/Equipment.html), [Chromeleon instruments](https://www.chem.uzh.ch/en/research/services/massspec/Open-access_LC-and_GC-MS_with_Chromeleon.html).
 
@@ -57,7 +64,7 @@ Use Python 3.12 on the operator workstation, not the robot's internal Python. Fr
 python3.12 -m venv .hte-venv
 source .hte-venv/bin/activate
 python -m pip install -e '.[sources,test,analytics,embeddings]'
-# Optional measured-prior GoLLuM variant; not needed for this two-round plan:
+# Optional embedding rebuilds and historical adapter tests:
 python -m pip install -r requirements-gollum.txt
 python -m pytest -q tests/hte
 python -m hte.cli demo --output output/hte-rehearsal
@@ -91,7 +98,7 @@ python -m hte.cli embeddings --model google-t5/t5-base --download \
   --output output/hte-embeddings/rebuilt.npz
 ```
 
-With no measured pair yields, GoLLuM contributes its language-model representation approach rather than a trained yield model. Our frozen T5-base encoder embeds the names, SMILES and reaction context for all 465 pairs; averaging both ligand orders makes each representation symmetric. Claude independently scores every pair five times. Software converts the mean scores to rank percentiles, then combines 50% Claude rank and 50% embedding-diversity rank at each greedy selection. Initial diversity uses distance from the embedding centroid; later diversity uses minimum distance from selected pairs. These ranks are selection preferences, not calibrated chemical probabilities. Initialization needs no measured pair yields: [upstream initializers](https://github.com/schwallergroup/gollum/blob/main/src/gollum/initialization/initializers.py) select from input representations. After round one, only Claude receives measured feedback and selects ten new pairs; GoLLuM is not used again.
+With no measured pair yields, GoLLuM contributes its language-model representation approach rather than a trained yield model. Our frozen T5-base encoder embeds the names, SMILES and reaction context for all 465 pairs; averaging both ligand orders makes each representation symmetric. Claude independently scores every pair five times. Software converts the mean scores to rank percentiles, then combines 50% Claude rank and 50% embedding-diversity rank at each greedy selection. Initial diversity uses distance from the embedding centroid; later diversity uses minimum distance from selected pairs. Equal scores/distances receive average ranks, so ligand IDs do not create a preference between ties. These ranks are selection preferences, not calibrated chemical probabilities. Initialization needs no measured pair yields: [upstream initializers](https://github.com/schwallergroup/gollum/blob/main/src/gollum/initialization/initializers.py) select from input representations. After round one, only Claude receives measured feedback and selects ten new pairs; GoLLuM is not used again.
 
 **All 31 ligands must appear in at least one of the 65 first-round pair wells.** The L17 single-ligand reference does not satisfy this pair-coverage requirement. Coverage is secured first: eligible pairs that introduce two unseen ligands are preferred where possible, and the same 50/50 consensus chooses between them. Once all ligands are represented, ordinary consensus filling completes the 65 pairs. The usual Claude percentile floor is 0.25; a coverage choice may go below that floor when necessary, and its override is recorded. This requirement adds no wells, singles or repeats.
 
@@ -109,8 +116,9 @@ export ANTHROPIC_API_KEY
 Run scoring or the watcher from the repository root. The local key file works on other platforms too; use HTE's approved secret setup if required by the workstation policy.
 
 ```bash
-python -m hte.cli score --output output/hte-round1-scoring
-python -m hte.cli design --ranking output/hte-round1-scoring/ranking.csv \
+python -m hte.cli --config local_data/campaign.json score --output output/hte-round1-scoring
+python -m hte.cli --config local_data/campaign.json \
+  design --ranking output/hte-round1-scoring/ranking.csv \
   --embeddings hte_inputs/pair_embeddings_t5-base.npz \
   --output output/hte-round1-design.csv
 ```
@@ -123,20 +131,27 @@ Run `python -m hte.cli preview-prompts --output output/prompt-review` to inspect
 
 Claude Opus 4.8 is explicitly configured; the code checks access and never silently substitutes a model. At the verified $5/M input and $25/M output token prices, five requests each using the full 10,000-output-token allowance cost at most $1.25 for output, before input and retries. A $20 cap per campaign is therefore plausibly ample for the present prompts, but the code performs a token-count preflight, reserves one retry, and refuses a campaign whose estimated bound exceeds the cap. The two rounds have separate $20 caps; this is not a shared $20 project budget. A preflight is an estimate, not a provider-enforced spending limit; use a provider limit too if required. [Model and pricing](https://platform.claude.com/docs/en/models/opus-4-8/overview).
 
-Resume the same scoring directory only with identical inputs; successful calls are reused. A saved response that failed validation is not automatically paid for again. Inspect it and deliberately start a new campaign if a replacement call is needed.
+Resume the same scoring directory only with identical inputs; successful calls are reused. An interrupted request may have been charged even when no response was saved. A saved attempt or unvalidated raw response blocks automatic repayment: inspect it and deliberately start a new campaign if a replacement call is needed. OS locks prevent concurrent scoring/watchers on the same directory and release after a crash; the empty lock file can remain.
 
 ## Stock preparation before the clock starts
 
 Once exact hardware is configured, export for simulation/review without `--live`:
 
 ```bash
-python -m hte.cli export --design output/hte-round1-design.csv \
+python -m hte.cli --config local_data/campaign.json export --design output/hte-round1-design.csv \
   --output output/hte-round1-review
+```
+
+After completing the bench checks, LC settings and measured timing, release the actual protocols into a separate folder:
+
+```bash
+python -m hte.cli --config local_data/campaign.json export \
+  --design output/hte-round1-design.csv --output output/hte-round1 --live
 ```
 
 Verify the first-batch ligand coverage CSV, then print `stock_preparation.csv`, `deck_loads.csv`, `dosing.csv`, `round2_predose.csv`, `lc_sequence.csv` and `tip_budget.json`. **Use that campaign's generated quantities**, not the synthetic demo's quantities. `stock_preparation.csv` specifies total solution to prepare; `deck_loads.csv` specifies how much to place at each source for each protocol. The remaining prepared stock stays capped off deck. Source capacities are checked; large solvent reserves are not all loaded into a single well.
 
-The stock planner includes first-round consumption, tip surplus, a conservative reserve for any ligand to be selected throughout round two, 50% extra usable stock and dead volume. Default dead volumes are 100 µL per 1.5 mL tube and 1,000 µL per reservoir well. These are provisional aspiration allowances and need measurement with the actual source geometry. The second-round substrate is already included in first-round stock consumption. Keep enough fresh tips/racks for the printed budget plus contingency; a source-dedicated reuse setting must be validated before physical execution.
+The stock planner includes first-round consumption, tip surplus, a conservative reserve for any ligand to be selected throughout round two, 50% extra usable stock and dead volume. Default dead volumes are 100 µL per 1.5 mL tube and 1,000 µL per reservoir well. These are provisional aspiration allowances and need measurement with the actual source geometry. The second-round substrate is already included in first-round stock consumption. The ledger column `protocol_consumption_ul` reports consumption for the exported round, including any first-round predosing. Keep enough fresh tips/racks for the printed budget plus contingency; a source-dedicated reuse setting must be validated before physical execution.
 
 | Stock | Concentration / solvent | Per pair well | Preparation basis |
 |---|---|---|---|
@@ -224,7 +239,7 @@ The default 14-injection sequence contains five nonzero levels, a zero-analyte b
 
 Adding IS before the reaction requires HTE to verify naphthalene retention through both dry-down methods, the sealed hot reaction and extraction, and to check chemical interference. Loss of IS can inflate area-ratio yields. The software assumes quantitative recovery and does not apply an unmeasured correction. Live export requires `pre_reaction_internal_standard_validated`, as detailed in the [stock instructions](stocks-and-calibration.md).
 
-For each analyte fit `area_analyte / area_IS = slope × final_concentration_µM + intercept`. Substrate and product have separate response factors. Do not use area%, TIC% or an uncalibrated MS area as yield. At least three distinct concentrations per analyte, positive slopes and the configured fit threshold are required. R² ≥0.995 is a software gate, not complete method validation; verify accuracy, precision, blanks, LOQ, recovery and linearity with HTE. Set measured LOQs and nonoverlapping retention windows from authentic standards. MS confirmation must support the assigned analyte peak, especially if a short method coelutes other components.
+For each analyte fit `area_analyte / area_IS = slope × final_concentration_µM + intercept`. Substrate and product have separate response factors. Do not use area%, TIC% or an uncalibrated MS area as yield. The current campaign requires five distinct nonzero concentrations, a measured zero-analyte blank and at least one independent check per analyte, positive slopes and the configured fit threshold. R² ≥0.995 is a software gate, not complete method validation; verify accuracy, precision, blanks, LOQ, recovery and linearity with HTE. Set measured LOQs and nonoverlapping retention windows from authentic standards. MS confirmation must support the assigned analyte peak, especially if a short method coelutes other components.
 
 If HTE's complete integrated peak list omits nondetected analytes, set `missing_analyte_policy` to `censor` **only after verifying that export behavior**. A valid IS and completed injection/export are required. The reader then reports `yield_upper_bound_percent`, not zero; below-LOQ detected peaks are also represented as bounds. The default is `reject` because a missing row could mean a bad export. Multiple peaks in the reference window, absent/invalid IS, inconsistent method, out-of-range calibration or implausible mass balance are QC failures. Invalid numerical results are removed before LLM feedback. With the current zero-tolerance batch QC setting, resolve a failed measurement/export before the loop proceeds; reaction failure itself is valid data when analytically measured.
 
@@ -246,12 +261,12 @@ Example mapping structure, with placeholders replaced by exact Chromeleon export
 
 The normalized CSV has one row per peak: `sample_id,retention_time_min,area,channel,method_id,qc_flag`. Retention times are minutes. `sample_id` must exactly match `R1-001` etc. from `lc_sequence.csv`; retain full peak lists on the selected quantitative channel. Other channels are ignored, never summed. Per-channel spreadsheets that omit channel/method columns need those columns added from verified acquisition metadata before normalization. The selected channel must not change between calibration and samples.
 
-`calibration.csv` follows `hte_inputs/calibration_template.csv`: sample ID, role (`calibration` or `check`), authentic analyte label (`substrate` or `product`), final concentration, its integrated area, IS area, final IS concentration, method and channel. The two analytes may come from the same validated mixed-standard injection; include a row for each and update the injection count. Legacy CSVs without `role` are treated as all calibration points, so use the supplied template to keep checks outside the fit.
+`calibration.csv` follows `hte_inputs/calibration_template.csv`: sample ID, role (`calibration` or `check`), authentic analyte label (`substrate` or `product`), final concentration, its integrated area, IS area, final IS concentration, method and channel. The two analytes may come from the same validated mixed-standard injection; include a row for each and update the injection count. Use the supplied template with explicit roles; a legacy CSV without independent `check` rows fails the calibration gate.
 
 Prepare the watcher before first-round LC finishes:
 
 ```bash
-python -m hte.cli watch --inbox output/hte-lc-inbox \
+python -m hte.cli --config local_data/campaign.json watch --inbox output/hte-lc-inbox \
   --dosing output/hte-round1/dosing.csv --calibration output/hte-calibration.csv \
   --output output/hte-iteration
 ```
@@ -259,32 +274,35 @@ python -m hte.cli watch --inbox output/hte-lc-inbox \
 After all 66 injections have finished, run from a second terminal (or a verified Chromeleon post-sequence hook):
 
 ```bash
-python -m hte.cli normalize path/to/complete_vendor_export.xlsx \
+python -m hte.cli --config local_data/campaign.json normalize path/to/complete_vendor_export.xlsx \
   --output output/hte-lc-inbox/round1.csv
-python -m hte.cli complete-export --peaks output/hte-lc-inbox/round1.csv \
+python -m hte.cli --config local_data/campaign.json \
+  complete-export --peaks output/hte-lc-inbox/round1.csv \
   --dosing output/hte-round1/dosing.csv \
   --output output/hte-lc-inbox/round1.ready.json
 ```
 
-The `complete-export` command is an operator attestation that every expected injection has finished. A stable CSV alone does not establish sequence completion. If the export is already normalized, place it directly at `round1.csv`, then publish the manifest. The manifest verifies expected sample IDs, method and SHA256 file hashes. The watcher responds only to `*.ready.json` with a matching CSV; partial, mismatched or changed exports cannot trigger a valid batch. Publishing the same event twice does not repeat paid calls. Failed events are recorded once; correct the data/configuration and publish a corrected event instead of repeatedly charging requests.
+The `complete-export` command is an operator attestation that every expected injection has finished. A stable CSV alone does not establish sequence completion. If the export is already normalized, place it directly at `round1.csv`, then publish the manifest. The manifest verifies expected sample IDs, method and SHA256 file hashes. The watcher responds only to `*.ready.json` with a matching CSV; partial, mismatched or changed exports cannot trigger a valid batch. Input hashes are checked before and after ingestion, and the completed iteration hashes its analysis, scoring and handoff files. Publishing the same event twice does not repeat paid calls; changed inputs or archived outputs are rejected. Failed events are recorded once; correct the data/configuration and publish a corrected event instead of repeatedly charging requests.
 
 Restart the watcher after changing its configuration, inventory or evidence, because those inputs are loaded when it starts. Calibration/export files are read for the event. Set the API key before starting the watcher.
 
 The output directory is printed as `output/hte-iteration/iteration-...`. Inspect `analysis/results.csv`, `analysis/qc_report.json`, `scoring/ranking.csv`, `next_design.csv` and `next_dosing.csv`. The second round uses only LLM mean-score ranking of the 400 untested pairs, incorporating first-round calibrated observations and the single reference. It does not use an exploratory split or GoLLuM acquisition.
 
-Live protocols are generated automatically when the live bench validation settings are complete; otherwise the next dosing CSV is still produced for review. Explicit export uses:
+Live protocols are generated automatically when the bench validations, analytical settings and measured timing pass the release checks; otherwise the next dosing CSV is still produced for review. Explicit export uses:
 
 ```bash
-python -m hte.cli export --design output/hte-iteration/iteration-REPLACE/next_design.csv \
+python -m hte.cli --config local_data/campaign.json \
+  export --design output/hte-iteration/iteration-REPLACE/next_design.csv \
+  --history output/hte-round1/dosing.csv \
   --output output/hte-round2 --live
 ```
 
-Use a new output directory each time to preserve earlier exports. Validate the local App analysis and compare sample IDs, wells, substrate predose and stock loads before running. The watcher does not start the robot or upload protocols remotely.
+For round two, `--history` must point to the actual first-round dosing file; repeated pairs or edited dose amounts stop export. Use a new output directory each time, including after a partial export, to preserve earlier files. Validate the local App analysis and compare sample IDs, wells, substrate predose and stock loads before running. The watcher does not start the robot or upload protocols remotely.
 
 For final second-round results, normalize/publish a manifest in the same way, then:
 
 ```bash
-python -m hte.cli analyze --dosing output/hte-round2/dosing.csv \
+python -m hte.cli --config local_data/campaign.json analyze --dosing output/hte-round2/dosing.csv \
   --peaks output/hte-round2-peaks.csv --ready output/hte-round2-peaks.ready.json \
   --calibration output/hte-calibration.csv --output output/hte-final-analysis
 ```
@@ -309,6 +327,6 @@ At two minutes **injection-to-injection**, 66 + 10 reaction samples require 152 
 
 The supplied provisional overheads are 30 minutes dosing, 10 first-round evaporation, 12 heating, 12 cooling, 20 workup, 8 decision and 5 other: 97 minutes, giving **729 minutes / 12 h 9 min**. This is an honest planning warning, not a verified duration. Heavy-block heating/cooling, two-minute LC overhead, noncontact delivery and API quotas can change it materially. Replace estimates with rehearsal measurements; achieve at least nine minutes of documented savings, plus a contingency margin. Prioritize off-module cooling under HTE's approved handling SOP, full-column workup/sampling, validated source-dedicated tip reuse, preconfigured LC sequences and pretested concurrent scoring. Do not shorten the specified four-hour reaction or skip method validation to make a nominal timeline fit.
 
-`python -m hte.cli check` prints the timing and outstanding bench fields. Before live export, HTE records successful checks in `validation`: chemistry, block/adapter/seal, solvent pipetting, heating/evaporation, homogeneous sampling, LC calibration, local App simulation, ambient second-round evaporation, pre-reaction IS retention/compatibility, and noncontact tip reuse when enabled. These fields represent completed bench work; changing a Boolean is not validation. A changed plate, solvent, dilution, stock concentration or height requires review of the affected check and regenerated exports.
+`python -m hte.cli check` prints the timing and outstanding bench fields. Before live export, HTE records successful checks in `validation`: chemistry, block/adapter/seal, solvent pipetting, heating/evaporation, homogeneous sampling, LC calibration, local App simulation, ambient second-round evaporation, pre-reaction IS retention/compatibility, and noncontact tip reuse when enabled. Live export also requires actual LC identifiers, nonoverlapping retention windows, measured LOQs and a configured schedule within the deadline; the template at 729 minutes cannot be released. These fields represent completed bench work; changing a Boolean is not validation. A changed plate, solvent, dilution, stock concentration or height requires review of the affected check and regenerated exports.
 
 Keep a campaign folder containing inventory/COAs, configuration, embedding provenance, all scoring responses, designs, dosing/deck/stock CSVs, exact labware JSONs, App analysis and Opentrons JSON logs, standards/LC exports/raw data, QC reports and actual timestamps. The offline demo and tests establish software behavior; they cannot establish chemical success or a 12-hour physical run.

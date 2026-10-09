@@ -8,7 +8,7 @@ import random
 import statistics
 from pathlib import Path
 
-from .io import atomic_text, finite, new_output, object_digest, read_json, write_csv, write_json
+from .io import atomic_text, file_lock, finite, new_output, object_digest, read_json, write_csv, write_json
 
 
 PROMPT_FORMAT_VERSION = 4
@@ -231,14 +231,21 @@ def export_prompt_preview(config, inventory, candidates, evidence, observations,
 
 
 def score_candidates(config, inventory, candidates, evidence, observations, run_dir):
+    with file_lock(Path(run_dir)/".scoring.lock"):
+        return _score_candidates_locked(config, inventory, candidates, evidence, observations, run_dir)
+
+
+def _score_candidates_locked(config, inventory, candidates, evidence, observations, run_dir):
     import anthropic
     settings = config["llm"]
     cache = prompt_cache_settings(settings)
-    repeats = int(settings["repeats"])
-    if not 1 <= int(settings["batch_size"]) <= 465 or not 1 <= int(settings["workers"]) <= 5:
-        raise ValueError("Choose batch_size 1-465 and workers 1-5")
-    if not 2 <= repeats <= 30:
-        raise ValueError("Choose 2-30 scoring repeats")
+    for key, low, high in (("batch_size", 1, 465), ("workers", 1, 5), ("repeats", 2, 30),
+                           ("max_output_tokens", 1, 128000)):
+        if type(settings[key]) is not int or not low <= settings[key] <= high:
+            raise ValueError(f"Choose an integer {key} from {low} to {high}")
+    for key in ("input_usd_per_million", "output_usd_per_million", "budget_usd", "timeout_seconds"):
+        finite(settings[key], key, 0.000001)
+    repeats = settings["repeats"]
     if config.get("demo"):
         raise ValueError("Demo configurations cannot make paid scoring calls")
     if any(row["identity_confirmed"] != "true" for row in inventory.values()):
@@ -275,8 +282,8 @@ def score_candidates(config, inventory, candidates, evidence, observations, run_
             parse_scores(saved["output_text"], batch)
             existing_cost += saved["cost_usd"]
         else:
-            if path.with_suffix(".raw.json").exists():
-                raise ValueError(f"A previous response failed validation: {path.with_suffix('.raw.json')}. Inspect it before starting another charged campaign.")
+            if path.with_suffix(".raw.json").exists() or path.with_suffix(".attempt.json").exists():
+                raise ValueError(f"A previous request may have been charged without a validated response: {path}. Inspect the attempt/raw records before deliberately starting another campaign.")
             request = request_parameters(settings, content, schema)
             request.pop("max_tokens")
             count = client.messages.count_tokens(**request)
@@ -296,6 +303,10 @@ def score_candidates(config, inventory, candidates, evidence, observations, run_
 
     def run_job(job):
         repeat, batch, content, schema, path = job
+        # A timeout/crash can be charged even when no final response is received.
+        # Persist intent before network I/O and never retry it automatically on resume.
+        write_json(path.with_suffix(".attempt.json"), {"request_digest": object_digest(request_parameters(settings, content, schema)),
+                                                      "status": "started", "candidate_ids": batch})
         with client.messages.stream(**request_parameters(settings, content, schema)) as stream:
             response = stream.get_final_message()
         output = "".join(block.text for block in response.content if block.type == "text")
@@ -310,6 +321,8 @@ def score_candidates(config, inventory, candidates, evidence, observations, run_
             raise ValueError(f"Incomplete model response: {response.stop_reason}; inspect {path.with_suffix('.raw.json')}")
         parse_scores(output, batch)
         write_json(path, saved)
+        write_json(path.with_suffix(".attempt.json"), {"status": "validated", "response_id": response.id,
+                                                      "request_digest": object_digest(request_parameters(settings, content, schema))})
         return repeat
 
     groups = {}
@@ -320,11 +333,16 @@ def score_candidates(config, inventory, candidates, evidence, observations, run_
         # The first real scoring response warms each schema group; no extra paid warm-up.
         warmers = {executor.submit(run_job, group[0]): group[1:] for group in groups.values()}
         followers = []
-        for future in concurrent.futures.as_completed(warmers):
-            future.result()
-            followers.extend(executor.submit(run_job, job) for job in warmers[future])
-        for future in concurrent.futures.as_completed(followers):
-            future.result()
+        try:
+            for future in concurrent.futures.as_completed(warmers):
+                future.result()
+                followers.extend(executor.submit(run_job, job) for job in warmers[future])
+            for future in concurrent.futures.as_completed(followers):
+                future.result()
+        except Exception:
+            for future in [*warmers, *followers]:
+                future.cancel()  # Requests already in flight may finish; queued ones stop.
+            raise
     totals = [{} for _ in range(repeats)]
     saved_responses = []
     for repeat, batch, _, _, path in jobs:

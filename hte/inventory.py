@@ -4,7 +4,7 @@ from itertools import combinations
 from rdkit import Chem
 from rdkit.Chem import Descriptors
 
-from .io import read_csv, write_csv
+from .io import finite, read_csv, write_csv
 
 
 IDENTITY_FLAGS = {
@@ -46,20 +46,31 @@ def import_workbook(path, output):
 
 def load_inventory(path, confirmed=False):
     rows = read_csv(path)
-    seen, locations = set(), set()
+    if not rows:
+        raise ValueError("Ligand inventory is empty")
+    seen, locations, cas_numbers = set(), set(), set()
     for row in rows:
         key = row["ligand_id"]
         if key in seen or not key:
             raise ValueError(f"Duplicate or empty ligand ID: {key}")
         seen.add(key)
+        if not row["cas"] or row["cas"] in cas_numbers:
+            raise ValueError("Inventory CAS numbers must be present and unique")
+        cas_numbers.add(row["cas"])
         slot, well = int(row["source_slot"]), row["source_well"]
         if slot not in (1, 4) or well not in [f"{r}{c}" for c in range(1, 7) for r in "ABCD"]:
             raise ValueError(f"Invalid ligand source address: {key}")
         if (slot, well) in locations:
             raise ValueError("Duplicate ligand source location")
         locations.add((slot, well))
-        if Chem.MolFromSmiles(row["smiles"]) is None:
+        mol = Chem.MolFromSmiles(row["smiles"])
+        if mol is None:
             raise ValueError(f"Invalid ligand SMILES: {key}")
+        mw = finite(row["molecular_weight_g_mol"], key+" molecular weight", 1)
+        if abs(mw-Descriptors.MolWt(mol)) > 0.001:
+            raise ValueError(f"Ligand molecular weight differs from its structure: {key}")
+        if int(row["phosphorus_atoms"]) != sum(a.GetAtomicNum() == 15 for a in mol.GetAtoms()):
+            raise ValueError(f"Ligand phosphorus count differs from its structure: {key}")
         if confirmed and row.get("identity_confirmed") != "true":
             raise ValueError(f"Unresolved identity {key}: {row.get('identity_note', '')}")
     return {row["ligand_id"]: row for row in rows}

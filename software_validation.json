@@ -1,7 +1,7 @@
 {
-  "created_utc": "2026-10-09T07:40:50.328308+00:00",
+  "created_utc": "2026-10-09T09:20:15.451448+00:00",
   "tests": {
-    "tests": 54,
+    "tests": 88,
     "errors": 0,
     "failures": 0,
     "skipped": 0
@@ -75,7 +75,9 @@
     "no_internal_standard_redose": true,
     "round1_ligands_covered_in_pairs": 31,
     "round1_missing_ligands": [],
-    "coverage_floor_overrides": 0
+    "coverage_floor_overrides": 0,
+    "physical_execution_allowed": false,
+    "result_interpretation": "Synthetic yields and mocked rankings validate data flow only."
   },
   "prompt_caching": {
     "enabled_by_default": true,
@@ -187,5 +189,21 @@
     "round2_uses_gollum": false,
     "no_gollum_optimizer_calls_in_campaign_rehearsal_tested": true,
     "source": "https://github.com/schwallergroup/gollum/blob/main/src/gollum/initialization/initializers.py"
+  },
+  "repository_audit": {
+    "date_utc": "2026-10-09",
+    "paid_api_calls": 0,
+    "original_workbook_ligands_checked": 31,
+    "reextracted_SI_yields_matching_evidence": 18,
+    "exact_published_prompt_matches_preview": true,
+    "live_LC_and_competition_timing_gates_tested": true,
+    "numerical_dosing_and_round2_history_validation_tested": true,
+    "CSV_and_XLSX_normalization_tested": true,
+    "calibration_blank_levels_and_independent_checks_enforced": true,
+    "interrupted_requests_cannot_automatically_repay": true,
+    "concurrent_process_locks_tested": true,
+    "complete_iteration_and_handoff_hashes_verified": true,
+    "ties_receive_average_ranks": true,
+    "test_count": 88
   }
 }

@@ -7,6 +7,7 @@ import math
 import os
 import re
 import tempfile
+from contextlib import contextmanager
 from pathlib import Path
 
 
@@ -61,11 +62,12 @@ def write_json(path, data):
 def read_csv(path):
     with Path(path).open(encoding="utf-8-sig", newline="") as stream:
         reader = csv.DictReader(stream)
-        if reader.fieldnames is None or len(reader.fieldnames) != len(set(reader.fieldnames)):
+        if (not reader.fieldnames or any(not name or not name.strip() for name in reader.fieldnames)
+                or len(reader.fieldnames) != len(set(reader.fieldnames))):
             raise ValueError("Missing or duplicate CSV headers")
         rows = list(reader)
-        if any(None in row for row in rows):
-            raise ValueError("CSV row has more fields than its header")
+        if any(None in row or any(value is None for value in row.values()) for row in rows):
+            raise ValueError("CSV row field count differs from its header")
         return rows
 
 
@@ -102,7 +104,45 @@ def wells():
 
 def new_output(path):
     path = Path(path)
-    if path.exists():
-        raise ValueError(f"Output already exists: {path}. Use a new run directory.")
-    path.mkdir(parents=True)
+    try:
+        path.mkdir(parents=True)
+    except FileExistsError:
+        raise ValueError(f"Output already exists: {path}. Use a new run directory.") from None
     return path
+
+
+@contextmanager
+def file_lock(path):
+    """One local process per run; OS releases the lock even after a crash.
+
+    Leave the lock file in place so another process cannot lock a new inode while
+    the original is still open. Neither credentials nor inputs are stored here.
+    """
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a+b") as stream:
+        if os.name == "nt":
+            import msvcrt
+            if path.stat().st_size == 0:
+                stream.write(b"0")
+                stream.flush()
+            stream.seek(0)
+            try:
+                msvcrt.locking(stream.fileno(), msvcrt.LK_NBLCK, 1)
+            except OSError:
+                raise ValueError(f"Another process is already using this run: {path}") from None
+            try:
+                yield
+            finally:
+                stream.seek(0)
+                msvcrt.locking(stream.fileno(), msvcrt.LK_UNLCK, 1)
+        else:
+            import fcntl
+            try:
+                fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                raise ValueError(f"Another process is already using this run: {path}") from None
+            try:
+                yield
+            finally:
+                fcntl.flock(stream, fcntl.LOCK_UN)

@@ -48,7 +48,7 @@ python -m hte.cli design --ranking output/round1-scoring/ranking.csv \
 
 For file-based setup, copy `anthropic.key.example` to `anthropic.key` in the repository root and replace its single placeholder line with your API key. This local file is ignored by Git and excluded from the handoff. Scoring and the watcher read it automatically; an existing `ANTHROPIC_API_KEY` environment variable takes precedence.
 
-The [first-batch script](scripts/first-batch.zsh) loads the local key file and combines scoring and selection. If no key file or environment variable exists, it asks for hidden input. After confirming the hardware configuration, see the runbook for protocol/stock exports, calibration, the LC watcher, pipetting settings and live operation. Keep API keys and experimental outputs outside version control.
+The [first-batch script](scripts/first-batch.zsh) loads the local key file and combines scoring and selection. If no key file or environment variable exists, it asks for hidden input. Optional arguments are the output folder, campaign configuration and ligand inventory; use the same campaign configuration for protocol export and LC feedback. After confirming the hardware configuration, see the runbook for protocol/stock exports, calibration, the LC watcher, pipetting settings and live operation. Keep API keys and experimental outputs outside version control.
 
 [Anthropic prompt caching](docs/prompt-caching.md) is enabled by default in both rounds, with a one-hour lifetime and provider-reported usage/cost records in `cache_summary.json`.
 
@@ -56,7 +56,7 @@ The [scoring prompt guide](docs/scoring-prompt.md) lists every ligand ID, name, 
 
 ## Validation status
 
-The local acceptance exercise passed **54 tests**, including OT-2 simulation, combined SM/IS dosing and dilution, LC calibration/QC with independent checks, MOCCA raw-DAD integration on synthetic data, the GoLLuM adapter and a complete watcher/scoring rehearsal with mocked Claude responses. [Validation record](software_validation.json), [rehearsal results](docs/rehearsal-results.md).
+The local acceptance exercise passed **88 tests**, including OT-2 simulation, combined SM/IS dosing and dilution, LC calibration/QC with independent checks, MOCCA raw-DAD integration on synthetic data, the GoLLuM adapter and a complete watcher/scoring rehearsal with mocked Claude responses. [Validation record](software_validation.json), [rehearsal results](docs/rehearsal-results.md), [repository audit](docs/rehearsal-results.md#repository-audit).
 
 `demo/` contains **synthetic chemistry results and selections**. Its protocols refuse physical execution. Three live Opus 4.8 smoke tests (four pairs, two repeats each) passed. The current v4 prompt returns scores only with extended thinking disabled; provider-reported cache reuse was verified. Combined estimated test cost was $0.4023. The full first-round selection still needs to be run; physical bench validation remains open.
 
