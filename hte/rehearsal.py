@@ -64,7 +64,6 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
                 # This formula is neither Claude reasoning nor a chemical prediction.
                 scores[key] = round(0.25*base+0.75*sum(means)/2, 3) if measured else base
             self.content = [SimpleNamespace(type="text", text=json.dumps({
-                "hypothesis": "OFFLINE SYNTHETIC EMULATOR; no chemical prediction or Claude inference.",
                 "scores": scores}))]
 
         def model_dump(self):

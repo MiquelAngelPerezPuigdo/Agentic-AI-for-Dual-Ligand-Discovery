@@ -32,6 +32,8 @@ Use a fresh output directory. `rehearsal_report.json` records the checks and the
 
 ## Separate live API checks
 
-On 9 October 2026, two small Opus 4.8 smoke tests each scored four pairs twice. The revised v3 prompt returned valid complete JSON with hypotheses of 162 and 159 words, and the second response reported 12,911 cached read tokens. Its estimated returned-usage cost was $0.1914; combined with the earlier $0.1539 test, total estimated spending was $0.3453, below the $1 test allowance. A conservative preflight stopped an earlier v3 attempt before generation when its bound exceeded the remaining allowance.
+On 9 October 2026, three small Opus 4.8 smoke tests each scored four pairs twice. The current scores-only v4 prompt returned valid complete JSON with no reasoning or hypothesis field; both provider responses contained only text blocks with extended thinking disabled. The second response reported **5,174 cached read tokens**. The v4 test cost approximately **$0.0570**, bringing total estimated returned-usage spending across six generation requests to **$0.4023**, below the $1 smoke-test allowance.
+
+The earlier v2/v3 tests used a different prompt and output contract; their $0.3453 combined cost is included in that total. A conservative preflight stopped one earlier v3 attempt before generation. The scores-only offline feedback rehearsal was rerun successfully: all 66 synthetic first-round results reached the prompt, 400 untested pairs were scored in five mocked calls and ten new pairs were exported without substrate/IS redosing.
 
 These checks establish live model access, structured-response parsing and cache reuse for the smoke requests. The full 465-pair initial campaign has not been generated, and the model scores are not measured chemistry yields. The [prompt guide](scoring-prompt.md) supplies the identities, SI evidence and output contract. Raw responses and keys remain outside the public handoff.

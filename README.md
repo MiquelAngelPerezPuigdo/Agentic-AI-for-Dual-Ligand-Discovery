@@ -1,6 +1,6 @@
 # Agentic AI for Dual-Ligand Discovery
 
-Local OT-2 experiment planning and LC-to-LLM iteration for Pd-catalyzed desulfonylative fluorination. The campaign searches 465 pairs from 31 ligands using repeated mechanism-informed Claude scoring and diversity across language-model embeddings.
+Local OT-2 experiment planning and LC-to-LLM iteration for Pd-catalyzed desulfonylative fluorination. The campaign searches 465 pairs from 31 ligands using repeated Claude performance scoring with potential ligand cooperativity and diversity across language-model embeddings.
 
 Start with [organizer questions and first-batch setup](docs/start-here.md), the [operator runbook](docs/hte-runbook.md) and [HTE configuration checklist](docs/hte-questions.md).
 
@@ -56,7 +56,7 @@ The [scoring prompt guide](docs/scoring-prompt.md) lists every ligand ID, name, 
 
 The local acceptance exercise passed **46 tests**, including OT-2 simulation, combined SM/IS dosing and dilution, LC calibration/QC with independent checks, MOCCA raw-DAD integration on synthetic data, the GoLLuM adapter and a complete watcher/scoring rehearsal with mocked Claude responses. [Validation record](software_validation.json), [rehearsal results](docs/rehearsal-results.md).
 
-`demo/` contains **synthetic chemistry results and selections**. Its protocols refuse physical execution. Two live Opus 4.8 smoke tests (four pairs, two repeats each) passed, including the structured v3 prompt and provider-reported cache reuse. Combined estimated test cost was $0.3453. The full first-round selection still needs to be run; physical bench validation remains open.
+`demo/` contains **synthetic chemistry results and selections**. Its protocols refuse physical execution. Three live Opus 4.8 smoke tests (four pairs, two repeats each) passed. The current v4 prompt returns scores only with extended thinking disabled; provider-reported cache reuse was verified. Combined estimated test cost was $0.4023. The full first-round selection still needs to be run; physical bench validation remains open.
 
 The glass-block definition and mounting/seal, solvent delivery, extraction, analytical method and timing still require HTE verification. The provisional schedule is **729 minutes**, nine minutes beyond the 720-minute competition limit; a measured rehearsal must resolve this before the campaign.
 
