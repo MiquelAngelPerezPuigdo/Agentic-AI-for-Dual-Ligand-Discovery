@@ -103,6 +103,24 @@ def aggregate(scores_by_repeat, expected):
     return rows
 
 
+def operator_api_key(key_file="anthropic.key"):
+    """Read one local key without executing file content or changing the environment."""
+    key = os.environ.get("ANTHROPIC_API_KEY")
+    if key:
+        return key
+    path = Path(key_file)
+    if not path.exists():
+        raise ValueError("Put the Claude API key in local anthropic.key, or set ANTHROPIC_API_KEY")
+    try:
+        key = path.read_text(encoding="utf-8-sig").strip()
+    except (OSError, UnicodeError):
+        raise ValueError("Cannot read anthropic.key as a text file") from None
+    if (not key or key == "PASTE_YOUR_ANTHROPIC_API_KEY_HERE"
+            or any(char.isspace() for char in key) or not key.startswith("sk-ant-")):
+        raise ValueError("Replace the placeholder in anthropic.key with only your Anthropic API key; no quotes or variable prefix")
+    return key
+
+
 def score_candidates(config, inventory, candidates, evidence, observations, run_dir):
     import anthropic
     settings = config["llm"]
@@ -112,8 +130,6 @@ def score_candidates(config, inventory, candidates, evidence, observations, run_
         raise ValueError("Choose batch_size 1-465 and workers 1-5")
     if not 2 <= repeats <= 30:
         raise ValueError("Choose 2-30 scoring repeats")
-    if not os.environ.get("ANTHROPIC_API_KEY"):
-        raise ValueError("Set ANTHROPIC_API_KEY on the operator laptop; do not put it in a CSV or protocol")
     if config.get("demo"):
         raise ValueError("Demo configurations cannot make paid scoring calls")
     if any(row["identity_confirmed"] != "true" for row in inventory.values()):
@@ -121,7 +137,7 @@ def score_candidates(config, inventory, candidates, evidence, observations, run_
     if not settings.get("data_sharing_confirmed"):
         raise ValueError("Confirm that the campaign data may be sent to Anthropic in llm.data_sharing_confirmed")
     model = settings["model"]
-    client = anthropic.Anthropic(timeout=settings["timeout_seconds"], max_retries=1)
+    client = anthropic.Anthropic(api_key=operator_api_key(), timeout=settings["timeout_seconds"], max_retries=1)
     # Verify actual access before doing an entire scoring campaign. No automatic model substitution.
     client.models.retrieve(model)
     ids = [c["pair_id"] for c in candidates]

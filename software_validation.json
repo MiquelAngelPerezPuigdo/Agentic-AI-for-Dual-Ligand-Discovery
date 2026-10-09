@@ -1,7 +1,7 @@
 {
-  "created_utc": "2026-10-09T00:09:49.715632+00:00",
+  "created_utc": "2026-10-09T00:35:13.318503+00:00",
   "tests": {
-    "tests": 39,
+    "tests": 42,
     "failures": 0,
     "errors": 0,
     "skipped": 0
@@ -108,5 +108,14 @@
     ],
     "independent_calibration_checks_excluded_from_fit": true,
     "physical_retention_and_compatibility_validated": false
+  },
+  "local_api_key_file": {
+    "filename": "anthropic.key",
+    "git_ignored": true,
+    "included_in_handoff": false,
+    "environment_takes_precedence": true,
+    "scoring_and_feedback_use_file": true,
+    "mocked_key_loading_and_no_output_leak_tested": true,
+    "live_key_not_used": true
   }
 }

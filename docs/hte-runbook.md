@@ -93,16 +93,16 @@ python -m hte.cli embeddings --model google-t5/t5-base --download \
 
 With no measured pair data, first-round exploration uses distance from previously selected LM embeddings. Each greedy choice combines Claude rank percentile and diversity rank percentile at 0.5/0.5, with a Claude percentile floor of 0.25. These are explicit tunable settings, not chemically calibrated probabilities. Every selected well uses both signals; there is no 32/33 split. `*.selection.csv` records the selection trace. Conditions are randomized across the occupied wells, in column-major order, to use full eight-well columns efficiently.
 
-Store the Claude key in the local process environment using the workstation's approved secret mechanism. It must not appear in a protocol, CSV, notebook output, committed file or this handoff. The package reads `ANTHROPIC_API_KEY`; it does not automatically load `.env`.
+Store the Claude key on the operator workstation. Copy `anthropic.key.example` to `anthropic.key` in the repository root and replace the single placeholder line with the raw key, without quotes or an `ANTHROPIC_API_KEY=` prefix. Scoring and the watcher automatically read this file when run from the repository root. The file is ignored by Git and excluded from this handoff. It must not appear in a protocol, CSV, notebook output or committed file.
 
-On a macOS zsh terminal, a hidden interactive entry can set it for that terminal without typing the key into command history:
+An existing `ANTHROPIC_API_KEY` environment variable takes precedence over the file; `.env` files are not automatically loaded. On macOS zsh, hidden entry can set that variable without putting the key in command history:
 
 ```zsh
 read -rs 'ANTHROPIC_API_KEY?Claude API key: '
 export ANTHROPIC_API_KEY
 ```
 
-Run scoring or the watcher from that terminal. Use HTE's approved secret setup on other platforms.
+Run scoring or the watcher from the repository root. The local key file works on other platforms too; use HTE's approved secret setup if required by the workstation policy.
 
 ```bash
 python -m hte.cli score --output output/hte-round1-scoring
