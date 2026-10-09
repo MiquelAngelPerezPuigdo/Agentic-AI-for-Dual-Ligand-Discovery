@@ -26,12 +26,12 @@ def main():
     d = commands.add_parser("design")
     d.add_argument("--ranking", required=True)
     d.add_argument("--embeddings")
-    d.add_argument("--acquisition")
     d.add_argument("--output", required=True)
     e = commands.add_parser("export")
     e.add_argument("--design", required=True)
     e.add_argument("--output", required=True)
     e.add_argument("--live", action="store_true")
+    e.add_argument("--history", help="First-round dosing.csv; required for live round-two export")
     a = commands.add_parser("analyze")
     for key in ["dosing", "peaks", "ready", "calibration", "output"]:
         a.add_argument("--"+key, required=True)
@@ -55,7 +55,7 @@ def main():
     emb.add_argument("--model", required=True)
     emb.add_argument("--output", required=True)
     emb.add_argument("--download", action="store_true")
-    g = commands.add_parser("gollum")
+    g = commands.add_parser("gollum", help="Historical adapter validation only; outside the two-round campaign")
     g.add_argument("--embeddings", required=True)
     g.add_argument("--priors", required=True)
     g.add_argument("--output", required=True)
@@ -115,12 +115,14 @@ def main():
             controls = config["design"]["round1_controls"]
             if controls is None:
                 raise ValueError("Decide first-round reference-well allocation before design")
-            acq = {r["pair_id"]: r["exploration_score"] for r in read_csv(args.acquisition)} if args.acquisition else None
-            backend = "gollum_acquisition" if acq else "lm_diversity_initialization" if args.embeddings else "fingerprint_diversity_initialization"
+            outputs = [Path(str(args.output)+suffix) for suffix in ("", ".selection.csv", ".ligand_coverage.csv", ".metadata.json")]
+            if any(path.exists() for path in outputs):
+                raise ValueError("Design output already exists; use a new path to preserve its audit files")
+            backend = "lm_diversity_initialization" if args.embeddings else "fingerprint_diversity_initialization"
             config["design"]["exploration_backend"] = backend
             count = config["design"]["round1_total"]-len(controls)
             selection, trace = consensus_select(pairs, ranking, features, count,
-                           config["design"]["consensus_weight_llm"], config["design"]["minimum_llm_percentile"], acq,
+                           config["design"]["consensus_weight_llm"], config["design"]["minimum_llm_percentile"],
                            required_ligands=round1_required_ligands(config, inv))
             design = make_design(config, inv, pairs, ranking, selection, 1)
             write_csv(args.output, design)
@@ -137,7 +139,8 @@ def main():
                   f"{sum(row['llm_floor_override'] for row in trace)} LLM-floor overrides")
         elif args.command == "export":
             from .protocols import export
-            export(config, inv, read_csv(args.design), args.output, live=args.live)
+            export(config, inv, read_csv(args.design), args.output, live=args.live,
+                   history=read_csv(args.history) if args.history else None)
             print(args.output)
         elif args.command == "normalize":
             from .analytics import normalize_export
@@ -146,9 +149,12 @@ def main():
             from .analytics import complete_export
             complete_export(config, args.peaks, args.dosing, args.output)
         elif args.command == "analyze":
-            from .analytics import analyze, validate_completion
-            validate_completion(args.ready, args.peaks, args.dosing, config)
-            _, report = analyze(config, read_csv(args.dosing), read_csv(args.peaks), read_csv(args.calibration), args.output)
+            from .analytics import analyze, read_completed_inputs
+            from .planning import validate_dosing
+            tables, hashes = read_completed_inputs(config, args.dosing, args.peaks, args.ready, args.calibration)
+            validate_dosing(config, inv, tables["dosing"])
+            _, report = analyze(config, tables["dosing"], tables["peaks"], tables["calibration"], args.output)
+            write_json(Path(args.output)/"inputs.json", {"config": object_digest(config), "inventory": object_digest(inv), **hashes})
             print(report)
         elif args.command == "iterate":
             from .workflow import iterate

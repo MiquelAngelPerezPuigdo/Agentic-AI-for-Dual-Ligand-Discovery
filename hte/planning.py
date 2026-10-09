@@ -44,6 +44,21 @@ def validate_config(config, live=False):
                  "ligand_b_mol_percent", "pd_mol_percent", "reaction_minutes"):
         finite(c[name], name, 0.00001)
     finite(c["temperature_C"], "temperature", 37, 95)
+    finite(c.get("thermal_equilibration_minutes", 0), "thermal equilibration", 0)
+    for name, value in (("reaction shaking", c["rpm"]), ("workup shaking", liquid["mix_rpm"]),
+                        ("evaporation shaking", config["evaporation"]["rpm"])):
+        finite(value, name, 200, 3000)
+    finite(config["evaporation"]["temperature_C"], "evaporation temperature", 37, 95)
+    finite(config["evaporation"]["minutes"], "evaporation time", 0)
+    for name in ("reuse_tips",):
+        if not isinstance(config["pipetting"].get(name), bool):
+            raise ValueError(f"{name} must be true or false")
+    if not isinstance(config["design"].get("round2_predosed"), bool):
+        raise ValueError("round2_predosed must be true or false")
+    for round_number in (1, 2):
+        count = config["design"][f"round{round_number}_total"]
+        if type(count) is not int or not 1 <= count <= 96:
+            raise ValueError("Round counts must be integers from 1 to 96")
     for name in ("substrate_stock_mM", "ligand_stock_mM", "pd_stock_mM", "workup_ul", "aliquot_ul", "diluent_ul"):
         finite(liquid[name], name, 0.00001)
     for name in ("aspirate_height_mm", "dispense_above_top_mm", "surplus_ul", "air_gap_ul"):
@@ -54,7 +69,7 @@ def validate_config(config, live=False):
         finite(config["pipetting"][name], name, 0.000001)
     for name in ("post_aspirate_seconds", "post_dispense_seconds"):
         finite(config["pipetting"][name], name, 0)
-    if not isinstance(config["pipetting"]["prewet_cycles"], int) or not 0 <= config["pipetting"]["prewet_cycles"] <= 5:
+    if type(config["pipetting"]["prewet_cycles"]) is not int or not 0 <= config["pipetting"]["prewet_cycles"] <= 5:
         raise ValueError("Choose 0-5 prewet cycles")
     n0 = c["substrate_molarity_M"]*c["reaction_volume_ul"]
     preloaded_is, _, final_is = internal_standard_amounts(config, n0)
@@ -90,12 +105,21 @@ def validate_config(config, live=False):
                 raise ValueError(f"Exact Opentrons load name required: {key}")
         if not c.get("pd_identity"):
             raise ValueError("Pd identity must be specified")
+        from .analytics import validate_analytics_settings
+        validate_analytics_settings(config)
+        if any(str(config["analytics"][key]).upper().startswith("SYNTHETIC") for key in ("method_id", "channel")):
+            raise ValueError("Synthetic LC settings cannot release live protocols")
+        timing = schedule(config)
+        if not timing["fits_serial_estimate"]:
+            raise ValueError(f"Measured timing plan exceeds the competition deadline: {timing['serial_total_minutes']:g} > {timing['deadline_minutes']:g} min")
     return config
 
 
 def dosing_rows(config, inventory, design):
     validate_config(config)
     from .inventory import pair_id
+    from .design import validate_design
+    validate_design(config, inventory, design)
     if not design or len({int(d["round"]) for d in design}) != 1:
         raise ValueError("A dosing design must contain one nonempty round")
     round_number = int(design[0]["round"])
@@ -164,6 +188,22 @@ def dosing_rows(config, inventory, design):
         from .design import validate_round1_coverage
         validate_round1_coverage(config, inventory, design)
     return rows
+
+
+def validate_dosing(config, inventory, rows):
+    """Reject stale or edited numerical doses before quantification or feedback."""
+    expected = dosing_rows(config, inventory, rows)
+    numeric_fields = ("substrate_umol", "pd_umol", "ligand_a_umol", "ligand_b_umol", "sm_DCM_ul",
+                      "substrate_predosed_umol", "naphthalene_total_umol", "naphthalene_added_with_substrate_umol",
+                      "naphthalene_predosed_umol", "naphthalene_workup_umol", "internal_standard_final_uM",
+                      "ligand_a_ul", "ligand_b_ul", "pd_ul", "toluene_ul", "reaction_volume_ul",
+                      "temperature_C", "reaction_minutes", "workup_ul", "aliquot_ul", "diluent_ul")
+    for actual, calculated in zip(rows, expected):
+        for field in numeric_fields:
+            if field not in actual or not math.isclose(finite(actual[field], field), calculated[field],
+                                                     rel_tol=1e-9, abs_tol=1e-9):
+                raise ValueError(f"Dosing value differs from the campaign: {actual['sample_id']} {field}")
+    return expected
 
 
 def transfer_operations(config, inventory, rows):
@@ -262,7 +302,7 @@ def stock_plan(config, inventory, operations, reserve_round2=True):
         dead = config["stock_preparation"]["tube_dead_ul"]
         prepare = math.ceil(((usage[key] + reserve) * margin + dead) / 10) * 10
         records.append({"reagent": key, "name": row["name"], "solvent": "toluene",
-                        "stock_mM": liquid["ligand_stock_mM"], "round1_consumption_ul": usage[key],
+                        "stock_mM": liquid["ligand_stock_mM"], "protocol_consumption_ul": usage[key],
                         "round2_reserve_ul": reserve, "dead_ul": dead, "prepare_ul": prepare,
                         "mass_mg": corrected_mass(key, liquid["ligand_stock_mM"] * prepare * float(row["molecular_weight_g_mol"]) / 1e6),
                         "source_slot": row["source_slot"], "source_well": row["source_well"],
@@ -288,7 +328,7 @@ def stock_plan(config, inventory, operations, reserve_round2=True):
         concentration_mM = liquid[concentration] if concentration else ""
         mw = c.get("pd_molecular_weight_g_mol") if key == "Pd" else c.get("substrate_molecular_weight_g_mol") if key == "substrate_DCM" else liquid["naphthalene_molecular_weight_g_mol"] if key == "workup" else None
         records.append({"reagent": key, "name": key, "solvent": solvent, "stock_mM": concentration_mM,
-                        "round1_consumption_ul": usage[key], "round2_reserve_ul": reserve,
+                        "protocol_consumption_ul": usage[key], "round2_reserve_ul": reserve,
                         "dead_ul": dead, "prepare_ul": prepare,
                         "mass_mg": corrected_mass(key, concentration_mM * prepare * mw / 1e6) if mw else "",
                         "source_slot": 2, "source_well": well,
@@ -320,15 +360,21 @@ def schedule(config):
     t = config["timing"]
     counts = [config["design"]["round1_total"], config["design"]["round2_total"]]
     reaction = 2 * config["chemistry"]["reaction_minutes"]
-    injections = sum(counts) + t["additional_injections"]
+    extra = t["additional_injections"]
+    parallel = t.get("calibration_injections_during_round1_reaction", 0)
+    if type(extra) is not int or type(parallel) is not int or extra < 0:
+        raise ValueError("Injection counts must be nonnegative integers")
+    injections = sum(counts) + extra
     cycle = finite(t["injection_cycle_minutes"], "full injection cycle time", 2)
-    parallel = int(t.get("calibration_injections_during_round1_reaction", 0))
     if not 0 <= parallel <= t["additional_injections"] or parallel*cycle > config["chemistry"]["reaction_minutes"]:
         raise ValueError("Calibration overlap exceeds available first-reaction window")
     analysis = (injections-parallel) * cycle
     overhead = sum(finite(t[key], key, 0) for key in ["dosing_total_minutes", "evaporation_total_minutes",
                  "heat_ramp_total_minutes", "cooling_total_minutes", "workup_total_minutes",
                  "decision_minutes", "other_minutes"])
+    if t["heat_ramp_total_minutes"] < 2*config["chemistry"].get("thermal_equilibration_minutes", 0):
+        raise ValueError("Heating overhead omits the configured equilibration for both rounds")
+    finite(t["deadline_minutes"], "competition deadline", 0.00001)
     total = reaction + analysis + overhead
     return {"reaction_minutes": reaction, "lc_minutes": analysis, "overhead_minutes": overhead,
             "injections": injections, "minimum_reaction_plus_lc_minutes": reaction + analysis,

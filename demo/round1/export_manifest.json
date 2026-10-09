@@ -68,10 +68,19 @@
     "R1-065",
     "R1-066"
   ],
+  "config_digest": "73230bb433263ffb83a82efbd87bb06127a5f82b583b2918d2b99d4630005aea",
+  "inventory_digest": "0e5021ec567d89ac82b35d001dcb036e2685a50d3688f8115a9c24f42de9b413",
+  "design_digest": "af94eb7c0713ece8de519f82c79e9f5bf1d7be260d4258943100876f141b82fa",
+  "history_digest": null,
   "files": {
-    "dosing.csv": "ae6c9d4b1fdd132f6ed114c90dc3a9d3b2b2f60532d3ae76aa86dbd926d2f8a5",
-    "deck_loads.csv": "5b7ab5e06b6de6ec102c27151ab6a6bff3cf3149bffc77fcadc1ed0b6efb1236",
-    "dose_and_react.py": "79ddd0f4e76998c7d53e88fd577afa3e651103aed660e6a0edfa8e31ebead71d",
-    "workup.py": "cb633ded6e537ed65e1cf848784deda855393c599d091965387096f8ba74f317"
+    "deck_loads.csv": "5bebc833851e454f5e0c92c029487cc026eb9fe050d4108e13ca59f5a11157ce",
+    "dose_and_react.py": "2504720323102d51a8072ae66a9449417c2a0cd5c2eaa7f98480c65e788fbb11",
+    "dosing.csv": "bfb613f1a836e96b39a6170976b866a2b110d5d55be8b6b828170f669f05afce",
+    "lc_sequence.csv": "fe65588c793680dc1f0ee4701d892c6f8e671dbadc5e273c1c527b002f831162",
+    "operations.json": "a619b609f1476a04023ed9ef4026096e3c787a0213723acc374d1976910b6a36",
+    "round2_predose.csv": "498bc822820371b9c1371958aac618ba3027b59a51224b3c3edecd187c50895e",
+    "stock_preparation.csv": "617822cdaf6bdef94714e554aa4b0e84e0907a5ecc5a690ee3c839c57bfd6dcd",
+    "tip_budget.json": "56b1a3e426a84947ef61be9bed05e718c7780406501e1b8bdd52dc03df4ab969",
+    "workup.py": "64cea6a6916924477cbb7b4583a654b6fecbb7d757fc9bb43add333c63493c88"
   }
 }

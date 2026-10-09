@@ -2,7 +2,7 @@
 
 **Campaign folder:** ____________________ **Operator/date:** ____________________
 
-**Before use:** HTE must release the block/seal/mount, pipetting heights, extraction/IS recovery, LC method/matrix and a measured plan within 12 h. These remain pending. Use released files, not `demo/`.
+**Before use:** HTE must release the block/seal/mount, pipetting heights, extraction/IS recovery, LC method/matrix and a measured plan within 12 h. These remain pending; live export enforces LC settings and timing. Use released files.
 
 ## Before the clock
 

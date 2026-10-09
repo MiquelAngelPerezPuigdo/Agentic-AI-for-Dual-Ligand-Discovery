@@ -257,7 +257,7 @@ def build(output, edition):
                   Paragraph("Generated quantities from the real selected campaign take precedence over the synthetic demo. This handbook includes the procedures and outstanding decisions; it does not supply unmeasured geometry or analytical settings.", sheet["small"]),
                   PageBreak(), Paragraph("Contents", sheet["chapter"])])
     toc = TableOfContents()
-    toc.levelStyles = [ParagraphStyle("toc0", fontName="HTE-Bold", fontSize=9.6, leading=13, spaceBefore=6, textColor=BLUE),
+    toc.levelStyles = [ParagraphStyle("toc0", fontName="HTE-Bold", fontSize=9.6, leading=12, spaceBefore=3, textColor=BLUE),
                        ParagraphStyle("toc1", fontName="HTE", fontSize=8.8, leading=11.5, leftIndent=14, firstLineIndent=0, textColor=GRAY)]
     story.append(toc)
     parser = mistune.create_markdown(renderer="ast", plugins=["table"])

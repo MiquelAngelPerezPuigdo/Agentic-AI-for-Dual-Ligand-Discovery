@@ -19,9 +19,11 @@ The offline first-feedback-loop rehearsal completed successfully. All chemistry 
 | Physical protocol generation by watcher | Disabled because bench validations remain incomplete |
 | Optional GoLLuM execution | Actual attributed upstream optimizer, real embeddings, 61 uncensored synthetic pair priors, 465 finite acquisition values |
 | Local API key file | Mocked scoring reads `anthropic.key`; environment takes precedence; malformed entries stop without echoing contents; no key saved in outputs |
-| Local acceptance suite | 54 passed, zero failures/errors/skips |
+| Local acceptance suite | 88 passed, zero failures/errors/skips |
 
 Adversarial selector tests also cover a ligand whose every pair is below the Claude percentile floor, tight coverage within 16 wells, impossible coverage, and a manually edited design where the L17 reference is present but L17 is absent from all pairs. Coverage overrides are audited; missing pair coverage blocks export. The current offline loop uses the same mandatory coverage rule and completes all 31 ligands without extra wells.
+
+The repository audit added regression checks for calibration roles/levels/blanks, CSV/XLSX normalization, stale dosing, repeated pairs, ties, live LC/timing gates, file races, concurrent processes and interrupted API calls. No additional paid requests were made. See the [audit record](https://github.com/MiquelAngelPerezPuigdo/Agentic-AI-for-Dual-Ligand-Discovery/blob/main/docs/rehearsal-results.md#repository-audit).
 
 The campaign rehearsal also rejects any call to a GoLLuM yield optimizer and verifies that every second-round assignment uses the LLM selection method. GoLLuM-inspired initialization needs no pair yields.
 
@@ -42,3 +44,20 @@ On 9 October 2026, three small Opus 4.8 smoke tests each scored four pairs twice
 The earlier v2/v3 tests used a different prompt and output contract; their $0.3453 combined cost is included in that total. A conservative preflight stopped one earlier v3 attempt before generation. The scores-only offline feedback rehearsal was rerun successfully: all 66 synthetic first-round results reached the prompt, 400 untested pairs were scored in five mocked calls and ten new pairs were exported without substrate/IS redosing.
 
 These checks establish live model access, structured-response parsing and cache reuse for the smoke requests. The full 465-pair initial campaign has not been generated, and the model scores are not measured chemistry yields. The [prompt guide](scoring-prompt.md) supplies the identities, SI evidence and output contract. Raw responses and keys remain outside the public handoff.
+
+## Repository audit
+
+The 9 October review checked all source modules, tests, campaign inputs, documentation and generated handoffs. The 31 ligand identities were compared with the original workbook; molecular weights and phosphorus counts were checked from the structures. Re-extraction of the 18 same-substrate single-ligand SI yields reproduced the stored evidence. The exact first-round prompt preview matched the published prompt; its scores-only contract and prompt caching remain unchanged.
+
+The audit corrected these operational issues:
+
+- Live export now requires complete analytical settings and a measured schedule within the competition deadline, alongside bench validations.
+- Designs and imported dosing files are checked for the configured reference, unique pair identities, ligand coverage and all calculated quantities. Live round-two export requires the actual first-round history and rejects repeated pairs.
+- Calibration requires the configured five nonzero levels, measured zero blanks and independent checks. CSV/XLSX import rejects incomplete exports while preserving measured zero peak areas.
+- Equal scores/distances receive equal average ranks. Initial selection remains 50/50 Claude and embedding diversity; feedback selection remains entirely Claude.
+- Process locks prevent duplicate local jobs. Attempt records prevent automatic repayment after a charged request is interrupted. Completed input/output hashes detect changes, and existing or partially written protocol exports cannot be overwritten.
+- Production commands consistently use the campaign-specific configuration. The staff checklist remains two pages; the complete handbook retains the technical reference.
+
+All **88 tests passed**, including actual Opentrons simulation and the offline LC-to-Claude feedback loop. Additional direct demo and feedback rehearsals use synthetic results and mocked API responses. No new paid calls were made for this audit. The historical live smoke-test total remains approximately $0.4023.
+
+The full real first-batch ranking has not been generated. No physical chemistry or hardware run was performed. HTE must still validate glass hardware, solvent handling, IS recovery, extraction, the LC method and actual timing. The template's **729-minute** schedule exceeds the **720-minute** limit and is deliberately blocked from live release until measured timings fit.

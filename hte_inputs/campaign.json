@@ -136,6 +136,11 @@
     "internal_standard_area_tolerance_fraction": 0.3,
     "minimum_calibration_r2": 0.995,
     "calibration_check_tolerance_fraction": 0.15,
+    "calibration_requirements": {
+      "minimum_nonzero_levels": 5,
+      "require_zero_blank": true,
+      "minimum_independent_checks": 1
+    },
     "quantification_limit_uM": {
       "substrate": null,
       "product": null

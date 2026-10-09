@@ -88,7 +88,7 @@ def test_tip_capacity_source_ledger_and_predose(demo, cfg, inventory, reuse):
     assert sum(op["volume_ul_per_channel"]*op["channels"] for op in ops if op["stage"] == "sampling") == 66*20
     plan = stock_plan(cfg, inventory, ops)
     assert all(r["capacity_ok"] for r in plan)
-    assert all(r["prepare_ul"] >= r["round1_consumption_ul"]+r["round2_reserve_ul"]+r["dead_ul"] for r in plan)
+    assert all(r["prepare_ul"] >= r["protocol_consumption_ul"]+r["round2_reserve_ul"]+r["dead_ul"] for r in plan)
     assert "NO naphthalene" in next(r for r in plan if r["reagent"] == "LC_diluent")["solvent"]
     workup=next(r for r in plan if r["reagent"] == "workup")
     assert workup["stock_mM"] == 0
@@ -137,6 +137,8 @@ def test_preloaded_is_bench_validation_is_required(cfg):
     with pytest.raises(ValueError, match="pre_reaction_internal_standard_validated"):
         validate_config(cfg, live=True)
     cfg["validation"]["pre_reaction_internal_standard_validated"] = True
+    cfg["analytics"].update(method_id="VALIDATED_TEST_METHOD", channel="VALIDATED_TEST_DAD")
+    cfg["timing"]["dosing_total_minutes"] = 20  # Within the deadline in this unit-test fixture.
     validate_config(cfg, live=True)
 
 

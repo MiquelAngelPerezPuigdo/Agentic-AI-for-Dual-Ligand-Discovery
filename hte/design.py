@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import random
+from collections import Counter
 import numpy as np
 from rdkit import Chem, DataStructs
 from rdkit.Chem import rdFingerprintGenerator
@@ -53,6 +54,22 @@ def ranked_ids(rows, candidates):
     return [r["pair_id"] for r in sorted(rows, key=lambda r: (-float(r["mean_score"]), r["pair_id"]))]
 
 
+def rank_percentiles(values):
+    """Average ranks for ties, so IDs do not invent differences in model scores."""
+    order = sorted(values, key=lambda key: (-values[key], str(key)))
+    result = {}
+    start = 0
+    while start < len(order):
+        end = start+1
+        while end < len(order) and values[order[end]] == values[order[start]]:
+            end += 1
+        percentile = 1-(start+end-1)/2/max(1, len(order)-1)
+        for key in order[start:end]:
+            result[key] = percentile
+        start = end
+    return result
+
+
 def consensus_select(candidates, ranking, features, count, weight=0.5, minimum_percentile=0.25,
                      acquisition=None, required_ligands=()):
     """Greedy rank consensus, with mandatory ligand coverage before ordinary filling.
@@ -65,7 +82,7 @@ def consensus_select(candidates, ranking, features, count, weight=0.5, minimum_p
     n = len(candidates)
     if not 0 <= weight <= 1 or not 0 <= minimum_percentile <= 1 or not 0 <= count <= n:
         raise ValueError("Invalid consensus settings")
-    utility = {key: 1-i/max(1, n-1) for i, key in enumerate(order)}
+    utility = rank_percentiles({row["pair_id"]: float(row["mean_score"]) for row in ranking})
     features = np.asarray(features, dtype=float)
     if features.ndim != 2 or len(features) != n or not np.isfinite(features).all():
         raise ValueError("Features must be finite and match candidate order")
@@ -109,8 +126,7 @@ def consensus_select(candidates, ranking, features, count, weight=0.5, minimum_p
             phase = "consensus"
         if not choices:
             raise ValueError("Not enough candidates remain above the LLM percentile floor")
-        broad = sorted(rank_pool, key=lambda i: (-(fixed[i] if fixed is not None else distance[i]), candidates[i]["pair_id"]))
-        broad_rank = {i: 1-rank/max(1, len(broad)-1) for rank, i in enumerate(broad)}
+        broad_rank = rank_percentiles({i: fixed[i] if fixed is not None else distance[i] for i in rank_pool})
         choose = max(choices, key=lambda i: (weight*utility[candidates[i]["pair_id"]]+(1-weight)*broad_rank[i],
                                               utility[candidates[i]["pair_id"]], candidates[i]["pair_id"]))
         key = candidates[choose]["pair_id"]
@@ -158,6 +174,46 @@ def validate_round1_coverage(config, inventory, design):
         missing = [row["ligand_id"] for row in ligand_coverage(inventory, design) if not row["covered"]]
         if missing:
             raise ValueError("First-round pair design omits required ligands: "+", ".join(missing))
+
+
+def validate_design(config, inventory, rows, history=()):
+    """Validate edited CSVs as well as generated designs against the campaign."""
+    if not rows or len({str(row["round"]) for row in rows}) != 1:
+        raise ValueError("A design must contain one nonempty round")
+    round_number = str(rows[0]["round"])
+    if round_number not in ("1", "2") or len(rows) != config["design"][f"round{round_number}_total"]:
+        raise ValueError("Design count differs from the configured round")
+    controls = config["design"].get(f"round{round_number}_controls")
+    if controls is None:
+        raise ValueError("Specify the configured controls before making a design")
+    def signature(row):
+        return (row["kind"], row.get("ligand_a", ""), row.get("ligand_b", ""))
+    actual_controls = [row for row in rows if row["kind"] != "pair"
+                       or row.get("selection_method") == "specified_control"]
+    if Counter(map(signature, actual_controls)) != Counter(map(signature, controls)):
+        raise ValueError("Design controls differ from the configured reference/control wells")
+    experimental = [row for row in rows if row["kind"] == "pair"
+                    and row.get("selection_method") != "specified_control"]
+    ids = [row["pair_id"] for row in experimental]
+    if len(ids) != len(set(ids)):
+        raise ValueError("Experimental pairs must be distinct; repeats require explicit controls")
+    for row in rows:
+        a, b = row.get("ligand_a", ""), row.get("ligand_b", "")
+        if any(key and key not in inventory for key in (a, b)):
+            raise ValueError("Unknown ligand in design")
+        if row["kind"] in ("pair", "no_pd") and (not a or not b or a >= b or row["pair_id"] != pair_id(a, b)):
+            raise ValueError("Pair ID must match two different, canonically ordered ligands")
+        if row["kind"] == "single" and (not a or b or row.get("pair_id")):
+            raise ValueError("A single reference requires one ligand and an empty pair ID")
+    if round_number == "1":
+        validate_round1_coverage(config, inventory, rows)
+    elif history:
+        validate_design(config, inventory, history)
+        if str(history[0]["round"]) != "1":
+            raise ValueError("Round-two history must be the complete first round")
+        tested = {row["pair_id"] for row in history if row["kind"] == "pair"}
+        if tested.intersection(ids):
+            raise ValueError("Round two repeats a first-round experimental pair")
 
 
 def make_design(config, inventory, candidates, ranking, exploration, round_number, history=()):
@@ -208,4 +264,5 @@ def make_design(config, inventory, candidates, ranking, exploration, round_numbe
     random.Random(design["seed"] + round_number).shuffle(entries)
     for i, (row, well) in enumerate(zip(entries, wells()), 1):
         row.update(round=round_number, sample_id=f"R{round_number}-{i:03d}", well=well)
+    validate_design(config, inventory, entries, history)
     return entries
