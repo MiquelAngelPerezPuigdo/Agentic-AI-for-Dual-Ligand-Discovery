@@ -28,7 +28,9 @@ The runbook supplies the details and stop points. Exact glass hardware, extracti
 
 ## Where to put the Claude API key
 
-Use the key on the **operator laptop**, in the environment variable `ANTHROPIC_API_KEY`. The robot does not need it. The software does not automatically read `.env` files.
+Use the key on the **operator laptop**. Create `anthropic.key` in the repository root by copying `anthropic.key.example`, then replace its single placeholder line with your Anthropic API key. Paste only the key, with no quotes or `ANTHROPIC_API_KEY=` prefix. Scoring and the watcher read this file automatically when run from the repository root. The robot does not need it.
+
+`anthropic.key` is excluded from Git and the HTE handoff. Keep it on the operator laptop. An existing `ANTHROPIC_API_KEY` environment variable takes precedence; `.env` files are not automatically loaded.
 
 From the repository root, create/activate a Python environment and install the package:
 
@@ -36,21 +38,23 @@ From the repository root, create/activate a Python environment and install the p
 python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e .
+cp anthropic.key.example anthropic.key
+# Open anthropic.key in a text editor and replace the placeholder.
 zsh scripts/first-batch.zsh
 ```
 
-The script prompts for the key with hidden input and runs five real scoring calls over the 465 pairs, followed by the 50/50 score/diversity selection. Its output is `output/first-batch-<timestamp>/first_batch.csv`: **65 pair assignments plus one L17 tBuBrettPhos reference**, including well and sample IDs. Scoring files preserve hypotheses, individual scores, token usage and the cost preflight. These are paid calls within the configured estimated $20 campaign cap. No key belongs in a committed file or chat message.
+The script uses the local key file and runs five real scoring calls over the 465 pairs, followed by the 50/50 score/diversity selection. Its output is `output/first-batch-<timestamp>/first_batch.csv`: **65 pair assignments plus one L17 tBuBrettPhos reference**, including well and sample IDs. Scoring files preserve hypotheses, individual scores, token usage and the cost preflight. These are paid calls within the configured estimated $20 campaign cap. No key belongs in a committed file or chat message.
 
 The first batch can be selected before the organizers finalize hardware and LC details. Protocol/stock exports use the confirmed campaign configuration as described in the runbook. Do not use the synthetic demo ranking for experiments.
 
-If the key is already set in the terminal, the script uses it. For the later watcher, set it again in that terminal with hidden input:
+The later watcher can read the same `anthropic.key` file. As an alternative, set the key for a terminal with hidden input:
 
 ```zsh
 read -rs 'ANTHROPIC_API_KEY?Claude API key: '
 export ANTHROPIC_API_KEY
 ```
 
-The first-batch script keeps a prompted key in its own process; it does not save it to disk or set it in the parent terminal. Real model access is checked before scoring, and access failures stop the campaign without silently selecting another model.
+If no key file or environment variable exists, the first-batch script asks for hidden input. A prompted key stays in that process; it is not saved to disk or set in the parent terminal. Real model access is checked before scoring, and access failures stop the campaign without silently selecting another model.
 
 [Prompt caching](prompt-caching.md) is already enabled for both rounds. Shared context uses a one-hour lifetime, and the score command prints the provider-reported cache status. Inspect `scoring/cache_summary.json` for read/write tokens and estimated cost. No additional key setting is needed.
 

@@ -1,11 +1,11 @@
 #!/bin/zsh
-# Run after activating the Python environment. The key remains in this process.
+# Run after activating Python. Use local anthropic.key or hidden input.
 set -euo pipefail
 repo_root=${0:A:h:h}
 cd "$repo_root"
 campaign="${1:-output/first-batch-$(date +%Y%m%d-%H%M%S)}"
 
-if [[ -z ${ANTHROPIC_API_KEY:-} ]]; then
+if [[ -z ${ANTHROPIC_API_KEY:-} && ! -f anthropic.key ]]; then
   read -rs 'ANTHROPIC_API_KEY?Claude API key (hidden): '
   printf '\n'
   export ANTHROPIC_API_KEY
