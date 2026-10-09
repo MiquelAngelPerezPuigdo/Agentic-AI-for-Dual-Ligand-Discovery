@@ -1,5 +1,6 @@
 # Preserve CSV bytes: synthetic export markers include SHA-256 file hashes.
 *.csv -text whitespace=cr-at-eol
+*.pdf binary
 
 # Retain whitespace from the attributed upstream optimizer source.
 hte/vendor/gollum_optimizer.py whitespace=-blank-at-eol

@@ -4,6 +4,8 @@ Local OT-2 experiment planning and LC-to-LLM iteration for Pd-catalyzed desulfon
 
 Start with [organizer questions and first-batch setup](docs/start-here.md), the [operator runbook](docs/hte-runbook.md) and [HTE configuration checklist](docs/hte-questions.md).
 
+The [HTE PDF handbook](docs/HTE-operator-handbook.pdf) combines the operator instructions, stock/calibration plan and checklist. Its [editable sources and rebuild command](docs/updating-the-handbook.md) let us refresh it as the pipeline changes.
+
 ## Campaign
 
 - Round 1: 65 distinct ligand pairs and one tBuBrettPhos single-ligand reference.
