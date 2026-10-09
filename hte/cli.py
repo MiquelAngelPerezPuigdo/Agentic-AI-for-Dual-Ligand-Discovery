@@ -106,7 +106,7 @@ def main():
             print(f"Prompt cache: {cache['status']}; {cache['cache_hit_requests']}/{cache['requests']} "
                   f"requests reported hits, {cache['cache_read_input_tokens']} cached read tokens")
         elif args.command == "design":
-            from .design import consensus_select, make_design, pair_features
+            from .design import consensus_select, ligand_coverage, make_design, pair_features, round1_required_ligands
             from .adapters import load_embeddings
             if config["design"].get("require_lm_embeddings") and not args.embeddings:
                 raise ValueError("This campaign requires LM embeddings; pass --embeddings")
@@ -120,12 +120,21 @@ def main():
             config["design"]["exploration_backend"] = backend
             count = config["design"]["round1_total"]-len(controls)
             selection, trace = consensus_select(pairs, ranking, features, count,
-                           config["design"]["consensus_weight_llm"], config["design"]["minimum_llm_percentile"], acq)
+                           config["design"]["consensus_weight_llm"], config["design"]["minimum_llm_percentile"], acq,
+                           required_ligands=round1_required_ligands(config, inv))
             design = make_design(config, inv, pairs, ranking, selection, 1)
             write_csv(args.output, design)
             write_csv(str(args.output)+".selection.csv", trace)
-            write_json(str(args.output)+".metadata.json", {"config_digest": object_digest(config), "backend": backend, "pairs": count})
+            coverage = ligand_coverage(inv, design)
+            write_csv(str(args.output)+".ligand_coverage.csv", coverage)
+            write_json(str(args.output)+".metadata.json", {"config_digest": object_digest(config), "backend": backend, "pairs": count,
+                       "required_ligand_coverage": bool(round1_required_ligands(config, inv)),
+                       "ligands_covered_in_pairs": sum(row["covered"] for row in coverage),
+                       "missing_ligands": [row["ligand_id"] for row in coverage if not row["covered"]],
+                       "coverage_floor_overrides": sum(row["llm_floor_override"] for row in trace)})
             print(args.output)
+            print(f"Ligand coverage in pair wells: {sum(row['covered'] for row in coverage)}/{len(inv)}; "
+                  f"{sum(row['llm_floor_override'] for row in trace)} LLM-floor overrides")
         elif args.command == "export":
             from .protocols import export
             export(config, inv, read_csv(args.design), args.output, live=args.live)

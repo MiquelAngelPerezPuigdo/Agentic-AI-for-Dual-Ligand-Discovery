@@ -1,0 +1,32 @@
+ligand_id,name,pair_well_count,covered
+L01,MorDal Phos,6,True
+L02,racBINAP,4,True
+L03,RockPhos,3,True
+L04,Alphos,5,True
+L05,AdBrettPhos,8,True
+L06,Me4t-BuXPhos,5,True
+L07,AdJohnPhos,4,True
+L08,t-BuDave Phos,3,True
+L09,Xantphos,4,True
+L10,OTIPS DalPhos,5,True
+L11,Me3OMe-t-BuXPhos,3,True
+L12,VBRIDP,5,True
+L13,Trimesityl phosphine,3,True
+L14,CataCXium ABn,4,True
+L15,dppb,2,True
+L16,dcypf,5,True
+L17,t-BuBrettPhos,5,True
+L18,dtbpf,3,True
+L19,dppp,3,True
+L20,dppf,3,True
+L21,Xphos,2,True
+L22,RuPhos,6,True
+L23,SPhos,5,True
+L24,BrettPhos,3,True
+L25,MeDalPhos,3,True
+L26,Taniaphos SL-T001-2,5,True
+L27,tris(3-chlorophenyl)phosphine,5,True
+L28,BippyPhos,5,True
+L29,meCgPPh,3,True
+L30,N-XantPhos,6,True
+L31,Trixie Phos,4,True

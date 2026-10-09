@@ -1,14 +1,10 @@
 {
   "edition_date": "2026-10-09",
   "edition_timezone": "Europe/Zurich",
-  "source_sha256": "b408953043751b5e1929f4024375219c7ab6cb6adebf6623df634d96fbf8a546",
+  "source_sha256": "48034229994762b9fd8363f0122885843316c4c6107788738b164814430c962f",
   "sources": {
-    "docs/start-here.md": "372a8cf6d9609253e9c2c20021a6a489d4bfe68b4ced92ea2ff2f8635c9784d6",
-    "docs/hte-runbook.md": "1a905567bca563bd2240056031dd3b15978a7473b417aa97e957b877e5c723a9",
+    "docs/hte-staff-checklist.md": "1a1c7ef3f3ddc5351b1966c54f1e594abf450bd5526e91f6d17bbd5cec2259ff",
     "docs/stocks-and-calibration.md": "576b437556959af785038fea4b2d808359667531a5445f33017e405feef21efa",
-    "docs/hte-questions.md": "e75004cf7aae652e78b4169bf3fbff9fe1f376772d5eac3900e7830ed80d9d82",
-    "docs/prompt-caching.md": "5f3e61eee68201e7bf2f363b3207cb8b50afa4ff7aeedb29a13a4775c3095d31",
-    "docs/rehearsal-results.md": "77154f2a2201e125edf962676a0922bd38f0839066add2d79cd5842839de306c",
     "hte_inputs/campaign.json": "9c284208234111d0efc35573df6927c9ab8c7f8d669987cee9369930acb5f9f7",
     "hte_inputs/calibration_template.csv": "a97fe52a403e31f33b13fb070b01472947366969236116203da9ab4a17cf6c49",
     "hte_inputs/ligands.csv": "a24c186b814eaeb8b5950e7a059e21b8df001764e83b19f127a3da179f4a5876",
@@ -17,9 +13,10 @@
     "hte/planning.py": "22ff637ccf315d1ced2089ba67fbb8fe1c9114827cacfae5bbcab3fa5edb943c",
     "hte/io.py": "1a14023cd2aba6dc159edd1a8d5f1a8e6ea176f3e7cbd68a3d7837fb4bd297dc"
   },
-  "pdf_sha256": "7a8c11a85cba4a85b5e6875a2180772e848ada70776e51bdc6520834e0e95360",
-  "pages": 26,
-  "editable_master": "docs/*.md and hte_inputs/campaign.json; rebuild with scripts/build-hte-pdf.py",
+  "pdf_sha256": "e078d079a6c0fa0f594bac482a4cf4597be02433f2b4e531a0baa7ca1c61e0cf",
+  "pages": 2,
+  "editable_master": "docs/hte-staff-checklist.md; rebuild with scripts/build-hte-pdf.py --staff",
   "private_email_included": false,
-  "api_calls": 0
+  "api_calls": 0,
+  "staff_only": true
 }

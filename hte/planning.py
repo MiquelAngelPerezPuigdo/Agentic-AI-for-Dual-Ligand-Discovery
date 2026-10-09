@@ -160,6 +160,9 @@ def dosing_rows(config, inventory, design):
                "workup_ul": stocks["workup_ul"], "aliquot_ul": stocks["aliquot_ul"],
                "diluent_ul": stocks["diluent_ul"]}
         rows.append(row)
+    if round_number == 1:
+        from .design import validate_round1_coverage
+        validate_round1_coverage(config, inventory, design)
     return rows
 
 

@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 from .adapters import load_embeddings
 from .demo import fixtures, synthetic_config
-from .design import consensus_select, make_design
+from .design import consensus_select, ligand_coverage, make_design, round1_required_ligands
 from .inventory import candidates, load_inventory
 from .io import new_output, read_csv, read_json, write_csv, write_json
 from .protocols import export
@@ -98,10 +98,13 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
             os.environ, {"ANTHROPIC_API_KEY": "offline_rehearsal_placeholder"}):
         ranking = score_candidates(scoring_config, inventory, pairs, evidence, [], out/"initial_scoring")
         selected, trace = consensus_select(pairs, ranking, features, 65,
-            config["design"]["consensus_weight_llm"], config["design"]["minimum_llm_percentile"])
+            config["design"]["consensus_weight_llm"], config["design"]["minimum_llm_percentile"],
+            required_ligands=round1_required_ligands(config, inventory))
         design = make_design(config, inventory, pairs, ranking, selected, 1)
         write_csv(out/"round1_design.csv", design)
         write_csv(out/"round1_selection.csv", trace)
+        coverage = ligand_coverage(inventory, design)
+        write_csv(out/"round1_ligand_coverage.csv", coverage)
         dosing = export(config, inventory, design, out/"round1")
         calibration, peaks = fixtures(config, dosing)
         write_csv(out/"calibration.csv", calibration)
@@ -141,6 +144,9 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
               "live_cache_hits_verified": False,
               "actual_lm_embeddings": {"pairs": len(features), "dimensions": features.shape[1]},
               "mocked_requests": calls, "round1_pairs": len(tested), "round1_reference_wells": 1,
+              "round1_ligands_covered_in_pairs": sum(row["covered"] for row in coverage),
+              "round1_missing_ligands": [row["ligand_id"] for row in coverage if not row["covered"]],
+              "coverage_floor_overrides": sum(row["llm_floor_override"] for row in trace),
               "first_round_qc_pass": read_json(iteration/"analysis/qc_report.json")["batch_qc_pass"],
               "feedback_samples": len(results), "remaining_pairs_scored": 465-len(tested),
               "round2_pairs": len(next_dosing), "no_pair_repeats": no_repeats,

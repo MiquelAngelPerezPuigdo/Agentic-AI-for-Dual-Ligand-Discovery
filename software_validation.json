@@ -1,7 +1,7 @@
 {
-  "created_utc": "2026-10-09T07:25:52.464962+00:00",
+  "created_utc": "2026-10-09T07:40:50.328308+00:00",
   "tests": {
-    "tests": 46,
+    "tests": 54,
     "errors": 0,
     "failures": 0,
     "skipped": 0
@@ -72,7 +72,10 @@
     "mocked_requests": 10,
     "prompt_caching_enabled": true,
     "live_cache_hits_verified": false,
-    "no_internal_standard_redose": true
+    "no_internal_standard_redose": true,
+    "round1_ligands_covered_in_pairs": 31,
+    "round1_missing_ligands": [],
+    "coverage_floor_overrides": 0
   },
   "prompt_caching": {
     "enabled_by_default": true,
@@ -156,5 +159,33 @@
     "max_output_tokens": 10000,
     "full_campaign_token_count": 35647,
     "full_campaign_conservative_bound_usd": 6.2647
+  },
+  "first_round_ligand_coverage": {
+    "required": true,
+    "ligands_required": 31,
+    "scope": "pair wells only; the L17 single-ligand reference does not count",
+    "pair_wells": 65,
+    "reference_wells": 1,
+    "no_extra_experiments": true,
+    "selection": "coverage first, then ordinary 50/50 LLM-rank/embedding-diversity filling",
+    "llm_percentile_floor": 0.25,
+    "floor_override_for_coverage": true,
+    "overrides_audited": true,
+    "missing_ligands_rejected_by_design_export_and_feedback": true,
+    "adversarial_all_pairs_of_one_ligand_below_floor_tested": true,
+    "tight_16_well_complete_library_coverage_tested": true,
+    "offline_rehearsal_ligands_covered": 31,
+    "offline_rehearsal_missing_ligands": [],
+    "offline_rehearsal_floor_overrides": 0,
+    "real_first_batch_generated": false
+  },
+  "initialization_only_gollum": {
+    "embedding_diversity_needs_pair_yields": false,
+    "representation": "frozen symmetric T5-base embeddings of ligand names/SMILES and conditions",
+    "initial_batch_consensus": "50% Claude performance rank + 50% embedding-diversity rank with mandatory ligand coverage",
+    "round2_selector": "Claude scores only, with measured feedback",
+    "round2_uses_gollum": false,
+    "no_gollum_optimizer_calls_in_campaign_rehearsal_tested": true,
+    "source": "https://github.com/schwallergroup/gollum/blob/main/src/gollum/initialization/initializers.py"
   }
 }

@@ -53,8 +53,14 @@ def ranked_ids(rows, candidates):
     return [r["pair_id"] for r in sorted(rows, key=lambda r: (-float(r["mean_score"]), r["pair_id"]))]
 
 
-def consensus_select(candidates, ranking, features, count, weight=0.5, minimum_percentile=0.25, acquisition=None):
-    """Greedy rank consensus; all wells combine LLM preference and exploration."""
+def consensus_select(candidates, ranking, features, count, weight=0.5, minimum_percentile=0.25,
+                     acquisition=None, required_ligands=()):
+    """Greedy rank consensus, with mandatory ligand coverage before ordinary filling.
+
+    Coverage can override the LLM floor; every choice still uses both rank signals.
+    The campaign's complete unordered-pair library permits a two-ligand-per-well
+    completion bound. Final validation also rejects incomplete sparse selections.
+    """
     order = ranked_ids(ranking, candidates)
     n = len(candidates)
     if not 0 <= weight <= 1 or not 0 <= minimum_percentile <= 1 or not 0 <= count <= n:
@@ -63,9 +69,16 @@ def consensus_select(candidates, ranking, features, count, weight=0.5, minimum_p
     features = np.asarray(features, dtype=float)
     if features.ndim != 2 or len(features) != n or not np.isfinite(features).all():
         raise ValueError("Features must be finite and match candidate order")
-    available = [i for i, c in enumerate(candidates) if utility[c["pair_id"]] >= minimum_percentile]
-    if len(available) < count:
+    available = list(range(n))
+    above_floor = {i for i, c in enumerate(candidates) if utility[c["pair_id"]] >= minimum_percentile}
+    if len(above_floor) < count:
         raise ValueError("LLM percentile floor leaves fewer candidates than required")
+    missing = set(required_ligands)
+    candidate_ligands = {ligand for c in candidates for ligand in (c["ligand_a"], c["ligand_b"])}
+    if missing-candidate_ligands:
+        raise ValueError("Required ligands have no candidate pairs: "+", ".join(sorted(missing-candidate_ligands)))
+    if (len(missing)+1)//2 > count:
+        raise ValueError("Too few pair wells to cover all required ligands")
     if acquisition is not None:
         if set(acquisition) != set(order):
             raise ValueError("GoLLuM acquisition file must cover every candidate")
@@ -74,19 +87,77 @@ def consensus_select(candidates, ranking, features, count, weight=0.5, minimum_p
         fixed = None
     selected, trace = [], []
     distance = ((features-features.mean(axis=0))**2).sum(axis=1)
-    for _ in range(count):
-        broad = sorted(available, key=lambda i: (-(fixed[i] if fixed else distance[i]), candidates[i]["pair_id"]))
+    for step in range(count):
+        normal = [i for i in available if i in above_floor]
+        new = {i: missing.intersection((candidates[i]["ligand_a"], candidates[i]["ligand_b"]))
+               for i in available}
+        if missing:
+            slots_after = count-step-1
+            coverage = [i for i in available if new[i] and (len(missing)-len(new[i])+1)//2 <= slots_after]
+            preferred = [i for i in coverage if i in above_floor]
+            choices = preferred or coverage
+            if not choices:
+                raise ValueError("Cannot complete required ligand coverage within the allocated pair wells")
+            # Cover two new ligands where possible, using the same consensus to
+            # choose between equally useful coverage candidates.
+            most_new = max(len(new[i]) for i in choices)
+            choices = [i for i in choices if len(new[i]) == most_new]
+            rank_pool = normal if preferred else normal+[i for i in coverage if i not in above_floor]
+            phase = "coverage"
+        else:
+            choices = rank_pool = normal
+            phase = "consensus"
+        if not choices:
+            raise ValueError("Not enough candidates remain above the LLM percentile floor")
+        broad = sorted(rank_pool, key=lambda i: (-(fixed[i] if fixed is not None else distance[i]), candidates[i]["pair_id"]))
         broad_rank = {i: 1-rank/max(1, len(broad)-1) for rank, i in enumerate(broad)}
-        choose = max(available, key=lambda i: (weight*utility[candidates[i]["pair_id"]]+(1-weight)*broad_rank[i],
+        choose = max(choices, key=lambda i: (weight*utility[candidates[i]["pair_id"]]+(1-weight)*broad_rank[i],
                                               utility[candidates[i]["pair_id"]], candidates[i]["pair_id"]))
         key = candidates[choose]["pair_id"]
         selected.append(key)
+        newly_covered = sorted(new[choose])
+        missing.difference_update(newly_covered)
         trace.append({"pair_id": key, "llm_percentile": utility[key], "exploration_percentile": broad_rank[choose],
                       "consensus_score": weight*utility[key]+(1-weight)*broad_rank[choose],
-                      "exploration_method": "trained_gollum_acquisition" if fixed else "diversity_initialization"})
+                      "exploration_method": "trained_gollum_acquisition" if fixed is not None else "diversity_initialization",
+                      "selection_step": step+1, "selection_phase": phase,
+                      "new_ligands_covered": ";".join(newly_covered), "uncovered_ligands_remaining": len(missing),
+                      "llm_floor_override": choose not in above_floor})
         available.remove(choose)
-        distance = np.minimum(distance, ((features-features[choose])**2).sum(axis=1))
+        next_distance = ((features-features[choose])**2).sum(axis=1)
+        distance = next_distance if step == 0 else np.minimum(distance, next_distance)
+    if missing:
+        raise ValueError("Selection omitted required ligands: "+", ".join(sorted(missing)))
     return selected, trace
+
+
+def round1_required_ligands(config, inventory):
+    required = config["design"].get("require_all_ligands_in_round1_pairs", False)
+    if not isinstance(required, bool):
+        raise ValueError("require_all_ligands_in_round1_pairs must be true or false")
+    return set(inventory) if required else set()
+
+
+def ligand_coverage(inventory, design):
+    """Count pair wells only; single-ligand references do not satisfy coverage."""
+    counts = dict.fromkeys(inventory, 0)
+    for row in design:
+        if row["kind"] != "pair":
+            continue
+        for key in (row["ligand_a"], row["ligand_b"]):
+            if key not in counts:
+                raise ValueError("Unknown ligand in coverage report: "+key)
+            counts[key] += 1
+    return [{"ligand_id": key, "name": inventory[key]["name"], "pair_well_count": counts[key],
+             "covered": counts[key] > 0} for key in sorted(inventory)]
+
+
+def validate_round1_coverage(config, inventory, design):
+    required = round1_required_ligands(config, inventory)
+    if required:
+        missing = [row["ligand_id"] for row in ligand_coverage(inventory, design) if not row["covered"]]
+        if missing:
+            raise ValueError("First-round pair design omits required ligands: "+", ".join(missing))
 
 
 def make_design(config, inventory, candidates, ranking, exploration, round_number, history=()):
@@ -119,6 +190,8 @@ def make_design(config, inventory, candidates, ranking, exploration, round_numbe
     entries = []
     for key, method in selected:
         entries.append({**candidate_map[key], "kind": "pair", "selection_method": method})
+    if round_number == 1:
+        validate_round1_coverage(config, inventory, entries)
     for control in controls:
         row = {"pair_id": "", "ligand_a": "", "ligand_b": "", **control,
                "selection_method": "specified_control"}
