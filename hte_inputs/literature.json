@@ -6,24 +6,300 @@
   "published_general_conditions": "General SI procedure: Pd2(dba)3 5 mol% complex (10 mol% Pd atoms), ligand 20 mol%, toluene 0.2 M, 150 C, generally 18 h. PyFluor tBuBrettPhos example run 4 h. Table S2 itself does not specify every row's time/precatalyst separately.",
   "air_precedent": "SI S30: sealed PyFluor reaction with Pd2(dba)3 and tBuBrettPhos, toluene 0.1 M, 150 C, 4 h, 71% 19F NMR yield under air. This does not establish performance of Pd(COD)(DQ) at 95 C.",
   "yields": [
-    {"name": "XPhos", "cas": "564483-18-7", "yield_percent": 1},
-    {"name": "SPhos", "cas": "657408-07-6", "yield_percent": 1},
-    {"name": "RuPhos", "cas": "787618-22-8", "yield_percent": 1},
-    {"name": "Trimesityl phosphine", "cas": "23897-15-6", "yield_percent": 0},
-    {"name": "CataCXium ABn", "cas": "395116-70-8", "yield_percent": 3},
-    {"name": "t-BuBrettPhos", "cas": "1160861-53-9", "yield_percent": 77},
-    {"name": "vBRIDP", "cas": "384842-25-5", "yield_percent": 0},
-    {"name": "BrettPhos", "cas": "1070663-78-3", "yield_percent": 14},
-    {"name": "RockPhos", "cas": "1262046-34-3", "yield_percent": 63},
-    {"name": "t-BuDavePhos", "cas": "224311-49-3", "yield_percent": 0},
-    {"name": "Me4t-BuXPhos", "cas": "857356-94-6", "yield_percent": 72},
-    {"name": "AdJohnPhos", "cas": "224311-55-1", "yield_percent": 1},
-    {"name": "AdBrettPhos", "cas": "1160861-59-5", "yield_percent": 78},
-    {"name": "OTIPS DalPhos", "cas": "1384966-55-5", "yield_percent": 0},
-    {"name": "AlPhos", "cas": "1805783-60-1", "yield_percent": 62},
-    {"name": "MorDalPhos", "cas": "1237588-12-3", "yield_percent": 77},
-    {"name": "MeDalPhos", "cas": "1219080-77-9", "yield_percent": 22},
-    {"name": "Me3OMe-t-BuXPhos", "cas": "1359986-21-2", "yield_percent": 61}
+    {
+      "ligand_id": "L21",
+      "name": "XPhos",
+      "inventory_name": "Xphos",
+      "cas": "564483-18-7",
+      "yield_percent": 1,
+      "yield_basis": "19F NMR",
+      "si_selection_group": "Training",
+      "kraken_id": 1,
+      "source_table": "S2",
+      "source_page": "S35"
+    },
+    {
+      "ligand_id": "L23",
+      "name": "SPhos",
+      "inventory_name": "SPhos",
+      "cas": "657408-07-6",
+      "yield_percent": 1,
+      "yield_basis": "19F NMR",
+      "si_selection_group": "Training",
+      "kraken_id": 3,
+      "source_table": "S2",
+      "source_page": "S35"
+    },
+    {
+      "ligand_id": "L22",
+      "name": "RuPhos",
+      "inventory_name": "RuPhos",
+      "cas": "787618-22-8",
+      "yield_percent": 1,
+      "yield_basis": "19F NMR",
+      "si_selection_group": "Training",
+      "kraken_id": 4,
+      "source_table": "S2",
+      "source_page": "S35"
+    },
+    {
+      "ligand_id": "L13",
+      "name": "Trimesityl phosphine",
+      "inventory_name": "Trimesityl phosphine",
+      "cas": "23897-15-6",
+      "yield_percent": 0,
+      "yield_basis": "19F NMR",
+      "si_selection_group": "Predicted",
+      "kraken_id": 60,
+      "source_table": "S2",
+      "source_page": "S35"
+    },
+    {
+      "ligand_id": "L14",
+      "name": "CataCXium ABn",
+      "inventory_name": "CataCXium ABn",
+      "cas": "395116-70-8",
+      "yield_percent": 3,
+      "yield_basis": "19F NMR",
+      "si_selection_group": "Training",
+      "kraken_id": 64,
+      "source_table": "S2",
+      "source_page": "S35"
+    },
+    {
+      "ligand_id": "L17",
+      "name": "t-BuBrettPhos",
+      "inventory_name": "t-BuBrettPhos",
+      "cas": "1160861-53-9",
+      "yield_percent": 77,
+      "yield_basis": "19F NMR",
+      "si_selection_group": "Training",
+      "kraken_id": 89,
+      "source_table": "S2",
+      "source_page": "S35"
+    },
+    {
+      "ligand_id": "L12",
+      "name": "vBRIDP",
+      "inventory_name": "VBRIDP",
+      "cas": "384842-25-5",
+      "yield_percent": 0,
+      "yield_basis": "19F NMR",
+      "si_selection_group": "Predicted",
+      "kraken_id": 91,
+      "source_table": "S2",
+      "source_page": "S35"
+    },
+    {
+      "ligand_id": "L24",
+      "name": "BrettPhos",
+      "inventory_name": "BrettPhos",
+      "cas": "1070663-78-3",
+      "yield_percent": 14,
+      "yield_basis": "19F NMR",
+      "si_selection_group": "Training",
+      "kraken_id": 102,
+      "source_table": "S2",
+      "source_page": "S35"
+    },
+    {
+      "ligand_id": "L03",
+      "name": "RockPhos",
+      "inventory_name": "RockPhos",
+      "cas": "1262046-34-3",
+      "yield_percent": 63,
+      "yield_basis": "19F NMR",
+      "si_selection_group": "Training",
+      "kraken_id": 103,
+      "source_table": "S2",
+      "source_page": "S35"
+    },
+    {
+      "ligand_id": "L08",
+      "name": "t-BuDavePhos",
+      "inventory_name": "t-BuDave Phos",
+      "cas": "224311-49-3",
+      "yield_percent": 0,
+      "yield_basis": "19F NMR",
+      "si_selection_group": "Predicted",
+      "kraken_id": 281,
+      "source_table": "S2",
+      "source_page": "S35"
+    },
+    {
+      "ligand_id": "L06",
+      "name": "Me4t-BuXPhos",
+      "inventory_name": "Me4t-BuXPhos",
+      "cas": "857356-94-6",
+      "yield_percent": 72,
+      "yield_basis": "19F NMR",
+      "si_selection_group": "Predicted",
+      "kraken_id": 291,
+      "source_table": "S2",
+      "source_page": "S35"
+    },
+    {
+      "ligand_id": "L07",
+      "name": "AdJohnPhos",
+      "inventory_name": "AdJohnPhos",
+      "cas": "224311-55-1",
+      "yield_percent": 1,
+      "yield_basis": "19F NMR",
+      "si_selection_group": "Predicted",
+      "kraken_id": 306,
+      "source_table": "S2",
+      "source_page": "S35"
+    },
+    {
+      "ligand_id": "L05",
+      "name": "AdBrettPhos",
+      "inventory_name": "AdBrettPhos",
+      "cas": "1160861-59-5",
+      "yield_percent": 78,
+      "yield_basis": "19F NMR",
+      "si_selection_group": "Training",
+      "kraken_id": 347,
+      "source_table": "S2",
+      "source_page": "S35"
+    },
+    {
+      "ligand_id": "L10",
+      "name": "OTIPS DalPhos",
+      "inventory_name": "OTIPS DalPhos",
+      "cas": "1384966-55-5",
+      "yield_percent": 0,
+      "yield_basis": "19F NMR",
+      "si_selection_group": "Predicted",
+      "kraken_id": 349,
+      "source_table": "S2",
+      "source_page": "S35"
+    },
+    {
+      "ligand_id": "L04",
+      "name": "AlPhos",
+      "inventory_name": "Alphos",
+      "cas": "1805783-60-1",
+      "yield_percent": 62,
+      "yield_basis": "19F NMR",
+      "si_selection_group": "Training",
+      "kraken_id": 369,
+      "source_table": "S2",
+      "source_page": "S35"
+    },
+    {
+      "ligand_id": "L01",
+      "name": "MorDalPhos",
+      "inventory_name": "MorDal Phos",
+      "cas": "1237588-12-3",
+      "yield_percent": 77,
+      "yield_basis": "19F NMR",
+      "si_selection_group": "Predicted",
+      "kraken_id": 371,
+      "source_table": "S2",
+      "source_page": "S35"
+    },
+    {
+      "ligand_id": "L25",
+      "name": "MeDalPhos",
+      "inventory_name": "MeDalPhos",
+      "cas": "1219080-77-9",
+      "yield_percent": 22,
+      "yield_basis": "19F NMR",
+      "si_selection_group": "Predicted",
+      "kraken_id": 527,
+      "source_table": "S2",
+      "source_page": "S35"
+    },
+    {
+      "ligand_id": "L11",
+      "name": "Me3OMe-t-BuXPhos",
+      "inventory_name": "Me3OMe-t-BuXPhos",
+      "cas": "1359986-21-2",
+      "yield_percent": 61,
+      "yield_basis": "19F NMR",
+      "si_selection_group": "Training",
+      "kraken_id": 534,
+      "source_table": "S2",
+      "source_page": "S35"
+    }
   ],
-  "thesis_method": "Repository src/prompts.py: supplied mechanism -> ligand properties -> complete scores; config.py sets five repetitions. Dual-ligand benchmark src/ligand_data.py concerns decarbonylative Suzuki coupling. Its ligand-relay analogy motivates hypotheses but cannot supply yields or a proven fluorination relay mechanism."
+  "thesis_method": "Repository src/prompts.py: supplied mechanism -> ligand properties -> complete scores; config.py sets five repetitions. Dual-ligand benchmark src/ligand_data.py concerns decarbonylative Suzuki coupling. Its ligand-relay analogy motivates hypotheses but cannot supply yields or a proven fluorination relay mechanism.",
+  "source_document_sha256": "e42878c3074dde11b46d37b7f341d49e35add254e7099f99124dffbced519396",
+  "extraction": {
+    "page_label": "S35",
+    "pdf_page_number": 35,
+    "table": "S2",
+    "rows": 18,
+    "matching_key": "CAS",
+    "method": "pypdf text extraction of Table S2 only",
+    "selection_group_meaning": "Training/Predicted describes selection; all listed yields are measured 19F NMR yields"
+  },
+  "ligands_without_table_S2_data": [
+    {
+      "ligand_id": "L02",
+      "name": "racBINAP",
+      "yield_percent": null
+    },
+    {
+      "ligand_id": "L09",
+      "name": "Xantphos",
+      "yield_percent": null
+    },
+    {
+      "ligand_id": "L15",
+      "name": "dppb",
+      "yield_percent": null
+    },
+    {
+      "ligand_id": "L16",
+      "name": "dcypf",
+      "yield_percent": null
+    },
+    {
+      "ligand_id": "L18",
+      "name": "dtbpf",
+      "yield_percent": null
+    },
+    {
+      "ligand_id": "L19",
+      "name": "dppp",
+      "yield_percent": null
+    },
+    {
+      "ligand_id": "L20",
+      "name": "dppf",
+      "yield_percent": null
+    },
+    {
+      "ligand_id": "L26",
+      "name": "Taniaphos SL-T001-2",
+      "yield_percent": null
+    },
+    {
+      "ligand_id": "L27",
+      "name": "tris(3-chlorophenyl)phosphine",
+      "yield_percent": null
+    },
+    {
+      "ligand_id": "L28",
+      "name": "BippyPhos",
+      "yield_percent": null
+    },
+    {
+      "ligand_id": "L29",
+      "name": "meCgPPh",
+      "yield_percent": null
+    },
+    {
+      "ligand_id": "L30",
+      "name": "N-XantPhos",
+      "yield_percent": null
+    },
+    {
+      "ligand_id": "L31",
+      "name": "Trixie Phos",
+      "yield_percent": null
+    }
+  ],
+  "condition_assignment_note": "The general screening procedure is on S20 (150 C, Pd2(dba)3, 20 mol% ligand, toluene 0.2 M, N2 glovebox; generally 18 h, PyFluor example 4 h). Table S2 does not state row-specific time and precursor deviations. Its t-BuBrettPhos value is 77%; the separate S20 PyFluor example is 83% and the S30 air example is 71%. Preserve these separate experiments."
 }

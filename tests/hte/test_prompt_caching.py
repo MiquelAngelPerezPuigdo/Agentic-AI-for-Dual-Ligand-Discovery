@@ -8,7 +8,8 @@ import pytest
 
 from hte.inventory import candidates, load_inventory
 from hte.io import object_digest, read_json
-from hte.scoring import cost_breakdown, prompt_cache_settings, score_candidates
+from hte.scoring import (cost_breakdown, export_prompt_preview, parse_scores,
+                         prompt_cache_settings, prompt_context, score_candidates)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -146,3 +147,70 @@ def test_disabled_cache_omits_breakpoints(tmp_path, monkeypatch):
     score_candidates(config, inventory, pairs, {}, [], tmp_path)
     assert all("cache_control" not in block for request in calls
                for block in request["messages"][0]["content"])
+
+
+def test_inventory_ids_structures_and_extracted_si_values_are_explicit():
+    config, inventory, pairs = inputs()
+    evidence = read_json(ROOT/"hte_inputs/literature.json")
+    payload, _ = prompt_context(config, inventory, pairs, evidence, [])
+    ligands = {row["ligand_id"]: row for row in payload["ligands"]}
+    expected = {"L01":77, "L03":63, "L04":62, "L05":78, "L06":72, "L07":1,
+                "L08":0, "L10":0, "L11":61, "L12":0, "L13":0, "L14":3,
+                "L17":77, "L21":1, "L22":1, "L23":1, "L24":14, "L25":22}
+    assert len(ligands) == 31 and len(evidence["yields"]) == 18
+    for key, row in ligands.items():
+        assert row["name"] == inventory[key]["name"] and row["smiles"] == inventory[key]["smiles"]
+        assert row["same_substrate_table_S2_yield_percent"] == expected.get(key)
+    assert ligands["L08"]["same_substrate_table_S2_yield_percent"] == 0
+    assert ligands["L09"]["same_substrate_table_S2_yield_percent"] is None
+    for row in pairs:
+        assert payload["candidate_catalog"][row["pair_id"]] == {
+            "ligand_a": row["ligand_a"], "ligand_b": row["ligand_b"]}
+
+
+def test_prompt_preview_matches_real_sdk_contract_without_using_credentials(tmp_path, monkeypatch):
+    calls, counted = install_mock(monkeypatch)
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    config, inventory, pairs = inputs()
+    evidence = read_json(ROOT/"hte_inputs/literature.json")
+    export_prompt_preview(config, inventory, pairs, evidence, [], tmp_path/"preview")
+    assert not calls and not counted
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "synthetic_cache_fixture")
+    score_candidates(config, inventory, pairs, evidence, [], tmp_path/"scoring")
+    exported = []
+    for index in range(len(calls)):
+        filename = f"repeat-{index:02d}-batch-0000.request.json"
+        request = read_json(tmp_path/"preview"/filename)
+        assert read_json(tmp_path/"scoring"/filename) == request
+        exported.append(request)
+    assert all(call in exported for call in calls)
+    for call in calls:
+        candidates_block = json.loads(call["messages"][0]["content"][-1]["text"])
+        assert candidates_block["candidate_count"] == len(pairs)
+    assert read_json(tmp_path/"preview/preview_manifest.json")["api_calls"] == 0
+
+
+def test_strict_output_contract_rejects_unusable_responses():
+    invalid = [[], {"hypothesis":"ok", "scores":{"a":"42"}},
+               {"hypothesis":"ok", "scores":{"a":True}}, {"hypothesis":"ok", "scores":{"a":None}},
+               {"hypothesis":"", "scores":{"a":42}}, {"hypothesis":[], "scores":{"a":42}},
+               {"hypothesis":"word "*201, "scores":{"a":42}}, {"hypothesis":"ok", "scores":[]},
+               {"hypothesis":"ok", "scores":{"a":42}, "extra":"field"},
+               {"hypothesis":"ok", "scores":{"a":101}}, {"hypothesis":"ok", "scores":{"a":float('nan')}}]
+    for value in invalid:
+        with pytest.raises(ValueError):
+            parse_scores(json.dumps(value), ["a"])
+    values, _ = parse_scores('{"hypothesis":"mechanistic summary", "scores":{"a":42.5}}', ["a"])
+    assert values == {"a":42.5}
+
+
+def test_identity_mismatch_and_bad_pair_mapping_stop_prompt_construction():
+    config, inventory, pairs = inputs()
+    evidence = read_json(ROOT/"hte_inputs/literature.json")
+    evidence["yields"][0]["ligand_id"] = "L01"
+    with pytest.raises(ValueError, match="ID/CAS"):
+        prompt_context(config, inventory, pairs, evidence, [])
+    bad_pairs = copy.deepcopy(pairs)
+    bad_pairs[0]["ligand_a"] = "L31"
+    with pytest.raises(ValueError, match="Candidate pair"):
+        prompt_context(config, inventory, bad_pairs, {}, [])
