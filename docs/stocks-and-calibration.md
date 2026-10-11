@@ -19,14 +19,14 @@ Each **25 µL** dose provides **25.00 µmol SM and 0.250 µmol naphthalene**. **
 
 ## Catalyst stocks and volume balance
 
-Prepare ligands in the glovebox at **20.0 mM in toluene**, and Pd(COD)(DQ) at **40.0 mM in toluene**. Confirm every stock is homogeneous at dispensing temperature; solubility of SM does not establish catalyst-stock solubility. Use `stock_preparation.csv` for masses, separate assay corrections, margins and worst-case round-two reserves. Keep bulk reserves in compatible capped containers; load only the generated source quantities.
+Prepare ligands in the glovebox at **20.0 mM in toluene**, and Pd(COD)(DQ) at **40.0 mM in toluene**. Use ordinary plastic tube racks for these stocks; metal blocks are reserved for reaction vials. No separate catalyst-solubility study is requested. Use `stock_preparation.csv` for masses, separate assay corrections, margins and worst-case round-two reserves. Keep bulk reserves in compatible capped containers; load only the generated source quantities.
 
 | Reaction | SM/IS stock, µL | Ligand A, µL | Ligand B, µL | Pd, µL | Total, µL |
 |---|---:|---:|---:|---:|---:|
 | Pair | 25 | 75 | 75 | 75 | 250 |
 | L17 single reference | 25 | 150 | 0 | 75 | 250 |
 
-This gives **0.1 M SM, 6 mol% of each ligand and 12 mol% Pd**; the reference uses 12 mol% L17. No extra neat toluene is needed with these stocks. A p300 single plus p300 eight-channel is proposed for efficient transfers; HTE must confirm installation and volume accuracy. The generator also supports p20 single with split transfers when explicitly configured, but timing must be remeasured.
+This gives **0.1 M SM, 6 mol% of each ligand and 12 mol% Pd**; the reference uses 12 mol% L17. No extra neat toluene is needed with these stocks. A p300 single plus p300 eight-channel is proposed for efficient transfers; Both pipettes are listed as available; fit them locally and use the generated matching tip racks. The generator also supports p20 single with split transfers when explicitly configured, but timing must be remeasured.
 
 ## Workup and sample dilution
 

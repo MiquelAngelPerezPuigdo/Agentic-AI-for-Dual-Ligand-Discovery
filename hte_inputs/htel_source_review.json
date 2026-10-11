@@ -142,5 +142,15 @@
       "Pd": 40
     },
     "catalyst_solubility_confirmed": false
+  },
+  "user_hardware_clarification": {
+    "stock_racks": "ordinary plastic tube racks",
+    "metal_blocks": "reaction only",
+    "requested_reaction_heating": "conventional off-robot hotplate with magnetic stirring and small stir bar per vial",
+    "request_confirmed_by_htel": false,
+    "current_generator_heating": "OT-2 heater-shaker in slot 10",
+    "concurrent_first_round_vials": 60,
+    "separate_catalyst_solubility_study_requested": false,
+    "pipette_setup_is_routine_local_mounting": true
   }
 }

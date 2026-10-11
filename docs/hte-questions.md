@@ -6,10 +6,10 @@ Record confirmed answers in the campaign configuration before live release.
 
 ## Hardware and scale
 
-- Clarify Para-Dox availability and send the missing **24 × 4 mL vial-rack JSON**. The ZIP defines a plastic plate.
-- Confirm **60 sealed vials heated together at 95 °C for four hours**, uniform heating/mixing and thermal lag. Sequential 24-vial holds exceed the deadline. Provide a second predose array.
+- Can sealed vials run **off the OT-2 on conventional hotplate/magnetic stirrer(s)**, with aluminum blocks and small stir bars?
+- Heat/stir **60 vials together at 95 °C for four hours** (three concurrent 24-vial blocks if needed), then ten vials. Confirm hotplates, stirring at 250 µL, bar size and thermal lag.
 - Confirm **250 µL reaction + 250 µL workup**, vial depth/bottom, mounting, deck/cap clearance, shaking and toluene/SO2-compatible sealing.
-- Current 96-array protocols require 9 mm pitch. A 24-vial setup requires revised maps/pipettes/heating.
+- Send vial-rack JSON; current 9 mm/on-robot protocols need revision for 24-vial/external heating. Account for stir bars at aspiration.
 
 ## LC method, export and calibration
 
@@ -23,10 +23,10 @@ Record confirmed answers in the campaign configuration before live release.
 ## Stocks, sampling and local operation
 
 - Validate **greater than 1 mm** bottom clearance and immersion at the lowest volume, organic-solvent pipetting, noncontact stock-tip reuse and fresh sample-tip conditioning.
-- Confirm stock assays/solubility, glovebox ligand preparation/storage and capped reserves. Store combined SM/IS stock in glass; validate reservoir contact with toluene.
+- Use plastic stock racks, glovebox preparation, capped reserves and 20/40 mM ligand/Pd recipes; no separate solubility study.
 - Validate IS recovery, homogeneous extraction and LC matrix. Confirm sample 1% HCOOH compatibility with 0.1% mobile phase.
-- Confirm proposed p300 single/eight-channel mounts, 20/40 mM ligand/Pd solubility, capped 25 µL predose storage, cooling and LC shaking. Manual actions occur at pauses.
+- Fit p300 single left/eight-channel right. Confirm capped predose storage, cooling and LC shaking; manual actions at pauses.
 - Time handling/full cycle and reserve instruments: provisional 686 min, 34 min margin.
 - Confirm local Anthropic access, private key delivery and stock preparation/initial selection outside the clock.
 
-Due **21 October AoE**: code/workflow. Confirm Builderbase/Wednesday slot. Slides/results: **30 October 12:00 CET**, ten-minute talk. GitHub final: 6 November.
+See [organizer deadlines](organizer-updates.md); workflow due **21 October AoE**.

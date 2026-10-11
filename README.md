@@ -66,7 +66,7 @@ Analytical sample transfers use fresh same-well tip conditioning, slower flow an
 
 The proposed fivefold scale uses 250 µL reaction plus 250 µL workup, keeping final LC product/IS concentrations unchanged. Workup and LC diluent each use two capacity-checked reservoir channels.
 
-The glass-block definition and mounting/seal, solvent delivery, extraction, analytical method and timing still require HTE verification. The requested **1.7-minute LC method** gives a provisional **686-minute** schedule, leaving 34 minutes within the 720-minute limit if 1.7 minutes is the full cycle. Method suitability, cycle overhead and simultaneous glass-vial heating remain unconfirmed. [Organizer update and compliance](docs/organizer-updates.md).
+Stock tubes use ordinary plastic racks; metal blocks are only for reaction vials. We now request conventional off-robot heating with magnetic stirring. Current generated reaction files still use the OT-2 heater-shaker and will need adaptation if HTEL confirms that alternative. Exact rack/stir-bar geometry, simultaneous heating, solvent delivery, extraction, analytical method and timing remain pending. The requested **1.7-minute LC method** gives a provisional **686-minute** schedule, leaving 34 minutes within the 720-minute limit if 1.7 minutes is the full cycle. Method suitability, cycle overhead and simultaneous glass-vial heating remain unconfirmed. [Organizer update and compliance](docs/organizer-updates.md).
 
 ## Contents
 
