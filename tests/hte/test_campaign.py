@@ -346,3 +346,70 @@ def test_paid_call_schema_resume_and_cap(cfg, inventory, tmp_path, monkeypatch):
     with pytest.raises(ValueError,match="exceeds budget"):
         score_candidates(cfg,inventory,pairs,{},[],tmp_path/"capped")
     assert len(calls)==2
+
+
+@pytest.mark.parametrize('field,value', [
+    ('sample_prewet_cycles', -1), ('sample_prewet_cycles', 6),
+    ('sample_prewet_cycles', True), ('sample_flow_rate_multiplier', 0),
+    ('sample_flow_rate_multiplier', 1.1), ('sample_flow_rate_multiplier', float('nan')),
+    ('sample_air_gap_rate', 0), ('sample_air_gap_rate', 1.1),
+    ('sample_aspirate_height_mm', 0), ('sample_pause_seconds', -1),
+])
+def test_invalid_analytical_handling_settings_stop_export(cfg, field, value):
+    cfg['pipetting'][field] = value
+    with pytest.raises(ValueError):
+        validate_config(cfg)
+
+
+def test_sample_surplus_must_not_exhaust_the_extract(cfg):
+    cfg['liquids']['aliquot_ul'] = 100
+    with pytest.raises(ValueError, match='exhausts the extract'):
+        validate_config(cfg)
+
+
+@pytest.mark.parametrize('round_name,cycles', [('round1', 2), ('round2', 0)])
+def test_sample_conditioning_conserves_volume_and_stays_in_its_own_well(
+        demo, cfg, inventory, tmp_path, round_name, cycles):
+    import re
+    from hte.protocols import export
+    from opentrons.simulate import simulate
+
+    cfg['pipetting'].update(sample_prewet_cycles=cycles, sample_aspirate_height_mm=2)
+    out = tmp_path/round_name
+    export(cfg, inventory, read_csv(demo/(round_name+'_design.csv')), out)
+    operations = [r for r in read_json(out/'operations.json') if r['stage'] == 'sampling']
+    with (out/'workup.py').open() as handle:
+        commands, _ = simulate(handle)
+    starts = [i for i, c in enumerate(commands)
+              if re.match(r'(reaction_samples|R[12]-\d+):', c['payload'].get('text', ''))]
+    assert len(starts) == len(operations)
+    for n, op in enumerate(operations):
+        end = starts[n+1] if n+1 < len(starts) else len(commands)
+        payloads = [c['payload'] for c in commands[starts[n]:end]]
+        liquid = [p for p in payloads if p.get('text', '').startswith('Aspirating')
+                  and p['location'].point.z < p['location'].labware.as_well().top().point.z]
+        dispenses = [p for p in payloads if p.get('text', '').startswith('Dispensing')]
+        assert len(liquid) == cycles+1
+        assert len(dispenses) == cycles+1
+        source = liquid[0]['location'].labware.as_well()
+        assert source.well_name == op['source_well']
+        assert all(p['location'].labware.as_well() == source for p in liquid)
+        assert all(p['location'].point.z == pytest.approx(source.bottom(2).point.z) for p in liquid)
+        returns = dispenses[:-1]
+        assert all(p['location'].labware.as_well() == source for p in returns)
+        assert all(p['location'].point == source.bottom(2).point for p in returns)
+        assert sum(p['volume'] for p in liquid)-sum(p['volume'] for p in returns) == pytest.approx(
+            op['volume_ul_per_channel']+cfg['pipetting']['surplus_ul'])
+        destination = dispenses[-1]['location'].labware.as_well()
+        assert destination.well_name == op['destination_wells'][0]
+        assert destination.parent != source.parent
+        assert dispenses[-1]['volume']-cfg['pipetting']['air_gap_ul'] == pytest.approx(
+            op['volume_ul_per_channel'])
+        assert not op['retained_tip_from_previous'] and not op['retain_tip_for_next']
+        assert any(p.get('text', '').startswith('Dropping tip') for p in payloads)
+        flow = cfg['pipetting'][op['pipette']+'_aspirate_ul_s']*cfg['pipetting']['sample_flow_rate_multiplier']
+        assert all(float(re.search(r'at ([\d.]+) uL/sec', p['text'])[1]) == pytest.approx(flow) for p in liquid)
+        air = [p for p in payloads if p.get('text', '').startswith('Aspirating') and p not in liquid]
+        assert len(air) == 1
+        assert float(re.search(r'at ([\d.]+) uL/sec', air[0]['text'])[1]) == pytest.approx(
+            flow*cfg['pipetting']['sample_air_gap_rate'])

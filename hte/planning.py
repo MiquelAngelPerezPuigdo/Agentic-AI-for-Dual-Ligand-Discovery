@@ -71,6 +71,21 @@ def validate_config(config, live=False):
         finite(config["pipetting"][name], name, 0)
     if type(config["pipetting"]["prewet_cycles"]) is not int or not 0 <= config["pipetting"]["prewet_cycles"] <= 5:
         raise ValueError("Choose 0-5 prewet cycles")
+    p = config["pipetting"]
+    if type(p["sample_prewet_cycles"]) is not int or not 0 <= p["sample_prewet_cycles"] <= 5:
+        raise ValueError("Choose 0-5 sample prewet cycles")
+    finite(p["sample_aspirate_height_mm"], "sample aspiration height", 0.1)
+    finite(p["sample_flow_rate_multiplier"], "sample flow-rate multiplier", 0.000001, 1)
+    finite(p["sample_air_gap_rate"], "sample air-gap rate", 0.000001, 1)
+    finite(p["sample_pause_seconds"], "sample aspiration/dispense pause", 0)
+    # Fresh sample tips retain a surplus on every split transfer. There must
+    # remain enough extract to keep the tip immersed on the final aspiration.
+    # Partial columns always use p20: use its capacity for the worst case.
+    partial_capacity = 20-p["air_gap_ul"]-p["surplus_ul"]
+    withdrawals = liquid["aliquot_ul"]+math.ceil(liquid["aliquot_ul"]/partial_capacity)*p["surplus_ul"]
+    extract_volume = c["reaction_volume_ul"]+liquid["workup_ul"]
+    if withdrawals >= extract_volume:
+        raise ValueError("Sample transfer plus discarded surplus exhausts the extract; reduce the aliquot")
     n0 = c["substrate_molarity_M"]*c["reaction_volume_ul"]
     preloaded_is, _, final_is = internal_standard_amounts(config, n0)
     if config["analytics"]["calibration_mode"] == "internal_standard" and abs(final_is-config["analytics"]["internal_standard_final_uM"]) > 1e-6:

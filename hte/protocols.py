@@ -54,17 +54,37 @@ def run(protocol: protocol_api.ProtocolContext):
                 pipette.pick_up_tip()
         source = labware[op["source_slot"]][op["source_well"]]
         target = labware[op["destination_slot"]][op["destination_wells"][0]]
+        sampling = op["stage"] == "sampling"
+        multiplier = p["sample_flow_rate_multiplier"] if sampling else 1
+        pipette.flow_rate.aspirate = p[op["pipette"]+"_aspirate_ul_s"] * multiplier
+        pipette.flow_rate.dispense = p[op["pipette"]+"_dispense_ul_s"] * multiplier
+        source_height = p["sample_aspirate_height_mm"] if sampling else p["aspirate_height_mm"]
+        source_location = source.bottom(source_height)
+        aspirate_pause = p["sample_pause_seconds"] if sampling else p["post_aspirate_seconds"]
+        dispense_pause = p["sample_pause_seconds"] if sampling else p["post_dispense_seconds"]
         protocol.comment(op["reagent"] + ": " + str(op["volume_ul_per_channel"]) + " uL per channel into " + ",".join(op["destination_wells"]))
-        if fresh and op["source_slot"] != 3:
-            for _ in range(p["prewet_cycles"]):
-                pipette.aspirate(op["aspirated_ul_per_channel"], source.bottom(p["aspirate_height_mm"]))
-                pipette.dispense(op["aspirated_ul_per_channel"], source.bottom(p["aspirate_height_mm"]))
-        pipette.aspirate(op["aspirated_ul_per_channel"], source.bottom(p["aspirate_height_mm"]))
-        protocol.delay(seconds=p["post_aspirate_seconds"])
+        cycles = p["sample_prewet_cycles"] if sampling else p["prewet_cycles"]
+        if fresh and (sampling or op["source_slot"] != 3):
+            # Condition only in this source, before visiting a destination.
+            # Sample channels return to their own reaction well; no air gaps or blowouts here.
+            for _ in range(cycles):
+                pipette.aspirate(op["aspirated_ul_per_channel"], source_location)
+                if sampling:
+                    protocol.delay(seconds=aspirate_pause)
+                pipette.dispense(op["aspirated_ul_per_channel"], source_location)
+                if sampling:
+                    protocol.delay(seconds=dispense_pause)
+        pipette.aspirate(op["aspirated_ul_per_channel"], source_location)
+        protocol.delay(seconds=aspirate_pause)
+        # API 2.18 has no air_gap(rate=...). Temporarily change its aspiration flow.
+        liquid_aspirate_flow = pipette.flow_rate.aspirate
+        if sampling:
+            pipette.flow_rate.aspirate = liquid_aspirate_flow * p["sample_air_gap_rate"]
         pipette.air_gap(p["air_gap_ul"])
+        pipette.flow_rate.aspirate = liquid_aspirate_flow
         pipette.dispense(op["volume_ul_per_channel"] + p["air_gap_ul"],
                          target.top(p["dispense_above_top_mm"]))
-        protocol.delay(seconds=p["post_dispense_seconds"])
+        protocol.delay(seconds=dispense_pause)
         # Retained reverse-pipetting surplus is discarded. No touching, mixing, or return to source.
         if not op["retain_tip_for_next"]:
             pipette.drop_tip()
@@ -133,10 +153,10 @@ def run(protocol: protocol_api.ProtocolContext):
         hs.set_and_wait_for_shake_speed(CONFIG["liquids"]["mix_rpm"])
         protocol.delay(minutes=2)
         off_heater()
-        protocol.pause("Inspect extraction for phase separation, precipitates and recovery. Do not resume sampling if the validated homogeneous matrix is not achieved.")
+        protocol.pause("Inspect extraction: one homogeneous phase, no precipitate, no aspiration-path bubbles. Use the validated mixing-to-sampling interval; remix under the approved method if delayed. Do not sample one phase or assume pipette prewetting dissolves solids. Confirm sample-specific bottom clearance and immersion at the lowest remaining volume.")
         transfer_stage("dilution")
         transfer_stage("sampling")
-        protocol.pause("Seal LC plate and shake 2 minutes with the HTE-validated LC plate/adapter method. Submit only after mixing and transfer to the autosampler. Use lc_sequence.csv to retain well/sample mapping.")
+        protocol.pause("Seal LC plate and shake 2 minutes with the HTE-validated LC plate/adapter method. Let bubbles clear for the validated interval; check seal, autosampler needle height and minimum remaining sample volume. Submit only after mixing. Use lc_sequence.csv for well/sample mapping. If a transfer was uncertain, quarantine its LC well and prepare a fresh documented dilution; never top it up or restart the whole workup.")
 '''
 
 
