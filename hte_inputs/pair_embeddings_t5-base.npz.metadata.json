@@ -1,9 +1,18 @@
 {
   "model": "google-t5/t5-base",
   "revision": "a9723ea7f1b39c1eae772870f3b547bf6ef7e6c1",
-  "pairs": 465,
+  "pairs": 435,
   "dimensions": 768,
-  "inventory_digest": "0e5021ec567d89ac82b35d001dcb036e2685a50d3688f8115a9c24f42de9b413",
+  "inventory_digest": "0d3102a4069dbaf45a7a9cd4df16150ac4553d4bcc017360b2f76e9568512e7d",
   "method": "mean masked token pooling; mean of both ligand orders; frozen T5 encoder",
-  "template_conditions": "PyFluor 0.1 M, toluene, 95 C, 6+6 mol% ligands, 12 mol% Pd"
+  "template_conditions": "PyFluor 0.1 M, toluene, 95 C, 6+6 mol% ligands, 12 mol% Pd",
+  "excluded_ligand_ids": [
+    "L07"
+  ],
+  "subset_of": {
+    "pairs": 465,
+    "sha256": "037260e791efc8918a7d8a0fefc606cf8cdc7ed524fe7b30258a0ed0d418922f",
+    "inventory_digest": "0e5021ec567d89ac82b35d001dcb036e2685a50d3688f8115a9c24f42de9b413"
+  },
+  "subset_method": "Exact row selection from previously generated model embeddings; no new model inference"
 }

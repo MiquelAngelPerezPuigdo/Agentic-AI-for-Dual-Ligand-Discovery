@@ -4,7 +4,7 @@ import argparse
 from pathlib import Path
 
 from .io import object_digest, read_csv, read_json, write_csv, write_json
-from .inventory import candidates, import_workbook, load_inventory
+from .inventory import candidates, campaign_inventory, import_workbook
 
 
 def main():
@@ -31,6 +31,7 @@ def main():
     e.add_argument("--design", required=True)
     e.add_argument("--output", required=True)
     e.add_argument("--live", action="store_true")
+    e.add_argument("--stage", choices=("all", "dose_and_react", "workup"), default="all")
     e.add_argument("--history", help="First-round dosing.csv; required for live round-two export")
     a = commands.add_parser("analyze")
     for key in ["dosing", "peaks", "ready", "calibration", "output"]:
@@ -38,6 +39,11 @@ def main():
     n = commands.add_parser("normalize")
     n.add_argument("input")
     n.add_argument("--output", required=True)
+    n.add_argument("--injections", help="Explicit Chromeleon inj_no to sample_id/method_id mapping CSV")
+    cal = commands.add_parser("calibration-from-peaks", help="Build and QC calibration from normalized authentic-standard peaks")
+    cal.add_argument("--peaks", required=True)
+    cal.add_argument("--plan", default="hte_inputs/calibration_template.csv")
+    cal.add_argument("--output", required=True)
     ready = commands.add_parser("complete-export", help="Invoke only after every expected LC injection completed")
     for key in ("peaks", "dosing", "output"):
         ready.add_argument("--"+key, required=True)
@@ -83,7 +89,7 @@ def main():
             print(run(args.output, args.inventory, args.config, args.evidence, args.embeddings))
             return
         config = read_json(args.config)
-        inv = load_inventory(args.inventory)
+        inv = campaign_inventory(args.inventory, config)
         pairs = candidates(inv)
         if args.command == "check":
             from .planning import schedule, validate_config, required_validations
@@ -140,11 +146,14 @@ def main():
         elif args.command == "export":
             from .protocols import export
             export(config, inv, read_csv(args.design), args.output, live=args.live,
-                   history=read_csv(args.history) if args.history else None)
+                   history=read_csv(args.history) if args.history else None, stage=args.stage)
             print(args.output)
         elif args.command == "normalize":
             from .analytics import normalize_export
-            normalize_export(config, args.input, args.output)
+            normalize_export(config, args.input, args.output, injections_path=args.injections)
+        elif args.command == "calibration-from-peaks":
+            from .analytics import calibration_from_peaks
+            calibration_from_peaks(config, args.peaks, args.plan, args.output)
         elif args.command == "complete-export":
             from .analytics import complete_export
             complete_export(config, args.peaks, args.dosing, args.output)

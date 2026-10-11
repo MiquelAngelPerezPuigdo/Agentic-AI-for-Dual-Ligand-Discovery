@@ -9,7 +9,7 @@ from hte.cli import main
 from hte.demo import synthetic_config
 from hte.design import (consensus_select, ligand_coverage, make_design,
                         round1_required_ligands)
-from hte.inventory import candidates, load_inventory
+from hte.inventory import candidates, campaign_inventory, load_inventory
 from hte.io import read_csv, read_json, write_csv
 from hte.planning import dosing_rows
 
@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[2]
 @pytest.fixture(scope="module")
 def library():
     config = synthetic_config(ROOT/"hte_inputs/campaign.json")
-    inventory = load_inventory(ROOT/"hte_inputs/ligands.csv", confirmed=True)
+    inventory = campaign_inventory(ROOT/"hte_inputs/ligands.csv", config, confirmed=True)
     pairs = candidates(inventory)
     features = load_embeddings(ROOT/"hte_inputs/pair_embeddings_t5-base.npz", inventory, pairs)
     # Adversarial scores: every pair containing L31 is below the ordinary floor.
@@ -32,19 +32,19 @@ def library():
 
 def test_low_scoring_ligand_is_covered_without_extra_wells_or_pair_repeats(library):
     config, inventory, pairs, features, ranking = library
-    selected, trace = consensus_select(pairs, ranking, features, 65, required_ligands=inventory)
+    selected, trace = consensus_select(pairs, ranking, features, 59, required_ligands=inventory)
     design = make_design(config, inventory, pairs, ranking, selected, 1)
     coverage = ligand_coverage(inventory, design)
-    assert len(selected) == len(set(selected)) == 65 and len(design) == 66
-    assert len(coverage) == 31 and all(row["pair_well_count"] >= 1 for row in coverage)
-    assert sum(row["pair_well_count"] for row in coverage) == 130
+    assert len(selected) == len(set(selected)) == 59 and len(design) == 60
+    assert len(coverage) == 30 and all(row["pair_well_count"] >= 1 for row in coverage)
+    assert sum(row["pair_well_count"] for row in coverage) == 118
     overrides = [row for row in trace if row["llm_floor_override"]]
     assert len(overrides) == 1 and "L31" in overrides[0]["new_ligands_covered"].split(";")
     assert overrides[0]["llm_percentile"] < 0.25 and overrides[0]["selection_phase"] == "coverage"
     assert trace[-1]["uncovered_ligands_remaining"] == 0
     assert all(row["consensus_score"] == pytest.approx(
         0.5*row["llm_percentile"]+0.5*row["exploration_percentile"]) for row in trace)
-    assert consensus_select(pairs, ranking, features, 65, required_ligands=inventory) == (selected, trace)
+    assert consensus_select(pairs, ranking, features, 59, required_ligands=inventory) == (selected, trace)
 
 
 def test_tight_complete_library_budget_overrides_star_shaped_llm_preference(library):
@@ -59,7 +59,7 @@ def test_tight_complete_library_budget_overrides_star_shaped_llm_preference(libr
 
 
 @pytest.mark.parametrize("count,required,message", [
-    (15, [f"L{i:02d}" for i in range(1, 32)], "Too few pair wells"),
+    (14, list(set(f"L{i:02d}" for i in range(1, 32))-{ "L07" }), "Too few pair wells"),
     (65, ["L99"], "no candidate pairs"),
     (0, ["L01"], "Too few pair wells"),
 ])
@@ -72,7 +72,7 @@ def test_impossible_coverage_stops_instead_of_omitting_ligands(library, count, r
 def test_reference_does_not_replace_pair_coverage_and_manual_design_is_rejected(library):
     config, inventory, pairs, _, ranking = library
     missing_l17 = [row["pair_id"] for row in pairs if "L17" not in
-                   (row["ligand_a"], row["ligand_b"])][:65]
+                   (row["ligand_a"], row["ligand_b"])][:59]
     with pytest.raises(ValueError, match="omits required ligands:.*L17"):
         make_design(config, inventory, pairs, ranking, missing_l17, 1)
     legacy = copy.deepcopy(config)
@@ -94,12 +94,12 @@ def test_cli_exports_auditable_coverage_and_override_reports(library, tmp_path, 
         "--embeddings", str(ROOT/"hte_inputs/pair_embeddings_t5-base.npz"), "--output", str(output)])
     main()
     coverage = read_csv(str(output)+".ligand_coverage.csv")
-    assert len(read_csv(output)) == 66 and len(coverage) == 31
+    assert len(read_csv(output)) == 60 and len(coverage) == 30
     assert all(int(row["pair_well_count"]) >= 1 for row in coverage)
     metadata = read_json(str(output)+".metadata.json")
-    assert metadata["ligands_covered_in_pairs"] == 31 and not metadata["missing_ligands"]
+    assert metadata["ligands_covered_in_pairs"] == 30 and not metadata["missing_ligands"]
     assert metadata["required_ligand_coverage"] and metadata["coverage_floor_overrides"] == 1
-    assert "31/31" in capsys.readouterr().out
+    assert "30/30" in capsys.readouterr().out
 
 
 def test_coverage_setting_requires_a_boolean(library):

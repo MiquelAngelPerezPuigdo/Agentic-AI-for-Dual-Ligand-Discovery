@@ -12,7 +12,7 @@ from unittest.mock import patch
 from .adapters import load_embeddings
 from .demo import fixtures, synthetic_config
 from .design import consensus_select, ligand_coverage, make_design, round1_required_ligands
-from .inventory import candidates, load_inventory
+from .inventory import candidates, campaign_inventory
 from .io import new_output, read_csv, read_json, write_csv, write_json
 from .protocols import export
 from .scoring import prompt_cache_settings, score_candidates
@@ -31,7 +31,7 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
     scoring_config = copy.deepcopy(config)
     scoring_config["demo"] = False
     scoring_config["validation"] = {key: False for key in config["validation"]}
-    inventory = load_inventory(inventory_path, confirmed=True)
+    inventory = campaign_inventory(inventory_path, config, confirmed=True)
     pairs = candidates(inventory)
     features = load_embeddings(embeddings_path, inventory, pairs)
     evidence = read_json(evidence_path)
@@ -97,7 +97,8 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
     with patch.object(anthropic, "Anthropic", OfflineClient), patch.dict(
             os.environ, {"ANTHROPIC_API_KEY": "offline_rehearsal_placeholder"}):
         ranking = score_candidates(scoring_config, inventory, pairs, evidence, [], out/"initial_scoring")
-        selected, trace = consensus_select(pairs, ranking, features, 65,
+        count = config["design"]["round1_total"]-len(config["design"]["round1_controls"])
+        selected, trace = consensus_select(pairs, ranking, features, count,
             config["design"]["consensus_weight_llm"], config["design"]["minimum_llm_percentile"],
             required_ligands=round1_required_ligands(config, inventory))
         design = make_design(config, inventory, pairs, ranking, selected, 1)
@@ -132,10 +133,10 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
     results = read_csv(iteration/"analysis/results.csv")
     tested = {row["pair_id"] for row in design if row["kind"] == "pair"}
     no_repeats = not tested.intersection(row["pair_id"] for row in next_dosing)
-    no_redose = all(float(row["sm_DCM_ul"]) == 0 for row in next_dosing)
+    no_redose = all(float(row["sm_stock_ul"]) == 0 for row in next_dosing)
     no_is_redose = all(float(row["naphthalene_added_with_substrate_umol"]) == 0 and
                        float(row["naphthalene_workup_umol"]) == 0 for row in next_dosing)
-    if len(next_dosing) != 10 or not no_repeats or not no_redose:
+    if len(next_dosing) != config["design"]["round2_total"] or not no_repeats or not no_redose:
         raise ValueError("Rehearsal next batch violated campaign constraints")
     if config["liquids"].get("naphthalene_addition_stage") == "substrate_stock" and not no_is_redose:
         raise ValueError("Rehearsal redosed the preloaded internal standard")
@@ -148,7 +149,7 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
               "round1_missing_ligands": [row["ligand_id"] for row in coverage if not row["covered"]],
               "coverage_floor_overrides": sum(row["llm_floor_override"] for row in trace),
               "first_round_qc_pass": read_json(iteration/"analysis/qc_report.json")["batch_qc_pass"],
-              "feedback_samples": len(results), "remaining_pairs_scored": 465-len(tested),
+              "feedback_samples": len(results), "remaining_pairs_scored": len(pairs)-len(tested),
               "round2_pairs": len(next_dosing), "no_pair_repeats": no_repeats,
               "no_substrate_redose": no_redose, "no_internal_standard_redose": no_is_redose,
               "incomplete_export_ignored": not ignored,

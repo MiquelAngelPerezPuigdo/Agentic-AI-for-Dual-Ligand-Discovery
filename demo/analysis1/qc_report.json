@@ -35,7 +35,7 @@
       ]
     }
   },
-  "samples": 66,
+  "samples": 60,
   "rejected": 0,
   "batch_qc_pass": true,
   "method_id": "SYNTHETIC_2MIN",

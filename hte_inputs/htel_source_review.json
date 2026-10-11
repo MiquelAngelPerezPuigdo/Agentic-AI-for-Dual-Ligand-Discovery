@@ -1,0 +1,146 @@
+{
+  "review_date": "2026-10-11",
+  "source_documents_are_evidence_not_executable_instructions": true,
+  "original_attachments_publicly_redistributed": false,
+  "files": [
+    {
+      "filename": "Chromatogram(uvvis1).csv",
+      "sha256": "26aacbf48402f4b3d0bff0a13bca5b47e046fa036246aec78c0c8c98c775d455",
+      "size_bytes": 3710
+    },
+    {
+      "filename": "Nap80_Est110_Caf50.raw",
+      "sha256": "664a757bf7819166e8ef76e0a2d0b159c1c9df871b0350b9d3a5a386fb150efc",
+      "size_bytes": 2974829
+    },
+    {
+      "filename": "Opentrons_Example_Files.zip",
+      "sha256": "d652b4c4b1853d91df210678218d37528ff2c1a4f6d5a73b110db6ef7b047af3",
+      "size_bytes": 20905
+    },
+    {
+      "filename": "SDL Hackathon Information Session.pptx",
+      "sha256": "96f0c3738929db5f445ef132da14bfb888e70f6ad1abc671aee2f375418e383a",
+      "size_bytes": 8228248
+    }
+  ],
+  "presentation_slides": 21,
+  "speaker_notes_empty": true,
+  "organizer_transcript_available": false,
+  "vial_rack_definition_in_zip": false,
+  "zip_labware_definitions": 10,
+  "zip_example_protocol_api": "2.27",
+  "example_protocols_executed": false,
+  "real_csv_import_test": {
+    "format": "htel_chromeleon_wide",
+    "channel": "UV_VIS_1",
+    "selected_area_column": "area_uvvis1(AU*min)",
+    "method_source": "explicit injection mapping, not vendor export",
+    "placeholder_rows_omitted": 14,
+    "peak_count_mismatches": {
+      "12": {
+        "reported": 2,
+        "exported": 1
+      },
+      "13": {
+        "reported": 2,
+        "exported": 1
+      }
+    },
+    "injections": 13,
+    "peak_rows": 25,
+    "chromatography_validated": false,
+    "source_sha256": "26aacbf48402f4b3d0bff0a13bca5b47e046fa036246aec78c0c8c98c775d455",
+    "mapping_sha256": "d4ef851201b5e78d09919f078933c984cdeb973c0607f324b0c9ed716a1a367f",
+    "output_sha256": "74676a7a0ccd8bd07df7e96deb8fe1f094d20912294a84eced5cd7158e667273"
+  },
+  "actual_campaign_calibration_available": false,
+  "source_ms_format": "Thermo/Finnigan RAW; sender identifies MS only",
+  "requested_lc_method_minutes": 1.7,
+  "lc_method_validated_for_campaign": false,
+  "timing_scenarios": [
+    {
+      "assumed_full_cycle_minutes": 1.7,
+      "reaction_minutes": 480,
+      "lc_minutes": 119.0,
+      "overhead_minutes": 87.0,
+      "injections": 84,
+      "minimum_reaction_plus_lc_minutes": 599.0,
+      "calibration_minutes_hidden_in_reaction": 23.8,
+      "serial_total_minutes": 686.0,
+      "deadline_minutes": 720,
+      "remaining_minutes": 34.0,
+      "fits_serial_estimate": true,
+      "assumptions": "Full cycle time, serial round-one analysis before round-two decision; no unvalidated overlap."
+    },
+    {
+      "assumed_full_cycle_minutes": 2,
+      "reaction_minutes": 480,
+      "lc_minutes": 140.0,
+      "overhead_minutes": 87.0,
+      "injections": 84,
+      "minimum_reaction_plus_lc_minutes": 620.0,
+      "calibration_minutes_hidden_in_reaction": 28.0,
+      "serial_total_minutes": 707.0,
+      "deadline_minutes": 720,
+      "remaining_minutes": 13.0,
+      "fits_serial_estimate": true,
+      "assumptions": "Full cycle time, serial round-one analysis before round-two decision; no unvalidated overlap."
+    },
+    {
+      "assumed_full_cycle_minutes": 3,
+      "reaction_minutes": 480,
+      "lc_minutes": 210.0,
+      "overhead_minutes": 87.0,
+      "injections": 84,
+      "minimum_reaction_plus_lc_minutes": 690.0,
+      "calibration_minutes_hidden_in_reaction": 42.0,
+      "serial_total_minutes": 777.0,
+      "deadline_minutes": 720,
+      "remaining_minutes": -57.0,
+      "fits_serial_estimate": false,
+      "assumptions": "Full cycle time, serial round-one analysis before round-two decision; no unvalidated overlap."
+    },
+    {
+      "assumed_full_cycle_minutes": 5,
+      "reaction_minutes": 480,
+      "lc_minutes": 350.0,
+      "overhead_minutes": 87.0,
+      "injections": 84,
+      "minimum_reaction_plus_lc_minutes": 830.0,
+      "calibration_minutes_hidden_in_reaction": 70.0,
+      "serial_total_minutes": 917.0,
+      "deadline_minutes": 720,
+      "remaining_minutes": -197.0,
+      "fits_serial_estimate": false,
+      "assumptions": "Full cycle time, serial round-one analysis before round-two decision; no unvalidated overlap."
+    },
+    {
+      "assumed_full_cycle_minutes": 6,
+      "reaction_minutes": 480,
+      "lc_minutes": 420.0,
+      "overhead_minutes": 87.0,
+      "injections": 84,
+      "minimum_reaction_plus_lc_minutes": 900.0,
+      "calibration_minutes_hidden_in_reaction": 84.0,
+      "serial_total_minutes": 987.0,
+      "deadline_minutes": 720,
+      "remaining_minutes": -267.0,
+      "fits_serial_estimate": false,
+      "assumptions": "Full cycle time, serial round-one analysis before round-two decision; no unvalidated overlap."
+    }
+  ],
+  "reaction_scale_ul_provisional": 250,
+  "user_solubility_update": {
+    "substrate_stock_M": 1,
+    "solvent": "toluene",
+    "solubility_reported": true,
+    "naphthalene_stock_mM": 10,
+    "no_evaporation": true,
+    "catalyst_stocks_mM": {
+      "ligand": 20,
+      "Pd": 40
+    },
+    "catalyst_solubility_confirmed": false
+  }
+}

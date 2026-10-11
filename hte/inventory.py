@@ -82,6 +82,29 @@ def pair_id(a, b):
     return "__".join(sorted((a, b)))
 
 
+def campaign_inventory(path, config, confirmed=False):
+    """Keep stable workbook IDs while excluding explicitly unavailable reagents."""
+    inventory = load_inventory(path, confirmed=confirmed)
+    excluded = config["design"].get("excluded_ligands", [])
+    if not isinstance(excluded, list):
+        raise ValueError("excluded_ligands must be a list of ID/CAS/reason records")
+    seen = set()
+    for entry in excluded:
+        key = entry.get("ligand_id")
+        if key not in inventory or key in seen or entry.get("cas") != inventory[key]["cas"]:
+            raise ValueError("Excluded ligand must have a unique matching inventory ID and CAS")
+        if not entry.get("reason"):
+            raise ValueError("Excluded ligand requires an availability reason")
+        seen.add(key)
+    controls = [*(config["design"]["round1_controls"] or []), *(config["design"]["round2_controls"] or [])]
+    if any(control.get(k) in seen for control in controls for k in ("ligand_a", "ligand_b")):
+        raise ValueError("An excluded ligand cannot be a campaign reference")
+    active = {key: row for key, row in inventory.items() if key not in seen}
+    if len(active) < 2:
+        raise ValueError("At least two available ligands are required")
+    return active
+
+
 def candidates(inventory):
     return [{"pair_id": pair_id(a, b), "ligand_a": a, "ligand_b": b}
             for a, b in combinations(sorted(inventory), 2)]

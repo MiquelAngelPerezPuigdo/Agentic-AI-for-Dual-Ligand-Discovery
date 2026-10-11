@@ -178,6 +178,9 @@ def validate_round1_coverage(config, inventory, design):
 
 def validate_design(config, inventory, rows, history=()):
     """Validate edited CSVs as well as generated designs against the campaign."""
+    excluded = {entry["ligand_id"] for entry in config["design"].get("excluded_ligands", [])}
+    if any(row.get(k) in excluded for row in rows for k in ("ligand_a", "ligand_b")):
+        raise ValueError("Design uses an excluded unavailable ligand")
     if not rows or len({str(row["round"]) for row in rows}) != 1:
         raise ValueError("A design must contain one nonempty round")
     round_number = str(rows[0]["round"])

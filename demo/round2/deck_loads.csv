@@ -1,19 +1,4 @@
 protocol,reagent,source_slot,source_well,load_ul,stock_mM,naphthalene_stock_mM,solvent
-dose_and_react,L02,1,B1,130,30,,toluene
-dose_and_react,L03,1,C1,120,30,,toluene
-dose_and_react,L08,1,D2,120,30,,toluene
-dose_and_react,L11,1,C3,130,30,,toluene
-dose_and_react,L13,1,A4,120,30,,toluene
-dose_and_react,L18,1,B5,120,30,,toluene
-dose_and_react,L19,1,C5,130,30,,toluene
-dose_and_react,L20,1,D5,120,30,,toluene
-dose_and_react,L21,1,A6,120,30,,toluene
-dose_and_react,L22,1,B6,120,30,,toluene
-dose_and_react,L24,1,D6,140,30,,toluene
-dose_and_react,L27,4,C1,120,30,,toluene
-dose_and_react,L30,4,B2,130,30,,toluene
-dose_and_react,L31,4,C2,120,30,,toluene
-dose_and_react,Pd,2,A2,1110,60,,toluene
-dose_and_react,toluene,2,A3,1210,,,toluene
-workup,workup,2,A4,1510,0,,"1:1 water/acetonitrile, 1% v/v formic acid; NO naphthalene"
-workup,LC_diluent,2,A5,2810,,,"1:1 water/acetonitrile, 1% v/v formic acid; NO naphthalene"
+dose_and_react,Pd,2,A2,2260,40,,toluene
+workup,workup,2,A4,4010,0,,"1:1 water/acetonitrile, 1% v/v formic acid; NO naphthalene"
+workup,LC_diluent,2,A5,3310,,,"1:1 water/acetonitrile, 1% v/v formic acid; NO naphthalene"

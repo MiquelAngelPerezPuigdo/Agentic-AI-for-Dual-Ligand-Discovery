@@ -268,7 +268,11 @@ def build(output, edition):
         heading = Paragraph(f"{number}. {title}", sheet["chapter"])
         heading.bookmark, heading.toc_level = f"chapter-{number}", 0
         story.extend([heading, Paragraph(f'<link href="{REPO}/blob/main/docs/{filename}" color="#087E8B">Editable source: docs/{filename}</link>', sheet["small"])])
-        story.extend(markdown_blocks(parser((ROOT/"docs"/filename).read_text()), sheet, number, [0]))
+        source = (ROOT/"docs"/filename).read_text()
+        if filename == "rehearsal-results.md":
+            source = source.split("## Historical 31-ligand rehearsal", 1)[0]
+            source += "\nHistorical runs and earlier API cost records remain in the linked editable source.\n"
+        story.extend(markdown_blocks(parser(source), sheet, number, [0]))
     output.parent.mkdir(parents=True, exist_ok=True)
     Handbook(output, edition, source_hash).multiBuild(story)
     from pypdf import PdfReader
@@ -290,6 +294,7 @@ def build_staff(output, edition):
     sheet["section"].fontSize, sheet["section"].spaceBefore, sheet["section"].spaceAfter = 11, 7, 5
     sheet["chapter"].fontSize, sheet["chapter"].spaceAfter = 17, 7
     hashes, source_hash = input_record(staff=True)
+    config = json.loads((ROOT/"hte_inputs/campaign.json").read_text())
     parts = (ROOT/"docs/hte-staff-checklist.md").read_text().split("\n---\n")
     if len(parts) != 2:
         raise ValueError("Staff source must have exactly two pages separated by a standalone ---")
@@ -300,7 +305,7 @@ def build_staff(output, edition):
             story.append(PageBreak())
         title = "HTE staff checklist - "+("Setup" if number == 1 else "Run")
         story.extend([Paragraph(title, sheet["chapter"]),
-                      Paragraph(f"Edition {edition.isoformat()} | Local OT-2 | 66 first-round + 10 second-round wells", sheet["small"])])
+                      Paragraph(f"Edition {edition.isoformat()} | Local OT-2 | {config['design']['round1_total']} first-round + {config['design']['round2_total']} second-round wells", sheet["small"])])
         story.extend(markdown_blocks(parser(part), sheet, number, [0], compact=True))
     output.parent.mkdir(parents=True, exist_ok=True)
     Handbook(output, edition, source_hash, staff=True).build(story)

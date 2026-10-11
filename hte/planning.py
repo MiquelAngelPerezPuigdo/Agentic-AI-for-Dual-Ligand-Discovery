@@ -7,8 +7,34 @@ from .io import finite, well_name, wells
 
 
 VALIDATIONS = ["chemistry_confirmed", "plate_adapter_seal_validated", "solvent_pipetting_validated",
-               "heating_and_evaporation_validated", "homogeneous_sampling_validated",
-               "lc_calibration_validated", "local_app_simulation_passed", "round2_ambient_evaporation_validated"]
+               "heating_validated", "homogeneous_sampling_validated",
+               "lc_calibration_validated", "local_app_simulation_passed", "round2_predose_storage_validated",
+               "injection_cycle_validated", "simultaneous_heating_capacity_validated"]
+
+COMMON_WELLS = {"substrate_stock":"A1", "Pd":"A2", "toluene":"A3", "workup":"A4", "LC_diluent":"A5"}
+
+
+def single_pipette(config):
+    model = config["robot"]["single"]
+    if model not in ("p20_single_gen2", "p300_single_gen2"):
+        raise ValueError("Choose a p20 or p300 single GEN2")
+    return ("p20", 20) if model == "p20_single_gen2" else ("p300_single", 300)
+
+
+def reservoir_source_pools(config):
+    overrides = config["stock_preparation"].get("reservoir_source_pools", {})
+    if set(overrides)-set(COMMON_WELLS):
+        raise ValueError("Unknown reservoir source-pool reagent")
+    pools = {key:overrides.get(key,[well]) for key,well in COMMON_WELLS.items()}
+    seen = set()
+    for key, pool in pools.items():
+        if not isinstance(pool,list) or not pool:
+            raise ValueError("Each reservoir source pool needs a nonempty channel list")
+        for well in pool:
+            if well not in [f"A{i}" for i in range(1,13)] or well in seen:
+                raise ValueError("Reservoir source pools need distinct valid channels")
+            seen.add(well)
+    return pools
 
 
 def required_validations(config):
@@ -38,18 +64,26 @@ def internal_standard_amounts(config, substrate_umol):
     return preloaded, workup, final_uM
 
 
-def validate_config(config, live=False):
+def validate_config(config, live=False, live_scope="all"):
+    if live_scope not in ("all", "first_reaction"):
+        raise ValueError("Unknown live validation scope")
+    reservoir_source_pools(config)
+    stock = config["stock_preparation"]
+    dead = finite(stock["reservoir_dead_ul"], "reservoir dead volume", 0)
+    capacity = finite(stock["reservoir_max_fill_ul"], "reservoir fill limit", dead+1)
+    if capacity > config["robot"].get("reservoir_working_volume_ul", capacity):
+        raise ValueError("Reservoir fill limit exceeds the configured labware working volume")
     c, liquid = config["chemistry"], config["liquids"]
     for name in ("substrate_molarity_M", "reaction_volume_ul", "ligand_a_mol_percent",
                  "ligand_b_mol_percent", "pd_mol_percent", "reaction_minutes"):
         finite(c[name], name, 0.00001)
     finite(c["temperature_C"], "temperature", 37, 95)
     finite(c.get("thermal_equilibration_minutes", 0), "thermal equilibration", 0)
-    for name, value in (("reaction shaking", c["rpm"]), ("workup shaking", liquid["mix_rpm"]),
-                        ("evaporation shaking", config["evaporation"]["rpm"])):
+    for name, value in (("reaction shaking", c["rpm"]), ("workup shaking", liquid["mix_rpm"])):
         finite(value, name, 200, 3000)
-    finite(config["evaporation"]["temperature_C"], "evaporation temperature", 37, 95)
-    finite(config["evaporation"]["minutes"], "evaporation time", 0)
+    if liquid.get("substrate_stock_solvent") != "toluene":
+        raise ValueError("This liquid-dose workflow requires the substrate stock in toluene")
+    single, capacity = single_pipette(config)
     for name in ("reuse_tips",):
         if not isinstance(config["pipetting"].get(name), bool):
             raise ValueError(f"{name} must be true or false")
@@ -63,9 +97,11 @@ def validate_config(config, live=False):
         finite(liquid[name], name, 0.00001)
     for name in ("aspirate_height_mm", "dispense_above_top_mm", "surplus_ul", "air_gap_ul"):
         finite(config["pipetting"][name], name, 0.1)
-    if config["pipetting"]["surplus_ul"]+config["pipetting"]["air_gap_ul"] >= 20:
-        raise ValueError("Air gap plus surplus leaves no p20 transfer capacity")
-    for name in ("p20_aspirate_ul_s", "p20_dispense_ul_s", "p300_aspirate_ul_s", "p300_dispense_ul_s", "minimum_p20_ul"):
+    if config["pipetting"]["aspirate_height_mm"] <= 1:
+        raise ValueError("Aspiration requires bottom clearance greater than 1 mm per HTEL guidance")
+    if config["pipetting"]["surplus_ul"]+config["pipetting"]["air_gap_ul"] >= capacity:
+        raise ValueError("Air gap plus surplus leaves no single-channel transfer capacity")
+    for name in (single+"_aspirate_ul_s", single+"_dispense_ul_s", "p300_aspirate_ul_s", "p300_dispense_ul_s", "minimum_"+single+"_ul"):
         finite(config["pipetting"][name], name, 0.000001)
     for name in ("post_aspirate_seconds", "post_dispense_seconds"):
         finite(config["pipetting"][name], name, 0)
@@ -75,13 +111,15 @@ def validate_config(config, live=False):
     if type(p["sample_prewet_cycles"]) is not int or not 0 <= p["sample_prewet_cycles"] <= 5:
         raise ValueError("Choose 0-5 sample prewet cycles")
     finite(p["sample_aspirate_height_mm"], "sample aspiration height", 0.1)
+    if p["sample_aspirate_height_mm"] <= 1:
+        raise ValueError("Sample aspiration requires bottom clearance greater than 1 mm")
     finite(p["sample_flow_rate_multiplier"], "sample flow-rate multiplier", 0.000001, 1)
     finite(p["sample_air_gap_rate"], "sample air-gap rate", 0.000001, 1)
     finite(p["sample_pause_seconds"], "sample aspiration/dispense pause", 0)
     # Fresh sample tips retain a surplus on every split transfer. There must
     # remain enough extract to keep the tip immersed on the final aspiration.
-    # Partial columns always use p20: use its capacity for the worst case.
-    partial_capacity = 20-p["air_gap_ul"]-p["surplus_ul"]
+    # Partial columns use the configured single-channel pipette.
+    partial_capacity = capacity-p["air_gap_ul"]-p["surplus_ul"]
     withdrawals = liquid["aliquot_ul"]+math.ceil(liquid["aliquot_ul"]/partial_capacity)*p["surplus_ul"]
     extract_volume = c["reaction_volume_ul"]+liquid["workup_ul"]
     if withdrawals >= extract_volume:
@@ -100,8 +138,8 @@ def validate_config(config, live=False):
         raise ValueError("Validate source-dedicated noncontact tip reuse before live export")
     if config["robot"]["heater_slot"] != 10:
         raise ValueError("This deck is designed for heater-shaker slot 10")
-    if config["robot"]["p20"] != "p20_single_gen2" or config["robot"]["p300"] != "p300_multi_gen2":
-        raise ValueError("This protocol requires a p20 single GEN2 and p300 eight-channel GEN2")
+    if config["robot"]["p300"] != "p300_multi_gen2":
+        raise ValueError("This protocol requires a p300 eight-channel GEN2")
     volume = c["reaction_volume_ul"] + liquid["workup_ul"]
     if volume > config["robot"]["reaction_working_volume_ul"]:
         raise ValueError("Extraction exceeds reaction plate working volume")
@@ -112,7 +150,10 @@ def validate_config(config, live=False):
     if live:
         if config.get("demo"):
             raise ValueError("Demo protocol cannot be exported for live use")
-        missing = [name for name in required_validations(config) if config["validation"].get(name) is not True]
+        needed = required_validations(config)
+        if live_scope == "first_reaction":
+            needed = [name for name in needed if name != "lc_calibration_validated"]
+        missing = [name for name in needed if config["validation"].get(name) is not True]
         if missing:
             raise ValueError("Bench decisions/validation required: " + ", ".join(missing))
         for key in ("reaction_labware", "lc_labware", "heater_adapter"):
@@ -120,9 +161,12 @@ def validate_config(config, live=False):
                 raise ValueError(f"Exact Opentrons load name required: {key}")
         if not c.get("pd_identity"):
             raise ValueError("Pd identity must be specified")
-        from .analytics import validate_analytics_settings
-        validate_analytics_settings(config)
-        if any(str(config["analytics"][key]).upper().startswith("SYNTHETIC") for key in ("method_id", "channel")):
+        if not config["analytics"].get("method_id"):
+            raise ValueError("Configure LC method before starting the first reaction")
+        if live_scope == "all":
+            from .analytics import validate_analytics_settings
+            validate_analytics_settings(config)
+        if any(str(config["analytics"].get(key)).upper().startswith("SYNTHETIC") for key in ("method_id", "channel")):
             raise ValueError("Synthetic LC settings cannot release live protocols")
         timing = schedule(config)
         if not timing["fits_serial_estimate"]:
@@ -176,18 +220,21 @@ def dosing_rows(config, inventory, design):
         v_b = n_b / stocks["ligand_stock_mM"] * 1000
         v_pd = n_pd / stocks["pd_stock_mM"] * 1000
         predosed = int(d["round"]) == 2 and config["design"].get("round2_predosed", False)
-        v_sm = 0 if predosed else n_substrate / stocks["substrate_stock_mM"] * 1000
+        total_sm_volume = n_substrate / stocks["substrate_stock_mM"] * 1000
+        v_sm = 0 if predosed else total_sm_volume
         preloaded_is, workup_is, final_is = internal_standard_amounts(config, n_substrate)
         if config["analytics"]["calibration_mode"] == "internal_standard" and final_is <= 0:
             raise ValueError("Combined substrate/IS dosing does not add IS to a reaction blank; define a separate validated blank preparation")
-        v_tol = c["reaction_volume_ul"] - v_a - v_b - v_pd
+        # Predosed toluene remains in R2 and counts even though no new SM is added.
+        v_tol = c["reaction_volume_ul"] - total_sm_volume - v_a - v_b - v_pd
         if v_tol < -1e-8:
             raise ValueError("Stocks are too dilute to fit in the final reaction volume")
         if v_sm > config["robot"]["reaction_working_volume_ul"]:
-            raise ValueError("DCM dosing volume exceeds reaction working volume")
+            raise ValueError("Substrate-stock dosing volume exceeds reaction working volume")
         row = {**d, "well": well, "substrate_umol": n_substrate, "pd_umol": n_pd,
-               "ligand_a_umol": n_a, "ligand_b_umol": n_b, "sm_DCM_ul": v_sm,
+               "ligand_a_umol": n_a, "ligand_b_umol": n_b, "sm_stock_ul": v_sm,
                "substrate_predosed_umol": n_substrate if predosed else 0,
+               "substrate_predosed_ul": total_sm_volume if predosed else 0,
                "naphthalene_total_umol": preloaded_is+workup_is,
                "naphthalene_added_with_substrate_umol": 0 if predosed else preloaded_is,
                "naphthalene_predosed_umol": preloaded_is if predosed else 0,
@@ -208,8 +255,8 @@ def dosing_rows(config, inventory, design):
 def validate_dosing(config, inventory, rows):
     """Reject stale or edited numerical doses before quantification or feedback."""
     expected = dosing_rows(config, inventory, rows)
-    numeric_fields = ("substrate_umol", "pd_umol", "ligand_a_umol", "ligand_b_umol", "sm_DCM_ul",
-                      "substrate_predosed_umol", "naphthalene_total_umol", "naphthalene_added_with_substrate_umol",
+    numeric_fields = ("substrate_umol", "pd_umol", "ligand_a_umol", "ligand_b_umol", "sm_stock_ul",
+                      "substrate_predosed_umol", "substrate_predosed_ul", "naphthalene_total_umol", "naphthalene_added_with_substrate_umol",
                       "naphthalene_predosed_umol", "naphthalene_workup_umol", "internal_standard_final_uM",
                       "ligand_a_ul", "ligand_b_ul", "pd_ul", "toluene_ul", "reaction_volume_ul",
                       "temperature_C", "reaction_minutes", "workup_ul", "aliquot_ul", "diluent_ul")
@@ -225,16 +272,17 @@ def transfer_operations(config, inventory, rows):
     """Expand all transfers, including surplus discarded with tips; multi volumes are PER CHANNEL."""
     operations = []
     p = config["pipetting"]
-    capacities = {"p20": 20 - p["air_gap_ul"] - p["surplus_ul"],
+    single, capacity = single_pipette(config)
+    capacities = {single: capacity - p["air_gap_ul"] - p["surplus_ul"],
                   "p300": 300 - p["air_gap_ul"] - p["surplus_ul"]}
 
     def add(stage, reagent, slot, source, target_slot, targets, volume, multi=False):
         if volume <= 1e-9:
             return
-        pipette = "p300" if multi else "p20"
+        pipette = "p300" if multi else single
         count = math.ceil(volume / capacities[pipette])
         part = volume / count
-        minimum = 20 if multi else p["minimum_p20_ul"]
+        minimum = 20 if multi else p["minimum_"+single+"_ul"]
         if part < minimum:
             raise ValueError(f"{reagent}: {part:.3f} uL below validated pipette minimum {minimum}")
         for _ in range(count):
@@ -257,11 +305,11 @@ def transfer_operations(config, inventory, rows):
         for w, volume in remaining.items():
             add(stage, reagent, 2, source, target_slot, [w], volume)
 
-    common("substrate", "substrate_DCM", "A1", {r["well"]: r["sm_DCM_ul"] for r in rows})
+    common("substrate", "substrate_stock", "A1", {r["well"]: r["sm_stock_ul"] for r in rows})
     if int(rows[0]["round"]) == 1 and config["design"].get("round2_predosed"):
         n0 = config["chemistry"]["substrate_molarity_M"]*config["chemistry"]["reaction_volume_ul"]
         volume = n0/config["liquids"]["substrate_stock_mM"]*1000
-        common("round2_predose", "substrate_DCM", "A1",
+        common("round2_predose", "substrate_stock", "A1",
                {w: volume for w in wells()[:config["design"]["round2_total"]]}, target_slot=6)
     for ligand in inventory:
         for r in rows:
@@ -283,6 +331,24 @@ def transfer_operations(config, inventory, rows):
                     del remaining[w]
     for r in remaining.values():
         add("sampling", r["sample_id"], 3, r["well"], 6, [r["well"]], r["aliquot_ul"])
+    # Allocate complete aspirations to reservoir channels before assigning reused tips.
+    # Worst-case fresh surplus makes this conservative when a tip is retained.
+    pools = reservoir_source_pools(config)
+    limit = config["stock_preparation"]["reservoir_max_fill_ul"]-config["stock_preparation"]["reservoir_dead_ul"]
+    spent = defaultdict(float)
+    index = defaultdict(int)
+    for op in operations:
+        if op["source_slot"] != 2:
+            continue
+        key = op["reagent"]
+        withdrawal = op["aspirated_ul_per_channel"]*op["channels"]
+        pool = pools[key]
+        while index[key] < len(pool) and spent[(key,pool[index[key]])]+withdrawal > limit:
+            index[key] += 1
+        if index[key] >= len(pool):
+            raise ValueError(f"Reservoir source capacity exceeded for {key}; add a validated source channel")
+        op["source_well"] = pool[index[key]]
+        spent[(key,op["source_well"])] += withdrawal
     for i, op in enumerate(operations):
         previous = operations[i-1] if i else None
         following = operations[i+1] if i+1 < len(operations) else None
@@ -298,10 +364,13 @@ def transfer_operations(config, inventory, rows):
 
 def stock_plan(config, inventory, operations, reserve_round2=True):
     usage = defaultdict(float)
+    source_usage = defaultdict(float)
     for op in operations:
         if op["source_slot"] != 3:
             usage[op["reagent"]] += op["aspirated_ul_per_channel"] * op["channels"]
+            source_usage[(op["reagent"],op["source_well"])] += op["aspirated_ul_per_channel"] * op["channels"]
     c, liquid = config["chemistry"], config["liquids"]
+    _, single_capacity = single_pipette(config)
     margin = finite(config["stock_preparation"]["margin_factor"], "stock margin", 1)
     reserve_wells = config["design"]["round2_total"] if reserve_round2 else 0
     n = c["substrate_molarity_M"] * c["reaction_volume_ul"]
@@ -312,7 +381,7 @@ def stock_plan(config, inventory, operations, reserve_round2=True):
         assay = finite(config["stock_preparation"].get("assay_fractions", {}).get(key, 1), key+" assay fraction", 0.000001, 1)
         return pure_mass/assay
     for key, row in inventory.items():
-        part_count = math.ceil(worst_ligand / (20-config["pipetting"]["air_gap_ul"]-config["pipetting"]["surplus_ul"]))
+        part_count = math.ceil(worst_ligand / (single_capacity-config["pipetting"]["air_gap_ul"]-config["pipetting"]["surplus_ul"]))
         reserve = reserve_wells * (worst_ligand + part_count * config["pipetting"]["surplus_ul"])
         dead = config["stock_preparation"]["tube_dead_ul"]
         prepare = math.ceil(((usage[key] + reserve) * margin + dead) / 10) * 10
@@ -324,35 +393,39 @@ def stock_plan(config, inventory, operations, reserve_round2=True):
                         "on_deck_ul": math.ceil((usage[key] + dead)/10)*10,
                         "source_capacity_ul": config["stock_preparation"]["tube_max_fill_ul"],
                         "capacity_ok": usage[key] + dead <= config["stock_preparation"]["tube_max_fill_ul"]})
-    common = [("substrate_DCM", "DCM", "substrate_stock_mM", "A1", n/liquid["substrate_stock_mM"]*1000),
+    common = [("substrate_stock", liquid["substrate_stock_solvent"], "substrate_stock_mM", "A1", n/liquid["substrate_stock_mM"]*1000),
               ("Pd", "toluene", "pd_stock_mM", "A2", n*c["pd_mol_percent"]/100/liquid["pd_stock_mM"]*1000),
               ("toluene", "toluene", None, "A3", c["reaction_volume_ul"]),
               ("workup", liquid["workup_composition"], "naphthalene_workup_mM", "A4", liquid["workup_ul"]),
               ("LC_diluent", liquid["lc_diluent_composition"], None, "A5", liquid["diluent_ul"])]
     for key, solvent, concentration, well, worst in common:
         # Conservatively allow single-channel splitting and surplus for every reserve well.
-        count = math.ceil(worst / (20-config["pipetting"]["air_gap_ul"]-config["pipetting"]["surplus_ul"]))
+        count = math.ceil(worst / (single_capacity-config["pipetting"]["air_gap_ul"]-config["pipetting"]["surplus_ul"]))
         reserve = reserve_wells * (worst + count * config["pipetting"]["surplus_ul"])
-        if key == "substrate_DCM" and config["design"].get("round2_predosed"):
+        if key == "substrate_stock" and config["design"].get("round2_predosed"):
             reserve = 0  # Round-two substrate is already included in round-one operations.
         dead = config["stock_preparation"]["reservoir_dead_ul"]
-        prepare = math.ceil(((usage[key] + reserve) * margin + dead) / 10) * 10
-        if key == "substrate_DCM":
-            prepare = max(prepare, finite(config["stock_preparation"].get("substrate_min_prepare_ul", 0),
-                                          "minimum substrate stock preparation", 0))
         concentration_mM = liquid[concentration] if concentration else ""
-        mw = c.get("pd_molecular_weight_g_mol") if key == "Pd" else c.get("substrate_molecular_weight_g_mol") if key == "substrate_DCM" else liquid["naphthalene_molecular_weight_g_mol"] if key == "workup" else None
-        records.append({"reagent": key, "name": key, "solvent": solvent, "stock_mM": concentration_mM,
-                        "protocol_consumption_ul": usage[key], "round2_reserve_ul": reserve,
+        mw = c.get("pd_molecular_weight_g_mol") if key == "Pd" else c.get("substrate_molecular_weight_g_mol") if key == "substrate_stock" else liquid["naphthalene_molecular_weight_g_mol"] if key == "workup" else None
+        pool = reservoir_source_pools(config)[key]
+        used = [well for well in pool if source_usage[(key,well)] > 0] or pool[:1]
+        for i, source in enumerate(used):
+            consumption = source_usage[(key,source)]
+            reserved = reserve if i == 0 else 0
+            prepare = math.ceil(((consumption+reserved)*margin+dead)/10)*10
+            if key == "substrate_stock":
+                prepare = max(prepare,finite(config["stock_preparation"].get("substrate_min_prepare_ul",0),"minimum substrate stock preparation",0))
+            records.append({"reagent": key, "name": key, "solvent": solvent, "stock_mM": concentration_mM,
+                        "protocol_consumption_ul": consumption, "round2_reserve_ul": reserved,
                         "dead_ul": dead, "prepare_ul": prepare,
                         "mass_mg": corrected_mass(key, concentration_mM * prepare * mw / 1e6) if mw else "",
-                        "source_slot": 2, "source_well": well,
-                        "on_deck_ul": math.ceil((usage[key] + dead)/10)*10,
+                        "source_slot": 2, "source_well": source,
+                        "on_deck_ul": math.ceil((consumption + dead)/10)*10,
                         "source_capacity_ul": config["stock_preparation"]["reservoir_max_fill_ul"],
-                        "capacity_ok": usage[key] + dead <= config["stock_preparation"]["reservoir_max_fill_ul"]})
+                        "capacity_ok": consumption + dead <= config["stock_preparation"]["reservoir_max_fill_ul"]})
     # The mixture is one reservoir source; report its second solute separately.
     for record in records:
-        mixed = record["reagent"] == "substrate_DCM" and liquid.get("naphthalene_addition_stage") == "substrate_stock"
+        mixed = record["reagent"] == "substrate_stock" and liquid.get("naphthalene_addition_stage") == "substrate_stock"
         record["naphthalene_stock_mM"] = liquid.get("naphthalene_substrate_stock_mM", 0) if mixed else ""
         record["naphthalene_mass_mg"] = corrected_mass("naphthalene", liquid["naphthalene_substrate_stock_mM"]*
             record["prepare_ul"]*liquid["naphthalene_molecular_weight_g_mol"]/1e6) if mixed else ""
@@ -380,7 +453,7 @@ def schedule(config):
     if type(extra) is not int or type(parallel) is not int or extra < 0:
         raise ValueError("Injection counts must be nonnegative integers")
     injections = sum(counts) + extra
-    cycle = finite(t["injection_cycle_minutes"], "full injection cycle time", 2)
+    cycle = finite(t["injection_cycle_minutes"], "full injection cycle time", 0.00001)
     if not 0 <= parallel <= t["additional_injections"] or parallel*cycle > config["chemistry"]["reaction_minutes"]:
         raise ValueError("Calibration overlap exceeds available first-reaction window")
     analysis = (injections-parallel) * cycle
@@ -398,3 +471,14 @@ def schedule(config):
             "remaining_minutes": t["deadline_minutes"]-total,
             "fits_serial_estimate": total <= t["deadline_minutes"],
             "assumptions": "Full cycle time, serial round-one analysis before round-two decision; no unvalidated overlap."}
+
+
+def schedule_scenarios(config, cycles=(1.7, 2, 3, 5, 6)):
+    """Method durations are provisional full-cycle scenarios until HTE measures overhead."""
+    import copy
+    scenarios = []
+    for cycle in cycles:
+        scenario = copy.deepcopy(config)
+        scenario["timing"]["injection_cycle_minutes"] = cycle
+        scenarios.append({"assumed_full_cycle_minutes": cycle, **schedule(scenario)})
+    return scenarios

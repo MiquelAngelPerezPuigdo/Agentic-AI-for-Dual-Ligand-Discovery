@@ -10,7 +10,7 @@ from hte.analytics import (complete_export, fit_calibration, normalize_export,
                            read_completed_inputs)
 from hte.demo import run
 from hte.design import consensus_select, rank_percentiles, validate_design
-from hte.inventory import candidates, load_inventory
+from hte.inventory import candidates, campaign_inventory, load_inventory
 from hte.io import file_lock, read_csv, read_json, write_csv
 from hte.planning import (dosing_rows, required_validations, schedule,
                           validate_config, validate_dosing)
@@ -30,7 +30,7 @@ def files(tmp_path_factory):
 
 @pytest.fixture
 def data(files):
-    return (read_json(files/"campaign.json"), load_inventory(ROOT/"hte_inputs/ligands.csv"),
+    return (read_json(files/"campaign.json"), campaign_inventory(ROOT/"hte_inputs/ligands.csv", read_json(files/"campaign.json")),
             read_csv(files/"round1/dosing.csv"))
 
 
@@ -106,7 +106,7 @@ def test_live_export_requires_analytics_and_a_plan_within_the_deadline(data, fau
         config["analytics"]["quantification_limit_uM"]["product"] = None
         message = "LOQ"
     elif fault == "over_deadline":
-        config["timing"]["dosing_total_minutes"] = 30
+        config["timing"]["dosing_total_minutes"] = 80
         message = "deadline"
     else:
         config["analytics"]["method_id"] = "SYNTHETIC_2MIN"
@@ -144,7 +144,7 @@ def test_live_round2_export_uses_the_complete_verified_history(files, data, tmp_
     manifest = read_json(tmp_path/"round2/export_manifest.json")
     assert manifest["live"] and manifest["history_digest"]
     assert {path.name for path in (tmp_path/"round2").iterdir() if path.name != "export_manifest.json"} == set(manifest["files"])
-    assert all(float(row["sm_DCM_ul"]) == 0 for row in read_csv(tmp_path/"round2/dosing.csv"))
+    assert all(float(row["sm_stock_ul"]) == 0 for row in read_csv(tmp_path/"round2/dosing.csv"))
 
 
 @pytest.mark.parametrize("fault,message", [("no_check", "independent calibration check"),
