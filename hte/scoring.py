@@ -137,6 +137,9 @@ def prompt_context(config, inventory, candidates, evidence, observations):
     priors = {}
     for row in evidence.get("yields", []):
         ligand = by_cas.get(row["cas"])
+        if ligand is None and any(row["cas"] == entry["cas"] and row.get("ligand_id") == entry["ligand_id"]
+                                 for entry in config["design"].get("excluded_ligands", [])):
+            continue  # Preserve the source SI, but never present unavailable ligands as candidates.
         if ligand is None or row.get("ligand_id", ligand["ligand_id"]) != ligand["ligand_id"]:
             raise ValueError("Literature ligand ID/CAS does not match the inventory")
         key = ligand["ligand_id"]

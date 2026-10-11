@@ -6,7 +6,7 @@ from types import SimpleNamespace
 import anthropic
 import pytest
 
-from hte.inventory import candidates, load_inventory
+from hte.inventory import candidates, campaign_inventory, load_inventory
 from hte.io import object_digest, read_json
 from hte.scoring import (cost_breakdown, export_prompt_preview, parse_scores,
                          prompt_cache_settings, prompt_context, score_candidates)
@@ -68,7 +68,7 @@ def install_mock(monkeypatch):
 def inputs():
     config = read_json(ROOT/"hte_inputs/campaign.json")
     config["llm"]["repeats"] = 3
-    inventory = load_inventory(ROOT/"hte_inputs/ligands.csv", confirmed=True)
+    inventory = campaign_inventory(ROOT/"hte_inputs/ligands.csv", config, confirmed=True)
     return config, inventory, candidates(inventory)[:6]
 
 
@@ -164,7 +164,7 @@ def test_inventory_ids_structures_and_extracted_si_values_are_explicit():
     expected = {"L01":77, "L03":63, "L04":62, "L05":78, "L06":72, "L07":1,
                 "L08":0, "L10":0, "L11":61, "L12":0, "L13":0, "L14":3,
                 "L17":77, "L21":1, "L22":1, "L23":1, "L24":14, "L25":22}
-    assert len(ligands) == 31 and len(evidence["yields"]) == 18
+    assert len(ligands) == 30 and len(evidence["yields"]) == 18
     for key, row in ligands.items():
         assert row["name"] == inventory[key]["name"] and row["smiles"] == inventory[key]["smiles"]
         assert row["same_substrate_table_S2_yield_percent"] == expected.get(key)

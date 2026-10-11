@@ -1,5 +1,19 @@
 # Software rehearsal results
 
+The updated liquid-dose workflow uses 1 M SM/10 mM IS in toluene, 20 mM ligand stocks and 40 mM Pd; no dry-down. Both rounds count the retained 25 µL SM stock in their 250 µL volume. OT-2 simulations cover the proposed p300 single and the optional p20 split-transfer setup.
+
+## Current HTEL update, 11 October 2026
+
+The revised campaign uses 30 active ligands (L07 excluded), 435 unchanged T5 embedding vectors, 59 first-round pairs plus one reference and ten new second-round pairs. The offline rehearsal delivered all **60** first-round results to five mocked Claude requests over the **376** untested pairs, with no repeats or second SM/IS dose. The requested 1.7-minute full-cycle scenario gives **686 minutes**, pending method, larger-scale handling and simultaneous-heating confirmation.
+
+The provisional scale is 250 µL reaction plus 250 µL workup. It preserves 50 µM LC naphthalene and 5 mM maximum product after 20 + 180 µL dilution. Source pools keep workup/diluent channels below 11.9 mL; same-stock reuse and fresh sample-tip conditioning remain explicit. First dosing can be released separately while calibration runs, but workup and round two retain full analytical validation. No physical run or paid Claude request occurred.
+
+Source-specific example records are retained privately.
+
+**Current local acceptance: 134 tests passed.** These include actual OT-2 simulations with a synthetic deepwell plate/adapter, availability exclusions, Chromeleon identity/channel/zero handling, measured-peak calibration, staged release and multi-source reservoir capacities. The hardware used for software simulation does not establish the 4 mL vial setup.
+
+## Historical 31-ligand rehearsal
+
 The offline first-feedback-loop rehearsal completed successfully. All chemistry results and Claude responses in this exercise were synthetic; no paid API call or physical robot run occurred.
 
 | Check | Observed result |
@@ -43,7 +57,7 @@ On 9 October 2026, three small Opus 4.8 smoke tests each scored four pairs twice
 
 The earlier v2/v3 tests used a different prompt and output contract; their $0.3453 combined cost is included in that total. A conservative preflight stopped one earlier v3 attempt before generation. The scores-only offline feedback rehearsal was rerun successfully: all 66 synthetic first-round results reached the prompt, 400 untested pairs were scored in five mocked calls and ten new pairs were exported without substrate/IS redosing.
 
-These checks establish live model access, structured-response parsing and cache reuse for the smoke requests. The full 465-pair initial campaign has not been generated, and the model scores are not measured chemistry yields. The [prompt guide](scoring-prompt.md) supplies the identities, SI evidence and output contract. Raw responses and keys remain outside the public handoff.
+These checks establish live model access, structured-response parsing and cache reuse for the smoke requests. The historical full 465-pair initial campaign was not generated; the revised real 435-pair campaign is also unrun, and the model scores are not measured chemistry yields. The [prompt guide](scoring-prompt.md) supplies the identities, SI evidence and output contract. Raw responses and keys remain outside the public handoff.
 
 ## Repository audit
 
@@ -60,7 +74,7 @@ The audit corrected these operational issues:
 
 At the repository audit, all **88 tests passed**, including actual Opentrons simulation and the offline LC-to-Claude feedback loop. Additional direct demo and feedback rehearsals use synthetic results and mocked API responses. No new paid calls were made for this audit. The historical live smoke-test total remains approximately $0.4023.
 
-The full real first-batch ranking has not been generated. No physical chemistry or hardware run was performed. HTE must still validate glass hardware, solvent handling, IS recovery, extraction, the LC method and actual timing. The template's **729-minute** schedule exceeds the **720-minute** limit and is deliberately blocked from live release until measured timings fit.
+The full real first-batch ranking has not been generated. No physical chemistry or hardware run was performed. HTE must still validate glass hardware, solvent handling, IS recovery, extraction, the LC method and actual timing. That audit’s **729-minute** template schedule exceeded the **720-minute** limit and was blocked from live release until measured timings fit.
 
 ## Analytical handling update
 

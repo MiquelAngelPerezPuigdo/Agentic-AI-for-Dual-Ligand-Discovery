@@ -31,16 +31,18 @@ def run(protocol: protocol_api.ProtocolContext):
     racks = {slot: protocol.load_labware("opentrons_24_tuberack_eppendorf_1.5ml_safelock_snapcap", slot)
              for slot in [1, 4]}
     reservoir = protocol.load_labware("nest_12_reservoir_15ml", 2)
-    tips20 = protocol.load_labware("opentrons_96_tiprack_20ul", 5)
+    single_key = "p20" if CONFIG["robot"]["single"] == "p20_single_gen2" else "p300_single"
+    single_tiprack = "opentrons_96_tiprack_20ul" if single_key == "p20" else "opentrons_96_tiprack_300ul"
+    tips_single = protocol.load_labware(single_tiprack, 5)
     tips300 = [protocol.load_labware("opentrons_96_tiprack_300ul", slot) for slot in [8, 9]]
-    single = protocol.load_instrument("p20_single_gen2", "left", tip_racks=[tips20])
+    single = protocol.load_instrument(CONFIG["robot"]["single"], "left", tip_racks=[tips_single])
     multi = protocol.load_instrument("p300_multi_gen2", "right", tip_racks=tips300)
-    pipettes = {"p20": single, "p300": multi}
+    pipettes = {single_key: single, "p300": multi}
     labware = {1: racks[1], 4: racks[4], 2: reservoir, 3: plate, 6: lc}
     p = CONFIG["pipetting"]
     for pipette in [single, multi]:
-        pipette.flow_rate.aspirate = p["p20_aspirate_ul_s"] if pipette is single else p["p300_aspirate_ul_s"]
-        pipette.flow_rate.dispense = p["p20_dispense_ul_s"] if pipette is single else p["p300_dispense_ul_s"]
+        pipette.flow_rate.aspirate = p[single_key+"_aspirate_ul_s"] if pipette is single else p["p300_aspirate_ul_s"]
+        pipette.flow_rate.dispense = p[single_key+"_dispense_ul_s"] if pipette is single else p["p300_dispense_ul_s"]
 
     def transfer(op):
         pipette = pipettes[op["pipette"]]
@@ -109,17 +111,8 @@ def run(protocol: protocol_api.ProtocolContext):
     if STAGE == "dose_and_react":
         if any(op["stage"] == "substrate" for op in OPERATIONS):
             transfer_stage("substrate")
-            protocol.pause("Cover unused volatile stock sources during dry-down using HTE-validated covers. Substrate/DCM A1 will be needed again for round-two predosing. Covers must be removed before any later aspiration. Resume to evaporate the first reaction block.")
-            onto_heater()
-            hs.set_and_wait_for_temperature(CONFIG["evaporation"]["temperature_C"])
-            hs.set_and_wait_for_shake_speed(CONFIG["evaporation"]["rpm"])
-            protocol.delay(minutes=CONFIG["evaporation"]["minutes"])
-            hs.deactivate_shaker()
-            hs.deactivate_heater()
-            protocol.pause("HTE: verify DCM dry-down endpoint under the approved ventilation SOP. Wait for safe handling temperature before moving. Uncover ligand, toluene and Pd sources for assembly; preserve unused volatile sources under validated covers. Resume only when dry, cooled and required sources accessible. The timer does not prove dryness.")
-            off_heater()
         else:
-            protocol.pause("Round two: use the ten wells predosed by round one. Verify sample mapping, substrate/IS amounts in round2_predose.csv, and complete ambient DCM evaporation before adding catalysts. Do not add the substrate/IS stock again.")
+            protocol.pause("Round two: use the ten capped wells predosed by round one. Verify sample mapping and substrate/IS amounts in round2_predose.csv, retained toluene volume and approved storage interval. Uncap only for dosing. Do not evaporate or add substrate/IS again; the retained stock solvent counts in the final reaction volume.")
         transfer_stage("assembly")
         protocol.pause("Seal every reaction well using the validated toluene-compatible 95 C seal. Check seal and clamp before resuming. Retain source stocks capped. Prepare assay standards while reactions run.")
         onto_heater()
@@ -132,7 +125,7 @@ def run(protocol: protocol_api.ProtocolContext):
             if has_predose:
                 protocol.pause("Before round-two substrate predosing: confirm A1 substrate stock concentration/load remains valid and remove every cover obstructing reservoir aspiration. Other stocks can remain capped. Resume promptly; this pause is part of the reaction hold.")
                 transfer_stage("round2_predose")
-                protocol.pause("Round-two substrate dosing complete in slot 6. Cap/remove unused stock sources. Remove the second block for ambient DCM evaporation under the HTE ventilated setup; no second heater step. Resume promptly. Run calibration standards on LC during this first reaction hold.")
+                protocol.pause("Round-two substrate dosing complete in slot 6. Cap every predosed vial promptly with the validated closure and label the mapping; retain the stock toluene and store under the approved conditions. Cap/remove unused sources. Do not evaporate. Resume promptly. Run calibration standards on LC during this first reaction hold.")
             elapsed = 0 if protocol.is_simulating() else (time.monotonic()-hold_start)/60
             if elapsed >= CONFIG["chemistry"]["reaction_minutes"]:
                 raise RuntimeError("Reaction hold exceeded during predosing/pause. Stop and record the actual hold time.")
@@ -160,8 +153,39 @@ def run(protocol: protocol_api.ProtocolContext):
 '''
 
 
-def export(config, inventory, design, output, live=False, history=None):
-    validate_config(config, live=live)
+def validate_definition_geometry(config, definitions, rows):
+    """Reject incompatible well maps and multichannel pitch before making protocols."""
+    from .io import finite, wells
+    for kind, definition in definitions.items():
+        needed = {row["well"] for row in rows}
+        if kind == "reaction" and config["design"].get("round2_predosed"):
+            needed.update(wells()[:config["design"]["round2_total"]])
+        defined = definition.get("wells", {})
+        if not needed.issubset(defined):
+            raise ValueError(f"{kind} definition lacks campaign well addresses; 24-vial racks require a different protocol and heating plan")
+        volume = (config["chemistry"]["reaction_volume_ul"]+config["liquids"]["workup_ul"]
+                  if kind == "reaction" else config["liquids"]["aliquot_ul"]+config["liquids"]["diluent_ul"])
+        for key in needed:
+            if finite(defined[key]["totalLiquidVolume"], "well capacity", 0) < volume:
+                raise ValueError(f"{kind} well {key} capacity is less than the planned liquid volume")
+        for col in range(1, 13):
+            column = [f"{r}{col}" for r in "ABCDEFGH"]
+            if not set(column).issubset(needed):
+                continue
+            first = defined[column[0]]
+            for i, key in enumerate(column[1:], 1):
+                well = defined[key]
+                if (abs(well["x"]-first["x"]) > 0.2 or abs(well["y"]-(first["y"]-9*i)) > 0.2
+                        or abs(well["z"]-first["z"]) > 0.2):
+                    raise ValueError(f"{kind} definition is incompatible with 9 mm eight-channel geometry")
+
+
+def export(config, inventory, design, output, live=False, history=None, stage="all"):
+    if stage not in ("all", "dose_and_react", "workup"):
+        raise ValueError("Unknown export stage")
+    # Calibration runs during R1. Only the first reaction may start before it.
+    scope = "first_reaction" if stage == "dose_and_react" and design and str(design[0]["round"]) == "1" else "all"
+    validate_config(config, live=live, live_scope=scope)
     definitions = {}
     from .io import read_json
     for kind in ("reaction", "lc"):
@@ -173,6 +197,7 @@ def export(config, inventory, design, output, live=False, history=None):
     if not config["robot"].get("heater_adapter"):
         raise ValueError("Supply the exact heater adapter before exporting a simulation")
     rows = dosing_rows(config, inventory, design)
+    validate_definition_geometry(config, definitions, rows)
     if int(rows[0]["round"]) == 2:
         if live and not history:
             raise ValueError("Live round-two export requires the first-round dosing history to exclude repeats and verify predoses")
@@ -194,16 +219,17 @@ def export(config, inventory, design, output, live=False, history=None):
     write_csv(output / "stock_preparation.csv", stocks)
     # Different source loads for dose vs workup. Common reservoir stock bottles stay off deck.
     deck = []
-    for stage, members in [("dose_and_react", {"substrate", "assembly", "round2_predose"}), ("workup", {"workup", "dilution"})]:
+    for deck_stage, members in [("dose_and_react", {"substrate", "assembly", "round2_predose"}), ("workup", {"workup", "dilution"})]:
         from collections import defaultdict
         use = defaultdict(float)
         for op in ops:
             if op["stage"] in members:
-                use[op["reagent"]] += op["aspirated_ul_per_channel"] * op["channels"]
+                use[(op["reagent"],op["source_slot"],op["source_well"])] += op["aspirated_ul_per_channel"] * op["channels"]
         for r in stocks:
-            if r["reagent"] in use:
-                deck.append({"protocol": stage, "reagent": r["reagent"], "source_slot": r["source_slot"],
-                             "source_well": r["source_well"], "load_ul": math_ceil10(use[r["reagent"]] + r["dead_ul"]),
+            address = (r["reagent"],r["source_slot"],r["source_well"])
+            if address in use:
+                deck.append({"protocol": deck_stage, "reagent": r["reagent"], "source_slot": r["source_slot"],
+                             "source_well": r["source_well"], "load_ul": math_ceil10(use[address] + r["dead_ul"]),
                              "stock_mM": r["stock_mM"], "naphthalene_stock_mM": r["naphthalene_stock_mM"],
                              "solvent": r["solvent"]})
     write_csv(output / "deck_loads.csv", deck)
@@ -214,18 +240,20 @@ def export(config, inventory, design, output, live=False, history=None):
         from .io import wells
         n0 = config["chemistry"]["substrate_molarity_M"]*config["chemistry"]["reaction_volume_ul"]
         write_csv(output/"round2_predose.csv", [{"round": 2, "sample_id": f"R2-{i:03d}", "well": well,
-                  "substrate_umol": n0, "sm_DCM_ul": n0/config["liquids"]["substrate_stock_mM"]*1000,
+                  "substrate_umol": n0, "sm_stock_ul": n0/config["liquids"]["substrate_stock_mM"]*1000,
                   "naphthalene_predosed_umol": n0*config["liquids"].get("naphthalene_substrate_stock_mM", 0)/config["liquids"]["substrate_stock_mM"],
-                  "evaporation": "ambient during round-one hold; verify dryness before catalysts"}
+                  "storage": "Cap promptly; retain 25 uL stock toluene (or configured dose); no evaporation; verify retained volume before catalysts"}
                   for i, well in enumerate(wells()[:config["design"]["round2_total"]], 1)])
-    for stage in ("dose_and_react", "workup"):
+    stages = ("dose_and_react", "workup") if stage == "all" else (stage,)
+    for protocol_stage in stages:
         prefix = "# Generated, self-contained. Keep this file with its dosing and deck-load CSVs.\n"
-        prefix += f"STAGE = {stage!r}\nDEMO = {not live!r}\nCONFIG = {config!r}\nOPERATIONS = {ops!r}\nDEFINITIONS = {definitions!r}\n"
-        protocol_name = f"Dual-ligand HTE R{rows[0]['round']} {stage}"
+        prefix += f"STAGE = {protocol_stage!r}\nDEMO = {not live!r}\nCONFIG = {config!r}\nOPERATIONS = {ops!r}\nDEFINITIONS = {definitions!r}\n"
+        protocol_name = f"Dual-ligand HTE R{rows[0]['round']} {protocol_stage}"
         runtime = RUNTIME.replace('"protocolName": "Dual-ligand HTE"', '"protocolName": '+repr(protocol_name))
-        atomic_text(output / f"{stage}.py", prefix + runtime)
+        atomic_text(output / f"{protocol_stage}.py", prefix + runtime)
     write_json(output / "export_manifest.json", {
-        "live": live, "sample_ids": [r["sample_id"] for r in rows],
+        "live": live, "released_stages": list(stages), "validation_scope": scope,
+        "sample_ids": [r["sample_id"] for r in rows],
         "config_digest": object_digest(config), "inventory_digest": object_digest(inventory),
         "design_digest": object_digest(design), "history_digest": object_digest(history) if history else None,
         "files": {path.name: digest(path) for path in sorted(output.iterdir()) if path.is_file()}})

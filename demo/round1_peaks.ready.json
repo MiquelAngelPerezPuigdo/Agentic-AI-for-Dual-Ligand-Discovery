@@ -60,15 +60,9 @@
     "R1-057",
     "R1-058",
     "R1-059",
-    "R1-060",
-    "R1-061",
-    "R1-062",
-    "R1-063",
-    "R1-064",
-    "R1-065",
-    "R1-066"
+    "R1-060"
   ],
   "method_id": "SYNTHETIC_2MIN",
-  "peaks_sha256": "2940c2816c73616f37690abe5af4fbccb40227924eff6dbfbe4a7da4f5b2ee05",
-  "dosing_sha256": "bfb613f1a836e96b39a6170976b866a2b110d5d55be8b6b828170f669f05afce"
+  "peaks_sha256": "8b26e4ea5d1f3cbd76a156420824a543c42b217d04b1ef212224d67027bf7e40",
+  "dosing_sha256": "5e6cb2eff35ef2d909a4aec50b9cb133ba2a817f828c91ff63dcea837b20b9b8"
 }

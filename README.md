@@ -1,6 +1,6 @@
 # Agentic AI for Dual-Ligand Discovery
 
-Local OT-2 experiment planning and LC-to-LLM iteration for Pd-catalyzed desulfonylative fluorination. The campaign searches 465 pairs from 31 ligands using repeated Claude performance scoring with potential ligand cooperativity and diversity across language-model embeddings.
+Local OT-2 experiment planning and LC-to-LLM iteration for Pd-catalyzed desulfonylative fluorination. The campaign searches 435 pairs from 30 active ligands using repeated Claude performance scoring with potential ligand cooperativity and diversity across language-model embeddings.
 
 For HTE staff, use the **[two-page action checklist](docs/HTE-staff-checklist.pdf)**. Its [editable source](docs/hte-staff-checklist.md) contains setup, deck loads, calibration preparation and the run sequence.
 
@@ -10,20 +10,22 @@ The [full reference handbook](docs/HTE-operator-handbook.pdf) preserves the deta
 
 ## Campaign
 
-- Round 1: 65 distinct ligand pairs and one tBuBrettPhos single-ligand reference.
+- Round 1: 59 distinct ligand pairs and one tBuBrettPhos single-ligand reference.
 - Round 2: 10 new pairs selected after the first LC results arrive.
-- Fixed conditions: 5 µmol substrate, 50 µL toluene, 0.1 M, 95 °C for four hours, 6 mol% of each ligand and 12 mol% Pd(COD)(DQ).
-- Initial selection combines Claude ranking and T5 embedding diversity at 50/50, with mandatory coverage of all 31 ligands in the 65 pair wells. After first-round yields arrive, the iterative selection uses only Claude scoring informed by those results; GoLLuM is not used for round two.
+- Fixed conditions: 25 µmol substrate, 250 µL toluene (provisional larger-vial scale), 0.1 M, 95 °C for four hours, 6 mol% of each ligand and 12 mol% Pd(COD)(DQ).
+- Initial selection combines Claude ranking and T5 embedding diversity at 50/50, with mandatory coverage of all 30 active ligands in the 59 pair wells. After first-round yields arrive, the iterative selection uses only Claude scoring informed by those results; GoLLuM is not used for round two.
 - Generated handoffs include dosing CSVs, stock preparation, exact deck loads, LC sequences and local Opentrons Python protocols.
 - A local watcher validates complete LC exports, calculates yields and creates the next dosing plan. Robot operation uses the local Opentrons App.
 
-The ten second-round substrate wells are predosed during the first reaction and allowed to evaporate DCM at ambient temperature, with a dry endpoint check before catalyst addition. Calibration measurements can run during the first four-hour hold.
+The ten second-round substrate wells receive 25 µL of the combined 1 M SM/10 mM naphthalene stock in toluene during the first reaction and are promptly capped. Retain that solvent; no evaporation step is used in either round. Calibration measurements run during the first four-hour hold. Release first dosing with `export --live --stage dose_and_react`; release workup separately after calibration passes. [LC import and calibration](docs/htel-lc-import.md).
 
-The [combined-stock and calibration plan](docs/stocks-and-calibration.md) uses one DCM stock with 250 mM SM and 2.5 mM naphthalene, a separate reservoir channel for LC dilution solvent, and five nonzero analyte calibration levels at fixed IS concentration. Pre-reaction IS retention and compatibility require HTE validation.
+The [combined-stock and calibration plan](docs/stocks-and-calibration.md) uses one toluene stock with 1 M SM and 10 mM naphthalene, a separate reservoir channel for LC dilution solvent, and five nonzero analyte calibration levels at fixed IS concentration. Pre-reaction IS retention and compatibility require HTE validation.
+
+L07 AdJohnPhos (CAS 224311-55-1) is excluded because its delivery is delayed. Original IDs and the 31-row source inventory stay unchanged; `design.excluded_ligands` controls availability.
 
 ## Install and verify
 
-Use Python 3.12 on the operator workstation:
+Use Python 3.12 on the operator workstation. For HTEL’s preferred uv installation, run `uv sync --python 3.12 --extra sources` and then `uv run hte check`. The existing pip/testing setup remains available:
 
 ```bash
 python3.12 -m venv .venv
@@ -35,7 +37,7 @@ python -m hte.cli demo --output output/rehearsal
 python -m hte.cli rehearse-loop --output output/fake-first-loop
 ```
 
-The optional ML dependencies support rebuilding embeddings and historical adapter validation; the campaign uses GoLLuM-inspired embeddings only for initialization. Precomputed real T5-base embeddings for all 465 pairs are included, so initial selection does not require downloading model weights. [Tested package versions](requirements-hte-tested.txt) document the local acceptance environment.
+The optional ML dependencies support rebuilding embeddings and historical adapter validation; the campaign uses GoLLuM-inspired embeddings only for initialization. Precomputed real T5-base embeddings for all 435 pairs are included, so initial selection does not require downloading model weights. [Tested package versions](requirements-hte-tested.txt) document the local acceptance environment.
 
 To score and select the first batch, set `ANTHROPIC_API_KEY` through a local secret mechanism, then run:
 
@@ -56,13 +58,15 @@ The [scoring prompt guide](docs/scoring-prompt.md) lists every ligand ID, name, 
 
 ## Validation status
 
-The local acceptance exercise passed **101 tests**, including OT-2 simulation, combined SM/IS dosing and dilution, LC calibration/QC with independent checks, MOCCA raw-DAD integration on synthetic data, the GoLLuM adapter and a complete watcher/scoring rehearsal with mocked Claude responses. [Validation record](software_validation.json), [rehearsal results](docs/rehearsal-results.md), [repository audit](docs/rehearsal-results.md#repository-audit).
+The local acceptance exercise passed **131 tests**, including OT-2 simulation, combined SM/IS dosing and dilution, LC calibration/QC with independent checks, MOCCA raw-DAD integration on synthetic data, the GoLLuM adapter and a complete watcher/scoring rehearsal with mocked Claude responses. [Validation record](software_validation.json), [rehearsal results](docs/rehearsal-results.md), [repository audit](docs/rehearsal-results.md#repository-audit).
 
 `demo/` contains **synthetic chemistry results and selections**. Its protocols refuse physical execution. Three live Opus 4.8 smoke tests (four pairs, two repeats each) passed. The current v4 prompt returns scores only with extended thinking disabled; provider-reported cache reuse was verified. Combined estimated test cost was $0.4023. The full first-round selection still needs to be run; physical bench validation remains open.
 
 Analytical sample transfers use fresh same-well tip conditioning, slower flow and a slow air gap; the runbook covers representative aliquots, failed-transfer recovery and repeat measurements. These starting settings require bench validation.
 
-The glass-block definition and mounting/seal, solvent delivery, extraction, analytical method and timing still require HTE verification. The provisional schedule is **729 minutes**, nine minutes beyond the 720-minute competition limit; a measured rehearsal must resolve this before the campaign.
+The proposed fivefold scale uses 250 µL reaction plus 250 µL workup, keeping final LC product/IS concentrations unchanged. Workup and LC diluent each use two capacity-checked reservoir channels.
+
+The glass-block definition and mounting/seal, solvent delivery, extraction, analytical method and timing still require HTE verification. The requested **1.7-minute LC method** gives a provisional **686-minute** schedule, leaving 34 minutes within the 720-minute limit if 1.7 minutes is the full cycle. Method suitability, cycle overhead and simultaneous glass-vial heating remain unconfirmed. [Organizer update and compliance](docs/organizer-updates.md).
 
 ## Contents
 

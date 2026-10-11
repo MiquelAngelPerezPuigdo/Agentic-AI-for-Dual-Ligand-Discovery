@@ -1,7 +1,7 @@
 {
-  "created_utc": "2026-10-09T09:42:08.911710+00:00",
+  "created_utc": "2026-10-11T18:35:26.441197+00:00",
   "tests": {
-    "tests": 101,
+    "tests": 134,
     "errors": 0,
     "failures": 0,
     "skipped": 0
@@ -31,52 +31,48 @@
   ],
   "language_model_pair_embeddings": {
     "model": "google-t5/t5-base",
-    "pairs": 465,
+    "pairs": 435,
     "dimensions": 768,
-    "actual_model_inference": true
+    "actual_model_inference": true,
+    "current_vectors": "Exact subset of original 465 model-inferred vectors; L07 rows removed, no new inference"
   },
   "claude_paid_calls": 6,
   "claude_api_request_contract_test": "three live Opus 4.8 smoke tests (four pairs, two repeats each); scores-only prompt v4 with thinking disabled checked live; full initial selection not run",
   "physical_robot_runs": 0,
   "real_chemistry_yields_available": false,
   "physical_bench_validation_complete": false,
-  "provisional_schedule_minutes": 729,
+  "provisional_schedule_minutes": 686.0,
   "competition_limit_minutes": 720,
-  "second_round_dcm": "ambient evaporation during first hold; dry endpoint check; no heater drying or substrate redose",
   "offline_lc_feedback_rehearsal": {
     "synthetic_only": true,
     "paid_api_calls": 0,
+    "physical_execution_allowed": false,
+    "prompt_caching_enabled": true,
+    "live_cache_hits_verified": false,
     "actual_lm_embeddings": {
-      "pairs": 465,
+      "pairs": 435,
       "dimensions": 768
     },
-    "round1_pairs": 65,
+    "mocked_requests": 10,
+    "round1_pairs": 59,
     "round1_reference_wells": 1,
+    "round1_ligands_covered_in_pairs": 30,
+    "round1_missing_ligands": [],
+    "coverage_floor_overrides": 0,
     "first_round_qc_pass": true,
-    "feedback_samples": 66,
-    "remaining_pairs_scored": 400,
+    "feedback_samples": 60,
+    "remaining_pairs_scored": 376,
     "round2_pairs": 10,
     "no_pair_repeats": true,
     "no_substrate_redose": true,
+    "no_internal_standard_redose": true,
     "incomplete_export_ignored": true,
     "duplicate_event_ignored": true,
-    "optional_gollum_check": {
-      "synthetic_only": true,
-      "valid_synthetic_pair_priors": 61,
-      "acquisition_rows": 465,
-      "all_acquisition_values_finite": true,
-      "actual_upstream_optimizer_executed": true,
-      "language_model_weights_finetuned": false,
-      "used_for_second_round_selection": false
-    },
-    "mocked_requests": 10,
-    "prompt_caching_enabled": true,
-    "live_cache_hits_verified": false,
-    "no_internal_standard_redose": true,
-    "round1_ligands_covered_in_pairs": 31,
-    "round1_missing_ligands": [],
-    "coverage_floor_overrides": 0,
-    "physical_execution_allowed": false,
+    "next_dosing_csv": "feedback_loop/iteration-2187b1985e852c20/next_dosing.csv",
+    "cache_summaries": [
+      "initial_scoring/cache_summary.json",
+      "feedback_loop/iteration-2187b1985e852c20/scoring/cache_summary.json"
+    ],
     "result_interpretation": "Synthetic yields and mocked rankings validate data flow only."
   },
   "prompt_caching": {
@@ -94,14 +90,14 @@
   },
   "preloaded_internal_standard": {
     "identity": "naphthalene",
-    "substrate_stock_mM": 250,
-    "naphthalene_stock_mM": 2.5,
-    "dose_ul": 20,
-    "is_umol_per_well": 0.05,
+    "substrate_stock_mM": 1000,
+    "naphthalene_stock_mM": 10,
+    "dose_ul": 25,
+    "is_umol_per_well": 0.25,
     "prepare_ul": 5000,
-    "storage_container": "capped 20 mL glass vial",
+    "storage_container": "capped 10 mL glass/PTFE vial",
     "deck_source": "slot 2 reservoir A1",
-    "lc_diluent_source": "slot 2 reservoir A5; no added IS",
+    "lc_diluent_source": "slot 2 A5/A7; no added IS",
     "final_lc_is_uM": 50,
     "is_amounts_and_no_redose_tested": true,
     "dilution_consistency_tested": true,
@@ -113,7 +109,11 @@
       6000
     ],
     "independent_calibration_checks_excluded_from_fit": true,
-    "physical_retention_and_compatibility_validated": false
+    "physical_retention_and_compatibility_validated": false,
+    "workup_ul": 250,
+    "reaction_ul": 250,
+    "scale_provisional": true,
+    "solvent": "toluene"
   },
   "local_api_key_file": {
     "filename": "anthropic.key",
@@ -141,9 +141,9 @@
   },
   "scoring_prompt": {
     "version": 4,
-    "ligand_ids_names_and_smiles": 31,
-    "explicit_pair_catalog": 465,
-    "extracted_same_substrate_SI_rows": 18,
+    "ligand_ids_names_and_smiles": 30,
+    "explicit_pair_catalog": 435,
+    "extracted_same_substrate_SI_rows": 17,
     "unreported_SI_rows_left_unknown": 13,
     "SI_page": "S35",
     "SI_table": "S2",
@@ -159,14 +159,19 @@
     "literature_narrative_in_API_input": false,
     "extended_thinking_disabled": true,
     "max_output_tokens": 10000,
-    "full_campaign_token_count": 35647,
-    "full_campaign_conservative_bound_usd": 6.2647
+    "historical_31_ligand_token_preflight": {
+      "input_tokens": 35647,
+      "conservative_bound_usd": 6.2647
+    },
+    "source_SI_rows": 18,
+    "full_campaign_token_count": null,
+    "full_campaign_conservative_bound_usd": null
   },
   "first_round_ligand_coverage": {
     "required": true,
-    "ligands_required": 31,
+    "ligands_required": 30,
     "scope": "pair wells only; the L17 single-ligand reference does not count",
-    "pair_wells": 65,
+    "pair_wells": 59,
     "reference_wells": 1,
     "no_extra_experiments": true,
     "selection": "coverage first, then ordinary 50/50 LLM-rank/embedding-diversity filling",
@@ -176,7 +181,7 @@
     "missing_ligands_rejected_by_design_export_and_feedback": true,
     "adversarial_all_pairs_of_one_ligand_below_floor_tested": true,
     "tight_16_well_complete_library_coverage_tested": true,
-    "offline_rehearsal_ligands_covered": 31,
+    "offline_rehearsal_ligands_covered": 30,
     "offline_rehearsal_missing_ligands": [],
     "offline_rehearsal_floor_overrides": 0,
     "real_first_batch_generated": false
@@ -220,5 +225,70 @@
     "repeat_injection_and_repeat_preparation_guidance_added": true,
     "physical_sampling_validation_complete": false,
     "extra_cycles_and_delays_need_measured_timing": true
-  }
+  },
+  "historical_31_ligand_feedback_rehearsal": {
+    "synthetic_only": true,
+    "paid_api_calls": 0,
+    "actual_lm_embeddings": {
+      "pairs": 465,
+      "dimensions": 768
+    },
+    "round1_pairs": 65,
+    "round1_reference_wells": 1,
+    "first_round_qc_pass": true,
+    "feedback_samples": 66,
+    "remaining_pairs_scored": 400,
+    "round2_pairs": 10,
+    "no_pair_repeats": true,
+    "no_substrate_redose": true,
+    "incomplete_export_ignored": true,
+    "duplicate_event_ignored": true,
+    "optional_gollum_check": {
+      "synthetic_only": true,
+      "valid_synthetic_pair_priors": 61,
+      "acquisition_rows": 465,
+      "all_acquisition_values_finite": true,
+      "actual_upstream_optimizer_executed": true,
+      "language_model_weights_finetuned": false,
+      "used_for_second_round_selection": false
+    },
+    "mocked_requests": 10,
+    "prompt_caching_enabled": true,
+    "live_cache_hits_verified": false,
+    "no_internal_standard_redose": true,
+    "round1_ligands_covered_in_pairs": 31,
+    "round1_missing_ligands": [],
+    "coverage_floor_overrides": 0,
+    "physical_execution_allowed": false,
+    "result_interpretation": "Synthetic yields and mocked rankings validate data flow only."
+  },
+  "htel_update": {
+    "excluded_ligands": [
+      "L07"
+    ],
+    "active_ligands": 30,
+    "requested_method_minutes": 1.7,
+    "full_cycle_validated": false,
+    "reaction_scale_ul": 250,
+    "scale_confirmed": false,
+    "real_supplied_csv_import_test": true,
+    "original_attachments_published": false,
+    "vial_rack_json_available": false,
+    "simultaneous_heating_validated": false,
+    "source_pools_capacity_tested": true,
+    "staged_first_reaction_release_tested": true,
+    "peak_calibration_join_tested": true,
+    "organizer_transcript_available": false,
+    "paid_calls_this_update": 0,
+    "toluene_substrate_stock_M": 1,
+    "substrate_stock_solubility_reported_by_user": true,
+    "no_evaporation": true,
+    "ligand_stock_mM": 20,
+    "pd_stock_mM": 40,
+    "retained_predose_volume_accounted_in_both_rounds": true,
+    "pipette_setup": "proposed p300 single + p300 multi; p20 split-transfer alternative tested",
+    "catalyst_stock_solubility_validated": false,
+    "p300_and_p20_no_dry_down_simulations_tested": true
+  },
+  "second_round_predose": "25 uL SM/IS in toluene; cap promptly during R1 hold, retain solvent; no drying, no redose"
 }

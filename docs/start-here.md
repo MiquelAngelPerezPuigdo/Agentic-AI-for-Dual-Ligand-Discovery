@@ -1,27 +1,27 @@
 # Start here: organizers, HTE operators and the first batch
 
-Send the organizers the [HTE configuration checklist](hte-questions.md) and give the experimental operators the **[two-page staff checklist](HTE-staff-checklist.pdf)**. The [complete runbook](hte-runbook.md) remains a technical reference. The checklist requests the unresolved facts; the runbook explains stock preparation, deck loading, each reaction/analysis stage and the automated decision.
+Use the local operating instructions. Send the organizers the [HTE configuration checklist](hte-questions.md) and give the experimental operators the **[two-page staff checklist](HTE-staff-checklist.pdf)**. The [complete runbook](hte-runbook.md) remains a technical reference. The checklist requests the unresolved facts; the runbook explains stock preparation, deck loading, each reaction/analysis stage and the automated decision.
 
 ## What to ask the organizers
 
-1. **Reaction hardware:** Which sealed glass-vial array, insert and seal can they supply and securely mount on the OT-2 heater-shaker? Ask for the measured labware JSON, validated 95 °C heating/shaking/sealing, actual thermal lag and a second vial array for predosing round two. Para-Dox 104960 is a candidate, with compatibility pending.
-2. **LC method and data:** Ask for the exact method, measured full two-minute injection cycle, quantitative channel/wavelength, retention times, injection volume and a representative CSV/XLSX export. Include well/sample mapping, failed injections, nondetections and an end-of-sequence signal. Raw DAD data are needed only for optional MOCCA processing.
-3. **Extraction and calibration:** Confirm recovery and homogeneous sampling from the toluene/water/ACN mixture, acceptable dilution/concentration, calibration and naphthalene suitability, and the LC plate/seal. Validate naphthalene added with SM through drying/heating before treating its area as a yield reference. Schedule five nonzero analyte levels at fixed IS, blanks and independent checks while the first reaction runs; use the [stock and calibration instructions](stocks-and-calibration.md).
-4. **Stocks and liquid handling:** Confirm identity/assay, solubility of every proposed stock, glovebox stock preparation, containers/dead volumes, solvent pipetting and acceptable source-dedicated tip reuse. Validate aspiration heights and the dry endpoint for ambient second-round DCM evaporation.
+1. **Reaction hardware:** Which sealed glass-vial array, insert and seal can they supply and securely mount on the OT-2 heater-shaker? Ask for the measured labware JSON, validated 95 °C heating/shaking/sealing, actual thermal lag and a second vial array for predosing round two. The email mentions 24 × 4 mL vials but the ZIP lacks their rack JSON. Confirm capacity to heat all 60 first-round reactions together.
+2. **LC method and data:** Request the existing 1.7-minute method, its measured full injection cycle, quantitative channel/wavelength, retention times, injection volume and a representative CSV/XLSX export. Include well/sample mapping, failed injections, nondetections and an end-of-sequence signal. Raw DAD data are needed only for optional MOCCA processing.
+3. **Extraction and calibration:** Confirm recovery and homogeneous sampling from the toluene/water/ACN mixture, acceptable dilution/concentration, calibration and naphthalene suitability, and the LC plate/seal. Validate naphthalene added with SM through capped predose storage/heating before treating its area as a yield reference. Schedule five nonzero analyte levels at fixed IS, blanks and independent checks while the first reaction runs; use the [stock and calibration instructions](stocks-and-calibration.md).
+4. **Stocks and liquid handling:** Confirm identity/assay, solubility of every proposed stock, glovebox stock preparation, containers/dead volumes, solvent pipetting and acceptable source-dedicated tip reuse. Validate aspiration heights and capped second-round predose storage, including retained toluene volume.
 5. **Time and access:** Request a timed rehearsal, continuous LC availability, local OT-2 App access, a shaker for the analytical plate and a workstation allowed to contact Anthropic. Stock preparation and initial selection are outside the clock; the final ten analyses end it.
 
-The chemistry and two-minute analyses already occupy 632 of 720 minutes. The complete provisional plan is 729 minutes; the organizers need to help establish a measured plan that fits.
+The requested 1.7-minute full-cycle scenario gives 599 minutes for chemistry and reaction-sample LC, plus 87 minutes of provisional operations: **686 minutes** total. HTEL must confirm the method separates all three compounds and measure the full cycle. A 3-minute serial method would take 777 minutes.
 
 ## What HTE follows
 
 | Stage | Operator action | Software handoff |
 |---|---|---|
-| Before the clock | Confirm equipment/method, prepare stocks in the glovebox, calibrate handling and rehearse | Campaign configuration; real first-batch selection; printed stock and deck-load CSVs |
-| First assembly | Dose combined SM/IS into 66 wells, remove DCM, add ligands/Pd/toluene, seal and begin the four-hour hold | Local first-round dosing/reaction protocol |
-| During first hold | Measure authentic standards/calibration; predose ten second-round SM/IS wells and allow ambient DCM evaporation | Calibration CSV and ten-well predose manifest |
-| First workup and LC | Cool, work up, dilute and measure all 66 samples; publish the complete export | Local workup protocol; peak CSV plus completion marker |
+| Before the clock | Confirm 250 µL scale/rack/method, prepare stocks in the glovebox, calibrate handling and rehearse | Campaign configuration; real first-batch selection; printed stock and deck-load CSVs |
+| First assembly | Dose 25 µL combined SM/IS/toluene into 60 wells, add ligands/Pd, seal and begin the four-hour hold | Local first-round dosing/reaction protocol |
+| During first hold | Measure authentic standards/calibration; predose and promptly cap ten second-round SM/IS/toluene wells | Calibration CSV and ten-well predose manifest |
+| First workup and LC | Cool, work up, dilute and measure all 60 samples; publish the complete export | Local workup protocol; peak CSV plus completion marker |
 | Decision | Review QC and the ten new pair assignments | Watcher produces `next_design.csv` and `next_dosing.csv` |
-| Second assembly | Verify predosed wells are dry; add the selected catalysts and toluene, seal and hold four hours | Local second-round protocol; substrate and IS are not dosed again |
+| Second assembly | Verify capped predoses retain their 25 µL stock volume; add the selected catalysts, seal and hold four hours | Local second-round protocol; substrate and IS are not dosed again |
 | Final workup and LC | Work up and measure all ten samples; stop the clock | Final calibrated results and logs |
 
 Staff follow the short checklist; the runbook supplies the detailed reference. Exact glass hardware, extraction and analytical settings are still pending; they must be resolved before physical execution.
@@ -43,7 +43,7 @@ cp anthropic.key.example anthropic.key
 zsh scripts/first-batch.zsh
 ```
 
-The script uses the local key file and runs five real scoring calls over the 465 pairs, followed by the 50/50 score/diversity selection. Its output is `output/first-batch-<timestamp>/first_batch.csv`: **65 pair assignments plus one L17 tBuBrettPhos reference**, including well and sample IDs. All 31 ligands must occur in the pair wells; the single reference does not count toward coverage. `first_batch.csv.ligand_coverage.csv` lists each ligand and its pair-well count, and the selection trace flags any coverage-driven Claude-cutoff override. Scoring files preserve the exact prompts, individual scores, token usage and the cost preflight. Responses contain scores only; extended thinking is disabled. These are paid calls within the configured estimated $20 campaign cap. No key belongs in a committed file or chat message.
+The script uses the local key file and runs five real scoring calls over the 435 pairs, followed by the 50/50 score/diversity selection. Its output is `output/first-batch-<timestamp>/first_batch.csv`: **59 pair assignments plus one L17 tBuBrettPhos reference**, including well and sample IDs. All 30 active ligands must occur in the pair wells; the single reference does not count toward coverage. `first_batch.csv.ligand_coverage.csv` lists each ligand and its pair-well count, and the selection trace flags any coverage-driven Claude-cutoff override. Scoring files preserve the exact prompts, individual scores, token usage and the cost preflight. Responses contain scores only; extended thinking is disabled. These are paid calls within the configured estimated $20 campaign cap. No key belongs in a committed file or chat message.
 
 The script accepts an output folder and campaign path, for example `zsh scripts/first-batch.zsh output/real-first-batch local_data/campaign.json`; an optional third argument supplies the inventory path. Use that same campaign file throughout export and LC feedback. The first batch can be selected before the organizers finalize hardware and LC details. Protocol/stock exports use the confirmed campaign configuration as described in the runbook. Do not use the synthetic demo ranking for experiments.
 
@@ -71,10 +71,10 @@ python -m hte.cli rehearse-loop --output output/fake-first-loop
 
 Use a fresh output directory for each rehearsal. This uses the real frozen T5 pair embeddings, **synthetic LC results**, and an explicitly mocked Claude client. It makes zero paid calls and needs no key. It runs both scoring campaigns through the real scoring code and the first-round event through the real watcher.
 
-The report verifies 66 first-round measurements reach the scorer, only 400 untested pairs are rescored, ten new pair assignments are generated, substrate is not dosed again, incomplete exports are ignored and repeated completion events do not trigger more calls. `rehearsal_report.json` points to the resulting `next_dosing.csv`. Scores and yields from this exercise demonstrate data flow only.
+The report verifies 60 first-round measurements reach the scorer, only 376 untested pairs are rescored, ten new pair assignments are generated, substrate is not dosed again, incomplete exports are ignored and repeated completion events do not trigger more calls. `rehearsal_report.json` points to the resulting `next_dosing.csv`. Scores and yields from this exercise demonstrate data flow only.
 
 ## What has run from GoLLuM
 
-Real T5-base inference generated the included 465 × 768 pair embeddings, averaging both ligand orders. Initial selection uses those embeddings for diversity, following the language-model representation idea that motivated GoLLuM. With no measured pair yields, it does not fit a yield model.
+Real T5-base inference generated the original 465 × 768 pair embeddings; the included library selects its 435 unchanged active rows, averaging both ligand orders. Initial selection uses those embeddings for diversity, following the language-model representation idea that motivated GoLLuM. With no measured pair yields, it does not fit a yield model.
 
-The attributed upstream GoLLuM optimizer has been executed with a local GP-trained projection over frozen embeddings and synthetic observations. This adapter keeps the original language-model weights frozen; it is not the full upstream fine-tuning pipeline. It is optional and is not used to decide the approved all-LLM second round. For this campaign, GoLLuM is used only as inspiration for embedding-based initialization. After the first yields arrive, Claude alone scores/selects the second round; no GoLLuM yield model is trained or consulted.
+The attributed upstream optimizer ran on synthetic observations with a GP projection over frozen embeddings; this was a historical adapter check. The campaign uses embedding diversity only for initialization. After measured yields arrive, Claude alone selects round two.

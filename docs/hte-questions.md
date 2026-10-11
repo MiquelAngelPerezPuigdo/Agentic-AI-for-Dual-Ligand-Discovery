@@ -1,50 +1,31 @@
 # HTE configuration checklist
 
-Record the confirmed values in a campaign-specific copy of `hte_inputs/campaign.json` before generating live protocols. This checklist accompanies the [operator runbook](hte-runbook.md).
+Confirmed: solvents/Chromeleon; L07 excluded; **59 pairs + one reference, then ten pairs**. Request **1.7-minute LC**. See [event requirements](organizer-updates.md).
 
-## Analytical method and export
+Record confirmed answers in the campaign configuration before live release.
 
-- Exact two-minute method ID and measured injection-to-injection cycle, including overhead.
-- Column, gradient, injection volume, quantitative DAD wavelength/channel and retention windows for substrate, product and naphthalene.
-- Representative CSV/XLSX export: headers, sample/well mapping, retention-time and area units, method/channel fields, nondetections and failed injections.
-- Complete-sequence export or an automatic completion marker for the local watcher.
-- Raw DAD export format if optional MOCCA processing will be used.
+## Hardware and scale
 
-Public HTEL equipment listings identify Vanquish Horizon Duo, ISQ-EM and DAD, and UZH lists `LC-ISQ-HTL-01` in Chromeleon. These listings do not establish the actual method or quantitative channel. [Equipment](https://www.chem.uzh.ch/en/research/services/htel/Equipment.html), [Chromeleon](https://www.chem.uzh.ch/en/research/services/massspec/Open-access_LC-and_GC-MS_with_Chromeleon.html).
+- Clarify Para-Dox availability and send the missing **24 × 4 mL vial-rack JSON**. The ZIP defines a plastic plate.
+- Confirm **60 sealed vials heated together at 95 °C for four hours**, uniform heating/mixing and thermal lag. Sequential 24-vial holds exceed the deadline. Provide a second predose array.
+- Confirm **250 µL reaction + 250 µL workup**, vial depth/bottom, mounting, deck/cap clearance, shaking and toluene/SO2-compatible sealing.
+- Current 96-array protocols require 9 mm pitch. A 24-vial setup requires revised maps/pipettes/heating.
 
-## Calibration and sample compatibility
+## LC method, export and calibration
 
-- Schedule authentic standards, calibration series, blanks and checks during the first reaction hold.
-- Validate extraction/recovery, analyte stability and phase homogeneity after adding 50 µL of 1:1 water/ACN with 1% formic acid, without extra IS, to 50 µL reaction mixture.
-- Verify retention/recovery and chemical compatibility of 0.050 µmol naphthalene added with SM before DCM evaporation, including both dry-down methods and the 95 °C hold. Confirm the five nonzero analyte calibration levels, fixed 50 µM IS and independent-check acceptance; see the [stock and calibration instructions](stocks-and-calibration.md).
-- Confirm the proposed 20 µL aliquot into 180 µL diluent is appropriate: nominal maximum product concentration is 5 mM and naphthalene is 50 µM.
-- Confirm final matrix, dilution, injection concentration, plate/seal, minimum volume and any filtration or centrifugation.
+- Supply the existing **1.7-minute** method ID, column/gradient, injection volume and **full injection-to-injection cycle**. Confirm separation of PyFluor, 2-fluoropyridine and naphthalene in our matrix. No prior method optimization is assumed.
+- Select UV wavelength/channel using authentic standards; supply RT windows/LOQs. Example wavelengths are not our method.
+- Explicitly request **14 calibration injections during round one**: five nonzero levels, a zero-analyte/IS blank and an independent check per analyte. Use [stock/calibration instructions](stocks-and-calibration.md); calibration is not a default HTEL service.
+- Export required low/zero signals; clarify `n.a.`, peak-count mismatches and failed injections.
+- Provide injection-number/sample-ID/method mapping and a complete-sequence marker; names may repeat.
+- MOCCA requires raw **DAD**; supplied MS RAW is for identity review.
 
-## Glass reaction block and heating
+## Stocks, sampling and local operation
 
-- Exact glass block, insert and seal, with a measured Opentrons labware definition.
-- Secure mounting on the OT-2 heater-shaker universal flat adapter, latch/bolt clearance, allowable shaking mass and open/sealed travel clearance.
-- Toluene loss, sealing and SO₂ compatibility at 95 °C for four hours.
-- Actual liquid thermal lag, off-module cooling procedure and safe thermal handling.
-- A second vial array or compatible removable tray for predosing ten substrate wells during round one.
+- Validate **greater than 1 mm** bottom clearance and immersion at the lowest volume, organic-solvent pipetting, noncontact stock-tip reuse and fresh sample-tip conditioning.
+- Confirm stock assays/solubility, glovebox ligand preparation/storage and capped reserves. Store combined SM/IS stock in glass; validate reservoir contact with toluene.
+- Validate IS recovery, homogeneous extraction and LC matrix. Confirm sample 1% HCOOH compatibility with 0.1% mobile phase.
+- Confirm proposed p300 single/eight-channel mounts, 20/40 mM ligand/Pd solubility, capped 25 µL predose storage, cooling and LC shaking. Manual actions occur at pauses.
+- Time handling/full cycle and reserve instruments: provisional 686 min, 34 min margin.
+- Confirm local Anthropic access, private key delivery and stock preparation/initial selection outside the clock.
 
-The Para-Dox Gen II 104960 is a candidate with 1 mL inserts and a standard microplate footprint. Its footprint does not establish module fit or thermal performance. [Drawing](https://www.analytical-sales.com/drawings/104960_rev1c_PUBLIC.pdf).
-
-## Stocks and solvent delivery
-
-- Bottle/COA identities and assay values for all ligands, Pd(COD)(DQ) and substrate.
-- Homogeneous combined 250 mM substrate + 2.5 mM naphthalene in DCM, 30 mM ligand/toluene and 60 mM Pd/toluene stocks at dispensing temperature.
-- Confirm the capped 20 mL glass preparation vial for the 5 mL SM/IS stock and short DCM contact compatibility of the on-deck 15 mL reservoir channel. Keep a separate channel for LC dilution solvent.
-- Glovebox preparation/storage for ligands, labeled stocks and sufficient capped reserves.
-- Source containers, dead volumes, aspiration/dispense heights and validated organic-solvent delivery settings.
-- p20 single GEN2 and p300 eight-channel GEN2 configuration; source-dedicated noncontact tip reuse only after validation, with fresh sample tips.
-- First-round DCM evaporation on the heater-shaker; second-round ambient evaporation under the approved ventilation setup, with a dry endpoint check before catalysts.
-
-## Timing and local operation
-
-- Rehearse dosing, heating, thermal equilibration, cooling, workup, manual moves, LC handling and the second-round LLM decision.
-- Confirm uninterrupted LC and local OT-2 App availability and access to a plate shaker for the analytical plate.
-- Confirm permitted Anthropic access from the operator workstation and test model access before the competition.
-- Stocks and initial preselection are outside the clock. The clock stops after the ten second-round analyses.
-
-Two four-hour holds and 76 analyses at two minutes each consume 632 minutes, leaving 88 minutes for all other operations. The provisional complete schedule is 729 minutes and therefore requires improvement supported by rehearsal measurements.

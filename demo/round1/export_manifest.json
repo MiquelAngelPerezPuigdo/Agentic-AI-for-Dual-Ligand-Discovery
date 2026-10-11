@@ -1,5 +1,10 @@
 {
   "live": false,
+  "released_stages": [
+    "dose_and_react",
+    "workup"
+  ],
+  "validation_scope": "all",
   "sample_ids": [
     "R1-001",
     "R1-002",
@@ -60,27 +65,21 @@
     "R1-057",
     "R1-058",
     "R1-059",
-    "R1-060",
-    "R1-061",
-    "R1-062",
-    "R1-063",
-    "R1-064",
-    "R1-065",
-    "R1-066"
+    "R1-060"
   ],
-  "config_digest": "39ea8638de5dc2f5849fe859db79e18a8c33124d242fd50aba38268c9b1262b4",
-  "inventory_digest": "0e5021ec567d89ac82b35d001dcb036e2685a50d3688f8115a9c24f42de9b413",
-  "design_digest": "af94eb7c0713ece8de519f82c79e9f5bf1d7be260d4258943100876f141b82fa",
+  "config_digest": "1ccfa55d62ad9a654bc74b672b966ed2f97a3f84fc4f6f2dc6736fe8fa8f0b07",
+  "inventory_digest": "0d3102a4069dbaf45a7a9cd4df16150ac4553d4bcc017360b2f76e9568512e7d",
+  "design_digest": "b264b147b02a32ac682a1baaa45d85a1e4f72a3d7a59f10aec82fb28082ce2dd",
   "history_digest": null,
   "files": {
-    "deck_loads.csv": "5bebc833851e454f5e0c92c029487cc026eb9fe050d4108e13ca59f5a11157ce",
-    "dose_and_react.py": "415ce6d51e4af8007350c3c6abfd0d939112f4bb88030afa8fb42c5640ef8276",
-    "dosing.csv": "bfb613f1a836e96b39a6170976b866a2b110d5d55be8b6b828170f669f05afce",
-    "lc_sequence.csv": "fe65588c793680dc1f0ee4701d892c6f8e671dbadc5e273c1c527b002f831162",
-    "operations.json": "a619b609f1476a04023ed9ef4026096e3c787a0213723acc374d1976910b6a36",
-    "round2_predose.csv": "498bc822820371b9c1371958aac618ba3027b59a51224b3c3edecd187c50895e",
-    "stock_preparation.csv": "617822cdaf6bdef94714e554aa4b0e84e0907a5ecc5a690ee3c839c57bfd6dcd",
-    "tip_budget.json": "56b1a3e426a84947ef61be9bed05e718c7780406501e1b8bdd52dc03df4ab969",
-    "workup.py": "28c7058a90515e7163823b8e1b78dfe07214d8717440c6c675b5a30136260b0c"
+    "deck_loads.csv": "09889373e37c922b7ab69060690738c86167fadafc96fdd1694169657a62642e",
+    "dose_and_react.py": "c33ca286e1be358dccfba0b2d9e0fa7ffdf3fd35145d3a1ba533480b10170a0a",
+    "dosing.csv": "5e6cb2eff35ef2d909a4aec50b9cb133ba2a817f828c91ff63dcea837b20b9b8",
+    "lc_sequence.csv": "95d7f2e6ea7bcf18217a3e2c323019ac523e446419e26b3fe150c2526c18fc4e",
+    "operations.json": "04b219f2cc8211f81d490b0440b996c1e600cbcf405477fac842615030b30fdc",
+    "round2_predose.csv": "211c1174d513537ddd1c71ffb97bd488cf53bd0110e1c24121a1f5b201146736",
+    "stock_preparation.csv": "4ce6d64421c2ee40ebcba5c40c4f9c32d2814558d96f4279d14db09612b0b659",
+    "tip_budget.json": "b1b619731631734b091ef01f3536b7e1a2a08be1bd391715159931695be7cee0",
+    "workup.py": "a7b0d632b8007170dd56a9dd468edf8ac24dd4bc514e44f76603c951c694183c"
   }
 }

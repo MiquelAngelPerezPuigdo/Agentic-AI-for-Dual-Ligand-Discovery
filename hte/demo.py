@@ -3,7 +3,7 @@ from pathlib import Path
 
 from .analytics import analyze, complete_export, validate_completion
 from .design import consensus_select, ligand_coverage, make_design, pair_features, round1_required_ligands
-from .inventory import candidates, load_inventory
+from .inventory import candidates, campaign_inventory
 from .io import new_output, read_json, write_csv, write_json
 from .planning import schedule
 from .protocols import export
@@ -34,8 +34,8 @@ def synthetic_config(config_path):
     config["demo"] = True
     config["design"]["require_lm_embeddings"] = False
     config["design"]["exploration_backend"] = "SYNTHETIC_fingerprint_fixture"
-    config["robot"].update(reaction_labware="biorad_96_wellplate_200ul_pcr",
-                           heater_adapter="opentrons_96_pcr_adapter")
+    config["robot"].update(reaction_labware="nest_96_wellplate_2ml_deep",
+                           heater_adapter="opentrons_96_deep_well_adapter")
     config["analytics"].update(method_id="SYNTHETIC_2MIN", channel="SYNTHETIC_UV",
         references={name: {"retention_time_min": rt, "window_min": 0.05}
                     for name, rt in [("substrate", 0.4), ("product", 0.9), ("internal_standard", 1.5)]},
@@ -47,13 +47,14 @@ def run(output, inventory_path, config_path="hte_inputs/campaign.json"):
     out = new_output(output)
     config = synthetic_config(config_path)
     write_json(out/"campaign.json", config)
-    inventory = load_inventory(inventory_path, confirmed=True)
+    inventory = campaign_inventory(inventory_path, config, confirmed=True)
     pairs = candidates(inventory)
     # Deterministic arbitrary scores are fixture data, not an LLM ranking.
     ranking = [{"pair_id": c["pair_id"], "mean_score": (i*37 % 101), "score_sd": 1, "scoring_calls": 5}
                for i, c in enumerate(pairs)]
     write_csv(out/"SYNTHETIC_ranking.csv", ranking)
-    selection, trace = consensus_select(pairs, ranking, pair_features(inventory, pairs), 65,
+    count = config["design"]["round1_total"]-len(config["design"]["round1_controls"])
+    selection, trace = consensus_select(pairs, ranking, pair_features(inventory, pairs), count,
                                        required_ligands=round1_required_ligands(config, inventory))
     write_csv(out/"selection.csv", trace)
     design1 = make_design(config, inventory, pairs, ranking, selection, 1)
@@ -80,5 +81,5 @@ def run(output, inventory_path, config_path="hte_inputs/campaign.json"):
         "round1_pairs": len(tested), "round1_reference_wells": 1, "round2_pairs": len(design2),
         "round1_qc_pass": report["batch_qc_pass"], "round2_qc_pass": report2["batch_qc_pass"],
         "no_pair_repeats": not tested.intersection(d["pair_id"] for d in design2),
-        "round2_substrate_redosed": any(d["sm_DCM_ul"] != 0 for d in dose2), "schedule": schedule(config)})
+        "round2_substrate_redosed": any(d["sm_stock_ul"] != 0 for d in dose2), "schedule": schedule(config)})
     return out/"demo_report.json"
