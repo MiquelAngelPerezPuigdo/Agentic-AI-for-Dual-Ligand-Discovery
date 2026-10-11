@@ -61,16 +61,16 @@ Follow the local App's pauses and the released CSV well maps. Keep plate orienta
 | 4. While reacting | At the App pause, predose **20 uL SM/IS/DCM into ten second-round wells** using `round2_predose.csv`. Remove that array to the approved ventilated ambient-evaporation location; resume promptly. Run the **14 calibration injections** in parallel. Cap/remove volatile sources at the permitted pauses; remove covers before any aspiration. |
 | 5. Cool | At the end of four hours, follow the manual-move prompt and thermal-handling SOP. Move the sealed block off the heater to slot 3. Cool before opening. |
 | 6. Work up | Load LC plate in slot 6 and run `round1/workup.py`. Add **50 uL workup solvent, without additional IS**, then shake the reaction block **2 min without heating** using the released method. Return to slot 3. |
-| 7. Dilute and analyze | Verify homogeneous extract. Robot adds **180 uL LC diluent**, then **20 uL extract** to the mapped LC wells with fresh sample tips. Seal and mix LC plate **2 min** on the approved shaker. Run all **66 samples** using `lc_sequence.csv`. |
+| 7. Dilute and analyze | Check homogeneous extract; remix if delayed and let bubbles clear. Fresh tips prewet **twice in their own reaction well** before slow aspiration. Robot adds **180 uL diluent + 20 uL extract** to mapped LC wells; discard tip surplus. Seal, mix LC plate **2 min**, let bubbles clear; check needle height/volume. Run **66 samples** using `lc_sequence.csv`. |
 | 8. Trigger next batch | Export the complete integrated peak list and publish its completion marker through the configured local hook. Wait for QC to pass and for `next_design.csv` / `next_dosing.csv` (**ten new pairs**). Follow the configured round-two export to obtain the released local protocols and deck-load CSV. If QC or export stops, resolve it before dosing. |
 | 9. Second reaction | Check the ten predosed wells and orientation; **verify DCM is gone**. Load stage quantities from the new deck CSV. Run the released second-round dosing protocol: add the selected ligands, toluene and Pd as in step 3; **do not redose SM/IS or perform a second heater dry-down**. Seal and react at **95 C / 500 rpm / 4 h**. |
 | 10. Finish | Cool sealed, then repeat steps 6-7 with the second-round workup protocol for **ten samples**. Stop the clock when all ten analyses are complete. Save calibrated results, QC, stock/refill records and Opentrons JSON logs. |
 
 ## Pause and correct before resuming
 
-- A tip hits the bottom, touches recipient liquid during dispensing, aspirates air, drips unexpectedly, or shows bubbles/solids: pause; correct the cause. Do not force repeated aspirations through an insoluble stock. Starting heights (1 mm above bottom; dispense 2 mm above top) require actual clearance and immersion validation.
-- Reuse a dosing tip only for its same stock with validated noncontact dispensing. Sample tips stay fresh between wells/columns. Replace racks when prompted; recap stocks at permitted pauses.
-- If the extract is visibly two-phase or contains solids, stop sampling and use the approved extraction method. Keep the reaction sealed through heating/cooling; open only under HTE's thermal-handling SOP.
+- Bottom contact, unintended air, dripping, bubbles or solids: pause and correct. Validate clearance/immersion (sample starts 1 mm above bottom); do not force insoluble material through tips.
+- Reuse only same-stock dosing tips with validated noncontact dispensing. Sample tips stay fresh. Never return a tip to source after LC contact. An uncertain transfer needs a fresh documented dilution, never a guessed top-up.
+- Two phases/solids: stop sampling and use the approved extraction method. Keep reactions sealed through heating/cooling. Preserve failed measurements; repeat only for documented QC faults, never to choose a higher yield.
 
 **Per reaction:** 5 umol SM, 50 uL final toluene solution, 0.1 M; 6 mol% each ligand, 12 mol% Pd; no base or external fluoride. **Timing:** 2 min per LC sample; 76 reaction samples total. The provisional 729-min plan must be shortened and measured before release against the 720-min limit.
 

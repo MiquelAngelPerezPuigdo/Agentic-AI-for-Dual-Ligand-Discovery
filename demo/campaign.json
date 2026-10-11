@@ -87,7 +87,12 @@
     "p20_dispense_ul_s": 8,
     "p300_aspirate_ul_s": 15,
     "p300_dispense_ul_s": 30,
-    "reuse_tips": true
+    "reuse_tips": true,
+    "sample_prewet_cycles": 2,
+    "sample_aspirate_height_mm": 1,
+    "sample_flow_rate_multiplier": 0.5,
+    "sample_air_gap_rate": 0.1,
+    "sample_pause_seconds": 1
   },
   "stock_preparation": {
     "assay_fractions": {},

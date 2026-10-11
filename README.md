@@ -56,9 +56,11 @@ The [scoring prompt guide](docs/scoring-prompt.md) lists every ligand ID, name, 
 
 ## Validation status
 
-The local acceptance exercise passed **88 tests**, including OT-2 simulation, combined SM/IS dosing and dilution, LC calibration/QC with independent checks, MOCCA raw-DAD integration on synthetic data, the GoLLuM adapter and a complete watcher/scoring rehearsal with mocked Claude responses. [Validation record](software_validation.json), [rehearsal results](docs/rehearsal-results.md), [repository audit](docs/rehearsal-results.md#repository-audit).
+The local acceptance exercise passed **101 tests**, including OT-2 simulation, combined SM/IS dosing and dilution, LC calibration/QC with independent checks, MOCCA raw-DAD integration on synthetic data, the GoLLuM adapter and a complete watcher/scoring rehearsal with mocked Claude responses. [Validation record](software_validation.json), [rehearsal results](docs/rehearsal-results.md), [repository audit](docs/rehearsal-results.md#repository-audit).
 
 `demo/` contains **synthetic chemistry results and selections**. Its protocols refuse physical execution. Three live Opus 4.8 smoke tests (four pairs, two repeats each) passed. The current v4 prompt returns scores only with extended thinking disabled; provider-reported cache reuse was verified. Combined estimated test cost was $0.4023. The full first-round selection still needs to be run; physical bench validation remains open.
+
+Analytical sample transfers use fresh same-well tip conditioning, slower flow and a slow air gap; the runbook covers representative aliquots, failed-transfer recovery and repeat measurements. These starting settings require bench validation.
 
 The glass-block definition and mounting/seal, solvent delivery, extraction, analytical method and timing still require HTE verification. The provisional schedule is **729 minutes**, nine minutes beyond the 720-minute competition limit; a measured rehearsal must resolve this before the campaign.
 

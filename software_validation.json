@@ -1,7 +1,7 @@
 {
-  "created_utc": "2026-10-09T09:20:15.451448+00:00",
+  "created_utc": "2026-10-09T09:42:08.911710+00:00",
   "tests": {
-    "tests": 88,
+    "tests": 101,
     "errors": 0,
     "failures": 0,
     "skipped": 0
@@ -205,5 +205,20 @@
     "complete_iteration_and_handoff_hashes_verified": true,
     "ties_receive_average_ranks": true,
     "test_count": 88
+  },
+  "analytical_handling_update": {
+    "date_utc": "2026-10-09",
+    "paid_api_calls": 0,
+    "tests": 101,
+    "fresh_sample_same_well_prewetting": true,
+    "slow_sample_flows_and_air_gap": true,
+    "same_well_returns_and_net_volumes_checked_in_OT2_simulation": true,
+    "sample_prewetting_disabled_mode_tested": true,
+    "partial_column_p20_and_full_column_p300_tested": true,
+    "invalid_settings_and_extract_exhaustion_rejected": true,
+    "uncertain_transfers_require_fresh_documented_dilution": true,
+    "repeat_injection_and_repeat_preparation_guidance_added": true,
+    "physical_sampling_validation_complete": false,
+    "extra_cycles_and_delays_need_measured_timing": true
   }
 }

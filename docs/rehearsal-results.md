@@ -19,7 +19,7 @@ The offline first-feedback-loop rehearsal completed successfully. All chemistry 
 | Physical protocol generation by watcher | Disabled because bench validations remain incomplete |
 | Optional GoLLuM execution | Actual attributed upstream optimizer, real embeddings, 61 uncensored synthetic pair priors, 465 finite acquisition values |
 | Local API key file | Mocked scoring reads `anthropic.key`; environment takes precedence; malformed entries stop without echoing contents; no key saved in outputs |
-| Local acceptance suite | 88 passed, zero failures/errors/skips |
+| Local acceptance suite | 101 passed, zero failures/errors/skips |
 
 Adversarial selector tests also cover a ligand whose every pair is below the Claude percentile floor, tight coverage within 16 wells, impossible coverage, and a manually edited design where the L17 reference is present but L17 is absent from all pairs. Coverage overrides are audited; missing pair coverage blocks export. The current offline loop uses the same mandatory coverage rule and completes all 31 ligands without extra wells.
 
@@ -58,6 +58,12 @@ The audit corrected these operational issues:
 - Process locks prevent duplicate local jobs. Attempt records prevent automatic repayment after a charged request is interrupted. Completed input/output hashes detect changes, and existing or partially written protocol exports cannot be overwritten.
 - Production commands consistently use the campaign-specific configuration. The staff checklist remains two pages; the complete handbook retains the technical reference.
 
-All **88 tests passed**, including actual Opentrons simulation and the offline LC-to-Claude feedback loop. Additional direct demo and feedback rehearsals use synthetic results and mocked API responses. No new paid calls were made for this audit. The historical live smoke-test total remains approximately $0.4023.
+At the repository audit, all **88 tests passed**, including actual Opentrons simulation and the offline LC-to-Claude feedback loop. Additional direct demo and feedback rehearsals use synthetic results and mocked API responses. No new paid calls were made for this audit. The historical live smoke-test total remains approximately $0.4023.
 
 The full real first-batch ranking has not been generated. No physical chemistry or hardware run was performed. HTE must still validate glass hardware, solvent handling, IS recovery, extraction, the LC method and actual timing. The template's **729-minute** schedule exceeds the **720-minute** limit and is deliberately blocked from live release until measured timings fit.
+
+## Analytical handling update
+
+The subsequent handling update passed **101 tests**. Added OT-2 simulations verify that conditioning cycles return only to the original sample well, the net sample withdrawal includes just the intended aliquot and discarded surplus, LC delivery matches the planned aliquot, sample tips remain fresh and the liquid/air-gap flows use the sample settings. Full-column p300 and partial-column p20 transfers are checked. Disabling sample conditioning and invalid settings are tested; a transfer that exhausts the nominal extract is rejected.
+
+The runbook now distinguishes reinjecting the same preparation from making an independent dilution, specifies bubble/phase/clearance checks and requires documented recovery from uncertain transfers. No paid API call or physical chemistry run occurred. The added conditioning and pauses need measured workup timings and matrix-specific bench validation before release.
