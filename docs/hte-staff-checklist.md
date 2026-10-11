@@ -2,11 +2,11 @@
 
 **Campaign:** ____________________ **Operator/date:** ____________________
 
-**Draft:** 250 uL scale, 96-position mapping. A 24-vial rack needs revised protocols. Use released files after HTE confirms scale, glass geometry/seal, simultaneous heating of 60 reactions, pipetting/extraction/IS recovery and the 1.7-min LC method. Release first dosing separately; calibration must pass before workup.
+**Draft:** 250 uL scale, 96-position mapping. A 24-vial rack needs revised protocols. Use released files after HTE confirms scale, glass geometry/seal, simultaneous heating of 60 reactions, pipetting/extraction/IS recovery and the 1.7-min LC method. Off-robot magnetic heating is requested; current files use slot 10. Release first dosing separately; calibration must pass before workup.
 
 ## Before the clock
 
-Check **59 pairs + one L17 reference**, all 30 active ligands covered, L07 excluded. Prepare stocks/reserves from `stock_preparation.csv`; prepare ligands in the glovebox. Label IDs, assays and addresses. Keep stocks homogeneous and reserves capped. Start the local watcher; key: laptop `anthropic.key`.
+Check **59 pairs + one L17 reference**, all 30 active ligands covered, L07 excluded. Prepare stocks/reserves from `stock_preparation.csv`; prepare ligands in the glovebox. Label IDs, assays and addresses. Use plastic stock racks; metal blocks are for reactions. Keep reserves capped. Start the local watcher; key: laptop `anthropic.key`.
 
 | Stock | Preparation |
 |---|---|
@@ -19,7 +19,7 @@ Check **59 pairs + one L17 reference**, all 30 active ligands covered, L07 exclu
 
 ## Deck - use stage quantities from `deck_loads.csv`
 
-**Left:** p300 single GEN2 (proposed). **Right:** p300 eight-channel GEN2. Manual moves.
+**Left:** p300 single GEN2. **Right:** p300 eight-channel GEN2. Manual moves.
 
 | Slot | Contents |
 |---|---|
