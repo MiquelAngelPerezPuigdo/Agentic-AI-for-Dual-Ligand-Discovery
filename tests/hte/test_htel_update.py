@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 @pytest.mark.parametrize("single", ["p20_single_gen2", "p300_single_gen2"])
-def test_toluene_stock_remains_in_both_rounds_and_has_no_dry_down(tmp_path, single):
+def test_dcm_is_removed_and_is_is_added_separately_in_both_rounds(tmp_path, single):
     from hte.planning import dosing_rows, transfer_operations
     from opentrons.simulate import simulate
     run(tmp_path/"demo",ROOT/"hte_inputs/ligands.csv",ROOT/"hte_inputs/campaign.json")
@@ -29,9 +29,9 @@ def test_toluene_stock_remains_in_both_rounds_and_has_no_dry_down(tmp_path, sing
         design = read_csv(tmp_path/f"demo/round{round_number}_design.csv")
         rows = dosing_rows(config,inv,design)
         for row in rows:
-            assert row["sm_stock_ul"]+row["substrate_predosed_ul"] == 25
-            assert sum(row[key] for key in ("sm_stock_ul","substrate_predosed_ul","ligand_a_ul","ligand_b_ul","pd_ul","toluene_ul")) == 250
-            assert row["toluene_ul"] == 0 and row["pd_ul"] == 75
+            assert row["sm_stock_ul"]+row["substrate_predosed_ul"] == 50
+            assert sum(row[key] for key in ("internal_standard_stock_ul","ligand_a_ul","ligand_b_ul","pd_ul","toluene_ul")) == 250
+            assert row["toluene_ul"] == 75 and row["pd_ul"] == 75
         ops = transfer_operations(config,inv,rows)
         if "p300" in single:
             assert all(op["volume_ul_per_channel"] >= 20 for op in ops)
@@ -44,7 +44,7 @@ def test_toluene_stock_remains_in_both_rounds_and_has_no_dry_down(tmp_path, sing
         assert len(heating) == 1 and "95" in heating[0]
         manifest = out/"round2_predose.csv"
         if round_number == 1:
-            assert all(float(r["sm_stock_ul"]) == 25 and "Cap promptly" in r["storage"] for r in read_csv(manifest))
+            assert all(float(r["sm_stock_ul"]) == 50 and "MANUAL OFF DECK" in r["storage"] for r in read_csv(manifest))
 
 
 def test_dilute_catalysts_cannot_overfill_the_liquid_predose(tmp_path):
@@ -80,7 +80,7 @@ def test_invalid_availability_exclusions_fail(fault):
     if fault == "wrong_cas": entry["cas"] = "224311-49-3"
     elif fault == "unknown_id": entry["ligand_id"] = "L99"
     elif fault == "duplicate": config["design"]["excluded_ligands"].append(copy.deepcopy(entry))
-    else: config["design"]["round1_controls"][0]["ligand_a"] = "L07"
+    else: config["design"]["round2_controls"][0]["ligand_a"] = "L07"
     with pytest.raises(ValueError):
         campaign_inventory(ROOT/"hte_inputs/ligands.csv", config)
 
@@ -88,8 +88,8 @@ def test_invalid_availability_exclusions_fail(fault):
 def test_lc_scenarios_include_short_method_and_fail_longer_serial_plan():
     config = read_json(ROOT/"hte_inputs/campaign.json")
     rows = schedule_scenarios(config)
-    assert [row["serial_total_minutes"] for row in rows] == [686, 707, 777, 917, 987]
-    assert [row["fits_serial_estimate"] for row in rows] == [True, True, False, False, False]
+    assert [row["serial_total_minutes"] for row in rows] == pytest.approx([752.7,774,845,987,1058])
+    assert [row["fits_serial_estimate"] for row in rows] == [False, False, False, False, False]
     assert not config["validation"]["injection_cycle_validated"]
 
 
@@ -105,12 +105,14 @@ def test_htel_requires_more_than_one_mm_clearance(parameter):
 def test_incompatible_labware_definition_fails_before_export(fault):
     config = synthetic_config(ROOT/"hte_inputs/campaign.json")
     definition = copy.deepcopy(load_definition("nest_96_wellplate_2ml_deep", 1))
-    rows = [{"well": f"{r}{c}"} for c in range(1, 9) for r in "ABCDEFGH"][:60]
+    from hte.io import reaction_wells,wells
+    rows=[{"well":w,"lc_well":wells()[i]} for i,w in enumerate(reaction_wells(config))]
+    if fault=="pitch": config["robot"]["reaction_multichannel"]=True
     if fault == "24_positions": definition["wells"] = {k:v for k,v in definition["wells"].items() if k[0] in "ABCD" and int(k[1:]) <= 6}
     elif fault == "pitch": definition["wells"]["B1"]["y"] -= 9
     else: definition["wells"]["A1"]["totalLiquidVolume"] = 50
-    with pytest.raises(ValueError, match="24-vial|geometry|capacity"):
-        validate_definition_geometry(config, {"reaction":definition}, rows)
+    with pytest.raises(ValueError, match="well addresses|geometry|capacity"):
+        validate_definition_geometry(config, {"lc" if fault=="pitch" else "reaction":definition}, rows)
 
 
 @pytest.fixture
@@ -236,8 +238,8 @@ def test_scaled_workup_and_dilution_use_separate_capacity_checked_reservoir_chan
     else:
         run(tmp_path/"demo",ROOT/"hte_inputs/ligands.csv",tmp_path/"config.json")
         deck = read_csv(tmp_path/"demo/round1/deck_loads.csv")
-        assert {row["source_well"] for row in deck if row["reagent"] == "workup"} == {"A4","A6"}
-        assert {row["source_well"] for row in deck if row["reagent"] == "LC_diluent"} == {"A5","A7"}
+        assert {row["source_well"] for row in deck if row["reagent"] == "workup"} == {"A4","A6","A9"}
+        assert {row["source_well"] for row in deck if row["reagent"] == "LC_diluent"} == {"A5","A7","A10","A11","A12"}
         assert all(float(row["load_ul"]) <= 11900 for row in deck if row["source_slot"] == "2")
         stocks = read_csv(tmp_path/"demo/round1/stock_preparation.csv")
-        assert sum(float(row["protocol_consumption_ul"]) for row in stocks if row["reagent"] == "workup") > 60*250
+        assert sum(float(row["protocol_consumption_ul"]) for row in stocks if row["reagent"] == "workup") > 48*500

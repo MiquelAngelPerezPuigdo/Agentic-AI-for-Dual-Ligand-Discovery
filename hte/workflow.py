@@ -22,7 +22,7 @@ def iterate(config, inventory, evidence, dosing_path, peaks_path, ready_path, ca
     validate_round1_coverage(config, inventory, dosing)
     validate_dosing(config, inventory, dosing)
     if config["design"].get("round2_controls") is None:
-        raise ValueError("Specify round-two controls, or [] for ten new pairs")
+        raise ValueError("Specify round-two controls, or [] for pairs only")
     inputs = {"config": object_digest(config), "inventory": object_digest(inventory), "evidence": object_digest(evidence),
               **hashes}
     out = Path(output)/("iteration-"+object_digest(inputs)[:16])

@@ -56,13 +56,14 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
                     if ligand:
                         by_ligand.setdefault(ligand, []).append(float(row["yield_percent"]))
             scores = {}
-            for key in payload["candidate_ids"]:
+            for partner in payload["partner_ligand_ids"]:
+                key=payload["anchor_ligand_id"]+"__"+partner
                 base = int(hashlib.sha256(key.encode()).hexdigest()[:8], 16) % 101
                 means = [sum(by_ligand[x])/len(by_ligand[x]) if x in by_ligand else 50
                          for x in key.split("__")]
                 # An arbitrary, labeled emulator demonstrates feedback plumbing.
                 # This formula is neither Claude reasoning nor a chemical prediction.
-                scores[key] = round(0.25*base+0.75*sum(means)/2, 3) if measured else base
+                scores[partner] = round(0.25*base+0.75*sum(means)/2, 3) if measured else base
             self.content = [SimpleNamespace(type="text", text=json.dumps({
                 "scores": scores}))]
 
@@ -88,8 +89,9 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
             payload = {}
             for block in kwargs["messages"][0]["content"]:
                 payload.update(json.loads(block["text"]))
-            calls.append({"candidates": len(payload["candidate_ids"]),
+            calls.append({"candidates": len(payload["partner_ligand_ids"]),
                           "feedback_samples": len(payload["measured_results"]),
+                          "single_ligand_yields": sum(row["same_substrate_table_S2_yield_percent"] is not None for row in payload["ligands"]),
                           "includes_reference": any(row["kind"] == "single"
                                                     for row in payload["measured_results"])})
             return Stream(Response(payload))
@@ -134,24 +136,30 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
     tested = {row["pair_id"] for row in design if row["kind"] == "pair"}
     no_repeats = not tested.intersection(row["pair_id"] for row in next_dosing)
     no_redose = all(float(row["sm_stock_ul"]) == 0 for row in next_dosing)
-    no_is_redose = all(float(row["naphthalene_added_with_substrate_umol"]) == 0 and
-                       float(row["naphthalene_workup_umol"]) == 0 for row in next_dosing)
-    if len(next_dosing) != config["design"]["round2_total"] or not no_repeats or not no_redose:
-        raise ValueError("Rehearsal next batch violated campaign constraints")
-    if config["liquids"].get("naphthalene_addition_stage") == "substrate_stock" and not no_is_redose:
-        raise ValueError("Rehearsal redosed the preloaded internal standard")
+    correct_is = all(float(row["internal_standard_predosed_umol"]) == 0 and
+                     float(row["internal_standard_workup_umol"]) == 0 and
+                     float(row["internal_standard_added_umol"]) == float(row["internal_standard_total_umol"])
+                     for row in next_dosing)
+    if len(next_dosing) != config["design"]["round2_total"] or not no_repeats or not no_redose or not correct_is:
+        raise ValueError("Rehearsal next batch violated campaign dose constraints")
+    export(config,inventory,next_dosing,out/"round2",history=dosing)
+    from .analytics import analyze
+    _,second_peaks=fixtures(config,next_dosing)
+    write_csv(out/"round2_peaks.csv",second_peaks)
+    _,second_report=analyze(config,next_dosing,second_peaks,calibration,out/"analysis2")
     report = {"synthetic_only": True, "paid_api_calls": 0, "physical_execution_allowed": False,
               "prompt_caching_enabled": prompt_cache_settings(scoring_config["llm"])["enabled"],
               "live_cache_hits_verified": False,
               "actual_lm_embeddings": {"pairs": len(features), "dimensions": features.shape[1]},
-              "mocked_requests": calls, "round1_pairs": len(tested), "round1_reference_wells": 1,
+              "mocked_requests": calls, "round1_pairs": len(tested), "round1_reference_wells": 0,
               "round1_ligands_covered_in_pairs": sum(row["covered"] for row in coverage),
               "round1_missing_ligands": [row["ligand_id"] for row in coverage if not row["covered"]],
               "coverage_floor_overrides": sum(row["llm_floor_override"] for row in trace),
               "first_round_qc_pass": read_json(iteration/"analysis/qc_report.json")["batch_qc_pass"],
               "feedback_samples": len(results), "remaining_pairs_scored": len(pairs)-len(tested),
-              "round2_pairs": len(next_dosing), "no_pair_repeats": no_repeats,
-              "no_substrate_redose": no_redose, "no_internal_standard_redose": no_is_redose,
+              "round2_pairs":sum(row["kind"]=="pair" for row in next_dosing), "round2_reference_wells":1,
+              "second_round_qc_pass":second_report["batch_qc_pass"], "no_pair_repeats": no_repeats,
+              "no_substrate_redose": no_redose, "no_internal_standard_redose": correct_is,
               "incomplete_export_ignored": not ignored,
               "duplicate_event_ignored": replay == state and len(calls) == after,
               "next_dosing_csv": str((iteration/"next_dosing.csv").relative_to(out)),

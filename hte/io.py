@@ -102,6 +102,18 @@ def wells():
     return [f"{row}{col}" for col in range(1, 13) for row in "ABCDEFGH"]
 
 
+def reaction_wells(config):
+    """Use the supplied reactor ordering; LC plates retain their own 96-well map."""
+    definition_path = config["robot"].get("reaction_definition_path")
+    if not definition_path:
+        return wells()
+    definition = read_json(definition_path)
+    ordered = [well_name(w) for column in definition["ordering"] for w in column]
+    if len(ordered) != len(set(ordered)) or set(ordered) != set(definition["wells"]):
+        raise ValueError("Reaction definition ordering must list every well exactly once")
+    return ordered
+
+
 def new_output(path):
     path = Path(path)
     try:

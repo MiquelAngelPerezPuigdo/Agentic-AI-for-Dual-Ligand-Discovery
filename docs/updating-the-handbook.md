@@ -31,7 +31,7 @@ Specify another destination or edition date when needed:
 
 ```bash
 python scripts/build-hte-pdf.py --output docs/HTE-operator-handbook.pdf
-python scripts/build-hte-pdf.py --date 2026-10-09
+python scripts/build-hte-pdf.py --date 2026-10-16
 ```
 
 ## Which source to edit
@@ -41,7 +41,7 @@ python scripts/build-hte-pdf.py --date 2026-10-09
 | Short action sheet for staff | `docs/hte-staff-checklist.md` |
 | Responsibilities, API-key setup and quickstart | `docs/start-here.md` |
 | Operator sequence, deck, pipetting, analytics and live handoff | `docs/hte-runbook.md` |
-| Combined stock, containers and five-level calibration | `docs/stocks-and-calibration.md` |
+| Separate SM/mesitylene stocks, containers and five-level calibration | `docs/stocks-and-calibration.md` |
 | Questions awaiting HTE confirmation | `docs/hte-questions.md` |
 | Prompt caching | `docs/prompt-caching.md` |
 | Actual software verification evidence | `docs/rehearsal-results.md`, `software_validation.json` |

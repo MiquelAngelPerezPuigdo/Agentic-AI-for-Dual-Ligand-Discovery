@@ -1,0 +1,2046 @@
+{
+  "local_raw_directory": "output/initial-scoring-anchor-v6",
+  "responses": [
+    {
+      "file": "repeat-00-batch-0000.json",
+      "sha256": "5a5079b24ae30ba2eae4d7d2f15e05eaaac0e80df2dc5a8525e06106c561334a",
+      "response_id": "msg_011Cg4okidgdovH2oskcu1QU",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0001.json",
+      "sha256": "e89dbc1b1bdea4b8ea6c7385b2c1440681252454e1ae27629523aadfe50628dd",
+      "response_id": "msg_011Cg4okmR8TMVQ79MuLsNP3",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0002.json",
+      "sha256": "d1830a1ac613f3b5fa51429af1b67cfb74e1ddaf47b24ad8f811d23541093e43",
+      "response_id": "msg_011Cg4om4WmSYAwKYX6PU9UL",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0003.json",
+      "sha256": "26d504a1b070ce3fdd07f7e21ccd62d859c35e639f845e4571418121ea499e55",
+      "response_id": "msg_011Cg4om4CRvVRoCzkkjwPQH",
+      "cost_usd": 0.05167
+    },
+    {
+      "file": "repeat-00-batch-0004.json",
+      "sha256": "d9fb497689d081e95e3c5eb82c04295fac4671d563361d71542f8a0afea6eab5",
+      "response_id": "msg_011Cg4omPKcSAgfqQ7FcwcF6",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0005.json",
+      "sha256": "556fb5bf194d59e6f80dc435df60ccdcd12f3c74d97d40a648fd98c966517dd9",
+      "response_id": "msg_011Cg4omSSQ2GeqRnwu9hx5U",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0006.json",
+      "sha256": "ff6f5d60ce350bf53b1c94e76b7008bbfa5821f506b205a7097c5a03ca37b84b",
+      "response_id": "msg_011Cg4omgr4jQ671oMCi7ubs",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0007.json",
+      "sha256": "72f9c5c833e2f32fe17709ed3841df09997c640cd29e812c4cb111fdce6209af",
+      "response_id": "msg_011Cg4omieDKviAyRQQmbjZV",
+      "cost_usd": 0.051265000000000005
+    },
+    {
+      "file": "repeat-00-batch-0008.json",
+      "sha256": "9aaf5be070597492c8df377e8a855286e4182cd61814430f44a04583213842b9",
+      "response_id": "msg_011Cg4omy49GikakuEsQ6L8y",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0009.json",
+      "sha256": "df5335ead33c264dfbad38c8f4cb0c235ab9dde245053113a2017e07d1045005",
+      "response_id": "msg_011Cg4on8YPZctqy7gaHb84Q",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0010.json",
+      "sha256": "67a167cd7cebbd79415809a583510de98f4d5de2635aaad8e63fd0da4c5ac9f1",
+      "response_id": "msg_011Cg4onEY4VTfmmizMkvFGX",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0011.json",
+      "sha256": "fdbafd8fe18d6d09047078ca977c482300cd80f96fe3bbaaba09bb76146c1f56",
+      "response_id": "msg_011Cg4onRGih9Dsgbvkn5ZKS",
+      "cost_usd": 0.05086000000000001
+    },
+    {
+      "file": "repeat-00-batch-0012.json",
+      "sha256": "4acba3053d20a0b0e6b72de0d54e4d92f7b8444aa8539c7d3702c52e363eee29",
+      "response_id": "msg_011Cg4onZcWjcZeTSENLrbdT",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0013.json",
+      "sha256": "6be6f6f696b1d23072d1ac041e1eb177bdc04908f9442cc8f322753356da71e4",
+      "response_id": "msg_011Cg4onqwXmPtciy9GWjmrt",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0014.json",
+      "sha256": "cf1851a7f15d6a36eee1c297d086a1a8e66a904ec5e21a1cf70fe8452f5691bc",
+      "response_id": "msg_011Cg4onsJe2euPRvg7tEXuv",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0015.json",
+      "sha256": "df24929678c2c8e108856910a38bc8dec20740916f901f4d0756fb241238c836",
+      "response_id": "msg_011Cg4oo8tkZqnCUtf2ekSdu",
+      "cost_usd": 0.05045500000000001
+    },
+    {
+      "file": "repeat-00-batch-0016.json",
+      "sha256": "feb084d042df14f107d92f527834f7288b0db9a486a993e79d4de5e725ce01e9",
+      "response_id": "msg_011Cg4ooCFfJm5Y72AAUasoY",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0017.json",
+      "sha256": "1523f5177b9ec3b0a6f96071c7c79ed385b7ac44b679d877d0dec4d619e222d9",
+      "response_id": "msg_011Cg4ooKBPEV9fESjZoa4Gs",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0018.json",
+      "sha256": "dad2aab1aadf5ea6a5ad4d381e7698147f0c564f6c50e25d6f5b7272b0a3760c",
+      "response_id": "msg_011Cg4ooVpbNye9Z5puRwP3w",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0019.json",
+      "sha256": "2f21664012b16d23a15da95a8c997923636647b14f486a4f56bff0763c448b59",
+      "response_id": "msg_011Cg4oobRSQq37P9GTtmdu5",
+      "cost_usd": 0.050050000000000004
+    },
+    {
+      "file": "repeat-00-batch-0020.json",
+      "sha256": "1768f9f70526f5cf2bdf70e6c28629a7c4e4e394351b37b827b3cc90d71927b8",
+      "response_id": "msg_011Cg4ookPwSgDbv9Avhh1HK",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0021.json",
+      "sha256": "7fb36343fba25ce62ec3bd20c43c3fa4c81e17c238cf64f4e44abd6c4bd55deb",
+      "response_id": "msg_011Cg4oonJYPih5RD3cYBye4",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0022.json",
+      "sha256": "4e85d18c08024d2eb35df4725a43fc2ebce6918c1f2f35d0063b9d63d7259cae",
+      "response_id": "msg_011Cg4op2anBCwFg7iaWmxCo",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0023.json",
+      "sha256": "4e161b4b6a27bdfe06c0584ce8037833be25ae0f6f84c82e20e41bad9a732351",
+      "response_id": "msg_011Cg4op3eXDUQhkU1YFpnwa",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0024.json",
+      "sha256": "f3c19be894beb6231320ad0483fd2bc5ecc4f91edcd82129ee048b3eb33d7f37",
+      "response_id": "msg_011Cg4opKt5vAYxuPUzie2ZC",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0025.json",
+      "sha256": "65ee85b131c782a60b9c6f0e95a9aae9315bb358a8f59c08e9951d652dada487",
+      "response_id": "msg_011Cg4opM3XSTPWd6eNZna5U",
+      "cost_usd": 0.052480000000000006
+    },
+    {
+      "file": "repeat-00-batch-0026.json",
+      "sha256": "4c42a804cbff650e06102830690c8d95018b964856bca9fc7524ad81627ac4ce",
+      "response_id": "msg_011Cg4opcQkKirsVZHfF4DCT",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0027.json",
+      "sha256": "50626075ff3ef254176d029784d210c1ba22d1ee73a01141bc3e8042caedd24e",
+      "response_id": "msg_011Cg4oppvZs4BJgyaK94zmR",
+      "cost_usd": 0.05288500000000001
+    },
+    {
+      "file": "repeat-00-batch-0028.json",
+      "sha256": "22d2f61d453f7c82f2456aba40874f2ab8f3704a6fe7e9ee252d40070da36b11",
+      "response_id": "msg_011Cg4opuzuzaSWbR8Fh8AUM",
+      "cost_usd": 0.052075
+    },
+    {
+      "file": "repeat-00-batch-0029.json",
+      "sha256": "0ec04e11f2982934304236cb811cacc460fa621654c38d297fd8c0eb70ceed60",
+      "response_id": "msg_011Cg4oqAb1AcHYLLLjz4R8i",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-00-batch-0030.json",
+      "sha256": "bde7ade91dc1f161b3b64ce00805b5547be0fff34b86f162dc2f9b3181e8ac44",
+      "response_id": "msg_011Cg4otiYiBoXd6M4rWh1pS",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-00-batch-0031.json",
+      "sha256": "68d3ee67c49b9a3d6f1a92e8ded0ba09252a051626a2f2e6a075adb7670ef00b",
+      "response_id": "msg_011Cg4orcWW5yPoX4jybLNqc",
+      "cost_usd": 0.0037425
+    },
+    {
+      "file": "repeat-00-batch-0032.json",
+      "sha256": "e0cb885d06614b51f1b0520e28ec3691131eae032e4b0ace064f87d5b36249a6",
+      "response_id": "msg_011Cg4owPfyjpy8MFcgZ4x7v",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-00-batch-0033.json",
+      "sha256": "130a95d875b7e9d3b05411653e203b739da4d73cd88ad8f1cfec4a18c0334bd0",
+      "response_id": "msg_011Cg4ozWPsxjnYago3zn2tK",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-00-batch-0034.json",
+      "sha256": "0c8325d3005b8d4ea6b3e2cc728b1e35e339ccada7cd6752e8369db408ac78fa",
+      "response_id": "msg_011Cg4oxRUPxXGNxxwJbN3QC",
+      "cost_usd": 0.0035655
+    },
+    {
+      "file": "repeat-00-batch-0035.json",
+      "sha256": "82374b22966127b86b5e18dd2b43420ff5b082ea98db91eb89a895c994d849fb",
+      "response_id": "msg_011Cg4p2d14J4pQZ8KKiayuJ",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-00-batch-0036.json",
+      "sha256": "02fc39334a015c318041cf4fa48dfa5b0693f90aee9682d8a97873d1ba66e694",
+      "response_id": "msg_011Cg4p3cjiQsamrDVqv65Cc",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-00-batch-0037.json",
+      "sha256": "a9e1453ac49b4d30a747107b8d9238c1c5acfa90171ff1d0572220c6e8749a1b",
+      "response_id": "msg_011Cg4p5w9nXYLWUoqnuekoP",
+      "cost_usd": 0.0033885000000000005
+    },
+    {
+      "file": "repeat-00-batch-0038.json",
+      "sha256": "1550bf915bb0cb4c70a34239ddccac164b237639b9a839b71b56fd732a1559ef",
+      "response_id": "msg_011Cg4p7zua4vSRp8GUHbGDw",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-00-batch-0039.json",
+      "sha256": "aecab1897870c926dad39f6fb2a957adf2668fbe4d3fbea2f9a7f906952aa27a",
+      "response_id": "msg_011Cg4p9SF6AmYyFF9qHEpuH",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-00-batch-0040.json",
+      "sha256": "c4243f9dafc152dd351358c8978a85dc0d33c0f58a9ff900e2e8b44b6fb94a64",
+      "response_id": "msg_011Cg4pAsMESKc8Ms1mPCMx4",
+      "cost_usd": 0.0032115000000000004
+    },
+    {
+      "file": "repeat-00-batch-0041.json",
+      "sha256": "6d19d9e79b8ceb85734fe096b1e6755c7c0657c63ee83d56af22ae2c0b6d86f1",
+      "response_id": "msg_011Cg4pDNZweRnntCG9sKWrr",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-00-batch-0042.json",
+      "sha256": "151fa2c6701423307edc818d644967911ee69d49e96f9d71bf308c6a1db2645c",
+      "response_id": "msg_011Cg4pEGqSg5v2XF2qLZy2s",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-00-batch-0043.json",
+      "sha256": "3d56ee01565cd774abcc5cabbdeb382bb7ec135596a723f2cdda5af951631f5b",
+      "response_id": "msg_011Cg4pFZzLpwX4knak28bd9",
+      "cost_usd": 0.0030345000000000007
+    },
+    {
+      "file": "repeat-00-batch-0044.json",
+      "sha256": "1f7bbfe68fc717223f03cbcb41f14bac127bf1afe854b84ea283b3ca6a8ca1b0",
+      "response_id": "msg_011Cg4pGioSqKZdg5cynZ8yb",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-00-batch-0045.json",
+      "sha256": "e6d32aeb1648e68c4bc3b4182af381a620b3bf5a56cbcafe126532a6ae75d681",
+      "response_id": "msg_011Cg4pHwhNaZPJFW67r4qZi",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-00-batch-0046.json",
+      "sha256": "905cd1d3616740ab99a80a933251daadea6c5dd54719d59da2f54aa085c3ec0e",
+      "response_id": "msg_011Cg4pKbZDh1hpe1cndK75u",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-00-batch-0047.json",
+      "sha256": "047bea4a795c8d5c6700ea60c5a3f3d7ee7cfa3ca02737326aa1cf652b866545",
+      "response_id": "msg_011Cg4pLP8Nnyapx54N8MEoD",
+      "cost_usd": 0.0040965
+    },
+    {
+      "file": "repeat-00-batch-0048.json",
+      "sha256": "addd46d7579146198814085dda7cb5fc293e7eaea29d99b78e3de271e6caf9ec",
+      "response_id": "msg_011Cg4pMyLhRG9FoKDEWudfD",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-00-batch-0049.json",
+      "sha256": "b1bdfddd6073d0304950a740075ec81bab5a56e2d9dadb9195b1245080394ad0",
+      "response_id": "msg_011Cg4pNtxZPtaLgShPqVWrM",
+      "cost_usd": 0.0039195
+    },
+    {
+      "file": "repeat-00-batch-0050.json",
+      "sha256": "20fe4261209bf3b8650c9522300542cedbdefd316f5679a4b2b55768b502c782",
+      "response_id": "msg_011Cg4otkDufSULbwu9hdxtt",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-00-batch-0051.json",
+      "sha256": "551c02ba5f5d98f887c2a83729812dc5bbdb67a6eca2e1bece2cee4b1fb51a39",
+      "response_id": "msg_011Cg4orrY7NqVPGZEpwZaiS",
+      "cost_usd": 0.0037425
+    },
+    {
+      "file": "repeat-00-batch-0052.json",
+      "sha256": "61494c59801cbc005ae6dc52e89e1ad6aaebf0b23e69b8a070528adf4ebedfa9",
+      "response_id": "msg_011Cg4ozY1rd7dmbHd3r4pgJ",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-00-batch-0053.json",
+      "sha256": "6bd7b19db4959291cfc1c35d75c7e864f4d07b434287545acb055d8091d78cb5",
+      "response_id": "msg_011Cg4oxRpEr3QKp7Gb6kSKA",
+      "cost_usd": 0.0035655
+    },
+    {
+      "file": "repeat-00-batch-0054.json",
+      "sha256": "597c4f5064db68ebaa5c646c9e5e2931297da3ffcc06eaa2bec5d19335aff9a4",
+      "response_id": "msg_011Cg4p3kdiaCApBiWQdtA3F",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-00-batch-0055.json",
+      "sha256": "ffb09955c1b1921914b70594e96b5f08e41a57b2e03370143d518ff5e0552f23",
+      "response_id": "msg_011Cg4p5yvUMEitQ4S7YXnGW",
+      "cost_usd": 0.0034635000000000004
+    },
+    {
+      "file": "repeat-00-batch-0056.json",
+      "sha256": "ae72f1050b171937dea97188b638576c6fc7b8197d227336feacf96f69915191",
+      "response_id": "msg_011Cg4p9YyAeQXNhrzVnEaC5",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-00-batch-0057.json",
+      "sha256": "2783b95780c85b2c35faad80ff938d59192d9932f400c5d33d6ea341942e71f7",
+      "response_id": "msg_011Cg4pAvPYPEaEuJFiCeqCf",
+      "cost_usd": 0.0032115000000000004
+    },
+    {
+      "file": "repeat-00-batch-0058.json",
+      "sha256": "596136d427136d27d2105cfc5489f88522331a24a927c5d7d5835a14cd478bfd",
+      "response_id": "msg_011Cg4pELkpwo1seXeVDE5VY",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-00-batch-0059.json",
+      "sha256": "10dea3a82dc3d4fcd7dcd7cd2e3422222678d5a52371e9c1fabd25b9fcc576ab",
+      "response_id": "msg_011Cg4pFdr2KQ6JqgZPVhTfD",
+      "cost_usd": 0.0030345000000000007
+    },
+    {
+      "file": "repeat-00-batch-0060.json",
+      "sha256": "4d95603d589088678cbf9bec8dec45348be7c04c3f2091a1b496c1d5aed24a1b",
+      "response_id": "msg_011Cg4pJ3rhR2dN4HKCdnmvx",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-00-batch-0061.json",
+      "sha256": "cdc7bad0694df6e87e5bf58d443dc432e5b3f568b447993851554a8ddef77256",
+      "response_id": "msg_011Cg4pLUZomDcwQSb7vvxzP",
+      "cost_usd": 0.0040965
+    },
+    {
+      "file": "repeat-00-batch-0062.json",
+      "sha256": "3a33e9c94686ccf2dc08d8fc8850771d35e31a67785b0da5fc37a21ca01ffa8d",
+      "response_id": "msg_011Cg4pNv33sEBscNqr3q4Pv",
+      "cost_usd": 0.0039195
+    },
+    {
+      "file": "repeat-00-batch-0063.json",
+      "sha256": "52213dfd4b497d3d337208530a5d79190407dacc9081c9013e8747a5b1d366ef",
+      "response_id": "msg_011Cg4orsTw12BdW5yZ8ph8U",
+      "cost_usd": 0.0037425
+    },
+    {
+      "file": "repeat-00-batch-0064.json",
+      "sha256": "b200c496d7febb57b351baa4b335799c424bd30eeefd8f1137d9daf9ab797820",
+      "response_id": "msg_011Cg4oxZiVojRKcVw4BXaaC",
+      "cost_usd": 0.0035655
+    },
+    {
+      "file": "repeat-00-batch-0065.json",
+      "sha256": "638d792c947a779317a8c425041b00b848756f9cdf06b66e163c21e32e038e15",
+      "response_id": "msg_011Cg4p69oZB9tCASrhvMCzT",
+      "cost_usd": 0.0033885000000000005
+    },
+    {
+      "file": "repeat-00-batch-0066.json",
+      "sha256": "c8abd9a52abf5c1a5bbb5a43965a68b32ede8c5c593804841c6d486156c38c53",
+      "response_id": "msg_011Cg4pB7Dv613kksJkpwvBL",
+      "cost_usd": 0.0032115000000000004
+    },
+    {
+      "file": "repeat-00-batch-0067.json",
+      "sha256": "613f7ca2f5a69df745a09121f341912a517832700bc2f8eb7234001cac78917a",
+      "response_id": "msg_011Cg4pFgYEmRMks5yNFRKSC",
+      "cost_usd": 0.0030345000000000007
+    },
+    {
+      "file": "repeat-01-batch-0000.json",
+      "sha256": "e2a73818a92a1593dce70f13996152275de638487e0a4b14e76bab683f808450",
+      "response_id": "msg_011Cg4or7Qnq7AT1XczRy3zh",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0001.json",
+      "sha256": "710b110a8614706c6ade7babfabba4d370c2e83185e7ac150dd5aeb3d9157209",
+      "response_id": "msg_011Cg4oqBSrcsuua9G51PfiF",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0002.json",
+      "sha256": "aa7649de764bd421cd1cba5f2caceccb9eece556e0fcb93d37bbc969e19a3134",
+      "response_id": "msg_011Cg4otxEyDRc8au27foWth",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0003.json",
+      "sha256": "c1f6c8b51bbb5e811b2f4a14b7120c44876090382a719faa0b3ac91f75c241dc",
+      "response_id": "msg_011Cg4os6QYLpJYcznKCxtyM",
+      "cost_usd": 0.0037425
+    },
+    {
+      "file": "repeat-01-batch-0004.json",
+      "sha256": "90668eda110387d81a4dcf36ee7fb76ece423470acd7e6465d1cfa6c5d642aa8",
+      "response_id": "msg_011Cg4ow9QErfFD3T8CR4mba",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0005.json",
+      "sha256": "3f588ff11380223f21bd8df1072ca6fd80a3de3e3e5947c27fd6de869e87bbe5",
+      "response_id": "msg_011Cg4owZyMXBttBYmuAaEd2",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0006.json",
+      "sha256": "c87b3d0517eddd62e8faf9e5229fe2c21ae01f4150e482f4de6b24edac8d47ab",
+      "response_id": "msg_011Cg4ozxn8ZYiKGxRTXuuYV",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0007.json",
+      "sha256": "df7e3702cd54f85017ef1fc40828b574215fe327df67363bad94cb4c309b92a7",
+      "response_id": "msg_011Cg4oxZkz235L8gsBkSfdT",
+      "cost_usd": 0.0035655
+    },
+    {
+      "file": "repeat-01-batch-0008.json",
+      "sha256": "b3848ea409e0bb68a8df3aba96cdb5c03a3b8626b356011bf05b698d0f6e7adf",
+      "response_id": "msg_011Cg4p266SVuUky4XHEhpTJ",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0009.json",
+      "sha256": "fa694bbb63c587ef62c0039e576cb94e00c8c8f2f7a57319ba2952f3d5daa346",
+      "response_id": "msg_011Cg4p2gdqfxA59sGLqxW3v",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0010.json",
+      "sha256": "6fcf5b9cf0ab9f87e04d78f4ce8d8e6f4ad2f64a303f8637615f751e6995d7aa",
+      "response_id": "msg_011Cg4p3sH4kQCdfTZemAUfa",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0011.json",
+      "sha256": "0b15c3304148d23114ce093923a45469b7e2c3416c1a7a713fc1f2a2a2cf8503",
+      "response_id": "msg_011Cg4p6CW2BXxeAC3MLQwRt",
+      "cost_usd": 0.0033885000000000005
+    },
+    {
+      "file": "repeat-01-batch-0012.json",
+      "sha256": "0f26c1ec17d28b1c25aa8ba12f67d1433f10d86f5b0b633ce9c225938e90eac5",
+      "response_id": "msg_011Cg4p5QzKdkXVwMnS8Bvvm",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0013.json",
+      "sha256": "7adaa898105afcb955d0aefa69bb80b9599c04cddd75e5f62b793fe14e67db0d",
+      "response_id": "msg_011Cg4p8Havb9hpBnEZrieyc",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0014.json",
+      "sha256": "9457b153cbee5a62d1664d2ddf6a4979fda33b68c1394fe497e6c324c18f1e5f",
+      "response_id": "msg_011Cg4p9eDBAW4EgwzqKZdkc",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0015.json",
+      "sha256": "4d1d934c4fb939e1b701a7ea7e5f4e5bc43c075670b00a8d478964144d2d0ae2",
+      "response_id": "msg_011Cg4pBBLhp8hMsPuPrPiaG",
+      "cost_usd": 0.0032115000000000004
+    },
+    {
+      "file": "repeat-01-batch-0016.json",
+      "sha256": "bf431a1b9bcae47834a87c95cb2117e6fc4bb482b5c89d50549c643ce7433b29",
+      "response_id": "msg_011Cg4pD2wzdrAYsr2PxjUi1",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0017.json",
+      "sha256": "50371591ed242d740abcfe853d53c4870d1ae72e416eb12b15fd70d1d4e1d8f6",
+      "response_id": "msg_011Cg4pDX2wFgKqFVJo1WmTZ",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0018.json",
+      "sha256": "7730bb3681225b71d63910528335e26801a0fde76fb5a30efe244c77696a71df",
+      "response_id": "msg_011Cg4pEVzxaygGzm6zMsCnz",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0019.json",
+      "sha256": "37544d66b2284919f8c93d67eb02ae843cf7681844e2768183960a7852b18a66",
+      "response_id": "msg_011Cg4pFjtQEQRH97NCjmnqC",
+      "cost_usd": 0.0030345000000000007
+    },
+    {
+      "file": "repeat-01-batch-0020.json",
+      "sha256": "e59f9f0c28b7cd950bb4e79bd0225b25008b8c83442042c580b98d7816b6fab9",
+      "response_id": "msg_011Cg4pHWwM6N2Gwq8rnCByJ",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0021.json",
+      "sha256": "e94340eed1fb112a13aee6ac83e0ed9d930ad0a70b90a450d0b3c1a97ef611be",
+      "response_id": "msg_011Cg4pGirgAATSMbWEL62Wj",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0022.json",
+      "sha256": "e6acc39c2dc2df0f8194d0add293365f4acf1772be6de0af544c2a451ff87776",
+      "response_id": "msg_011Cg4pJ7iNo25VGpjxzYQC2",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0023.json",
+      "sha256": "5aaf46d7e62c124d99ac08e43818c2ca89d5c8c9209421cd82a8f1b56d3daddb",
+      "response_id": "msg_011Cg4pKA1ZfM8QsSLsjcfAS",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0024.json",
+      "sha256": "d1291d066320613542e32903a06daf51908429e25888bc3898f87472feecb323",
+      "response_id": "msg_011Cg4pKcRooyjoJqvVi8dPZ",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0025.json",
+      "sha256": "931f380995fcbc2541042f8d60b2697cb11b65f2bd2540200fe7d353c6f7cf1f",
+      "response_id": "msg_011Cg4pLZLnLzcowxZvGRMmN",
+      "cost_usd": 0.0040965
+    },
+    {
+      "file": "repeat-01-batch-0026.json",
+      "sha256": "c94f6dbdca9bfc319a93b3c33d4850fb15d29847a50dab09863c132d6f373554",
+      "response_id": "msg_011Cg4pMetwPR447AMw6P3rA",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0027.json",
+      "sha256": "881de593dd64e33d47e0a6f8e20fee14d4e3663185730b65a71cb22b3f6c7809",
+      "response_id": "msg_011Cg4pN2mq6eQbJc2AAEg2B",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0028.json",
+      "sha256": "77ae2d333c32520cc9b7beda5862284c9d6bc6cad0d3d3be5ee9bd7db7fcfad9",
+      "response_id": "msg_011Cg4pP9CKPWqsHxUmj7Zou",
+      "cost_usd": 0.0039195
+    },
+    {
+      "file": "repeat-01-batch-0029.json",
+      "sha256": "549d583528f0e757beef464bfb5365ba5e792deb233d35ce0a76c39b3b98d0ec",
+      "response_id": "msg_011Cg4oqScfGSJTou1gjwUKe",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0030.json",
+      "sha256": "27f4375242ab246e2a949f61293f9f43b6666c2bd0813187ad8ae38c304a04e1",
+      "response_id": "msg_011Cg4ou24Qgby5p8HrJidC4",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0031.json",
+      "sha256": "457a72a16f81fa80d61c068a2fae4014218010d1fc93dfad3ee3764203432006",
+      "response_id": "msg_011Cg4osCDHsCwW2UTGR1KJn",
+      "cost_usd": 0.0037425
+    },
+    {
+      "file": "repeat-01-batch-0032.json",
+      "sha256": "4c2509b82fef864e299c4933df20e9e1474fd6ba3acda90c241d81925b31d755",
+      "response_id": "msg_011Cg4owdf6nnQyEw9A1e7wb",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0033.json",
+      "sha256": "c7720e196d92423ffeb1ff6e69c30762a7ec016fcea2839865e21336e550c18e",
+      "response_id": "msg_011Cg4ozmmLzMgg12Mgu4933",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0034.json",
+      "sha256": "3877a8c58470b25bd4c735a090d86f4c29b4dbd117e92e0075f9d9f0e160d2c4",
+      "response_id": "msg_011Cg4oy2kT6q72FwkrNfpZ8",
+      "cost_usd": 0.0035655
+    },
+    {
+      "file": "repeat-01-batch-0035.json",
+      "sha256": "95afffd288a640bfd3239d74fe029775d2f6fee417d1752f7d515d27ac0863f9",
+      "response_id": "msg_011Cg4p2tmqUY1Y3kZuViX8Y",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0036.json",
+      "sha256": "8c6d7634b8905c0c98d27be8684880082d66e8f872bc70cb2089b469d68a8606",
+      "response_id": "msg_011Cg4p45V316GXqbVhsqwG8",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0037.json",
+      "sha256": "0987c52fd17ad3f7049c35bd3c9ad310ee1346fb9767d3d7c68376730e2312f8",
+      "response_id": "msg_011Cg4p6NFAJ1LuRqD4GvsbN",
+      "cost_usd": 0.0033885000000000005
+    },
+    {
+      "file": "repeat-01-batch-0038.json",
+      "sha256": "0c900428dc642ea417d38b08ab31530d48e23938b6e6b3b603032af1a3f8c809",
+      "response_id": "msg_011Cg4p8HiN94KLynAMUdk8c",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0039.json",
+      "sha256": "9a8b47306c15c6d57bb31609e325c12cdcd3688fa33af2ca0bac17b42ee542ff",
+      "response_id": "msg_011Cg4p9iiJK1gCkhj2ZZnUb",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0040.json",
+      "sha256": "08ba51cc82721ac84d04f23fa4d52bfdf2c330bad93b6ac1d3760f85b08d54e8",
+      "response_id": "msg_011Cg4pBMUu7eZjzXXj6Z9Gm",
+      "cost_usd": 0.0032115000000000004
+    },
+    {
+      "file": "repeat-01-batch-0041.json",
+      "sha256": "14b644dccdcb6ee2c074eb057bb99216deb81f597824c9a68bf9822f62c273fe",
+      "response_id": "msg_011Cg4pDaFuwomCs7jbejQuJ",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0042.json",
+      "sha256": "e9a1017de4fc91a62bada2bb04dcc1c79b5c9cb78d10fc2f16b17b231ee7ed1e",
+      "response_id": "msg_011Cg4pEYosXES2MramHet8r",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0043.json",
+      "sha256": "e4607e4ee6c406d1b067d31031f7ba6064b7cdb92701da18e98c243198334170",
+      "response_id": "msg_011Cg4pFnsVezy97n2gf4718",
+      "cost_usd": 0.0030345000000000007
+    },
+    {
+      "file": "repeat-01-batch-0044.json",
+      "sha256": "56e0b9b8adf79c26aea6cfc3ffae5412e11e51ac778e9016e7e4443207a99669",
+      "response_id": "msg_011Cg4pGtdHvez7hw4ijXGws",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0045.json",
+      "sha256": "5401d8dc67841fc2632bd7a266589bc7492d50ae3dc237bfd5c13e1c3a9d7420",
+      "response_id": "msg_011Cg4pJD5adxdpJ8uciFLuL",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0046.json",
+      "sha256": "ebfd93488f8edbf7c6bd44e515e8b3f3f2a0b7c432b08793f396e77bcc2b449d",
+      "response_id": "msg_011Cg4pKqQ9ubMDaiN2BHJsZ",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0047.json",
+      "sha256": "73fb0bb9bc844a11aafa48a9eaed8189b052121073b5a392effad8dfdedd6f2a",
+      "response_id": "msg_011Cg4pLfh31pcARZcHPEtJE",
+      "cost_usd": 0.0040965
+    },
+    {
+      "file": "repeat-01-batch-0048.json",
+      "sha256": "523e49f1d648e3717172db4430052cdf0c5ff8ea9c2eb0f89037eac8845c4cae",
+      "response_id": "msg_011Cg4pNDTWwi2YVdJqXmWEf",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0049.json",
+      "sha256": "e85a0c94e59f26457dfb1c6daee7c7621c9e68a15b59b959821705db5bf5359e",
+      "response_id": "msg_011Cg4pP9k3zjqyEW2RwLbpR",
+      "cost_usd": 0.0039195
+    },
+    {
+      "file": "repeat-01-batch-0050.json",
+      "sha256": "c2a7ca35d7834da66794300f9334d7bfffca68cfb142e30c9e8d3361aba0806b",
+      "response_id": "msg_011Cg4oudyPnxh69dTs6vAbh",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0051.json",
+      "sha256": "2232e180387d2f5882e92b67cad35827c8cffacde96222ba7c3150a2fab4e5e7",
+      "response_id": "msg_011Cg4osHotWGn4GhnLrqn5c",
+      "cost_usd": 0.0037425
+    },
+    {
+      "file": "repeat-01-batch-0052.json",
+      "sha256": "c792847980aea0b227cea4957172f9fc8bc5becacb6f2262d3954569497f581e",
+      "response_id": "msg_011Cg4ozw1TvbPWLXwDXwcpb",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0053.json",
+      "sha256": "bb56734bfd5c8e28e8b9c1032814ffbe13441ebba3124968afd903aeaf0b1d9c",
+      "response_id": "msg_011Cg4oyAewvMNgdvxEeayNz",
+      "cost_usd": 0.0035655
+    },
+    {
+      "file": "repeat-01-batch-0054.json",
+      "sha256": "e41ff2230d2be73e19b5bf35261697dd4b6fdcade9eb33b4cd88bf15ef93582b",
+      "response_id": "msg_011Cg4p45cyKM6ifv8RAKScb",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0055.json",
+      "sha256": "56117736d30cb27a9269fda8edeafa891a8d3999b18b488e79a5fb63b40b620f",
+      "response_id": "msg_011Cg4p6PMP5GqqtUCMXHm6Q",
+      "cost_usd": 0.0033885000000000005
+    },
+    {
+      "file": "repeat-01-batch-0056.json",
+      "sha256": "2ce3484d87ed02f287b3ca7b534c3e0cd520710b3abac8f554ac381a4e843e99",
+      "response_id": "msg_011Cg4p9s5aSnGxL26a7zKAq",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0057.json",
+      "sha256": "15253e88ab5abd8226cc91bdebda03d6fef0fc844348b0e11eb455cd1f8284f7",
+      "response_id": "msg_011Cg4pBNcN6nDqQ3ueMSEco",
+      "cost_usd": 0.0032115000000000004
+    },
+    {
+      "file": "repeat-01-batch-0058.json",
+      "sha256": "e9d080886a3c78d39a05c0214c7026ec590abaeac20471d696260781ae9ada0d",
+      "response_id": "msg_011Cg4pEgy1czDaBq9jbA1k1",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0059.json",
+      "sha256": "e45a55c893bc7e32fed11a0f82db1a7cf3a8af5b4de1cea929f225e4bc49a87a",
+      "response_id": "msg_011Cg4pFt1Z88d5Q9upHQDM4",
+      "cost_usd": 0.0030345000000000007
+    },
+    {
+      "file": "repeat-01-batch-0060.json",
+      "sha256": "e3864accbcefe83cfb0fd84ba2f1cb39e34593a2bb51cf11cf5dc3bfffb557ab",
+      "response_id": "msg_011Cg4pJKaW44zKmWSXS4joZ",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-01-batch-0061.json",
+      "sha256": "9bfd68ee2a636992c514a47c3c5eb7ed7fe58e5b96ad364fd9b71426a51390d5",
+      "response_id": "msg_011Cg4pLmdxv86VqFK3vcqpd",
+      "cost_usd": 0.0040965
+    },
+    {
+      "file": "repeat-01-batch-0062.json",
+      "sha256": "66a6a26d562efcc44314f852e6955b11402d2366a4d5297e68445dd0fb7777f8",
+      "response_id": "msg_011Cg4pPJdbLp8iDGhtQpDGN",
+      "cost_usd": 0.0039195
+    },
+    {
+      "file": "repeat-01-batch-0063.json",
+      "sha256": "b4a657aea712b6bc01e3ccc38bcfa0a1e967c7be9fcd6c5fa9b131d5c47db8a2",
+      "response_id": "msg_011Cg4osNyT9DJV61dWb7amW",
+      "cost_usd": 0.0037425
+    },
+    {
+      "file": "repeat-01-batch-0064.json",
+      "sha256": "ddd35d2bd5a508effd13bde3282843928b1a6014957a788648adb4b7ca9708be",
+      "response_id": "msg_011Cg4oyFzRaMHvHyXvhBejD",
+      "cost_usd": 0.0035655
+    },
+    {
+      "file": "repeat-01-batch-0065.json",
+      "sha256": "a2e433788b873a629cde1b13da5842ac41072eead36e4c0f0046ddbe11bb8c5e",
+      "response_id": "msg_011Cg4p6dN12oX6y5Ro4FPZD",
+      "cost_usd": 0.0033885000000000005
+    },
+    {
+      "file": "repeat-01-batch-0066.json",
+      "sha256": "b1495824661978887d8b2db2e6ba6c36a541d33f82638e840e7486d9cb76265e",
+      "response_id": "msg_011Cg4pBZQFeT9tRbghnZXWS",
+      "cost_usd": 0.0032115000000000004
+    },
+    {
+      "file": "repeat-01-batch-0067.json",
+      "sha256": "c20264a7b5f043773a525d0d34e0a5076fe5a87127e7bc4d77e7df31f7c6190c",
+      "response_id": "msg_011Cg4pFu7YQK7Jx3ukZiGtN",
+      "cost_usd": 0.0030345000000000007
+    },
+    {
+      "file": "repeat-02-batch-0000.json",
+      "sha256": "c9c3d514e9dad885dbef8b0963c653605914d8cf94d04018f93aac8ff1b2e9b6",
+      "response_id": "msg_011Cg4orLgWCybXDkQ8dqAt1",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0001.json",
+      "sha256": "576b0ce39014456b728e992d88817dd9824fc59f2f444bbf8ebebbbba73c1946",
+      "response_id": "msg_011Cg4oqScfvMbwCYmGyA1fY",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0002.json",
+      "sha256": "cb35f0483f0d7aea615cd533a922d52d7e495cf0826c02325f631f303de08995",
+      "response_id": "msg_011Cg4ouFZmGMCgtLdhXwU5H",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0003.json",
+      "sha256": "83af3350b8be1a556c89530d9d54c4aa2e23cd9c90a5252e8f82324a35720438",
+      "response_id": "msg_011Cg4osXSwK11EFCr6puB3x",
+      "cost_usd": 0.0037425
+    },
+    {
+      "file": "repeat-02-batch-0004.json",
+      "sha256": "6ec1c5c1de86583aaec1ff9fa574c6b42094eafe7bb02b26efc1bdec3ba1240a",
+      "response_id": "msg_011Cg4ovz4R8JJVS5tGaVzk4",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0005.json",
+      "sha256": "32222d92e7d71904418e623feb79b74e390d26f491d2cb7a408ed0d55cc0cccd",
+      "response_id": "msg_011Cg4owmdaHHyZYjoJ4Gx42",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0006.json",
+      "sha256": "1a566bfb1ca39d437c8330b8408732b952ab50af96e09b82df745c363e2828fe",
+      "response_id": "msg_011Cg4p1A9FR3MWBaYmSUgnT",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0007.json",
+      "sha256": "b5cbf7a4119801c1759b1431339a49fc43e61c599918f094f70c99277c7d76cc",
+      "response_id": "msg_011Cg4oyKktZyP2vTGjyXUUr",
+      "cost_usd": 0.0035655
+    },
+    {
+      "file": "repeat-02-batch-0008.json",
+      "sha256": "1582edcf9a6294602587a4dd559145c6a1b5293d8520d4cbf09a4026eb62c23f",
+      "response_id": "msg_011Cg4p2DjLJZoEp9yLQTeyT",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0009.json",
+      "sha256": "8f64702740db4c1332cbba1e22f0b2501ef50198782ae6bf799a14b2a6777753",
+      "response_id": "msg_011Cg4p2tpZWncFFuLLjLqkM",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0010.json",
+      "sha256": "44b78b56c9293a8412d75691dd6725d99ba3f3eaec703fac0193439197de134a",
+      "response_id": "msg_011Cg4p4Jxer67omWqfZxymz",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0011.json",
+      "sha256": "50a0fac60893686f180ca7fcd94e9d89c96b7d70a6414d24987c16be0d04fcd7",
+      "response_id": "msg_011Cg4p6djZfGZtT2BPFaMEz",
+      "cost_usd": 0.0033885000000000005
+    },
+    {
+      "file": "repeat-02-batch-0012.json",
+      "sha256": "2c12a9f8e93b00040f0cc83b6438d4ff8761098b8dfcd419aa45f3f9d9ef6c46",
+      "response_id": "msg_011Cg4p5dyRfyt8RjrYWf7uV",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0013.json",
+      "sha256": "584e01b3cdee109983e8aec5a2e35d0e30bf8a30e89176299f369fe0cf1cd826",
+      "response_id": "msg_011Cg4p8pRpEHpxq88eLTGSD",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0014.json",
+      "sha256": "76b29f7c9cec9620684e8490ec927b59a2868557f66a5aa0a0e51ac761117be0",
+      "response_id": "msg_011Cg4p9wF727tLijroNXELM",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0015.json",
+      "sha256": "a4aa1df3d7fc5414e8b180b05e9292639a4f24cfa6c743bd8dc7325bfec26298",
+      "response_id": "msg_011Cg4pBaai2UKhnWSicNPj2",
+      "cost_usd": 0.0032115000000000004
+    },
+    {
+      "file": "repeat-02-batch-0016.json",
+      "sha256": "8faac80ddaa479ef89117879d42a9442d64d22c252cd2e102393c5f16222698c",
+      "response_id": "msg_011Cg4pD2xjpGckVwEFS2oCV",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0017.json",
+      "sha256": "60f000b83edde3a54406f8905698b493d91f39e21a13629cc4921d9a72a26e43",
+      "response_id": "msg_011Cg4pDg3vQ6AZBuv3a9UHR",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0018.json",
+      "sha256": "21f0a9cb03f45b41ca35c6e17bd956e0705f9b1f934f57a9376e5a31f33d9570",
+      "response_id": "msg_011Cg4pEieiN88yBNArzvuXo",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0019.json",
+      "sha256": "d19e93d0a5452472828dc11698fecd06fd40c69b95260f6eb4fda27ea19f7cca",
+      "response_id": "msg_011Cg4pFzEs8itCwSix9r29C",
+      "cost_usd": 0.0030595000000000006
+    },
+    {
+      "file": "repeat-02-batch-0020.json",
+      "sha256": "807187adf7cdae02a3ead168586a5a7a5b01c28f7e250e60e9f46a3a1e83d7a8",
+      "response_id": "msg_011Cg4pHfMrLk6iZzGvaXm4q",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0021.json",
+      "sha256": "f85b108fe06a29d6d1db5eac4054d336fa4a7ec311bce54e0fb1c65e4306934b",
+      "response_id": "msg_011Cg4pGuda84qoCzRwVHho3",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0022.json",
+      "sha256": "ed2ad61d39b96a6ba366b061a95936ce091243daf1ae665b1108c9978f9e94ae",
+      "response_id": "msg_011Cg4pJQ495bnSyK2mjFJpx",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0023.json",
+      "sha256": "6d8b4514171b24b6863387c5e16ed1427f33a201b563957ea20884e1d2515ccb",
+      "response_id": "msg_011Cg4pKJ6UbqmpqBaJxARMp",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0024.json",
+      "sha256": "d0634c3488c27d8a4181830c5c40f6f9c6bcabca07e55cc8f562bb0260caeaeb",
+      "response_id": "msg_011Cg4pKqy91A8eatUJiv2sv",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0025.json",
+      "sha256": "88d0d4806febf0ad7fb379df6066c3813ba7b98393f4cd496bf7f6d199cfdad1",
+      "response_id": "msg_011Cg4pLsPjkC4agYyHmxPsA",
+      "cost_usd": 0.0040965
+    },
+    {
+      "file": "repeat-02-batch-0026.json",
+      "sha256": "41ddfb17f51e90ab1b60cc3d1bc27b1778e8eb9917b8acaf3c0c7bb69debff5b",
+      "response_id": "msg_011Cg4pMicBbTLqk1AxxtCUU",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0027.json",
+      "sha256": "30d884823daaf93bca4a63e26801d45610196b0f5b0a15f027432ea4cacd19ee",
+      "response_id": "msg_011Cg4pNF7EPHxjHhEYbHLtR",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0028.json",
+      "sha256": "ae97c7567374b58ca3883a5d9989e9c0c1e72f3b85c2bcb52b740fb477ae2835",
+      "response_id": "msg_011Cg4pPMZTh3sbzahLMLptA",
+      "cost_usd": 0.0039195
+    },
+    {
+      "file": "repeat-02-batch-0029.json",
+      "sha256": "bb36c600cf6a194dbfaa3f82f0540cdce5eb0ce3bb169531f16a3e725ca33d09",
+      "response_id": "msg_011Cg4oqfgyFwDTHaTMRyQhL",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0030.json",
+      "sha256": "7f0512e29dcb88bed080878b598902c3dd66294a42bab6b42d1eb579d1bb89db",
+      "response_id": "msg_011Cg4ouTqhJ8CNPRiYv5WGu",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0031.json",
+      "sha256": "b61495df2006b4c3f15fec9fe682a95b900cd6b9b248857ca7467df3ed35bb00",
+      "response_id": "msg_011Cg4osakN77ewA6K98iFuJ",
+      "cost_usd": 0.0037425
+    },
+    {
+      "file": "repeat-02-batch-0032.json",
+      "sha256": "35b044ad6c2325fca5c35c12f7e536fe80e29f877105e954291394c8369d9ca7",
+      "response_id": "msg_011Cg4owpTzFDrwdCUNKqjan",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0033.json",
+      "sha256": "bc7c189b740415511a94c1c4152c1f9ab4a98cf2520312895c668967f39a7ea7",
+      "response_id": "msg_011Cg4p1A8WHtiziSKHsriJf",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0034.json",
+      "sha256": "50b8b88505e447b0a58027b64e47e95b29e0742899601ca6640f72e655a3397d",
+      "response_id": "msg_011Cg4oyQbMNXSVxH85Wcy2G",
+      "cost_usd": 0.0035655
+    },
+    {
+      "file": "repeat-02-batch-0035.json",
+      "sha256": "4b9c545c32976617ae9fc206246fcb74e7a66d9e0cc6c34d7e9964ecb753933c",
+      "response_id": "msg_011Cg4p35Tmx24c3GsYX9YFd",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0036.json",
+      "sha256": "d7fcc445edef3c277284a95916c2fd829bba7bbf1764eebc194a1cdc25293def",
+      "response_id": "msg_011Cg4p4Kbrh6nccSKe8x924",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0037.json",
+      "sha256": "1eccec90662d556a30ddaaa21bf564b321a4034d10c00a6b6b87a4b728f249d4",
+      "response_id": "msg_011Cg4p6rwZW8qpuZhrtmf4M",
+      "cost_usd": 0.0033885000000000005
+    },
+    {
+      "file": "repeat-02-batch-0038.json",
+      "sha256": "8fc30bf6e40a00fa23d2e58839f5b015f5c3c50e4919993dcfc1d4451279664d",
+      "response_id": "msg_011Cg4p8zLNAjso7GGaZucrv",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0039.json",
+      "sha256": "48fb525a6a77275830d6cfc747b95887d86fcb5466893fcb977c37f39d75c7dd",
+      "response_id": "msg_011Cg4pA35bY8Gzkh5aG8Li7",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0040.json",
+      "sha256": "81a14d68e0fecf30c616909bf44ba5f0dfcdd9713c0fe158bd24b699b7449ad7",
+      "response_id": "msg_011Cg4pBiyyj8jvXsjTEPHxu",
+      "cost_usd": 0.0032115000000000004
+    },
+    {
+      "file": "repeat-02-batch-0041.json",
+      "sha256": "ad25fd653d183228ba7e1657fdd8402092addf1e1361da07994e224b39e54a6c",
+      "response_id": "msg_011Cg4pDjvL8nMzsiBcWC9mF",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0042.json",
+      "sha256": "59b85b07438b4526861329862f943665fd02bfd0e662c6102a538d89a4bcb2d9",
+      "response_id": "msg_011Cg4pErnrZK1EefWPZPKr5",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0043.json",
+      "sha256": "0a2240af235040c8508763cb83c608401269403441bdaaa4644c1d3a6b758344",
+      "response_id": "msg_011Cg4pG1mdGrLEW9gKRYvGi",
+      "cost_usd": 0.0030345000000000007
+    },
+    {
+      "file": "repeat-02-batch-0044.json",
+      "sha256": "6108465e345dee9411c98426afb3c4d6b9c7e2c65021bd378319216ae4216cb0",
+      "response_id": "msg_011Cg4pH6DZHvwbEt4MAj8k9",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0045.json",
+      "sha256": "d24edb23cba34d3cc4486f6cebd47e04a4a9ac15423369070c635e6e32091044",
+      "response_id": "msg_011Cg4pJTchJexSophgipC14",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0046.json",
+      "sha256": "2f71521367df38f5fc11c02aaff339dc90b05ef61c1c42c1f865577914fc089e",
+      "response_id": "msg_011Cg4pL18oNyHEakcuCpLav",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0047.json",
+      "sha256": "975b206ebfd7b155f745967d1723f828cd4db966ca9e09c271d433935b0c7962",
+      "response_id": "msg_011Cg4pLx4XM4xaxwVFH7dD2",
+      "cost_usd": 0.0040965
+    },
+    {
+      "file": "repeat-02-batch-0048.json",
+      "sha256": "da1603b920366bd4500e216e0709933d06f4ca313875a31974e951ee923e91f9",
+      "response_id": "msg_011Cg4pNRouktT2UDmQoGmhH",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0049.json",
+      "sha256": "84c095cc938d3ac1c8d1ab95e53911c050bf651d7a166d6de7cdb7aad843f735",
+      "response_id": "msg_011Cg4pPUoH3ictTuyoZMCe3",
+      "cost_usd": 0.0039195
+    },
+    {
+      "file": "repeat-02-batch-0050.json",
+      "sha256": "1fb10494eba8cbc4ae0a256d458210aa8ff39e74cb9f917102e540974895d29d",
+      "response_id": "msg_011Cg4ouh4ghMjddjdPmF9xM",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0051.json",
+      "sha256": "330e27b9c26b68f8dbaadf5ba368ce31447ecdff7c5a3c2450a0f4238e810d01",
+      "response_id": "msg_011Cg4oskheqPwRFHQucpY8L",
+      "cost_usd": 0.0037425
+    },
+    {
+      "file": "repeat-02-batch-0052.json",
+      "sha256": "0fa508e308229f4b2b3bac8e125375e202c12a6c600aff2fde3abbb83663f003",
+      "response_id": "msg_011Cg4p1QvzTAugt7bAy715Z",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0053.json",
+      "sha256": "11edb2d1da7021b62b36dad7c721e19c8faa74d317512018a27bb819786f94d5",
+      "response_id": "msg_011Cg4oyWKdgCvy7ZYu7jFmV",
+      "cost_usd": 0.0035655
+    },
+    {
+      "file": "repeat-02-batch-0054.json",
+      "sha256": "a84a1700f37e41184fa7b909ad2e2b34b6d74bf2802d06bc963877bec2ed2ce6",
+      "response_id": "msg_011Cg4p4jivex4RDDHcZNoAd",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0055.json",
+      "sha256": "f070e08897d5cf79c69504dac5c446f9488922573a318f8982e95632da125597",
+      "response_id": "msg_011Cg4p6rpNastvb5PiLm7e1",
+      "cost_usd": 0.0033885000000000005
+    },
+    {
+      "file": "repeat-02-batch-0056.json",
+      "sha256": "6962b86b5b16d43d4c82203d207d404246f2d15e2cab8b6665b3618aecd1fca2",
+      "response_id": "msg_011Cg4pA7cCxYEoFU2CYBztG",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0057.json",
+      "sha256": "54d77fbeb7aebe74bf5339dbddf0af034ec7cd763f7555b9157474bddbc2c72d",
+      "response_id": "msg_011Cg4pBjeA3N71m5Q4yNNqV",
+      "cost_usd": 0.0032115000000000004
+    },
+    {
+      "file": "repeat-02-batch-0058.json",
+      "sha256": "45376535b0ec3df8235341e53cb0869a4546c45778cd375c43273d7d18652c24",
+      "response_id": "msg_011Cg4pEvf2igZZVw7U1GeBT",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0059.json",
+      "sha256": "8656eaaa067b2a4d2b59fa4dba37f5bf4125a5beb8497d8f4ba8dc4d9078de65",
+      "response_id": "msg_011Cg4pG7zBa71paBQQxpfh3",
+      "cost_usd": 0.0030345000000000007
+    },
+    {
+      "file": "repeat-02-batch-0060.json",
+      "sha256": "7826047ef3e438e37636117474735b681a8e8cf26cc8c3b24edcce720df177cf",
+      "response_id": "msg_011Cg4pJYLhhpDNijfhoVWqR",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-02-batch-0061.json",
+      "sha256": "eaf39040a2caff664d435eeff8a113234ebd4dcaf64ddaef2d101cd2bac21a13",
+      "response_id": "msg_011Cg4pM1iYYS3eXKptAg4nu",
+      "cost_usd": 0.0040965
+    },
+    {
+      "file": "repeat-02-batch-0062.json",
+      "sha256": "7a1324a00fa9ac01b4f554be45b4cf93b653660959c8ae6a492a58c2a1e770ec",
+      "response_id": "msg_011Cg4pPVp3qiG7JMDJEZrMy",
+      "cost_usd": 0.0039195
+    },
+    {
+      "file": "repeat-02-batch-0063.json",
+      "sha256": "802481d5ae8d7bc719a9d2236af11b4746b7d5136bef23f7966d9d4561a337e7",
+      "response_id": "msg_011Cg4oskgfnmBpfFkGRjTbd",
+      "cost_usd": 0.0037425
+    },
+    {
+      "file": "repeat-02-batch-0064.json",
+      "sha256": "427d0aefbd4683d8edd7763f7149069d03979086fbb28cdcbf60805be97b0e77",
+      "response_id": "msg_011Cg4oya2t1jDBEbpdEyoMY",
+      "cost_usd": 0.0035655
+    },
+    {
+      "file": "repeat-02-batch-0065.json",
+      "sha256": "2db8eeaf4092b011afc7e513dd12fced0b8d506458bc0fdf0e8512a2074ac804",
+      "response_id": "msg_011Cg4p6zFM3WQMPTpv5ToD5",
+      "cost_usd": 0.0033885000000000005
+    },
+    {
+      "file": "repeat-02-batch-0066.json",
+      "sha256": "2137c68f3eb5b2d635652f728745082457ff83a44471a8c443340bce5176466d",
+      "response_id": "msg_011Cg4pBuv3ucq2MAA7MAGgn",
+      "cost_usd": 0.0032115000000000004
+    },
+    {
+      "file": "repeat-02-batch-0067.json",
+      "sha256": "d78ae5ae6d8466a1922434b1d96a7dc3bb6befc45082e1c6777e98508e30fa7a",
+      "response_id": "msg_011Cg4pG8DpUFS6b9fV4NuyF",
+      "cost_usd": 0.0030345000000000007
+    },
+    {
+      "file": "repeat-03-batch-0000.json",
+      "sha256": "547256d582f4154bf8fa3aea66b2bdad607642cc03dd7a5d0f8c4f21c6f39918",
+      "response_id": "msg_011Cg4orLxsGxYGpoaUT18z4",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0001.json",
+      "sha256": "f42f415190295c08e53336de12cc34581d7f6ab5cfa4e2d0a4c286984383c283",
+      "response_id": "msg_011Cg4oqfixPhf4yLTEzspai",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0002.json",
+      "sha256": "983b025dcd5405b3ef90b3b9e74483691b8035befbdc499c3aaca1a1345fc194",
+      "response_id": "msg_011Cg4ouyEmkvtGHeKdwwfwg",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0003.json",
+      "sha256": "64412dc556253620ac0d9fbfa1ba1af07b3b305d77bcc16e056e6ea72334678b",
+      "response_id": "msg_011Cg4osu8uNtrrsf2NAqRpS",
+      "cost_usd": 0.0037425
+    },
+    {
+      "file": "repeat-03-batch-0004.json",
+      "sha256": "a8b7afcb47f966d53f9872890f922976678ddc8bdfbc18eea1a5fe0ad4565e95",
+      "response_id": "msg_011Cg4owCKrd5z2Gr9UeNFz3",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0005.json",
+      "sha256": "fbe357e70f417f3b7891e6395fd6f6e7ee9b16eaf55fd1368ffc1ff2bf9ff256",
+      "response_id": "msg_011Cg4owxxD1PyzQqbEvdPSw",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0006.json",
+      "sha256": "6cca9e97381ef25a308d1c17b8e1f076017670da369c9f391c590ce8e7348e32",
+      "response_id": "msg_011Cg4p1QwyrZoitpxV1BPLr",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0007.json",
+      "sha256": "5369d266f355e618120bbcf218fbd1333e2053e5892ca998433d87519d0a8ab2",
+      "response_id": "msg_011Cg4oyjg4V1RSavZLbZxT2",
+      "cost_usd": 0.0035655
+    },
+    {
+      "file": "repeat-03-batch-0008.json",
+      "sha256": "8cce02ed8e0fde471632e6d52847c69fc35606af88451137964257eb743e0211",
+      "response_id": "msg_011Cg4p2MDXsbq6BsiWG34fV",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0009.json",
+      "sha256": "47abc107a017e45b16ac3df2804f640b1f8d4a92273ce24a72be30c4da5f63cf",
+      "response_id": "msg_011Cg4p36CAkuPpgR3oWdxLT",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0010.json",
+      "sha256": "be93051e435a9971c3242ebc17d98b858488baaf81f9b6d4a689684cb83414bf",
+      "response_id": "msg_011Cg4p4jiS3yAG5Xmt9Sr6E",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0011.json",
+      "sha256": "69b08ec073ff9470f02e8277395f6f14647a8ada4df74614bae8f2d5716ff680",
+      "response_id": "msg_011Cg4p73N86SPPxAkvHZuig",
+      "cost_usd": 0.0033885000000000005
+    },
+    {
+      "file": "repeat-03-batch-0012.json",
+      "sha256": "50ab7365a07e4149c0f45d3e56946b5d1a8980156588a7c58121c5da76352266",
+      "response_id": "msg_011Cg4p5eGHSUn4ZPPjFgKyV",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0013.json",
+      "sha256": "0f6f1fabc8984f6812a94a39f0ab2d9b97fa43f487598e7e1f6af3f0d4fe473b",
+      "response_id": "msg_011Cg4p8yt5HUnmnhHmuWrLC",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0014.json",
+      "sha256": "e83a5e5ae743a40101601c3d42440dd5450dca4a164209abe89958d3a1d3bb56",
+      "response_id": "msg_011Cg4pACCnDcWEFxVzaJtbA",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0015.json",
+      "sha256": "028b528e7bd4c37ef3e492961c7e140efc96fa781fe7c737432e333239236cb5",
+      "response_id": "msg_011Cg4pBvfCMZhyZpRzJetey",
+      "cost_usd": 0.0032115000000000004
+    },
+    {
+      "file": "repeat-03-batch-0016.json",
+      "sha256": "c5b123478e76173ad516e8454bdb416a95142d98ec2e339e8ac1569e4bdbc586",
+      "response_id": "msg_011Cg4pDDheaw2K71iawzQ9o",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0017.json",
+      "sha256": "6af73a5a27fd08af66550704b2fe32f94999bf3b03280c76128bfc510d96ea6d",
+      "response_id": "msg_011Cg4pDrhcpGRDr6Epo4HRH",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0018.json",
+      "sha256": "052e627949c9f10fc91c0661fadf69f149a36af60d0b8d4b932354eecb467bd7",
+      "response_id": "msg_011Cg4pF3muUe5AJbw3S12tA",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0019.json",
+      "sha256": "dfeeac20abbb292f7da6cf0e38a64d2159ec477af0103ec75e58f6106f7b0c03",
+      "response_id": "msg_011Cg4pGELBX9u1srTWvZ6LY",
+      "cost_usd": 0.0030345000000000007
+    },
+    {
+      "file": "repeat-03-batch-0020.json",
+      "sha256": "6b0a3aefcd1f7d976a8332ad17663e4c1abc0b1e55fb5e26a54e1c077f023117",
+      "response_id": "msg_011Cg4pHm9cp7F2wQ8GY6ag4",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0021.json",
+      "sha256": "3b1235f8895e74c785e025805043d2ce9162ad27ba771da2fb6868e2857ac729",
+      "response_id": "msg_011Cg4pH6jpCesu5tJYs1fmX",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0022.json",
+      "sha256": "6427ca5f2340dc8348e3098fbef770fa9873ba86fe03d198cc2b6b6a67f5a8b1",
+      "response_id": "msg_011Cg4pJe1XjmtshLoFsNki4",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0023.json",
+      "sha256": "b1fe2b0eca37533f08722286059175cef5c0b4d4fb0a8c39c68408225da09203",
+      "response_id": "msg_011Cg4pKNZs53BkgF2udnzjt",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0024.json",
+      "sha256": "825f36de432e768dfc3c8c8e4f37db15a42bc1ee413928d6bad8f0e6a828381c",
+      "response_id": "msg_011Cg4pL4rXvYP6Fo9tTpiiC",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0025.json",
+      "sha256": "4dcd0a69e5f16c9f494ea811e9873f67ead0a36c66b05f1e40ebd9aa4550ed1a",
+      "response_id": "msg_011Cg4pM7NN9hDKNLrML2qxz",
+      "cost_usd": 0.0040965
+    },
+    {
+      "file": "repeat-03-batch-0026.json",
+      "sha256": "a10b2ed85450131a2e381de5332123eb7784df850e5400ef6ba7cb0d7c0acbcb",
+      "response_id": "msg_011Cg4pMpLiefpQ4HywtTYL1",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0027.json",
+      "sha256": "f81ecfa3d2a705c7b395762b21e542c12c03b81a1c69bb68db687c32e6bbae52",
+      "response_id": "msg_011Cg4pNRnvbmL51D3hsxsH3",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0028.json",
+      "sha256": "b46dbd21c4a34ba20902fe138a02c316b2e9d1a95c2ddd7dd0e5efb581066b4c",
+      "response_id": "msg_011Cg4pPcVsXUsiWa8fRFMYq",
+      "cost_usd": 0.0039195
+    },
+    {
+      "file": "repeat-03-batch-0029.json",
+      "sha256": "f8e2b127ba71ef8333b52bee8aac6730f19b76c7cdc840f6965120507b21f831",
+      "response_id": "msg_011Cg4oqtPTJbMo3LZyesPah",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0030.json",
+      "sha256": "a6abb3a4992c14e8ddb5dee8e4b3434d96f9277bd9b79d1c4e3d70cb6e609b13",
+      "response_id": "msg_011Cg4ov9pWa3UGZpLNBHTMW",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0031.json",
+      "sha256": "e4744e6682275bef9c8cf6e7d69b884ebded6eb2e997cc43cd2e8c542598308d",
+      "response_id": "msg_011Cg4ot3Pzv2izzSoexG1io",
+      "cost_usd": 0.0037425
+    },
+    {
+      "file": "repeat-03-batch-0032.json",
+      "sha256": "8dc8962a5d13d5f6d132ae8e2982be76611eadeb0dda8444dda74c4a5db50824",
+      "response_id": "msg_011Cg4ox7oX7optHY3UH7uxh",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0033.json",
+      "sha256": "44bb3a01a71dbb6bb21db4331d4b3f070833f512b92bad08a04de3ad9a19b1a8",
+      "response_id": "msg_011Cg4p1cynY7LeZjcCzf6Jx",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0034.json",
+      "sha256": "5945c954f10f4ed2cb7b5a8b9d2401fcac849697d904370067300751160a6703",
+      "response_id": "msg_011Cg4oyjpjUXvRThLPwAUxV",
+      "cost_usd": 0.0035655
+    },
+    {
+      "file": "repeat-03-batch-0035.json",
+      "sha256": "9548c50c21f08f30e38ce4c24adeafae9f2521c3d7feb619e0c1988af49e5dbb",
+      "response_id": "msg_011Cg4p3KSeoCL7xid9Kj8pk",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0036.json",
+      "sha256": "4eb4fb4c362b186f8dafb526bfbc730e0fc8e47e4e4aaa5d82c0dc4dd1eb2532",
+      "response_id": "msg_011Cg4p4wEUWFP1scV2dfJCA",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0037.json",
+      "sha256": "e282299bec8259e5ed33fcd1f932bab10b0f26d1560b2e39b9640c5bd04e55ba",
+      "response_id": "msg_011Cg4p77AZxznkNZZ1AZErF",
+      "cost_usd": 0.0033885000000000005
+    },
+    {
+      "file": "repeat-03-batch-0038.json",
+      "sha256": "ebf188385668daec64c484b3a641a47b326ead89f09e0efb5491b7d1b953ef3a",
+      "response_id": "msg_011Cg4p9B1Jzm4MjspuffZ27",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0039.json",
+      "sha256": "375ea7842d3d9480896c628d86d6921557c940382df2e1a0af804ca7ae2678ea",
+      "response_id": "msg_011Cg4pAHPpFbNGMME9kFuBA",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0040.json",
+      "sha256": "ffec71f8ffb1f1304b1d0c9f06b4807afeecc71dc7d9021006ff1c2b3d41e99b",
+      "response_id": "msg_011Cg4pC56TDbWdDzpv67XoV",
+      "cost_usd": 0.0032115000000000004
+    },
+    {
+      "file": "repeat-03-batch-0041.json",
+      "sha256": "67c27ee59e05a9f41edc8f694a1b369ac16c73d381ca47e3aa1f089ea7a897c9",
+      "response_id": "msg_011Cg4pDtifeHx9eKPj1KWAg",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0042.json",
+      "sha256": "0c54aadf5c87fc07745fcc0e1875e39660000711d4d33ad9829ed76858371447",
+      "response_id": "msg_011Cg4pF5RNbJ3mFLVRJEnXk",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0043.json",
+      "sha256": "56fa24a73d01cec5a8093978ba211626b65d7a687f9831556e9c317de1ec0b6f",
+      "response_id": "msg_011Cg4pGFFVdAPFSsPAMdvq5",
+      "cost_usd": 0.0030345000000000007
+    },
+    {
+      "file": "repeat-03-batch-0044.json",
+      "sha256": "72afbf1871a285b8446213894b65dca501404e341070c770790fb6a4231c4497",
+      "response_id": "msg_011Cg4pHHNXLbLfUAQaoJsea",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0045.json",
+      "sha256": "86c6dfecf5f100053c0199ee648b4ada122bbd1f4fc2e6a62258102ba751de23",
+      "response_id": "msg_011Cg4pJggm8xhKa74PgAkQa",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0046.json",
+      "sha256": "f621150cb92cc79130a0faf21065b6d97761c01743ddbb73e785ab6732055123",
+      "response_id": "msg_011Cg4pLAkEmibyPLk4ZYudw",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0047.json",
+      "sha256": "f0d345a2e7b40e4b54ccbe26f4cf1cf36780a0d40472c291a4057bf3d250649f",
+      "response_id": "msg_011Cg4pMBUS1S2CHTw4qqToF",
+      "cost_usd": 0.0040965
+    },
+    {
+      "file": "repeat-03-batch-0048.json",
+      "sha256": "895deab234e38d5a91851c5d3e9a815530a3832ae8b15d50e3484a2cd87a4fb2",
+      "response_id": "msg_011Cg4pNajBfNmr2Ky7ohwoq",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0049.json",
+      "sha256": "a1c59ac5350cf44e7dcaad067a925cead7e6e91ee5f7e13e23425ff1e126cea2",
+      "response_id": "msg_011Cg4pPdmHYf6kgUYtNYU8n",
+      "cost_usd": 0.0039195
+    },
+    {
+      "file": "repeat-03-batch-0050.json",
+      "sha256": "249d959f60da2ddf8c63372d7325fba40e96a0ce486705ae97d1e62a016d7fd6",
+      "response_id": "msg_011Cg4ovDJc2qdXUG1wRzSFy",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0051.json",
+      "sha256": "7b89d1ba839d58e1c46be6b31fca97b25010f685dd631d022c3f0b15978d6697",
+      "response_id": "msg_011Cg4otEBtqkEhjVz6oJUuc",
+      "cost_usd": 0.0037425
+    },
+    {
+      "file": "repeat-03-batch-0052.json",
+      "sha256": "17cf064233f13950b11e05532e04a3213d59644c5ed945acaebe6b7aca9f004f",
+      "response_id": "msg_011Cg4p1dSKVB76hdPuSHbRT",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0053.json",
+      "sha256": "0e7bc02cd3c56a98f075a4a2379920e0bad90317c4702093e875f7e5da47a96b",
+      "response_id": "msg_011Cg4oyy8BZLKxnVRZnK46w",
+      "cost_usd": 0.0035655
+    },
+    {
+      "file": "repeat-03-batch-0054.json",
+      "sha256": "2abe9fa694fd9bc6a4e6046cdd88bfb3fd3b17c49b1424c34781d735f44f365f",
+      "response_id": "msg_011Cg4p4wGi1Ati9un9yrdFF",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0055.json",
+      "sha256": "4493a0d5279d9af6b1194a08a4525da22baa9ceef5a3d44cc051f64834e3d2b3",
+      "response_id": "msg_011Cg4p7GpkWomYnRpbz6Laa",
+      "cost_usd": 0.0033885000000000005
+    },
+    {
+      "file": "repeat-03-batch-0056.json",
+      "sha256": "3d72822bf8c02eda93856d7588d9b6d93ee11dd1d075096f749b090075b68582",
+      "response_id": "msg_011Cg4pAMX7QnyPPbrLFJjCT",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0057.json",
+      "sha256": "1836ceab3365e4316c2a279287c5de90dafe707eab045c74990d907a0e9096b4",
+      "response_id": "msg_011Cg4pC5up9FmJ7Prhuifkt",
+      "cost_usd": 0.0032115000000000004
+    },
+    {
+      "file": "repeat-03-batch-0058.json",
+      "sha256": "a49066455c9bd742318a48d46c7cf6726d756a4276b5e9f4bedc1e9a198ab871",
+      "response_id": "msg_011Cg4pFD6kBAm7VkgM8PY8J",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0059.json",
+      "sha256": "65ba8077339b69836a628d3265ef25dc22a7371c264112117f8d2f4877a37076",
+      "response_id": "msg_011Cg4pGMiCAx2geQmgMN3kJ",
+      "cost_usd": 0.0030345000000000007
+    },
+    {
+      "file": "repeat-03-batch-0060.json",
+      "sha256": "9931af80a8c766ddcdeab7310f565eaec0fdcd0a292c92f92deaf36a85a51d51",
+      "response_id": "msg_011Cg4pJpckYhh4SoVHrW62Z",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-03-batch-0061.json",
+      "sha256": "62e51470cfc6a8df9902378883dc21de90f1ef284dfcc0a6580b718bc1a79d7c",
+      "response_id": "msg_011Cg4pMJ2pkYAU7H31PMiXE",
+      "cost_usd": 0.0040965
+    },
+    {
+      "file": "repeat-03-batch-0062.json",
+      "sha256": "6b04b6d202ff24edeeca0b320f4fb09fea0e0dd4fcb24117cf2265afaff5a60d",
+      "response_id": "msg_011Cg4pPkSsJ7c7MJru9S3Ff",
+      "cost_usd": 0.0039195
+    },
+    {
+      "file": "repeat-03-batch-0063.json",
+      "sha256": "4549c4af69a27b0002f8ee67ec72d7fe8962308572eefa30894894e2060bcfd9",
+      "response_id": "msg_011Cg4otECP9rHAWaiMqWyps",
+      "cost_usd": 0.0037425
+    },
+    {
+      "file": "repeat-03-batch-0064.json",
+      "sha256": "7d4f05929bdab85cc07fd4eeca6e30497da587a51a20f4e56b1cc0a2195a8dd1",
+      "response_id": "msg_011Cg4oyy5xfTLh5t8yfeGrq",
+      "cost_usd": 0.0035655
+    },
+    {
+      "file": "repeat-03-batch-0065.json",
+      "sha256": "c24f67712f24b8f6dc1c303f2f6f1212102b6d0e3f3f2f6de7b5d4e8a485cf17",
+      "response_id": "msg_011Cg4p7HRiazsjiH1Xua21m",
+      "cost_usd": 0.0033885000000000005
+    },
+    {
+      "file": "repeat-03-batch-0066.json",
+      "sha256": "ae73abb92b157f2bfb5b9b5cda7b6105348624a13c03e83d58daaf5de0354b1e",
+      "response_id": "msg_011Cg4pCFsqk5D5EkyG896CR",
+      "cost_usd": 0.0032115000000000004
+    },
+    {
+      "file": "repeat-03-batch-0067.json",
+      "sha256": "d1c83e8f63b2a141e17443843710386960d43c5b31947f51b940402fc3ecc549",
+      "response_id": "msg_011Cg4pGNV4yefChiUwiBkSU",
+      "cost_usd": 0.0030345000000000007
+    },
+    {
+      "file": "repeat-04-batch-0000.json",
+      "sha256": "cd508a7502880c7b480dcfa622001300690ae9d045275e7190e4c70a2fd41d0c",
+      "response_id": "msg_011Cg4orc9BSvcefLXJpDwmA",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0001.json",
+      "sha256": "5131c130ab5a1753ed55382e2dd8215405351955608ad56e7e80755fa980f0d7",
+      "response_id": "msg_011Cg4oqtQhqNog8DtMUjZyj",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0002.json",
+      "sha256": "4216f6b3a9b39cf98a6b712609298c6caf2f0ad724e4aba0ed8cffc1a1cf073f",
+      "response_id": "msg_011Cg4ovPWnPUkMurvTyvj2H",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0003.json",
+      "sha256": "2fa816343199003554c20bf5d6f7f0564522ccf73761f3b6bafa9d6bc82c5517",
+      "response_id": "msg_011Cg4otNWT1ZHF1AP67Px1M",
+      "cost_usd": 0.0037425
+    },
+    {
+      "file": "repeat-04-batch-0004.json",
+      "sha256": "8f126fb25e13230f8c3860d7863f262afe56660d1f618de68a92414f2b6c74dc",
+      "response_id": "msg_011Cg4owNT41ohBL9eN8MzAL",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0005.json",
+      "sha256": "6aa9fd33f8d1a57dfce9c408f212339e4c325b9bea6b455972fd4536c6b4bc71",
+      "response_id": "msg_011Cg4oxFoyYVzPBwXTmq2xq",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0006.json",
+      "sha256": "ab4a6961b4e29c5b9a561d19c9ac28b78ac360564d2fa36d7241961a998d8420",
+      "response_id": "msg_011Cg4p1qnieabwBaCvNHoWg",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0007.json",
+      "sha256": "b808574915cc34ec7913ffdbc3d21a68f37161128070319f559f7e7bf36e682a",
+      "response_id": "msg_011Cg4oz89B27XwdWnzRhYjH",
+      "cost_usd": 0.0035655
+    },
+    {
+      "file": "repeat-04-batch-0008.json",
+      "sha256": "1da481a1b89a94ba741d48c0ac34e1822fe64dc0572259650fb72fbbbcf5954c",
+      "response_id": "msg_011Cg4p2UETWLbzuWYL8xfjB",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0009.json",
+      "sha256": "aedaf97ccef073a050a5bb3394e6d4131cdeb4825ffd55981b043d46c006f824",
+      "response_id": "msg_011Cg4p3KZ6WE2WesC4DwwtM",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0010.json",
+      "sha256": "5cc7e6d1fa8e08b6dfac167357ac41305ef5948e4373cc8eab5c101c7587f9ce",
+      "response_id": "msg_011Cg4p5B2Bq2U7AX9oPj7kT",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0011.json",
+      "sha256": "e2dab3b9984094b8776426b6afc7d27fe40400cc6c4e7b4f50fd860faee730c0",
+      "response_id": "msg_011Cg4p7W11n4nSQwKBaxQhM",
+      "cost_usd": 0.0033885000000000005
+    },
+    {
+      "file": "repeat-04-batch-0012.json",
+      "sha256": "86a23ff48b9f92115f34879ed0627907cf90e70f3b150761c282123f651c06e4",
+      "response_id": "msg_011Cg4p5okJgZJgokSotPn2V",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0013.json",
+      "sha256": "e5bf1803d9e30e5f3792545ad5c5947da3a2ec4a060bf20c258f085b87d47e29",
+      "response_id": "msg_011Cg4p9B6Gr8pJtW9MtBu2F",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0014.json",
+      "sha256": "45d09cc52aa21588b8fd20558d457a4852ea92e351874ac94ac2ee32e83f0ea6",
+      "response_id": "msg_011Cg4pATLcGZuj6FGkpvmMj",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0015.json",
+      "sha256": "760cd497dfbb5180bf50e16e4aad300f6729dc6683761f88c4e94e6d4262a29f",
+      "response_id": "msg_011Cg4pCWFY727YjMCj6yMZV",
+      "cost_usd": 0.0032115000000000004
+    },
+    {
+      "file": "repeat-04-batch-0016.json",
+      "sha256": "f7dcb6ce5b86c85929cd6029833b99eedde84a3007475786cfc708b17f3e4bcc",
+      "response_id": "msg_011Cg4pDFzoXyfRwUXxnNT9G",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0017.json",
+      "sha256": "d26fba934a2c746ccffd287ee6db67a609eb596878c97771319dd2a3968fd4fa",
+      "response_id": "msg_011Cg4pE3KqqHBFHhnaRaSKR",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0018.json",
+      "sha256": "1ee872e10d5912d7d4d17c7670f2b52fd2aaff1ff26f8737877701f5e33145e8",
+      "response_id": "msg_011Cg4pFFmyVH14piBkhLJeQ",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0019.json",
+      "sha256": "6fe7a96fdd8a80f7f55f27758c40d2424cec79f4fdf32b6477ed23f39b1a4213",
+      "response_id": "msg_011Cg4pGU3vwQDhw6UZSJBKd",
+      "cost_usd": 0.0030345000000000007
+    },
+    {
+      "file": "repeat-04-batch-0020.json",
+      "sha256": "05f5bf5148b71f1e6f780026385a50b27470467828436388680ef971691312b3",
+      "response_id": "msg_011Cg4pHswtTyYDU94Hefeep",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0021.json",
+      "sha256": "6a25545c087ec943be39fbefd886e89ddba00352976115d8cf76e0ca4e5cd8b2",
+      "response_id": "msg_011Cg4pHHHKAGLw7QDh2Qkd4",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0022.json",
+      "sha256": "637fed608544fa7d30792d13400426d736bc61ae859b769a8a21a7574f03b1dd",
+      "response_id": "msg_011Cg4pJtgKQahTZgJRwoXU5",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0023.json",
+      "sha256": "ea1d95cdee8e191290acae49a4a64ed5cf118df7f201b5051e1489c623093eec",
+      "response_id": "msg_011Cg4pKTR4duM5GkFWns1LC",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0024.json",
+      "sha256": "d93d52fefb7aaa61f8adcbf5927b346bb2129b2171b73a0b4210889595f33e0a",
+      "response_id": "msg_011Cg4pLDs1fgwm7nyBV2TWW",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0025.json",
+      "sha256": "856f1f2bc49bfb2b1a6020ccdc492a47f345c0fd54db7cff73b5ecfa1ff76817",
+      "response_id": "msg_011Cg4pMMYfA6g1BwfVN5E4j",
+      "cost_usd": 0.0040965
+    },
+    {
+      "file": "repeat-04-batch-0026.json",
+      "sha256": "7240848080f70090aca4c36fc01d9aab1207d2bff208b6cdeb7737e531b81f10",
+      "response_id": "msg_011Cg4pMsUj5NwQ5sjq3K7oL",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0027.json",
+      "sha256": "9cc8860986123e743369dd38081dcba8d1905026a559966d3e41209d9b399284",
+      "response_id": "msg_011Cg4pNfA6CYjweAAtSx5XE",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0028.json",
+      "sha256": "f6f5c747903c486a2f82e552d49735c982a72840c81122656b462f268935c758",
+      "response_id": "msg_011Cg4pPn1NnRpDDDfeJM4vM",
+      "cost_usd": 0.0039195
+    },
+    {
+      "file": "repeat-04-batch-0029.json",
+      "sha256": "1a65bdd855392ec73fda484c25253698b993a19156cf33ed40b7cfa44c711e15",
+      "response_id": "msg_011Cg4or7RHUankg7gt23Z2g",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0030.json",
+      "sha256": "5462692e3571aeff773d206e53394bd08dae0953f5837894d97e8ac2d1e7c46a",
+      "response_id": "msg_011Cg4ovc9HthRHksspddWNy",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0031.json",
+      "sha256": "9b0fa66460b511c32f82ba4fd3003951056c9809e7b00db0951249201ac04569",
+      "response_id": "msg_011Cg4otPQXMmUKsTMqPKCMq",
+      "cost_usd": 0.0037425
+    },
+    {
+      "file": "repeat-04-batch-0032.json",
+      "sha256": "d415dbda4c8a75900547e76c4eba62b4d5c5b213662782b75362fb88fe82dba7",
+      "response_id": "msg_011Cg4oxFztWVZWB35RS9EhT",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0033.json",
+      "sha256": "a9405e0d30bf444f35bc514530168580bd2820b415beca016a27b508730f4985",
+      "response_id": "msg_011Cg4p1rgHsEimssZL94S7d",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0034.json",
+      "sha256": "9f7f28dac397da5c25141b88a92f65cfaab975addff284f805dd4d8202355b6a",
+      "response_id": "msg_011Cg4oz8DNv5YmUTfZkHMjR",
+      "cost_usd": 0.0035655
+    },
+    {
+      "file": "repeat-04-batch-0035.json",
+      "sha256": "02198548f3553411af6a43ae2adbd45ef8c3979e5f680b12cdf3fe871f04d83f",
+      "response_id": "msg_011Cg4p3YzVC2eh3Wgj38o5P",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0036.json",
+      "sha256": "49b97b2064465395c3ec87b8465275e1a94cf6f6e0f7980694c42f7ef6230bb6",
+      "response_id": "msg_011Cg4p5EY2hUuSWaMJ2VFMZ",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0037.json",
+      "sha256": "64ef094789686666c91c987870b9183a2493446f2762dee4823c54a536a74641",
+      "response_id": "msg_011Cg4p7WndvhN4tiQ1Lh4Ns",
+      "cost_usd": 0.0033885000000000005
+    },
+    {
+      "file": "repeat-04-batch-0038.json",
+      "sha256": "b51a678b12cbd52e0a3b4eb84b0d2bb85856002fa1e386e9772909c216b4729d",
+      "response_id": "msg_011Cg4p9PmmKcMyHkTSt6dQb",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0039.json",
+      "sha256": "d413257cab01385b086cac9e88d16139a41eb420b29093aec21540e8e2aa5b2d",
+      "response_id": "msg_011Cg4pAbGqr6k5x9tWkct6b",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0040.json",
+      "sha256": "072f1edc46bee9e6f7139f14720d1e2b477709c1e2f1112da8faf8e2877dc6bc",
+      "response_id": "msg_011Cg4pCiQGinxDLW3Lxa3CR",
+      "cost_usd": 0.0032115000000000004
+    },
+    {
+      "file": "repeat-04-batch-0041.json",
+      "sha256": "a6f24d0ff2ff1936bf6feb7a95884e0e1a8c6e336f9afb1b4efca0fc4a752d3e",
+      "response_id": "msg_011Cg4pE818L7veDaoBct548",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0042.json",
+      "sha256": "0efb47e59b6286fc65d1c829593ff10335db4dfea6ff370a6b3e9b774cbcaa74",
+      "response_id": "msg_011Cg4pFPvNF3q6Hnwp8ewsY",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0043.json",
+      "sha256": "86697c15c974313e344099338a019d7167ecacbf4e1581e69171ebe5a6e2f3ff",
+      "response_id": "msg_011Cg4pGV3ieVHJ3P5mLh7VX",
+      "cost_usd": 0.0030345000000000007
+    },
+    {
+      "file": "repeat-04-batch-0044.json",
+      "sha256": "10578118fe9bd3b2341c610927b2a18cb1cc7050e77596ffe0ff8df194010b47",
+      "response_id": "msg_011Cg4pHWjCY9xo58wvGa98d",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0045.json",
+      "sha256": "234634fa17a1e77ff166f68006a219a51bab715ce8f3e4d27f7f1f5294637979",
+      "response_id": "msg_011Cg4pJzXZTx2ZtA9mKZTCv",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0046.json",
+      "sha256": "03d7208bd72ca423d580c1985a2a3a2e5815ec5acf799c86be5dbdf3e1f763a5",
+      "response_id": "msg_011Cg4pLKLfpkdN3GqNBS2iK",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0047.json",
+      "sha256": "015ea05e887659a21220268b740c7398d2a07a15b88f1f0fdab5347c578ce4ac",
+      "response_id": "msg_011Cg4pMVxRngZMxw79Hp9y7",
+      "cost_usd": 0.0040965
+    },
+    {
+      "file": "repeat-04-batch-0048.json",
+      "sha256": "bf8b908232ac0a67d2f926f091b4efa3e5cf5991fe7244d4738da92ba17c3b98",
+      "response_id": "msg_011Cg4pNjsbud3QS6Dj14dy7",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0049.json",
+      "sha256": "9e666a24e8b86273a7965c365a1bbcb4a6f672542ab3d0e06b5f47ab8ce26e1e",
+      "response_id": "msg_011Cg4pPtb1o22Her3PgfTFj",
+      "cost_usd": 0.0039195
+    },
+    {
+      "file": "repeat-04-batch-0050.json",
+      "sha256": "b00dd4d78c975530d5b60d4fc4e2e67824e27885bef1ddde4626ea0c9eb96eeb",
+      "response_id": "msg_011Cg4ovokYB8Z612KEoiZ7Q",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0051.json",
+      "sha256": "78386afa326f70d014b9521e685d933ac4ff17725bba474340345f05d61c0a96",
+      "response_id": "msg_011Cg4otWk3QdymfnguGZntE",
+      "cost_usd": 0.0037425
+    },
+    {
+      "file": "repeat-04-batch-0052.json",
+      "sha256": "4d52ba9171575cc2d8ff9d8f3c344f006133d7e446679db93a15713a5b13ecf0",
+      "response_id": "msg_011Cg4p21mjvrhgwWU1hfZ4G",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0053.json",
+      "sha256": "49fe30ed01adcb2fdac674c001ff9d162c2cd4f0e1ed37cdca8e7fd1e7cff6eb",
+      "response_id": "msg_011Cg4ozJ8wat49B6XViX9Tc",
+      "cost_usd": 0.0035655
+    },
+    {
+      "file": "repeat-04-batch-0054.json",
+      "sha256": "8ff31d893bcf046f68a3b0f70a26254f2cde0b4c6a8a65ddb043aa211e16bcaa",
+      "response_id": "msg_011Cg4p5Po92xZ84woc7yNUs",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0055.json",
+      "sha256": "21b57fe564ac84ed43aecf99317cc4bd2d1d91d3949e1b8df84c932a0d79d79c",
+      "response_id": "msg_011Cg4p7jtRqjQPRhQngkbwd",
+      "cost_usd": 0.0033885000000000005
+    },
+    {
+      "file": "repeat-04-batch-0056.json",
+      "sha256": "f90702137289bbbbd9fc2fa847360d8d15a50954dbec87a818f926e981680f9f",
+      "response_id": "msg_011Cg4pAfCVMGXeTQyLrrHrg",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0057.json",
+      "sha256": "49b7b235dc92c673555e13065c186695e8c144dbead8c055b845fabcfb0dedc8",
+      "response_id": "msg_011Cg4pCss3LnFJtvWZz6ApY",
+      "cost_usd": 0.0032115000000000004
+    },
+    {
+      "file": "repeat-04-batch-0058.json",
+      "sha256": "0c799407af4cd22ea6ca3cf085b4c9727aae94044adbf30783dde1af5155b167",
+      "response_id": "msg_011Cg4pFSnzrDnesefz6gX1M",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0059.json",
+      "sha256": "fa549f6e398bc119d04fa44edceae08aec1f18b267d17f5a6145af746ce08813",
+      "response_id": "msg_011Cg4pGbmXRqCU1uTdsod34",
+      "cost_usd": 0.0030345000000000007
+    },
+    {
+      "file": "repeat-04-batch-0060.json",
+      "sha256": "d51eec44c44f99229af5f8d72febc0ddec1523d6c34ca8fa8b40110356c922be",
+      "response_id": "msg_011Cg4pK8Df5U8X6hK9vL1SE",
+      "cost_usd": 0.0042735
+    },
+    {
+      "file": "repeat-04-batch-0061.json",
+      "sha256": "a0e9d1c23931354100cb1c65347db26243a45b6f6f8e914805435b31eb411d56",
+      "response_id": "msg_011Cg4pMZaT2YZYAa5jpSpH1",
+      "cost_usd": 0.0040965
+    },
+    {
+      "file": "repeat-04-batch-0062.json",
+      "sha256": "5b7d3339c430b158d395ed5a29e675b26144a92a028ea72fcd4a9bc9627ff95d",
+      "response_id": "msg_011Cg4pPxrz4iqdFeSEGWznG",
+      "cost_usd": 0.0039195
+    },
+    {
+      "file": "repeat-04-batch-0063.json",
+      "sha256": "22bb88be758bdd838c56c0ff0b22b9cdd81d74c4e947d0fcb6bef02f6216f350",
+      "response_id": "msg_011Cg4otZ1igr7D3m3Murf6G",
+      "cost_usd": 0.0037425
+    },
+    {
+      "file": "repeat-04-batch-0064.json",
+      "sha256": "7fbdd8fcd2314646d857028830b99cd180d745d7974b6c4ff094a1ffcc1b75ab",
+      "response_id": "msg_011Cg4ozJJ7fNGKthRXxGJrT",
+      "cost_usd": 0.0035655
+    },
+    {
+      "file": "repeat-04-batch-0065.json",
+      "sha256": "5876512168d86fe46cdf012eff8d156137422cbb692fcebe78f18101f9e0f70a",
+      "response_id": "msg_011Cg4p7jrwoe4jCopBxWhfM",
+      "cost_usd": 0.0033885000000000005
+    },
+    {
+      "file": "repeat-04-batch-0066.json",
+      "sha256": "9b0c639f54cf95ff1761d0c6e61e4a216a48f23746223680ee5219c48b60fb5b",
+      "response_id": "msg_011Cg4pCuNqLo8sWM9pLqrM8",
+      "cost_usd": 0.0032115000000000004
+    },
+    {
+      "file": "repeat-04-batch-0067.json",
+      "sha256": "1bfb4222c634ee9a12ca6ddf66ff7e5b65fc3ed265a0f1b7fcbbd721cfd8e9c0",
+      "response_id": "msg_011Cg4pGcE4gSJEq3qq4m7T9",
+      "cost_usd": 0.0030345000000000007
+    }
+  ],
+  "raw_credentials_included": false
+}

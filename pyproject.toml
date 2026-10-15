@@ -7,7 +7,7 @@ name = "catalyst-hte"
 version = "0.1.0"
 description = "Local OT-2 dual-ligand screening and audited LC-to-LLM iteration"
 requires-python = ">=3.10"
-dependencies = ["numpy>=1.26,<3", "rdkit>=2024.3", "anthropic>=0.50,<1"]
+dependencies = ["numpy>=1.26,<3", "rdkit>=2024.3", "anthropic>=0.125,<1"]
 
 [project.optional-dependencies]
 sources = ["openpyxl>=3.1", "pypdf>=5"]

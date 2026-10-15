@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-16",
+  "actual_paid_claude": true,
+  "model": "claude-opus-4-8",
+  "prompt_format_version": 6,
+  "pairs": 435,
+  "repeats_per_pair": 5,
+  "requests": 340,
+  "chemistry_measurements_used": false,
+  "single_ligand_SI_yields": 17,
+  "unknown_SI_yields": 13,
+  "scoring_cost_usd": 2.7599745,
+  "prior_rejected_array_request_cost_usd": 0.225235,
+  "current_campaign_scoring_and_rejected_cost_usd": 2.9852095000000003,
+  "historical_smoke_tests_cost_usd": 0.4023195,
+  "all_known_paid_tests_and_campaign_cost_usd": 3.3875290000000002,
+  "source_input_digest_verified": true,
+  "current_prompt_payload_sha256": "cd9d65418a348e559ddd0bd9c73a660f1f53bd4a7639dfb68920fdafb25416cc",
+  "inputs_sha256": {
+    "hte_inputs/ligands.csv": "a24c186b814eaeb8b5950e7a059e21b8df001764e83b19f127a3da179f4a5876",
+    "hte_inputs/literature.json": "bdc36fcbaa06c5635064218629d7baeca35738d02cb9e5a0481e159a2e94a7be",
+    "hte_inputs/pair_embeddings_t5-base.npz": "22d626dea637cb4aaf43fd56c94b05ecf602ba1a3272af675c20cc760d4a0caa"
+  }
+}

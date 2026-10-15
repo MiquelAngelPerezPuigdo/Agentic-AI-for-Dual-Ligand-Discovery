@@ -7,7 +7,7 @@ from rdkit import Chem, DataStructs
 from rdkit.Chem import rdFingerprintGenerator
 
 from .inventory import pair_id
-from .io import finite, wells
+from .io import finite, wells, reaction_wells, well_name
 
 
 def pair_features(inventory, candidates):
@@ -186,6 +186,12 @@ def validate_design(config, inventory, rows, history=()):
     round_number = str(rows[0]["round"])
     if round_number not in ("1", "2") or len(rows) != config["design"][f"round{round_number}_total"]:
         raise ValueError("Design count differs from the configured round")
+    available = set(reaction_wells(config))
+    if any(row.get("well") not in available for row in rows):
+        raise ValueError("Design well is absent from the reaction definition")
+    lc = [well_name(row["lc_well"]) for row in rows]
+    if len(set(lc)) != len(lc):
+        raise ValueError("Duplicate LC destination well")
     controls = config["design"].get(f"round{round_number}_controls")
     if controls is None:
         raise ValueError("Specify the configured controls before making a design")
@@ -225,7 +231,7 @@ def make_design(config, inventory, candidates, ranking, exploration, round_numbe
     controls = design.get(f"round{round_number}_controls")
     if controls is None:
         raise ValueError(f"Decide round{round_number}_controls, including singles and repeats, first")
-    if not 1 <= n <= 96 or len(controls) >= n:
+    if not 1 <= n <= len(reaction_wells(config)) or len(controls) >= n:
         raise ValueError("Invalid batch/control count")
     candidate_map = {c["pair_id"]: c for c in candidates}
     order = ranked_ids(ranking, candidates)
@@ -265,7 +271,7 @@ def make_design(config, inventory, candidates, ranking, exploration, round_numbe
             row["pair_id"] = pair_id(row["ligand_a"], row["ligand_b"])
         entries.append(row)
     random.Random(design["seed"] + round_number).shuffle(entries)
-    for i, (row, well) in enumerate(zip(entries, wells()), 1):
-        row.update(round=round_number, sample_id=f"R{round_number}-{i:03d}", well=well)
+    for i, (row, well) in enumerate(zip(entries, reaction_wells(config)), 1):
+        row.update(round=round_number, sample_id=f"R{round_number}-{i:03d}", well=well, lc_well=wells()[i-1])
     validate_design(config, inventory, entries, history)
     return entries

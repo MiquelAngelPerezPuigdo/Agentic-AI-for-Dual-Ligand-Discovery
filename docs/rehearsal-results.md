@@ -1,83 +1,27 @@
-# Software rehearsal results
+# Validation and rehearsal evidence
 
-The updated liquid-dose workflow uses 1 M SM/10 mM IS in toluene, 20 mM ligand stocks and 40 mM Pd; no dry-down. Both rounds count the retained 25 µL SM stock in their 250 µL volume. OT-2 simulations cover the proposed p300 single and the optional p20 split-transfer setup.
+Current machine-readable record: [software_validation.json](../software_validation.json). Software checks validate implementation and simulation; no physical robot experiment, real calibration or 95 °C pair measurement has been performed.
 
-## Current HTEL update, 11 October 2026
+## Real initial Claude campaign
 
-The revised campaign uses 30 active ligands (L07 excluded), 435 unchanged T5 embedding vectors, 59 first-round pairs plus one reference and ten new second-round pairs. The offline rehearsal delivered all **60** first-round results to five mocked Claude requests over the **376** untested pairs, with no repeats or second SM/IS dose. The requested 1.7-minute full-cycle scenario gives **686 minutes**, pending method, larger-scale handling and simultaneous-heating confirmation.
+The real initial run is frozen in [campaigns/hackathon2026](../campaigns/hackathon2026/). **435 pairs ×five repeats**, **340 accepted small anchor/partner requests**, all requested IDs validated, scores0-100, thinking disabled. Accepted usage estimate **$2.7599745**; 311 requests reported cache hits, 1,578,979 cache-read tokens. The 48-pair consensus covers **all30 active ligands**, with zero lower-quartile floor overrides. Exact accepted request, repeated scores, mean/SD ranking, source hashes and response IDs are saved. Initial scoring used two workers and took approximately9 min; this is not a measured feedback-loop latency.
 
-The provisional scale is 250 µL reaction plus 250 µL workup. It preserves 50 µM LC naphthalene and 5 mM maximum product after 20 + 180 µL dilution. Source pools keep workup/diluent channels below 11.9 mL; same-stock reuse and fresh sample-tip conditioning remain explicit. First dosing can be released separately while calibration runs, but workup and round two retain full analytical validation. No physical run or paid Claude request occurred.
+Earlier full-size schema/array formats were rejected and never used for selection. Their costs and historical smoke tests are recorded in the audit; known combined estimated usage is$3.387529. No real second-round scoring has occurred.
 
-The actual supplied wide CSV normalized 13 injections and 25 peaks, omitted 14 empty placeholders and flagged two incomplete lists. It is old test data, not campaign calibration. Thermo MS RAW is excluded from the MOCCA path. The slide review, missing vial-rack JSON and submission requirements are recorded in [organizer updates](organizer-updates.md). The transcript remains unavailable.
+## Offline practice loop
 
-**Current local acceptance: 134 tests passed.** These include actual OT-2 simulations with a synthetic deepwell plate/adapter, availability exclusions, Chromeleon identity/channel/zero handling, measured-peak calibration, staged release and multi-source reservoir capacities. The hardware used for software simulation does not establish the 4 mL vial setup.
+`python -m hte.cli rehearse-loop --output output/practice` uses real frozen T5 vectors but mocks every Claude response and every chemistry yield. Current practice completed **650 mocked requests**, including340 initial requests and310 feedback requests for387 remaining pairs. Both stages contain **17 available individual SI yields**; each pair has five scores. All batches contain at most eight partners for one anchor.
 
-## Historical 31-ligand rehearsal
+The practice selects48 pairs covering30 ligands, accepts all48 synthetic LC results, then creates **22 untested pairs +L17 reference**. The complete second-round synthetic analysis also passes. It verifies no repeated pair, no SM redose and exactly one mesitylene dose after dry-down, ignores incomplete exports and repeated watcher events, and makes **zero paid API calls**. The generated practice next batch is not a scientific recommendation. No GoLLuM optimizer is invoked after feedback.
 
-The offline first-feedback-loop rehearsal completed successfully. All chemistry results and Claude responses in this exercise were synthetic; no paid API call or physical robot run occurred.
+## Acceptance scope
 
-| Check | Observed result |
-|---|---|
-| Real frozen T5 embeddings loaded | 465 unordered pairs, 768 dimensions |
-| Initial scoring request contract | Five mocked requests, each covering 465 pairs |
-| Initial batch | 65 distinct pairs plus one tBuBrettPhos reference |
-| Mandatory pair coverage | All 31 ligands represented; minimum one pair well per ligand, with the single reference excluded |
-| LC processing | 66 calibrated synthetic results; batch QC passed |
-| Feedback scoring request contract | Five mocked requests, each receiving all 66 results and scoring 400 untested pairs |
-| Next dosing CSV | Ten new pair assignments using only LLM scores, with no pair repeats |
-| Predosed substrate | All ten second-round substrate doses remain zero |
-| Predosed internal standard | 0.050 µmol naphthalene per well retained in the plan; no second substrate/IS stock or workup IS dose |
-| Calibration | Five nonzero levels plus an IS-containing blank per analyte; independent checks excluded from each fit |
-| Incomplete LC export | Ignored until the completion marker was published |
-| Repeated completion event | Ignored; no additional scoring calls |
-| Physical protocol generation by watcher | Disabled because bench validations remain incomplete |
-| Optional GoLLuM execution | Actual attributed upstream optimizer, real embeddings, 61 uncensored synthetic pair priors, 465 finite acquisition values |
-| Local API key file | Mocked scoring reads `anthropic.key`; environment takes precedence; malformed entries stop without echoing contents; no key saved in outputs |
-| Local acceptance suite | 101 passed, zero failures/errors/skips |
+Tests cover stoichiometry/reserves/deck loads, supplied geometry and cap envelope, reaction-to-LC maps, acid/dilution arithmetic, ligand coverage, strict scoring, caching/budget stops and interrupted requests. Chromeleon batches with reset injection numbers require explicit maps and full coverage; partial/overlapping/duplicate exports are rejected. Calibration and quantitative QC are enforced.
 
-Adversarial selector tests also cover a ligand whose every pair is below the Claude percentile floor, tight coverage within 16 wells, impossible coverage, and a manually edited design where the L17 reference is present but L17 is absent from all pairs. Coverage overrides are audited; missing pair coverage blocks export. The current offline loop uses the same mandatory coverage rule and completes all 31 ligands without extra wells.
+Actual Opentrons8.8.2 simulations execute both rounds with custom labware, manual moves/cap pauses and tip replacement. Optional MOCCA and GoLLuM adapters are tested on synthetic data, without establishing performance for this chemistry.
 
-The repository audit added regression checks for calibration roles/levels/blanks, CSV/XLSX normalization, stale dosing, repeated pairs, ties, live LC/timing gates, file races, concurrent processes and interrupted API calls. No additional paid requests were made. See the [audit record](https://github.com/MiquelAngelPerezPuigdo/Agentic-AI-for-Dual-Ligand-Discovery/blob/main/docs/rehearsal-results.md#repository-audit).
+## Practical limits
 
-The campaign rehearsal also rejects any call to a GoLLuM yield optimizer and verifies that every second-round assignment uses the LLM selection method. GoLLuM-inspired initialization needs no pair yields.
+Simulation does not establish physical fit, liquid temperature, extraction/IS recovery or LC separation. Formal separate homogeneity/solubility studies are not requested; pauses handle visible faults.
 
-The historical optional GoLLuM check did not change the second-round design. Its local GP adapter trained a projection over frozen embeddings, keeping the language-model weights unchanged.
-
-To reproduce the feedback loop from the repository root:
-
-```bash
-python -m hte.cli rehearse-loop --output output/fake-first-loop
-```
-
-Use a fresh output directory. `rehearsal_report.json` records the checks and the relative location of `next_dosing.csv`. The generated rankings use an explicitly labeled arbitrary emulator; they are unsuitable for deciding real experiments. The real initial selection requires the operator's Claude API key and the [first-batch setup](start-here.md).
-
-## Separate live API checks
-
-On 9 October 2026, three small Opus 4.8 smoke tests each scored four pairs twice. The current scores-only v4 prompt returned valid complete JSON with no reasoning or hypothesis field; both provider responses contained only text blocks with extended thinking disabled. The second response reported **5,174 cached read tokens**. The v4 test cost approximately **$0.0570**, bringing total estimated returned-usage spending across six generation requests to **$0.4023**, below the $1 smoke-test allowance.
-
-The earlier v2/v3 tests used a different prompt and output contract; their $0.3453 combined cost is included in that total. A conservative preflight stopped one earlier v3 attempt before generation. The scores-only offline feedback rehearsal was rerun successfully: all 66 synthetic first-round results reached the prompt, 400 untested pairs were scored in five mocked calls and ten new pairs were exported without substrate/IS redosing.
-
-These checks establish live model access, structured-response parsing and cache reuse for the smoke requests. The historical full 465-pair initial campaign was not generated; the revised real 435-pair campaign is also unrun, and the model scores are not measured chemistry yields. The [prompt guide](scoring-prompt.md) supplies the identities, SI evidence and output contract. Raw responses and keys remain outside the public handoff.
-
-## Repository audit
-
-The 9 October review checked all source modules, tests, campaign inputs, documentation and generated handoffs. The 31 ligand identities were compared with the original workbook; molecular weights and phosphorus counts were checked from the structures. Re-extraction of the 18 same-substrate single-ligand SI yields reproduced the stored evidence. The exact first-round prompt preview matched the published prompt; its scores-only contract and prompt caching remain unchanged.
-
-The audit corrected these operational issues:
-
-- Live export now requires complete analytical settings and a measured schedule within the competition deadline, alongside bench validations.
-- Designs and imported dosing files are checked for the configured reference, unique pair identities, ligand coverage and all calculated quantities. Live round-two export requires the actual first-round history and rejects repeated pairs.
-- Calibration requires the configured five nonzero levels, measured zero blanks and independent checks. CSV/XLSX import rejects incomplete exports while preserving measured zero peak areas.
-- Equal scores/distances receive equal average ranks. Initial selection remains 50/50 Claude and embedding diversity; feedback selection remains entirely Claude.
-- Process locks prevent duplicate local jobs. Attempt records prevent automatic repayment after a charged request is interrupted. Completed input/output hashes detect changes, and existing or partially written protocol exports cannot be overwritten.
-- Production commands consistently use the campaign-specific configuration. The staff checklist remains two pages; the complete handbook retains the technical reference.
-
-At the repository audit, all **88 tests passed**, including actual Opentrons simulation and the offline LC-to-Claude feedback loop. Additional direct demo and feedback rehearsals use synthetic results and mocked API responses. No new paid calls were made for this audit. The historical live smoke-test total remains approximately $0.4023.
-
-The full real first-batch ranking has not been generated. No physical chemistry or hardware run was performed. HTE must still validate glass hardware, solvent handling, IS recovery, extraction, the LC method and actual timing. That audit’s **729-minute** template schedule exceeded the **720-minute** limit and was blocked from live release until measured timings fit.
-
-## Analytical handling update
-
-The subsequent handling update passed **101 tests**. Added OT-2 simulations verify that conditioning cycles return only to the original sample well, the net sample withdrawal includes just the intended aliquot and discarded surplus, LC delivery matches the planned aliquot, sample tips remain fresh and the liquid/air-gap flows use the sample settings. Full-column p300 and partial-column p20 transfers are checked. Disabling sample conditioning and invalid settings are tested; a transfer that exhausts the nominal extract is rejected.
-
-The runbook now distinguishes reinjecting the same preparation from making an independent dilution, specifies bubble/phase/clearance checks and requires documented recovery from uncertain transfers. No paid API call or physical chemistry run occurred. The added conditioning and pauses need measured workup timings and matrix-specific bench validation before release.
+The 1.7-min full-cycle assumption and35-min handling overlap give717.7 min (752.7 min serial). No physical trial has demonstrated12 h. Record actual timings and [remaining setup facts](hte-questions.md); public protocols retain physical-execution guards pending local release.

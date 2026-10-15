@@ -9,6 +9,8 @@ on:
       - 'hte_inputs/campaign.json'
       - 'hte_inputs/calibration_template.csv'
       - 'hte_inputs/ligands.csv'
+      - 'hte_inputs/labware/**'
+      - 'campaigns/hackathon2026/**'
       - 'software_validation.json'
       - 'scripts/build-hte-pdf.py'
       - 'pyproject.toml'

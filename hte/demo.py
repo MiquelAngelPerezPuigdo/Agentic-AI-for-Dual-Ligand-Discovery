@@ -10,21 +10,24 @@ from .protocols import export
 
 
 def fixtures(config, dosing):
+    liquid = config["liquids"]
+    extract_ul = config["chemistry"]["reaction_volume_ul"]+liquid["workup_ul"]
+    maximum_uM = config["chemistry"]["substrate_molarity_M"]*config["chemistry"]["reaction_volume_ul"]*1e6/extract_ul*liquid["aliquot_ul"]/(liquid["aliquot_ul"]+liquid["diluent_ul"])
     cal = []
     for name in ("substrate", "product"):
-        for concentration in (0, 100, 500, 1000, 2500, 5000, 6000):
-            role = "check" if concentration == 5000 else "calibration"
+        for concentration in (0, 10, 50, 150, 350, maximum_uM, 800):
+            role = "check" if concentration == maximum_uM else "calibration"
             cal.append({"sample_id": f"SYNTHETIC_CAL_{name}_{concentration}", "role": role,
                         "analyte": name, "concentration_uM": concentration, "area": concentration*10,
-                        "internal_standard_area": 10000, "internal_standard_concentration_uM": 50,
-                        "method_id": "SYNTHETIC_2MIN", "channel": "SYNTHETIC_UV"})
+                        "internal_standard_area": 10000, "internal_standard_concentration_uM": config["analytics"]["internal_standard_final_uM"],
+                        "method_id": config["analytics"]["method_id"], "channel": config["analytics"]["channel"]})
     peaks = []
     for i, dose in enumerate(dosing):
         fraction = 0.2 if dose["kind"] == "single" else (i % 17)/20
-        for name, concentration in (("product", fraction*5000), ("substrate", (1-fraction)*5000),
+        for name, concentration in (("product", fraction*maximum_uM), ("substrate", (1-fraction)*maximum_uM),
                                     ("internal_standard", 1000)):
             peaks.append({"sample_id": dose["sample_id"], "retention_time_min": config["analytics"]["references"][name]["retention_time_min"],
-                          "area": concentration*10, "channel": "SYNTHETIC_UV", "method_id": "SYNTHETIC_2MIN", "qc_flag": "ok"})
+                          "area": concentration*10, "channel": config["analytics"]["channel"], "method_id": config["analytics"]["method_id"], "qc_flag": "ok"})
     return cal, peaks
 
 
@@ -34,9 +37,8 @@ def synthetic_config(config_path):
     config["demo"] = True
     config["design"]["require_lm_embeddings"] = False
     config["design"]["exploration_backend"] = "SYNTHETIC_fingerprint_fixture"
-    config["robot"].update(reaction_labware="nest_96_wellplate_2ml_deep",
-                           heater_adapter="opentrons_96_deep_well_adapter")
-    config["analytics"].update(method_id="SYNTHETIC_2MIN", channel="SYNTHETIC_UV",
+    # Keep the actual supplied reactor and reservoir definitions in simulations.
+    config["analytics"].update(method_id="SYNTHETIC_1P7MIN", channel="UV_VIS_1",
         references={name: {"retention_time_min": rt, "window_min": 0.05}
                     for name, rt in [("substrate", 0.4), ("product", 0.9), ("internal_standard", 1.5)]},
         quantification_limit_uM={"substrate": 10, "product": 10}, missing_analyte_policy="censor")
@@ -78,7 +80,8 @@ def run(output, inventory_path, config_path="hte_inputs/campaign.json"):
     complete_export(config, out/"round2_peaks.csv", out/"round2/dosing.csv", out/"round2_peaks.ready.json")
     _, report2 = analyze(config, dose2, peaks2, cal, out/"analysis2")
     write_json(out/"demo_report.json", {"synthetic_only": True, "api_calls": 0, "robot_execution_allowed": False,
-        "round1_pairs": len(tested), "round1_reference_wells": 1, "round2_pairs": len(design2),
+        "round1_pairs": len(tested), "round1_reference_wells": len(config["design"]["round1_controls"]),
+        "round2_pairs": sum(d["kind"] == "pair" for d in design2), "round2_reference_wells": len(config["design"]["round2_controls"]),
         "round1_qc_pass": report["batch_qc_pass"], "round2_qc_pass": report2["batch_qc_pass"],
         "no_pair_repeats": not tested.intersection(d["pair_id"] for d in design2),
         "round2_substrate_redosed": any(d["sm_stock_ul"] != 0 for d in dose2), "schedule": schedule(config)})

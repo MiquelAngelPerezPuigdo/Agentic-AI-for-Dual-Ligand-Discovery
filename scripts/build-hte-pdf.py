@@ -36,7 +36,7 @@ REPO = "https://github.com/MiquelAngelPerezPuigdo/Agentic-AI-for-Dual-Ligand-Dis
 CHAPTERS = [
     ("start-here.md", "Quickstart and responsibilities"),
     ("hte-runbook.md", "Complete operator runbook"),
-    ("stocks-and-calibration.md", "Combined stock and analytical calibration"),
+    ("stocks-and-calibration.md", "Stocks and analytical calibration"),
     ("hte-questions.md", "Facts to confirm with HTE"),
     ("prompt-caching.md", "Claude prompt caching and costs"),
     ("rehearsal-results.md", "Software rehearsal evidence"),
@@ -68,7 +68,7 @@ def register_fonts():
 def styles():
     sheet = StyleSheet1()
     specifications = {
-        "body": dict(fontName="HTE", fontSize=9.7, leading=14.4, spaceAfter=8, textColor=BLUE),
+        "body": dict(fontName="HTE", fontSize=9.5, leading=14, spaceAfter=7, textColor=BLUE),
         "chapter": dict(fontName="HTE-Bold", fontSize=19, leading=24, spaceAfter=12, textColor=BLUE, keepWithNext=True),
         "section": dict(fontName="HTE-Bold", fontSize=12.4, leading=17, spaceBefore=14, spaceAfter=7, textColor=TEAL, keepWithNext=True),
         "subsection": dict(fontName="HTE-Bold", fontSize=10.5, leading=15, spaceBefore=10, spaceAfter=6, textColor=BLUE, keepWithNext=True),
@@ -165,7 +165,7 @@ def markdown_blocks(tokens, sheet, chapter, counter, compact=False):
             longest = max((pdfmetrics.stringWidth(line, "Courier", 8) for line in raw.splitlines()), default=0)
             if longest > WIDTH-20:
                 raise ValueError("A code line exceeds PDF width; wrap the command in its Markdown source")
-            output.append(Preformatted(raw, sheet["code"]))
+            output.append(KeepTogether([Preformatted(raw, sheet["code"])]))
         elif kind == "list":
             items = [ListItem(markdown_blocks(item["children"], sheet, chapter, counter, compact), spaceAfter=2 if compact else 3)
                      for item in token["children"]]
@@ -218,6 +218,8 @@ def input_record(staff=False):
         "hte_inputs/campaign.json", "hte_inputs/calibration_template.csv", "hte_inputs/ligands.csv",
         "software_validation.json", "scripts/build-hte-pdf.py", "hte/planning.py", "hte/io.py",
     ]
+    paths += ["hte/protocols.py", "hte/scoring.py", "hte_inputs/labware/paradox_48_wellplate_2000ul_hs.json",
+              "campaigns/hackathon2026/round1_design.csv", "campaigns/hackathon2026/scoring/campaign_provenance.json"]
     hashes = {name: hashlib.sha256((ROOT/name).read_bytes()).hexdigest() for name in paths}
     fingerprint = hashlib.sha256(json.dumps(hashes, sort_keys=True).encode()).hexdigest()
     return hashes, fingerprint
@@ -242,9 +244,9 @@ def build(output, edition):
         ("Reaction", f"{chemistry['substrate_molarity_M']*chemistry['reaction_volume_ul']:g} µmol substrate; {chemistry['reaction_volume_ul']:g} µL toluene; {chemistry['temperature_C']:g} °C; {chemistry['reaction_minutes']:g} min per round"),
         ("Catalysts", f"{chemistry['ligand_a_mol_percent']:g} mol% each ligand; {chemistry['pd_mol_percent']:g} mol% Pd(COD)(DQ)"),
         ("Sample dilution", f"{liquid['aliquot_ul']:g} µL extract + {liquid['diluent_ul']:g} µL IS-free LC diluent"),
-        ("Software evidence", f"{validation['tests']['tests']} local tests; {validation['tests']['failures']} failures. Rehearsal chemistry and Claude responses are synthetic."),
+        ("Software evidence", f"{validation['tests']['tests']} local tests; {validation['tests']['failures']} failures. Initial Claude scores are real; practice chemistry and loop responses are synthetic."),
         ("Bench readiness", f"{len(missing)} applicable validation fields still unconfirmed; exact hardware and analytical settings must be supplied by HTE."),
-        ("Provisional timing", f"{timing['serial_total_minutes']:g} min planned / {timing['deadline_minutes']:g} min competition limit"),
+        ("Provisional timing", f"{timing['planned_total_minutes']:g} min target with staged LC; {timing['serial_total_minutes']:g} min serial / {timing['deadline_minutes']:g} min limit. Handling and full LC cycle are unmeasured."),
     ]
     table = Table([[Paragraph(escape(label), sheet["cell"]), Paragraph(escape(readable(value)), sheet["cell"])]
                    for label, value in cover_rows], colWidths=[126, WIDTH-126])
@@ -269,7 +271,7 @@ def build(output, edition):
         heading.bookmark, heading.toc_level = f"chapter-{number}", 0
         story.extend([heading, Paragraph(f'<link href="{REPO}/blob/main/docs/{filename}" color="#087E8B">Editable source: docs/{filename}</link>', sheet["small"])])
         source = (ROOT/"docs"/filename).read_text()
-        if filename == "rehearsal-results.md":
+        if filename == "rehearsal-results.md" and "## Historical 31-ligand rehearsal" in source:
             source = source.split("## Historical 31-ligand rehearsal", 1)[0]
             source += "\nHistorical runs and earlier API cost records remain in the linked editable source.\n"
         story.extend(markdown_blocks(parser(source), sheet, number, [0]))

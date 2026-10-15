@@ -1,77 +1,48 @@
-# Combined reaction stock and five-level calibration
+# Stock and calibration recipes
 
-Reaction stock combines SM/IS. Calibration uses separate analyte/IS stocks at fixed IS concentration. LC diluent has its own reservoir channels.
+Current master: `hte_inputs/campaign.json`, schema 2. Use the actual selected campaign's `stock_preparation.csv` for each ligand mass, bulk preparation volume and source address; `deck_loads.csv` supplies the different dosing/workup loads. **Preparation volume is not on-deck fill volume.** Masses below assume 100% assay; divide by the COA assay fraction and use appropriate solvent-compatible closures.
 
-## Reaction stock, container and deck source
+## Reaction stocks
 
-The provisional larger-vial plan uses **250 µL reaction + 250 µL workup** at 0.1 M, five times the original scale. Final geometry/heating must be confirmed.
+| Reagent | Bulk preparation | Per reaction |
+|---|---|---|
+| SM, MW 161.16 | **10.00 mL, 500 mM in DCM**: 805.8 mg, make to final volume; capped 20 mL glass vial | 50 µL =25 µmol; evaporate ALL DCM |
+| Each ligand | **40 mM in toluene**, glovebox; selected-campaign CSV contains individual quantities and reserves | 37.5 µL =1.5 µmol each |
+| Pd(COD)(DQ), MW 378.8 | **40 mM in toluene**; R1 campaign stock plan prepares 9.53 mL, 144.399 mg | 75 µL =3 µmol |
+| Mesitylene, MW 120.19 | **5.00 mL, 100 mM in toluene**: 60.095 mg | 25 µL =2.5 µmol, AFTER dry-down |
+| Neat toluene | At least generated reserve; current plan 15.57 mL | 75 µL |
 
-The user reports PyFluor soluble at **1.00 M in toluene**. Prepare **5.00 mL of 1.00 M PyFluor + 10.0 mM naphthalene in toluene** before the clock. At nominal molecular weights and 100% assay, this contains **805.80 mg PyFluor and 6.4085 mg naphthalene**. The planner corrects assays separately under `substrate_stock` and `naphthalene`. Bring the dissolved solutes to the final volume.
+Use ordinary source racks; fancy metal hardware is only the reaction block. Keep bulk ligand reserves in capped glass vials; load the configured working tubes only to their CSV quantities (maximum 1.4 mL). Each stock includes conservative second-round reserve and 50% margin. L17 reserve includes its single reference. All 30 active sources, including small-use ligands, appear on the deck-load sheet. No separate catalyst-solubility study is requested; an observed unsolved suspension still cannot represent a known dissolved concentration.
 
-1. Prepare **50.0 mM naphthalene in toluene**, for example 12.817 mg in a final 2.00 mL, corrected for assay. Use a larger preparation if required by the balance.
-2. Weigh the corrected PyFluor mass into a **10 mL glass vial with a toluene-compatible PTFE-faced closure**.
-3. Add **1.00 mL of the 50.0 mM toluene IS master**, dissolve and bring to **5.00 mL final volume** with toluene using validated volumetric handling.
-4. Confirm the combined solution is clear at dispensing temperature. Label both concentrations, solvent, assays, lots, preparation time and recheck conditions. Keep the reserve capped off deck.
+## Quench and dilution solvent
 
-The pipetting source is **A1 of the 12-channel reservoir in slot 2**, using a library geometry surrogate pending HTE substitution. All eight tips can aspirate from its long channel. The default reuse plan loads approximately **3.27 mL** for 60 reactions plus ten predoses, including the provisional **1.50 mL dead-volume allowance**. Use the actual generated `deck_loads.csv`, including when tip reuse is disabled. Keep the remainder of the 5 mL stock in the capped glass vial. This is not a Falcon tube. Confirm actual reservoir geometry and toluene compatibility; the fill limit is 11.9 mL per channel.
+- **Quench, 100 mL:** premix 9:1 ACN/water. Add **150 µL formic acid**, make to 100 mL with that mixture (0.15% v/v). No IS. Dose 500 µL into 250 µL reaction; recap and shake 1500 rpm for two minutes.
+- **LC diluent, 125 mL:** premix 1:1 water/ACN. Add **125 µL formic acid**, make to 125 mL with that mixture (0.1% v/v). No IS. Dose 980 µL and add 20 µL extract.
 
-Each **25 µL** dose provides **25.00 µmol SM and 0.250 µmol naphthalene**. **Retain the toluene: no drying or evaporation is performed in either round.** Predose the ten round-two wells during the first hold and cap promptly. Validate retained volume and the storage interval; second-round dosing adds no further SM/IS. The retained **25 µL stock solvent counts in the final 250 µL reaction**, also in round two.
+Nominal final sample: **1.00 mL**, analyte maximum **666.667 µM**, mesitylene **66.667 µM**, formic acid **0.1%**, toluene **0.667%**. This is 64.7 µg/mL product or 107.4 µg/mL SM at 100% amount. The concentration is a reasonable starting load for LC-UV/MS, not an established detector range or an approved injection volume. For context, a [Thermo LC-MS technical note](https://documents.thermofisher.com/TFS-Assets/CMD/Technical-Notes/tn-74053-lc-ms-monitoring-single-quadrupole-system-tn74053-en.pdf) uses 100 µg/mL preparations; that does not validate this method/analytes. Set the actual injection volume with the facility's existing 1.7-minute method and calibration.
 
-## Catalyst stocks and volume balance
+## Matched calibration stocks
 
-Prepare ligands in the glovebox at **20.0 mM in toluene**, and Pd(COD)(DQ) at **40.0 mM in toluene**. Use ordinary plastic tube racks for these stocks; metal blocks are reserved for reaction vials. No separate catalyst-solubility study is requested. Use `stock_preparation.csv` for masses, separate assay corrections, margins and worst-case round-two reserves. Keep bulk reserves in compatible capped containers; load only the generated source quantities.
+Analyte concentration varies; **IS is constant**, including blanks/checks. Prepare separate SM and product standards, no reaction-catalyst mixture. A convenient nominal final matrix is **0.667% toluene, about 50.15% ACN, 49.08% water, 0.1% formic acid**. For 100 mL: 0.6667 mL toluene, 50.1492 mL ACN, 0.1000 mL formic acid, water to volume. This approximates the planned final diluted extract and ignores mixing-volume contraction. Prepare all analytical stocks in this same matrix, so adding them preserves solvent/acid proportions.
 
-| Reaction | SM/IS stock, µL | Ligand A, µL | Ligand B, µL | Pd, µL | Total, µL |
-|---|---:|---:|---:|---:|---:|
-| Pair | 25 | 75 | 75 | 75 | 250 |
-| L17 single reference | 25 | 150 | 0 | 75 | 250 |
+For each authentic analyte, prepare **10 mM, 10.00 mL**: SM **16.116 mg** or product **9.709 mg**, make to volume with matched matrix. Prepare **1 mM working** by diluting 100 µL of 10 mM to 1.00 mL. These analyte masters contain **NO mesitylene**. Prepare separate independently weighed analyte masters for the check standards; a second dilution of the same master does not check that master's preparation.
 
-This gives **0.1 M SM, 6 mol% of each ligand and 12 mol% Pd**; the reference uses 12 mol% L17. No extra neat toluene is needed with these stocks. A p300 single plus p300 eight-channel is proposed for efficient transfers; Both pipettes are listed as available; fit them locally and use the generated matching tip racks. The generator also supports p20 single with split transfers when explicitly configured, but timing must be remeasured.
+Prepare analytical mesitylene **5 mM, 20.00 mL**: **12.019 mg**, make to volume with matched matrix. This is separate from the 100 mM reaction mesitylene stock; using that toluene stock directly would change matrix proportions.
 
-## Workup and sample dilution
+## Fourteen calibration injections during round one
 
-Reservoir channels **A4 and A6** hold the workup solvent: 1:1 water/ACN with 1% v/v HCOOH, **without additional naphthalene**. Add 250 µL per reaction and mix for two minutes after cooling/opening under HTE's SOP.
+Prepare the following **1.00 mL** samples for each analyte. Add **13.333 µL of 5 mM analytical mesitylene to every sample**, then the analyte aliquot and matrix to final volume. Use suitable calibrated manual pipettes. Cap, mix and label with `calibration_template.csv` IDs.
 
-Reservoir channels **A5 and A7** hold the LC diluent: the validated 1:1 water/ACN with 1% v/v HCOOH, **without naphthalene or analyte**. Dispense 180 µL into each LC destination first, then transfer 20 µL of homogeneous extract with fresh sample tips, and mix the LC plate for two minutes. Full columns use eight channels for both solvent dispensing and sample transfer. Fresh sample tips condition only in their own reaction well before transfer, using the sample-specific slow-flow settings. Follow the [runbook sampling sequence](hte-runbook.md) for immersion, bubble checks, surplus disposal and failed-transfer recovery; repeated aspiration cannot make a two-phase extract quantitative.
+| Target analyte, µM | Role | Analyte stock, mM | Analyte aliquot, µL | Matrix, µL |
+|---:|---|---:|---:|---:|
+| 0 | Fit blank | None | 0 | 986.667 |
+| 10 | Fit | 1 | 10 | 976.667 |
+| 50 | Fit | 1 | 50 | 936.667 |
+| 150 | Fit | 10 | 15 | 971.667 |
+| 350 | Fit | 10 | 35 | 951.667 |
+| 800 | Fit | 10 | 80 | 906.667 |
+| 666.667 | Independent check | 10, independent master | 66.667 | 920.000 |
 
-With quantitative retention/recovery, 0.250 µmol IS in a nominal 500 µL extract is 500 µM. The 20 + 180 µL dilution gives **50 µM naphthalene** and, at 100% yield, **5,000 µM product**. Sample dilution reduces both analyte and IS concentration; their concentration ratio stays constant. Changing the aliquot to 5 µL plus 195 µL gives 12.5 µM IS and a 1,250 µM maximum product concentration. It requires changing `robot.single` to `p20_single_gen2` and revalidating/releasing that setup. Update the configuration, standards and generated files together; the code checks their IS concentration agreement.
+This brackets the nominal 0-100% SM/product range. Fit the blank plus five nonzero levels; keep the independent check outside the fit. Check linear response, separation from mesitylene/other compounds, and practical sensitivity on the actual detector. The lowest standard is not automatically a measured LOQ. Current software requires R² >=0.995 and independent check error <=15%; retain failed measurements rather than changing results to pass.
 
-## Separate analytical stocks
-
-Prepare these before the clock, then prepare/run the working standards while the first reaction runs. Use the actual bottle/COA molecular weights and an HTE-approved LC-compatible solvent. ACN is a proposed stock solvent, subject to solubility and method validation.
-
-| Analytical stock | Proposed final volume | Nominal preparation at 100% assay |
-|---|---:|---|
-| Authentic PyFluor, 100 mM, no IS | 2.00 mL | 32.232 mg, MW 161.16 |
-| Authentic 2-fluoropyridine, 100 mM, no IS | 2.00 mL | Approximately 19.418 mg, MW 97.09; verify bottle |
-| Pure naphthalene, 50 mM, in LC-compatible solvent | 2.00 mL | 12.817 mg, MW 128.17 |
-| Each analyte working stock, 10 mM, no IS | 1.00 mL each | 100 µL of its 100 mM stock, bring to 1.00 mL |
-| Pure analytical IS working stock, 1 mM | 2.00 mL | 40 µL of the 50 mM analytical master, bring to 2.00 mL |
-
-Keep the **toluene naphthalene master for reaction dosing** and the **LC-compatible naphthalene master for calibration** distinctly labeled. Account for stock solvents when preparing the validated LC matrix. Do not add authentic SM/product calibration solutions to reaction wells.
-
-## Five nonzero analyte levels with fixed reference
-
-Prepare one series for SM and one for product. Each standard below has **1.00 mL final volume**, **50 µM naphthalene**, and the indicated known analyte concentration. The five nonzero fitted levels are 100, 500, 1,000, 2,500 and 6,000 µM. Also prepare an IS-containing zero-analyte blank and an independently prepared 5,000 µM check for each series. This gives **14 injections**, scheduled during the first four-hour reaction. These analytical blanks/checks do not occupy additional reaction wells.
-
-| Final analyte, µM | Analyte stock | Analyte volume, µL | 1 mM IS, µL | Remaining solvent volume to final 1 mL, µL | Role |
-|---:|---|---:|---:|---:|---|
-| 0 | None | 0 | 50 | 950 | Zero-analyte calibration blank |
-| 100 | 10 mM | 10 | 50 | 940 | Calibration level 1 |
-| 500 | 10 mM | 50 | 50 | 900 | Calibration level 2 |
-| 1,000 | 10 mM | 100 | 50 | 850 | Calibration level 3 |
-| 2,500 | 100 mM | 25 | 50 | 925 | Calibration level 4 |
-| 6,000 | 100 mM | 60 | 50 | 890 | Calibration level 5 |
-| 5,000 | 100 mM | 50 | 50 | 900 | Independent check, excluded from fit |
-
-Account for both stock solvents to obtain the **same validated matrix across standards and samples**. HTE must confirm the matrix recipe, phase behavior/recovery and LC compatibility before quantification. The table gives amounts and volume arithmetic.
-
-Use IDs/roles from `hte_inputs/calibration_template.csv` and measured areas/method/channel. Zero must be a verified blank signal, not a missing export. Fit blank plus five levels; exclude `check` rows. Mix, cap and record every dilution; use fresh tips between standards. Prepare the independent check separately, with an independent stock when feasible. HTE must approve the detector range/LOQs and proposed ±15% check tolerance (`analytics.calibration_check_tolerance_fraction`).
-
-Serial dilution of the combined reaction stock alone cannot make these fixed-IS standards: it keeps the SM:IS ratio at 100:1 and lowers both concentrations together. At 50 µM naphthalene it would supply 5,000 µM SM. Separate authentic analyte and pure analytical IS stocks let HTE vary the analyte while holding naphthalene at 50 µM.
-
-## Validation of IS added before the reaction
-
-Validate naphthalene recovery through capped storage, sealed heating and extraction/dilution, and check chemical/peak interference. Protect stocks/predoses against solvent loss.
-
-IS loss can inflate area-ratio yields; no unmeasured correction is applied. Record recovery/compatibility in `validation.pre_reaction_internal_standard_validated` before live release. Revise context, calibration, stocks and protocols together if IS settings change.
+SM/product quantities and fixed IS are entered in the calibration plan; the importer extracts peak areas. If Chromeleon omits a verified zero peak, supply an explicitly reviewed integrated zero measurement; the software does not silently invent one. A positive omitted peak is not zero. No actual calibration or retention times are prefilled in the public campaign.

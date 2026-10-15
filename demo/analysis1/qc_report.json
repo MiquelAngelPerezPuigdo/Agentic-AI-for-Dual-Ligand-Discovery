@@ -1,44 +1,44 @@
 {
   "calibration": {
     "substrate": {
-      "slope": 0.0010000000000000002,
-      "intercept": 1.537943019548547e-16,
+      "slope": 0.0010000000000000005,
+      "intercept": 5.796644145136837e-17,
       "r2": 1.0,
       "minimum_uM": 0.0,
-      "maximum_uM": 6000.0,
+      "maximum_uM": 800.0,
       "mean_is_area": 10000.0,
       "fit_measurements": 6,
       "independent_checks": [
         {
-          "sample_id": "SYNTHETIC_CAL_substrate_5000",
-          "expected_uM": 5000.0,
-          "measured_uM": 4999.999999999999,
-          "relative_error": 1.8189894035458566e-16
+          "sample_id": "SYNTHETIC_CAL_substrate_666.6666666666667",
+          "expected_uM": 666.6666666666667,
+          "measured_uM": 666.6666666666663,
+          "relative_error": 6.821210263296961e-16
         }
       ]
     },
     "product": {
-      "slope": 0.0010000000000000002,
-      "intercept": 1.537943019548547e-16,
+      "slope": 0.0010000000000000005,
+      "intercept": 5.796644145136837e-17,
       "r2": 1.0,
       "minimum_uM": 0.0,
-      "maximum_uM": 6000.0,
+      "maximum_uM": 800.0,
       "mean_is_area": 10000.0,
       "fit_measurements": 6,
       "independent_checks": [
         {
-          "sample_id": "SYNTHETIC_CAL_product_5000",
-          "expected_uM": 5000.0,
-          "measured_uM": 4999.999999999999,
-          "relative_error": 1.8189894035458566e-16
+          "sample_id": "SYNTHETIC_CAL_product_666.6666666666667",
+          "expected_uM": 666.6666666666667,
+          "measured_uM": 666.6666666666663,
+          "relative_error": 6.821210263296961e-16
         }
       ]
     }
   },
-  "samples": 60,
+  "samples": 48,
   "rejected": 0,
   "batch_qc_pass": true,
-  "method_id": "SYNTHETIC_2MIN",
-  "channel": "SYNTHETIC_UV",
+  "method_id": "SYNTHETIC_1P7MIN",
+  "channel": "UV_VIS_1",
   "quantification": "Calibrated detector response; area percent is not yield."
 }

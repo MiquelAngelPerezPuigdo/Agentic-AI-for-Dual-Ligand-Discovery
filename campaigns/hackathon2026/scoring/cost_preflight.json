@@ -1,0 +1,16 @@
+{
+  "worst_case_usd": 28.989235,
+  "budget_usd": 20.0,
+  "pending_requests": 340,
+  "per_request_reservation_usd": 0.0846,
+  "prior_campaign_cost_usd": 0.225235,
+  "prompt_cache": {
+    "enabled": true,
+    "ttl": "1h",
+    "read_multiplier": 0.1,
+    "write_5m_multiplier": 1.25,
+    "write_1h_multiplier": 2.0
+  },
+  "budget_mode": "incremental_cached",
+  "assumption": "No SDK retries. Each request reserves a cold-cache upper bound before it starts; unused reservation is released only after provider usage is recorded."
+}

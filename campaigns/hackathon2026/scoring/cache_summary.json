@@ -1,0 +1,18 @@
+{
+  "enabled": true,
+  "ttl": "1h",
+  "requests": 340,
+  "cache_read_input_tokens": 1578979,
+  "cache_creation_input_tokens": 147721,
+  "cache_hit_requests": 311,
+  "status": "cache_hits_reported",
+  "total_cost_usd": 2.7599745,
+  "rates": {
+    "enabled": true,
+    "ttl": "1h",
+    "read_multiplier": 0.1,
+    "write_5m_multiplier": 1.25,
+    "write_1h_multiplier": 2.0
+  },
+  "note": "Cache counters are supplied by the provider; offline rehearsal cannot verify live cache hits."
+}
