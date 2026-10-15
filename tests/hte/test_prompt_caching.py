@@ -68,6 +68,7 @@ def install_mock(monkeypatch):
 def inputs():
     config = read_json(ROOT/"hte_inputs/campaign.json")
     config["llm"]["repeats"] = 3
+    config["llm"]["prior_campaign_cost_usd"] = 0
     inventory = campaign_inventory(ROOT/"hte_inputs/ligands.csv", config, confirmed=True)
     return config, inventory, candidates(inventory)[:6]
 
@@ -77,7 +78,7 @@ def test_cache_prefix_schema_usage_cost_and_resume(tmp_path, monkeypatch):
     config, inventory, pairs = inputs()
     feedback = [{"sample_id": "SYNTHETIC", "yield_percent": 42}]
     score_candidates(config, inventory, pairs, {}, feedback, tmp_path)
-    assert len(calls) == len(counted) == 3
+    assert len(calls) == 3 and len(counted) == 1
     prefix = calls[0]["messages"][0]["content"][:2]
     schema = calls[0]["output_config"]["format"]["schema"]
     orders = []
@@ -88,7 +89,7 @@ def test_cache_prefix_schema_usage_cost_and_resume(tmp_path, monkeypatch):
         assert "cache_control" not in blocks[-1]
         assert json.loads(blocks[1]["text"])["measured_results"] == feedback
         assert request["output_config"]["format"]["schema"] == schema
-        orders.append(tuple(json.loads(blocks[-1]["text"])["candidate_ids"]))
+        orders.append(tuple(json.loads(blocks[-1]["text"])["partner_ligand_ids"]))
     assert len(set(orders)) > 1
     assert all(r["system"] == calls[0]["system"] and r["thinking"] == {"type": "disabled"}
                and r["output_config"]["format"]["schema"] == schema for r in counted)
@@ -99,7 +100,7 @@ def test_cache_prefix_schema_usage_cost_and_resume(tmp_path, monkeypatch):
     saved = read_json(tmp_path/"repeat-00-batch-0000.json")
     assert saved["cost_breakdown"]["cache_write_usd"] == pytest.approx(0.02)
     score_candidates(config, inventory, pairs, {}, feedback, tmp_path)
-    assert len(calls) == len(counted) == 3
+    assert len(calls) == 3 and len(counted) == 1
 
 
 def test_cached_batches_keep_same_cohort_and_schema_across_repeats(tmp_path, monkeypatch):
@@ -111,7 +112,7 @@ def test_cached_batches_keep_same_cohort_and_schema_across_repeats(tmp_path, mon
     for request in calls:
         schema = request["output_config"]["format"]["schema"]
         schemas.setdefault(object_digest(schema), []).append(schema)
-        batch = json.loads(request["messages"][0]["content"][-1]["text"])["candidate_ids"]
+        batch = json.loads(request["messages"][0]["content"][-1]["text"])["partner_ligand_ids"]
         assert set(batch) == set(schema["properties"]["scores"]["required"])
     assert len(schemas) == 3 and all(len(group) == 3 for group in schemas.values())
     assert read_json(tmp_path/"cache_summary.json")["cache_hit_requests"] == 6
@@ -120,11 +121,11 @@ def test_cached_batches_keep_same_cohort_and_schema_across_repeats(tmp_path, mon
 def test_budget_includes_cache_write_premium_before_paid_calls(tmp_path, monkeypatch):
     calls, _ = install_mock(monkeypatch)
     config, inventory, pairs = inputs()
-    config["llm"].update(repeats=2, max_output_tokens=100, budget_usd=0.1)
+    config["llm"].update(repeats=2, max_output_tokens=100, budget_usd=0.06, budget_mode="strict_all_miss")
     with pytest.raises(ValueError, match="exceeds budget"):
         score_candidates(config, inventory, pairs, {}, [], tmp_path)
     assert not calls
-    assert read_json(tmp_path/"cost_preflight.json")["worst_case_usd"] == pytest.approx(0.13)
+    assert read_json(tmp_path/"cost_preflight.json")["worst_case_usd"] == pytest.approx(0.065)
 
 
 def test_cost_counts_mixed_ttl_writes_reads_and_uncached_input_separately():
@@ -137,6 +138,18 @@ def test_cost_counts_mixed_ttl_writes_reads_and_uncached_input_separately():
     assert result["unclassified_cache_write_tokens"] == 0
     usage.pop("cache_creation")
     assert cost_breakdown(usage, config["llm"], prompt_cache_settings(config["llm"]))["cache_write_usd"] == pytest.approx(0.012)
+
+
+def test_incremental_cap_stops_before_next_paid_request(tmp_path, monkeypatch):
+    calls, _ = install_mock(monkeypatch)
+    config, inventory, pairs = inputs()
+    config["llm"].update(workers=1, max_output_tokens=100, budget_usd=0.05,
+                         budget_mode="incremental_cached")
+    with pytest.raises(ValueError, match="reservation exceeds budget"):
+        score_candidates(config, inventory, pairs, {}, [], tmp_path)
+    ledger=read_json(tmp_path/"budget_ledger.json")
+    assert len(calls)==1 and ledger["validated_requests"]==1 and ledger["stopped"]
+    assert ledger["reported_cost_usd"]<=0.05 and not (tmp_path/"ranking.csv").exists()
 
 
 def test_disabled_cache_omits_breakpoints(tmp_path, monkeypatch):
@@ -170,9 +183,8 @@ def test_inventory_ids_structures_and_extracted_si_values_are_explicit():
         assert row["same_substrate_table_S2_yield_percent"] == expected.get(key)
     assert ligands["L08"]["same_substrate_table_S2_yield_percent"] == 0
     assert ligands["L09"]["same_substrate_table_S2_yield_percent"] is None
-    for row in pairs:
-        assert payload["candidate_catalog"][row["pair_id"]] == {
-            "ligand_a": row["ligand_a"], "ligand_b": row["ligand_b"]}
+    assert "candidate_catalog" not in payload
+    assert "__" not in json.dumps(payload)
 
 
 def test_prompt_preview_matches_real_sdk_contract_without_using_credentials(tmp_path, monkeypatch):

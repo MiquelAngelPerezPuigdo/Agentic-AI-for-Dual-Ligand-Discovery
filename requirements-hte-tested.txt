@@ -1,4 +1,4 @@
-# Versions used for the Python 3.12 acceptance exercise (2026-10-09).
+# Versions used for the Python 3.12 acceptance exercise (2026-10-16).
 # Install the editable project separately: python -m pip install -e .
 # Optional adapters/embedding rebuilds account for the ML packages below.
 anthropic==0.125.0

@@ -1,52 +1,46 @@
-# HTEL Chromeleon import
+# HTEL Chromeleon import / calibration
 
-Use integrated UV peak areas for calibrated yield. The supplied old test CSV demonstrates format only. Its retention times, standards, concentration labels and injection volume do not validate our chemistry or the requested 1.7-minute method. The supplied Thermo RAW is MS data; it cannot feed MOCCA's raw-DAD workflow.
+Use calibrated integrated UV peak areas for yield; MS is identity support. The old supplied CSV establishes format only. Its RTs, names and wavelength settings do not validate the requested 1.7-minute method. The supplied Thermo RAW is MS data, not raw DAD for MOCCA.
 
-## Configure the method and map injections
+## Configure once from authentic standards
 
-In `local_data/campaign.json`, set the **actual** `analytics.method_id` and quantitative `analytics.channel`: `UV_VIS_1`, `UV_VIS_2`, `UV_VIS_3` or `UV_VIS_4`. HTEL's example wavelengths were 253/270/300/370 nm respectively. Confirm the actual method settings before choosing one. Never sum channels or use TIC as calibrated UV area.
+In `local_data/campaign.json`, set the actual `analytics.method_id`, one quantitative `channel` (`UV_VIS_1` to `UV_VIS_4`), `references` and `quantification_limit_uM`. References require `substrate`, `product`, `internal_standard`, each with measured `retention_time_min` and `window_min`; windows must not overlap. Record actual detector wavelength and injection volume alongside the method. We request 210 nm initially; the example's channels at 253/270/300/370 nm are historical settings. Do not sum wavelengths or substitute TIC for UV area.
 
-The wide export has no method ID. Record it from the acquisition sequence. Create one mapping CSV per accepted sequence:
+The 14-sample plan is `hte_inputs/calibration_template.csv`: each analyte blank +10/50/150/350/800 µM and independent 666.667 µM check, IS66.667 µM throughout. [Preparation recipes](stocks-and-calibration.md). These injections run inside the first four-hour hold; initial dosing release can precede them. Workup release requires completed calibration.
+
+## One explicit mapping per acquisition sequence
+
+Chromeleon's wide export lacks method ID and may repeat names. Copy each generated `lc_batchNN_injections.csv`, fill actual `method_id` and optionally actual `vial_position`, `injection_name`, `type`. Map `inj_no` to the canonical sample ID. Do not assume numbering continues across batches. Maps must describe actual accepted injections, not just intended order; archive replacements/rejections and keep one accepted measurement per sample.
 
 ```csv
-inj_no,sample_id,method_id,injection_name,vial_position
-1,R1-001,ACTUAL_METHOD_ID,ACTUAL_INJECTION_NAME,ACTUAL_POSITION
-2,R1-002,ACTUAL_METHOD_ID,ACTUAL_INJECTION_NAME,ACTUAL_POSITION
+inj_no,sample_id,method_id
+1,R1-001,ACTUAL_METHOD_ID
+2,R1-002,ACTUAL_METHOD_ID
 ```
 
-Replace every example entry with the actual sequence. `sample_id` comes from `lc_sequence.csv` for reactions, or `calibration_template.csv` for standards. Optional `injection_name`, `vial_position` and `type` columns are cross-checked when supplied. Names can repeat, so never map by name alone. Keep only one accepted injection per sample, archive rejected/replacement injections and their reasons, and export the accepted sequence separately. Every measured injection must appear in the mapping.
+Blank mapping fields are optional identity cross-checks; supplied nonempty fields must match the source. Calibration has its own 14-row mapping using the calibration-plan sample IDs. Reaction maps and LC preparation coordinates come from the matching generated sequence; the 48-well reaction coordinates differ from the 96-well preparation plate.
+
+## Calibration command sequence
+
+Normalize the completed standard export, then extract analyte/IS areas and publish the validated calibration:
 
 ```bash
-python -m hte.cli --config local_data/campaign.json normalize local_data/round1_vendor.csv \
-  --injections local_data/round1-injections.csv --output output/hte-lc-inbox/round1.csv
+python -m hte.cli --config local_data/campaign.json normalize \
+  local_data/calibration-vendor.csv \
+  --injections local_data/calibration-map.csv \
+  --output output/calibration-peaks.csv
+python -m hte.cli --config local_data/campaign.json \
+  calibration-from-peaks --peaks output/calibration-peaks.csv \
+  --plan local_data/calibration-plan.csv \
+  --output local_data/calibration.csv
 ```
 
-The importer reads `retention_time(min)` and one `area_uvvisN(AU*min)` column, keeping source injection number/name/vial/peak number. `channel_for_peak_detection` describes integration detection; it does not override the selected quantitative area column. `n.a.` padding is omitted only when peak number, RT and selected area are all missing. Missing area on a detected peak stops import. Actual numerical zero remains zero.
+Fit blank plus five levels and exclude independent checks from fitting. Wrong method/channel, ambiguous/missing peaks, poor fit or failed checks stop publication. A verified zero may require an explicitly reviewed integrated measurement in the template if the vendor omits zero peaks. No signal is silently set to zero. Configure measured LOQs; if missing-analyte censoring is desired, set `missing_analyte_policy="censor"` only with those LOQs, yielding upper bounds rather than invented zero yields. Default is rejection.
 
-`round1.csv.normalization.json` records hashes, chosen area column, omitted rows and declared/exported peak-count mismatches. Mismatched injections receive `incomplete_peak_export` QC flags and cannot supply accepted yield feedback. Resolve the export in Chromeleon; do not replace missing areas with zero. The supplied test file contains two such incomplete lists. An injection with no usable peaks stops import and needs explicit review.
+## Reaction results and final 22
 
-Release first dosing with `export --live --stage dose_and_react` after hardware/timing checks and method confirmation. This does not release workup. Complete calibration during the first hold, then release `export --live --stage workup` into a new folder. Round two retains the full calibration checks.
+After all 48 injections, run `scripts/hte-lc-results.py next` as shown on the [start page](start-here.md), giving six exports and six maps in corresponding order. It normalizes each sequence separately, rejects duplicate files/samples, combines them, and publishes a completion marker only for full expected sample coverage. Calibration/QC must then pass before any paid Claude call. The result is 22 new pairs plus one L17 reference, with local release status printed. Use `final` after the 23 final samples; it analyzes without Claude.
 
-## Build the calibration without manual area copying
+Alternatively use the separate `normalize`, `complete-export`, `analyze`/`iterate` commands or the local watcher. Do not run both helper and watcher on the same campaign deliberately: use one workflow and preserve its idempotent state. Corrected imports use fresh output directories. Retain hashes, source exports and map versions.
 
-Run the requested 14 authentic-standard injections during the first reaction. Supply their own accepted-injection mapping and normalize them as above. Configure authentic-standard RT windows, LOQs and all analytical settings first. Prepare a copy of `calibration_template.csv` with actual sample IDs, roles, known concentrations and fixed IS concentration.
-
-```bash
-python -m hte.cli --config local_data/campaign.json calibration-from-peaks \
-  --peaks output/calibration-peaks.csv --plan local_data/calibration-plan.csv \
-  --output output/hte-calibration.csv
-```
-
-The command extracts the analyte/IS peaks using configured RT windows, fits blank plus five nonzero concentrations and checks the independent standards. It publishes the calibration only after QC passes. Ambiguous peaks, wrong method, missing IS, poor fit or failed checks stop it. A blank needs a measured integrated zero area; an omitted peak is not silently assigned zero. If Chromeleon omits verified zero signals, HTE must provide explicitly reviewed measurements through the existing calibration template.
-
-## Complete the sequence and trigger iteration
-
-Only after all 60 first-round injections are complete and the normalized export has been checked:
-
-```bash
-python -m hte.cli --config local_data/campaign.json complete-export \
-  --peaks output/hte-lc-inbox/round1.csv --dosing output/hte-round1/dosing.csv \
-  --output output/hte-lc-inbox/round1.ready.json
-```
-
-The already-running local watcher validates hashes, sample coverage and calibration/QC before Claude receives results. It scores the remaining 376 pairs and produces ten new pair assignments. The robot remains isolated; staff import/start the released Python locally. Repeat normalization/final analysis for the ten second-round samples. Keep source CSVs, mappings, normalization reports, completion markers and original MS data together in the private campaign archive.
+The importer selects one `area_uvvisN(AU*min)` column, keeps injection/peak provenance and ignores `n.a.` placeholder rows only when peak number, RT and area are all absent. A missing area on a detected peak stops import. Declared/exported peak-count mismatches are flagged `incomplete_peak_export` and fail feedback QC. The supplied old test file had two such incomplete lists; this is a source-data issue to repair, not a zero yield. MOCCA is optional only if real raw DAD chromatograms are supplied; reintegrating an already integrated peak table cannot recover missing chromatographic information.

@@ -1,6 +1,5 @@
 {
-  "dose_p300": 24,
-  "dose_p300_single": 33,
-  "workup_p300": 80,
-  "workup_p300_single": 7
+  "dose_p300_single": 34,
+  "workup_p300_single": 51,
+  "workup_p300": 40
 }

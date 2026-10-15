@@ -32,19 +32,19 @@ def library():
 
 def test_low_scoring_ligand_is_covered_without_extra_wells_or_pair_repeats(library):
     config, inventory, pairs, features, ranking = library
-    selected, trace = consensus_select(pairs, ranking, features, 59, required_ligands=inventory)
+    selected, trace = consensus_select(pairs, ranking, features, 48, required_ligands=inventory)
     design = make_design(config, inventory, pairs, ranking, selected, 1)
     coverage = ligand_coverage(inventory, design)
-    assert len(selected) == len(set(selected)) == 59 and len(design) == 60
+    assert len(selected) == len(set(selected)) == 48 and len(design) == 48
     assert len(coverage) == 30 and all(row["pair_well_count"] >= 1 for row in coverage)
-    assert sum(row["pair_well_count"] for row in coverage) == 118
+    assert sum(row["pair_well_count"] for row in coverage) == 96
     overrides = [row for row in trace if row["llm_floor_override"]]
     assert len(overrides) == 1 and "L31" in overrides[0]["new_ligands_covered"].split(";")
     assert overrides[0]["llm_percentile"] < 0.25 and overrides[0]["selection_phase"] == "coverage"
     assert trace[-1]["uncovered_ligands_remaining"] == 0
     assert all(row["consensus_score"] == pytest.approx(
         0.5*row["llm_percentile"]+0.5*row["exploration_percentile"]) for row in trace)
-    assert consensus_select(pairs, ranking, features, 59, required_ligands=inventory) == (selected, trace)
+    assert consensus_select(pairs, ranking, features, 48, required_ligands=inventory) == (selected, trace)
 
 
 def test_tight_complete_library_budget_overrides_star_shaped_llm_preference(library):
@@ -72,13 +72,13 @@ def test_impossible_coverage_stops_instead_of_omitting_ligands(library, count, r
 def test_reference_does_not_replace_pair_coverage_and_manual_design_is_rejected(library):
     config, inventory, pairs, _, ranking = library
     missing_l17 = [row["pair_id"] for row in pairs if "L17" not in
-                   (row["ligand_a"], row["ligand_b"])][:59]
+                   (row["ligand_a"], row["ligand_b"])][:48]
     with pytest.raises(ValueError, match="omits required ligands:.*L17"):
         make_design(config, inventory, pairs, ranking, missing_l17, 1)
     legacy = copy.deepcopy(config)
     legacy["design"]["require_all_ligands_in_round1_pairs"] = False
     manual_design = make_design(legacy, inventory, pairs, ranking, missing_l17, 1)
-    assert any(row["kind"] == "single" and row["ligand_a"] == "L17" for row in manual_design)
+    assert all(row["kind"] == "pair" for row in manual_design)
     assert next(row for row in ligand_coverage(inventory, manual_design) if row["ligand_id"] == "L17")["pair_well_count"] == 0
     with pytest.raises(ValueError, match="omits required ligands:.*L17"):
         dosing_rows(config, inventory, manual_design)
@@ -94,7 +94,7 @@ def test_cli_exports_auditable_coverage_and_override_reports(library, tmp_path, 
         "--embeddings", str(ROOT/"hte_inputs/pair_embeddings_t5-base.npz"), "--output", str(output)])
     main()
     coverage = read_csv(str(output)+".ligand_coverage.csv")
-    assert len(read_csv(output)) == 60 and len(coverage) == 30
+    assert len(read_csv(output)) == 48 and len(coverage) == 30
     assert all(int(row["pair_well_count"]) >= 1 for row in coverage)
     metadata = read_json(str(output)+".metadata.json")
     assert metadata["ligands_covered_in_pairs"] == 30 and not metadata["missing_ligands"]

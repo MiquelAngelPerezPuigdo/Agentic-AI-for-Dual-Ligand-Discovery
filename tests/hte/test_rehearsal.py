@@ -29,20 +29,23 @@ def test_offline_loop_scores_feedback_without_network_or_repeated_events(tmp_pat
     assert report["round1_ligands_covered_in_pairs"] == 30 and not report["round1_missing_ligands"]
     coverage = read_csv(report_path.parent/"round1_ligand_coverage.csv")
     assert len(coverage) == 30 and all(int(row["pair_well_count"]) >= 1 for row in coverage)
-    assert len(report["mocked_requests"]) == 10
+    assert len(report["mocked_requests"]) > 500
+    assert all(1 <= r["candidates"] <= 8 for r in report["mocked_requests"])
     initial = [r for r in report["mocked_requests"] if r["feedback_samples"] == 0]
-    feedback = [r for r in report["mocked_requests"] if r["feedback_samples"] == 60]
-    assert len(initial) == len(feedback) == 5
-    assert all(r["candidates"] == 435 for r in initial)
-    assert all(r["candidates"] == 376 and r["includes_reference"] for r in feedback)
+    feedback = [r for r in report["mocked_requests"] if r["feedback_samples"] == 48]
+    assert len(initial) == 340 and len(feedback) > 250
+    assert sum(r["candidates"] for r in initial)==435*5
+    assert sum(r["candidates"] for r in feedback)==387*5
+    assert all(not r["includes_reference"] for r in initial+feedback)
     assert report["first_round_qc_pass"] and report["incomplete_export_ignored"]
     assert report["duplicate_event_ignored"] and report["no_pair_repeats"] and report["no_substrate_redose"]
     assert report["no_internal_standard_redose"]
     next_dosing = report_path.parent/report["next_dosing_csv"]
     rows = read_csv(next_dosing)
-    assert all(row["selection_method"] == "llm" for row in rows)
-    assert len(rows) == 10 and all(float(r["sm_stock_ul"]) == 0 for r in rows)
-    assert all(float(r["naphthalene_predosed_umol"]) == 0.25 and
-               float(r["naphthalene_added_with_substrate_umol"]) == 0 for r in rows)
+    assert sum(row["selection_method"] == "llm" for row in rows)==22
+    assert sum(row["kind"] == "single" for row in rows)==1
+    assert len(rows) == 23 and all(float(r["sm_stock_ul"]) == 0 for r in rows)
+    assert all(float(r["internal_standard_predosed_umol"]) == 0 and
+               float(r["internal_standard_added_umol"]) == 2.5 for r in rows)
     assert not (next_dosing.parent/"protocols").exists()
     assert os.environ["ANTHROPIC_API_KEY"] == "synthetic_existing_key"

@@ -1,31 +1,10 @@
-# HTE configuration checklist
+# Remaining setup facts for HTEL
 
-Confirmed: solvents/Chromeleon; L07 excluded; **59 pairs + one reference, then ten pairs**. Request **1.7-minute LC**. See [event requirements](organizer-updates.md).
+The campaign now uses the supplied **48 × 2 mL Para-Dox**, OT-2 heater-shaker, no stir bars, manual screw caps, 250 µL reactions and 48 +23 vials. These decisions supersede the earlier 24 ×4 mL / external-stirrer discussion.
 
-Record confirmed answers in the campaign configuration before live release.
+1. Confirm the supplied block fits securely on the universal flat adapter/latch with all caps, the capped assembly stays within the **45 mm travel envelope**, and 95 °C/500 rpm reaction plus 1500 rpm workup are workable. Record any thermal equilibration time and actual cooling time; revise the timing budget accordingly. Pipetting is off-module in slot 3.
+2. Supply the **existing 1.7-minute method ID**, full injection-to-injection time including washes/re-equilibration, injection volume and actual UV channel/wavelength. We request 210 nm initially. Record SM, 2-fluoropyridine and mesitylene RT windows/LOQs from authentic standards. The old example's 253/270/300/370 nm settings are not our method settings.
+3. Explicitly schedule the **14 calibration/check injections during the first hold**. Confirm that batches of eight HPLC vials can begin injection while the robot prepares subsequent batches. The 12-hour plan needs 35 minutes of this overlap and has only about two minutes spare under its current unmeasured handling assumptions. Confirm a realistic timed setup/handling plan before release.
+4. Mount p300 single GEN2 left and p300 multi GEN2 right; check custom labware offsets and source/sample immersion above the bottoms. Confirm the usual solvent/evaporation handling, capped dry-SM storage during the first hold and short-term source-container compatibility. Stock solutions use ordinary racks; bulk reserves stay capped.
 
-## Hardware and scale
-
-- Can sealed vials run **off the OT-2 on conventional hotplate/magnetic stirrer(s)**, with aluminum blocks and small stir bars?
-- Heat/stir **60 vials together at 95 °C for four hours** (three concurrent 24-vial blocks if needed), then ten vials. Confirm hotplates, stirring at 250 µL, bar size and thermal lag.
-- Confirm **250 µL reaction + 250 µL workup**, vial depth/bottom, mounting, deck/cap clearance, shaking and toluene/SO2-compatible sealing.
-- Send vial-rack JSON; current 9 mm/on-robot protocols need revision for 24-vial/external heating. Account for stir bars at aspiration.
-
-## LC method, export and calibration
-
-- Supply the existing **1.7-minute** method ID, column/gradient, injection volume and **full injection-to-injection cycle**. Confirm separation of PyFluor, 2-fluoropyridine and naphthalene in our matrix. No prior method optimization is assumed.
-- Select UV wavelength/channel using authentic standards; supply RT windows/LOQs. Example wavelengths are not our method.
-- Explicitly request **14 calibration injections during round one**: five nonzero levels, a zero-analyte/IS blank and an independent check per analyte. Use [stock/calibration instructions](stocks-and-calibration.md); calibration is not a default HTEL service.
-- Export required low/zero signals; clarify `n.a.`, peak-count mismatches and failed injections.
-- Provide injection-number/sample-ID/method mapping and a complete-sequence marker; names may repeat.
-- MOCCA requires raw **DAD**; supplied MS RAW is for identity review.
-
-## Stocks, sampling and local operation
-
-- Validate **greater than 1 mm** bottom clearance and immersion at the lowest volume, organic-solvent pipetting, noncontact stock-tip reuse and fresh sample-tip conditioning.
-- Use plastic stock racks, glovebox preparation, capped reserves and 20/40 mM ligand/Pd recipes; no separate solubility study.
-- Validate IS recovery, homogeneous extraction and LC matrix. Confirm sample 1% HCOOH compatibility with 0.1% mobile phase.
-- Fit p300 single left/eight-channel right. Confirm capped predose storage, cooling and LC shaking; manual actions at pauses.
-- Time handling/full cycle and reserve instruments: provisional 686 min, 34 min margin.
-- Confirm local Anthropic access, private key delivery and stock preparation/initial selection outside the clock.
-
+Method/deck facts go in `local_data/campaign.json`; record local evidence before changing release flags. No separate solubility or extraction-homogeneity study is requested. Visible transfer faults/layers/solids are addressed at the protocol pauses. The pipeline, key file and LC processing stay on the local workstation; only released Python/CSV setup files go to the OT-2.

@@ -46,10 +46,12 @@ def released_fixture(config):
 
 
 @pytest.mark.parametrize("fault", ["duplicate_pair", "wrong_reference", "missing_reference"])
-def test_edited_design_cannot_change_the_campaign(data, fault):
+def test_edited_design_cannot_change_the_campaign(data, files, fault):
     config, inv, doses = data
     pairs = [row for row in doses if row["kind"] == "pair"]
-    reference = next(row for row in doses if row["kind"] == "single")
+    if fault != "duplicate_pair":
+        doses=read_csv(files/"round2/dosing.csv")
+    reference = next((row for row in doses if row["kind"] == "single"),None)
     if fault == "duplicate_pair":
         for name in ("pair_id", "ligand_a", "ligand_b"):
             pairs[-1][name] = pairs[0][name]
@@ -158,7 +160,7 @@ def test_calibration_cannot_silently_skip_the_promised_validation(files, data, f
     elif fault == "no_blank":
         rows = [row for row in rows if float(row["concentration_uM"]) != 0]
     elif fault == "too_few_levels":
-        rows = [row for row in rows if float(row["concentration_uM"]) != 100]
+        rows = [row for row in rows if float(row["concentration_uM"]) != 10]
     elif fault == "duplicate_id":
         rows[1]["sample_id"] = rows[0]["sample_id"]
     else:
@@ -265,7 +267,7 @@ def test_iteration_checks_analysis_and_source_snapshots_on_replay(files, data, t
 def test_vendor_normalization_preserves_zero_areas_and_verified_metadata(data, tmp_path, extension):
     config = data[0]
     headers = ["Sample", "RT", "Area", "Detector", "Method"]
-    row = ["R1-001", 0.9, 0, "SYNTHETIC_UV", "SYNTHETIC_2MIN"]
+    row = ["R1-001", 0.9, 0, config["analytics"]["channel"], config["analytics"]["method_id"]]
     config["analytics"].update(column_mapping=dict(zip(
         ["sample_id", "retention_time_min", "area", "channel", "method_id"], headers)), export_sheet="Peaks")
     source = tmp_path/f"vendor.{extension}"

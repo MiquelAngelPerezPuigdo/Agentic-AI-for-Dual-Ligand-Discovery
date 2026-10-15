@@ -1,0 +1,10 @@
+{
+  "reported_cost_usd": 2.759974500000006,
+  "prior_campaign_cost_usd": 0.225235,
+  "reserved_usd": 0.0,
+  "uncertain_cost_upper_bound_usd": 0.0,
+  "validated_requests": 340,
+  "total_requests": 340,
+  "stopped": false,
+  "budget_usd": 20.0
+}

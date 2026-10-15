@@ -48,21 +48,9 @@
     "R1-045",
     "R1-046",
     "R1-047",
-    "R1-048",
-    "R1-049",
-    "R1-050",
-    "R1-051",
-    "R1-052",
-    "R1-053",
-    "R1-054",
-    "R1-055",
-    "R1-056",
-    "R1-057",
-    "R1-058",
-    "R1-059",
-    "R1-060"
+    "R1-048"
   ],
-  "method_id": "SYNTHETIC_2MIN",
-  "peaks_sha256": "8b26e4ea5d1f3cbd76a156420824a543c42b217d04b1ef212224d67027bf7e40",
-  "dosing_sha256": "5e6cb2eff35ef2d909a4aec50b9cb133ba2a817f828c91ff63dcea837b20b9b8"
+  "method_id": "SYNTHETIC_1P7MIN",
+  "peaks_sha256": "b59c4d3f9173a6f06abd9d5bacbe341dc1f7c18b92403ac0a34877ac2d29efef",
+  "dosing_sha256": "88b8e89cd98e37c67dded6b6f8991eb9e6961e27880e2011073d466ff63008f4"
 }

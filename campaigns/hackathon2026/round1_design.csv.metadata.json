@@ -1,0 +1,9 @@
+{
+  "config_digest": "07a86610f4e04495eb7def19d410fc38fda62d0fed7c3d261a3c4d76b98e4e28",
+  "backend": "lm_diversity_initialization",
+  "pairs": 48,
+  "required_ligand_coverage": true,
+  "ligands_covered_in_pairs": 30,
+  "missing_ligands": [],
+  "coverage_floor_overrides": 0
+}

@@ -1,0 +1,253 @@
+{
+  "demo": false,
+  "chemistry": {
+    "substrate": "pyridine-2-sulfonyl fluoride / PyFluor",
+    "substrate_smiles": "FS(C1=NC=CC=C1)(=O)=O",
+    "product": "2-fluoropyridine",
+    "product_smiles": "FC1=NC=CC=C1",
+    "substrate_molecular_weight_g_mol": 161.16,
+    "substrate_molarity_M": 0.1,
+    "reaction_volume_ul": 250,
+    "ligand_a_mol_percent": 6,
+    "ligand_b_mol_percent": 6,
+    "pd_mol_percent": 12,
+    "pd_identity": "Pd(COD)(DQ), CAS 86228-59-3, one Pd atom per complex",
+    "pd_molecular_weight_g_mol": 378.8,
+    "temperature_C": 95,
+    "reaction_minutes": 240,
+    "thermal_equilibration_minutes": 0,
+    "rpm": 500,
+    "atmosphere": "air; ligand stocks prepared in glovebox",
+    "preloaded_internal_standard": {
+      "identity": "mesitylene",
+      "cas": "108-67-8",
+      "smiles": "Cc1cc(C)cc(C)c1",
+      "molecular_weight_g_mol": 120.19,
+      "mol_percent_relative_to_substrate": 10,
+      "addition_stage": "reaction_stock"
+    },
+    "additives": [],
+    "scale_status": "250 uL reaction + 500 uL acidified quench = 750 uL in a nominal 2 mL vial; OT-2 heater-shaker, no stir bars; supplied rack geometry. Separate recovery/homogeneity study waived by user; inspect visibly before sampling."
+  },
+  "design": {
+    "round1_total": 48,
+    "round2_total": 23,
+    "round1_controls": [],
+    "round2_controls": [
+      {
+        "kind": "single",
+        "ligand_a": "L17",
+        "ligand_b": "",
+        "pair_id": ""
+      }
+    ],
+    "objective": "calibrated product yield; conversion retained as diagnostic",
+    "consensus_weight_llm": 0.5,
+    "require_all_ligands_in_round1_pairs": true,
+    "minimum_llm_percentile": 0.25,
+    "exploration_backend": "lm_diversity_initialization",
+    "require_lm_embeddings": true,
+    "seed": 20261009,
+    "round2_predosed": true,
+    "excluded_ligands": [
+      {
+        "ligand_id": "L07",
+        "cas": "224311-55-1",
+        "reason": "AdJohnPhos delivery delayed; 48 pairs then 22 new pairs + one L17 single reference"
+      }
+    ],
+    "round2_predose_mode": "manual_offdeck"
+  },
+  "liquids": {
+    "substrate_stock_mM": 500,
+    "ligand_stock_mM": 40,
+    "pd_stock_mM": 40,
+    "workup_ul": 500,
+    "aliquot_ul": 20,
+    "diluent_ul": 980,
+    "workup_composition": "9:1 acetonitrile/water, 0.15% v/v formic acid; NO mesitylene. Addition to 250 uL reaction gives nominal 0.1% acid in 750 uL extract.",
+    "mix_rpm": 1500,
+    "lc_diluent_composition": "1:1 water/acetonitrile, 0.1% v/v formic acid; NO mesitylene",
+    "substrate_stock_solvent": "DCM",
+    "internal_standard_stock_mM": 100,
+    "internal_standard_addition_stage": "reaction_stock",
+    "internal_standard_workup_mM": 0,
+    "internal_standard_molecular_weight_g_mol": 120.19,
+    "substrate_evaporation_required": true,
+    "internal_standard_stock_solvent": "toluene",
+    "workup_formic_acid_percent": 0.15,
+    "lc_diluent_formic_acid_percent": 0.1,
+    "quench_acetonitrile_fraction": 0.9,
+    "lc_diluent_acetonitrile_fraction": 0.5
+  },
+  "robot": {
+    "p300": "p300_multi_gen2",
+    "heater_slot": 10,
+    "reaction_labware": null,
+    "reaction_definition_path": "hte_inputs/labware/paradox_48_wellplate_2000ul_hs.json",
+    "reaction_working_volume_ul": 1000,
+    "lc_labware": null,
+    "lc_definition_path": "hte_inputs/labware/vwr_96_wellplate_2200ul.json",
+    "lc_working_volume_ul": 2000,
+    "heater_adapter": "opentrons_universal_flat_adapter",
+    "reservoir_working_volume_ul": 11900,
+    "single": "p300_single_gen2",
+    "pipette_setup_status": "Required setup: p300 GEN2 single left and multi right; reaction vials use single only.",
+    "reaction_multichannel": false,
+    "reservoir_labware": null,
+    "reservoir_definition_path": "hte_inputs/labware/axygen_12_reservoir_12000ul.json",
+    "heater_stack_status": "Zero-overlap flat stacking and a conservative 45 mm capped clearance envelope. Well coordinates are unchanged; no pipetting on the module. Verify mounting/latch and that caps fit within 45 mm locally.",
+    "pad_lc_diluent_columns": true,
+    "lc_batch_size": 8,
+    "capped_clearance_height_mm": 45
+  },
+  "pipetting": {
+    "aspirate_height_mm": 1.5,
+    "dispense_above_top_mm": 2,
+    "surplus_ul": 1,
+    "air_gap_ul": 2,
+    "minimum_p20_ul": 2,
+    "prewet_cycles": 2,
+    "post_aspirate_seconds": 0.5,
+    "post_dispense_seconds": 0.5,
+    "p20_aspirate_ul_s": 4,
+    "p20_dispense_ul_s": 8,
+    "p300_aspirate_ul_s": 15,
+    "p300_dispense_ul_s": 30,
+    "reuse_tips": true,
+    "sample_prewet_cycles": 2,
+    "sample_aspirate_height_mm": 1.5,
+    "sample_flow_rate_multiplier": 0.3,
+    "sample_air_gap_rate": 0.1,
+    "sample_pause_seconds": 0.5,
+    "minimum_p300_single_ul": 20,
+    "p300_single_aspirate_ul_s": 50,
+    "p300_single_dispense_ul_s": 100,
+    "workup_aspirate_ul_s": 150,
+    "workup_dispense_ul_s": 200
+  },
+  "stock_preparation": {
+    "assay_fractions": {},
+    "margin_factor": 1.5,
+    "tube_dead_ul": 100,
+    "reservoir_dead_ul": 1500,
+    "tube_max_fill_ul": 1400,
+    "reservoir_max_fill_ul": 11900,
+    "substrate_min_prepare_ul": 10000,
+    "substrate_storage_container": "20 mL glass vial with DCM-compatible PTFE-faced closure; capped off-deck reserve",
+    "reservoir_source_pools": {
+      "workup": [
+        "A4",
+        "A6",
+        "A9"
+      ],
+      "LC_diluent": [
+        "A5",
+        "A7",
+        "A10",
+        "A11",
+        "A12"
+      ]
+    },
+    "internal_standard_min_prepare_ul": 5000
+  },
+  "llm": {
+    "model": "claude-opus-4-8",
+    "repeats": 5,
+    "seed": 20261009,
+    "batch_size": 8,
+    "max_output_tokens": 512,
+    "workers": 2,
+    "timeout_seconds": 240,
+    "budget_usd": 20,
+    "input_usd_per_million": 5,
+    "output_usd_per_million": 25,
+    "prompt_cache": {
+      "enabled": true,
+      "ttl": "1h",
+      "read_multiplier": 0.1,
+      "write_5m_multiplier": 1.25,
+      "write_1h_multiplier": 2.0
+    },
+    "data_sharing_confirmed": true,
+    "budget_mode": "incremental_cached",
+    "prior_campaign_cost_usd": 0.225235,
+    "iteration_workers": 4
+  },
+  "analytics": {
+    "instrument_public_listing": "Target LC-MS setup: Thermo Vanquish Horizon / ISQ-EM; select the quantitative UV channel with authentic standards and verify the local configuration.",
+    "software_public_listing": "Importer accepts a wide integrated-peak CSV; provide method ID through the explicit injection map.",
+    "method_id": null,
+    "channel": null,
+    "calibration_mode": "internal_standard",
+    "internal_standard": "mesitylene",
+    "internal_standard_final_uM": 66.66666666666667,
+    "internal_standard_area_tolerance_fraction": 0.3,
+    "minimum_calibration_r2": 0.995,
+    "calibration_check_tolerance_fraction": 0.15,
+    "calibration_requirements": {
+      "minimum_nonzero_levels": 5,
+      "require_zero_blank": true,
+      "minimum_independent_checks": 1
+    },
+    "quantification_limit_uM": {
+      "substrate": null,
+      "product": null
+    },
+    "negative_concentration_tolerance_uM": 1,
+    "yield_tolerance_percent": 5,
+    "mass_balance_tolerance_fraction": 0.1,
+    "blank_max_product_umol": 0.01,
+    "maximum_rejected_fraction": 0,
+    "references": null,
+    "column_mapping": null,
+    "export_sheet": null,
+    "missing_analyte_policy": "reject",
+    "export_format": "htel_chromeleon_wide",
+    "example_wavelengths_nm": {
+      "UV_VIS_1": 253,
+      "UV_VIS_2": 270,
+      "UV_VIS_3": 300,
+      "UV_VIS_4": 370
+    },
+    "requested_method_duration_minutes": 1.7,
+    "requested_wavelength_nm": 210
+  },
+  "timing": {
+    "deadline_minutes": 720,
+    "injection_cycle_minutes": 1.7,
+    "additional_injections": 14,
+    "calibration_injections_during_round1_reaction": 14,
+    "dosing_total_minutes": 38,
+    "evaporation_total_minutes": 8,
+    "heat_ramp_total_minutes": 12,
+    "cooling_total_minutes": 12,
+    "workup_total_minutes": 72,
+    "decision_minutes": 5,
+    "other_minutes": 5,
+    "cycle_status": "User requests HTEL existing 1.7-minute method; injection-to-injection cycle and analyte separation remain unvalidated",
+    "staged_lc_overlap_minutes": 35,
+    "staged_lc_overlap_minutes_by_round": {
+      "1": 25,
+      "2": 10
+    }
+  },
+  "validation": {
+    "chemistry_confirmed": true,
+    "plate_adapter_seal_validated": false,
+    "solvent_pipetting_validated": false,
+    "homogeneous_sampling_validated": false,
+    "lc_calibration_validated": false,
+    "local_app_simulation_passed": false,
+    "noncontact_tip_reuse_validated": false,
+    "pre_reaction_internal_standard_validated": false,
+    "injection_cycle_validated": false,
+    "simultaneous_heating_capacity_validated": false,
+    "heating_validated": false,
+    "round2_predose_storage_validated": false,
+    "substrate_evaporation_validated": false,
+    "homogeneity_study_waived_by_user": true,
+    "staged_lc_timing_confirmed": false
+  },
+  "schema_version": 2
+}

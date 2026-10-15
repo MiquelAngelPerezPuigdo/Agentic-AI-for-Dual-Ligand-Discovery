@@ -1,45 +1,21 @@
-# Anthropic prompt caching
+# Claude prompt caching and costs
 
-Prompt caching is enabled by default for both scoring campaigns. The API key and first-batch commands remain the same. Configuration is in `hte_inputs/campaign.json`, under `llm.prompt_cache`:
+The live initial campaign used **claude-opus-4-8**, five scoring repeats per pair and small anchor/partner queries (at most eight pairs). Extended thinking is disabled and only an ID-keyed numeric score JSON is requested. The initial batch is already frozen in `campaigns/hackathon2026/`; do not pay to regenerate it as part of normal setup.
 
-```json
-{
-  "enabled": true,
-  "ttl": "1h",
-  "read_multiplier": 0.1,
-  "write_5m_multiplier": 1.25,
-  "write_1h_multiplier": 2.0
-}
-```
+## What is cached in both stages
 
-The one-hour lifetime allows repeats and queued requests to reuse the shared input. The second campaign begins after the first reaction and LC sequence, so it normally writes a new cache entry. This does not preserve the initial cache across the four-hour reaction.
+`hte/scoring.py` sends two stable text blocks with `cache_control={"type":"ephemeral","ttl":"1h"}`: (1) fixed chemistry, all individual ligand IDs/names/SMILES and available single-ligand SI yields, and (2) shared measured feedback. The short final block supplies one anchor and partner IDs. Cohorts/schema stay fixed across five repeats, while partner order is shuffled. The first actual scoring call warms each schema group; there is no extra paid warm-up. Shared feedback changes after experiments, so the second-round request has a new feedback prefix.
 
-## Request layout
+The live initial run reports **340 accepted requests, 311 cache-hit requests, 1,578,979 cache-read tokens and 147,721 cache-write tokens**. Accepted scoring cost is **$2.7599745** at the recorded rates. Prior rejected full-size output cost **$0.225235**, and earlier smoke tests **$0.4023195**: known combined estimate **$3.387529**. These are usage-based estimates, not an invoice. [Saved counters and score audit](../campaigns/hackathon2026/scoring/cache_summary.json).
 
-The fixed system instruction is followed by three user content blocks:
+## Budget / recovery
 
-1. Fixed reaction conditions, objective, all ligand IDs/names/SMILES, the explicit pair catalog, and CAS-matched single-ligand SI yields with a brief condition label (unreported values are null), with an explicit `cache_control` breakpoint.
-2. The complete measured feedback shared by the campaign's repeats, with another explicit breakpoint.
-3. The shuffled candidate IDs and exact candidate count, with no cache breakpoint.
+The configured **$20 cap applies to each scoring campaign**, with `prior_campaign_cost_usd` carried into that campaign's ledger. It is not a global Anthropic account spending limit. Current mode is `incremental_cached`: before each request, reserve a conservative cold-cache amount, then replace that reservation with provider-reported usage only after a validated response. No SDK retries are enabled. Stop before the next reservation would exceed the cap. The theoretical all-miss initial bound was **$28.99**, so a complete $20 run depended on caching; actual accepted usage was $2.76. `strict_all_miss` mode instead rejects a campaign when its entire worst-case bound exceeds the cap.
 
-The current prompt requests scores only and explicitly disables extended thinking. Changing the prompt, schema or thinking configuration creates a different cache prefix, so old v3 cache entries are not reused. The fixed blocks are serialized identically across repeats. Output-schema property ordering is canonical and remains identical for the same candidate cohort: schema changes can invalidate Anthropic's prompt cache. With smaller configured batches, cohorts stay fixed and their internal candidate order is shuffled independently for each repeat. The default still scores all 435 first-round candidates, or all 376 remaining second-round candidates, in each request.
+`cost_preflight.json`, `budget_ledger.json`, per-request usage/raw responses and `cache_summary.json` remain with the run. A failed/uncertain request retains its reservation and attempt record; the pipeline will not silently repay it on restart. An incomplete score set cannot select a batch. No paid second-round calls have been made; real cost/latency may differ because experimental feedback enlarges the prompt. Initial scoring used two workers; feedback uses four. The five-minute second-round decision allowance is a target, not measured API throughput.
 
-The first real scoring response for each schema completes before its followers are submitted. It warms the cache without an additional paid warm-up request. Subsequent scoring requests can run in parallel. All five responses remain separately generated; previous scores or assistant answers are not supplied as cached context.
+## API key
 
-## Cost and verification
+Keep the raw key in **`anthropic.key` at the repository root**; copy the supplied `.example` file once and replace its placeholder. Restrict access with `chmod 600 anthropic.key`. Both initial scoring and feedback load it automatically. `ANTHROPIC_API_KEY` in the environment takes precedence. Keys are ignored by Git and excluded from the public handoff; provide HTE's key separately. Never add a key to robot Python or a configuration committed to GitHub.
 
-For the configured Opus 4.8 prices, one-hour writes cost 2× normal input, five-minute writes cost 1.25× and reads cost 0.1×. These multipliers are explicit configuration values. The preflight assumes every pending request misses cache, charges input at the selected write rate and reserves one retry. It does not rely on hoped-for cache savings to stay within the estimated $20 cap.
-
-Each response record saves the provider's usage counters and a separate cost breakdown for uncached input, cache writes, cache reads and output. Detailed five-minute/one-hour write counters are used when available; otherwise the configured TTL is recorded as the pricing assumption. `input_tokens` excludes cached reads and writes, so those amounts are added separately.
-
-After each campaign, inspect `scoring/cache_summary.json`:
-
-- `cache_read_input_tokens > 0` and `cache_hit_requests > 0` verify reported reuse.
-- `cache_creation_input_tokens > 0` with no reads means entries were written but reuse was not reported.
-- Both counters zero means no cache activity was reported. Check prompt size, TTL and request consistency before a later campaign; the software does not buy extra retries solely to obtain cache hits.
-
-The score command prints the cache status and hit counts. Cache summary costs estimate the returned responses using the configured rates; SDK retries whose usage is not returned cannot be itemized. The budget preflight reserves for them.
-
-The mocked tests and offline rehearsal verify request layout, stable schemas, scheduling and accounting. Separate live four-pair smoke tests verified provider-reported reuse; the current v4 second request read 5,174 cached tokens, as recorded in the [rehearsal evidence](rehearsal-results.md). **Live provider cache hits require a real API run** and are not established by the rehearsal. Anthropic documents a 1,024-token minimum for Opus 4.8; the normal full-inventory context is intended to exceed that threshold.
-
-Primary references: [Anthropic prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching), [structured-output cache invalidation](https://platform.claude.com/docs/en/build-with-claude/structured-outputs#prompt-modification-and-token-costs).
+Current official references: [Anthropic caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching), [Opus 4.8](https://platform.claude.com/docs/en/models/opus-4-8/overview). Recorded rates are $5/M input, $25/M output, 0.1× cache reads and 2× one-hour cache writes. They are configurable if pricing changes.

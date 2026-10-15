@@ -1,71 +1,61 @@
 # HTE staff checklist - setup
 
-**Campaign:** ____________________ **Operator/date:** ____________________
+**48 pairs, then 22 pairs + L17 reference.** Local OT-2; one 48 × 2 mL Para-Dox; **71 fresh reaction vials**. Individual screw caps by hand. No stir bars. Keep reaction and LC well maps distinct.
 
-**Draft:** 250 uL scale, 96-position mapping. A 24-vial rack needs revised protocols. Use released files after HTE confirms scale, glass geometry/seal, simultaneous heating of 60 reactions, pipetting/extraction/IS recovery and the 1.7-min LC method. Off-robot magnetic heating is requested; current files use slot 10. Release first dosing separately; calibration must pass before workup.
+## Before starting the clock
 
-## Before the clock
+- Fit p300 single GEN2 left; p300 eight-channel GEN2 right. Reaction vials use single only (13 mm pitch). Check block/flat adapter/latch, offsets, cap clearance <=45 mm and tips >1 mm above bottoms. App-simulate released Python.
+- Use released `dosing.csv`, `stock_preparation.csv`, `deck_loads.csv`, `lc_sequence.csv` and `round2_predose.csv`. Initial selection is prepared; software colleague handles local release/LC import. Stocks and initial scoring are outside the clock.
+- Have 71 reaction vials/caps, 71 HPLC vials/caps plus calibration vials, two LC preparation plates, fresh robot racks and >=71 manual sample tips. Confirm full 1.7-min LC cycle and staged batch handoff.
 
-Check **59 pairs + one L17 reference**, all 30 active ligands covered, L07 excluded. Prepare stocks/reserves from `stock_preparation.csv`; prepare ligands in the glovebox. Label IDs, assays and addresses. Use plastic stock racks; metal blocks are for reactions. Keep reserves capped. Start the local watcher; key: laptop `anthropic.key`.
+## Stocks - prepare before the run
 
-| Stock | Preparation |
+| Stock | Preparation / use |
 |---|---|
-| SM + naphthalene | 1,000 mM SM + 10 mM IS in toluene; at least 5.00 mL. |
-| 30 active ligands / Pd | 20 mM ligands / 40 mM Pd(COD)(DQ), in toluene. CSV gives masses/reserves. |
-| Toluene | Stock solvent; no extra neat dose in the default recipe. |
-| Workup / LC diluent | 1:1 water/ACN + 1% v/v HCOOH; no extra IS. |
+| SM in DCM | **500 mM, 10 mL minimum**; 805.8 mg SM at 100% assay. Capped 20 mL glass bulk vial. Dose 50 µL, then evaporate completely. |
+| Ligands / Pd | **40 mM in toluene**; individual masses/volumes in stock CSV, including second-round reserve and margin. Open/prepare ligands in glovebox. Keep bulk stocks capped; use ordinary plastic source racks. |
+| Mesitylene | **100 mM in toluene, 5 mL**; 60.095 mg at 100% assay. Separate stock; add 25 µL AFTER DCM removal. |
+| Quench | **9:1 ACN/water +0.15% v/v formic acid**, no IS. Prepare 100 mL; add 150 µL acid and make to volume with premixed solvent. |
+| LC diluent | **1:1 water/ACN +0.1% v/v formic acid**, no IS. Prepare 125 mL; 125 µL acid, make to volume. |
 
-**SM:** PyFluor (pyridine-2-sulfonyl fluoride). **Product:** 2-fluoropyridine. Combined stock at 100% assay: **805.80 mg SM + 1.00 mL of 50 mM naphthalene/toluene**, toluene to **5.00 mL** in capped **10 mL glass/PTFE vial**. Naphthalene master: **12.817 mg to 2.00 mL**; separate toluene and LC-compatible masters.
-
-## Deck - use stage quantities from `deck_loads.csv`
-
-**Left:** p300 single GEN2. **Right:** p300 eight-channel GEN2. Manual moves.
+Correct masses for assay. Never load bulk preparation volumes into source tubes. Use **stage-specific deck loads**; refill for round two from reserves.
 
 | Slot | Contents |
 |---|---|
-| 1 / 4 | Ligand racks L01-L24 excluding L07 / L25-L31; exact CSV addresses. |
-| 2 | Reservoir A1 SM/IS/toluene; A2 Pd; A3 unused by default; A4/A6 workup; A5/A7 LC diluent. Fill at most 11.9 mL/channel. |
-| 3 / 10 | Reaction block for dosing/cooling / heater-shaker with released mount. |
-| 6 | Round-two substrate array during dosing; LC plate during workup. |
-| 5 / 8 / 9 | p300 single tips / p300 multi tips / p300 multi tips. Slots 7 and 11 empty. |
+| 1 / 4 | Ligand source racks; use exact CSV addresses, leave L07 absent. |
+| 2 | A1 SM/DCM; A2 Pd; A3 toluene; A8 mesitylene. Quench A4/A6/A9; LC diluent A5/A7/A10/A11/A12. |
+| 3 / 10 | Reaction block for pipetting / heater-shaker with flat adapter. |
+| 6 | Standard 96-well LC preparation plate, seated throughout sampling. |
+| 5/8/9 | Single tips / multi tips / multi tips. Slots 7 and 11 empty. |
 
-## Calibration - 14 injections during round one
+## Calibration during first hold - 14 injections
 
-Authentic SM/product: **100 mM, 2.00 mL each, no IS** (SM 32.232 mg; product 19.418 mg at 100% assay). Analyte working stock: **100 uL to 1.00 mL**, 10 mM. Analytical IS: **40 uL of 50 mM to 2.00 mL**, 1 mM.
-
-For each analyte, prepare **1.00 mL per column**, adding **50 uL of 1 mM IS to every tube**. Use the approved matrix, accounting for stock solvents.
-
-| Analyte, uM | 0 blank | 100 | 500 | 1,000 | 2,500 | 6,000 | 5,000 check |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| Stock, mM | None | 10 | 10 | 10 | 100 | 100 | 100 |
-| Analyte, uL | 0 | 10 | 50 | 100 | 25 | 60 | 50 |
-| Matrix, uL | 950 | 940 | 900 | 850 | 925 | 890 | 900 |
-
-Fit blank plus five levels. Keep the independent 5,000 uM check outside the fit.
+For **each SM and product**: blank + **10, 50, 150, 350, 800 µM**, plus independent **666.7 µM** check. **Mesitylene fixed at 66.7 µM in every vial**, including blanks/checks. Use matched matrix and recipes in [stock/calibration reference](stocks-and-calibration.md). Software colleague supplies calibrated method/channel and RT windows.
 
 ---
 
 # HTE staff checklist - run
 
-**Block/seal:** ____________________ **LC method/channel:** ____________________
+**Method / UV channel:** ____________________ **Operator / start:** ____________________
 
-Follow App pauses and released CSV maps. Preserve orientation/sample IDs. Start the timer with first dosing; stocks/initial selection are prepared beforehand.
+Follow local App pauses. Keep capped vials capped until prompted to open. Record actual times and any deviations.
 
-| Step | Staff action |
+| Step | Action |
 |---|---|
-| 1. Dose | Import released `dose_and_react.py`. Check deck/offsets. Dose **25 uL of 1 M SM/10 mM IS in toluene into 60 wells**. Retain the solvent; proceed directly to catalyst dosing. |
-| 2. React | Pair: **75 uL ligand A + 75 uL ligand B + 75 uL Pd**. Reference: **150 uL L17 + 75 uL Pd**. With the retained 25 uL SM stock, total is **250 uL**. Seal/move to slot 10; **95 C / 500 rpm / 4 h**, with validated thermal lag. |
-| 3. During hold | Predose **25 uL SM/IS/toluene into ten round-two wells**. Cap promptly, label and store under the approved conditions; retain solvent. Resume promptly. Run **14 calibration injections**. Cap unused sources; uncover before aspiration. |
-| 4. Cool / release | Follow the thermal-handling pause; move sealed block off heater to slot 3 and cool before opening. After calibration passes, obtain the separately released first workup protocol and deck loads. |
-| 5. Work up | Load LC plate in slot 6. Run released workup: add **250 uL workup solvent, no IS**; move/shake **2 min without heating** and return as prompted. Confirm homogeneous extract; remix if delayed, clear bubbles. |
-| 6. LC | Fresh sample tips prewet twice in their own well. Robot doses **180 uL diluent + 20 uL extract**. Seal/mix LC plate **2 min**, clear bubbles, check needle height/volume. Run **60 samples** in the mapped sequence. |
-| 7. Decide | Normalize the complete Chromeleon export with injection-number mapping; publish completion marker. Wait for calibration/QC and **ten new pairs** in `next_dosing.csv`. Import the released second-round protocol. |
-| 8. Round two | Verify retained **25 uL predoses** and mapping. Refill sources from reserves. **Do not redose SM/IS or evaporate.** Add selected catalysts, seal and run the same four-hour hold. Cool and repeat workup/LC for **ten samples**. Stop the clock after analysis; archive results/QC/logs. |
+| 1. SM | Run released R1 dosing. Robot adds **50 µL 500 mM SM/DCM** to 48 vials. Move block off deck when prompted; evaporate DCM by HTEL's ventilated procedure. Cool/return to slot 3. |
+| 2. Assemble | Robot adds **25 µL mesitylene +37.5 µL ligand A +37.5 µL ligand B +75 µL Pd +75 µL toluene =250 µL**. Hand-tighten every cap; move/latch as prompted. Run **95 °C, 500 rpm, 4 h**. |
+| 3. During hold | Run calibration. Separately hand-dose **23 NEW labelled vials with 50 µL SM/DCM each**, using predose map in an ordinary off-deck rack. Evaporate completely, cap dry SM; add NO mesitylene/catalyst yet. |
+| 4. Cool | Move sealed block off heater as prompted. Cool before opening. Load released workup and matching sources. |
+| 5. Quench | Open caps for addition. Robot adds **500 µL quench per vial**. Recap ALL by hand. Move/latch and shake **1500 rpm, 2 min**, heater off. Return to slot 3. |
+| 6. Sample | At each batch pause, gently remix the indicated capped vials; settle bubbles, then uncap ONLY those targets. Robot prepares **980 µL LC diluent +20 µL extract**. Fresh sample tips; no bottom contact. |
+| 7. HPLC vials | At pause, recap sampled reaction vials. Keep preparation plate in slot 6. Fresh manual tip per sample: mix completed LC well **500 µL ×5**, avoiding air, then transfer **900 µL** to labelled HPLC vial. Screw cap; invert briefly. Start LC batch BEFORE resuming robot. Never take unfinished wells. |
+| 8. Decide | Complete all **48** injections. Software colleague joins exports, checks QC and generates **22 new pairs + L17 reference**. Archive first-round reaction vials. Fit 23 dry SM vials into SAME block; verify orientation. |
+| 9. R2 | Refill from reserves using new deck loads. NO SM redosing. Add mesitylene/catalysts/toluene as selected; single reference uses **75 µL L17**, no ligand B. Hand-cap, run same 4 h, cool/work up/sample in batches of 8/8/7. LC preparation H3 is diluent only: DO NOT INJECT. |
 
-## Pause and correct
+Stop clock after all **23** final injections and quantitative analysis. Archive CSVs, maps, QC, protocols and robot JSON logs.
 
-- Validate **greater than 1 mm** bottom clearance and liquid immersion; sample default is 1.5 mm. Stop for contact, unintended air, dripping, bubbles or solids.
-- Reuse only validated same-stock/noncontact dosing tips. Samples use fresh tips. Never return to source after LC contact. Uncertain transfer: fresh documented dilution, no guessed top-up.
-- Two phases/solids: use approved extraction before sampling. Keep sealed through heating/cooling. Retain failed results; repeat for documented QC faults, never to choose a higher yield.
+## Stop and correct
 
-**Per reaction:** 25 umol SM, 250 uL, 0.1 M; 6 mol% each ligand, 12 mol% Pd; no base/external fluoride. Requested LC: **1.7 min**, 70 reaction samples. Provisional total **686 / 720 min**; measure cycle/handling. Details: [reference handbook](HTE-operator-handbook.pdf).
+Visible layers, solids at aspiration, persistent bubbles, air aspiration or tip contact: pause/review. Repeated aspiration is not a solubility remedy. Reuse only approved same-stock/noncontact tips; samples always fresh. Uncertain transfer: fresh documented dilution, no guessed top-up.
+
+**Timing target: 717.7 /720 min**, requiring 35 min LC/handling overlap. This is unmeasured with ~2 min margin; record real cycle/handling times. Details and local commands: [reference handbook](HTE-operator-handbook.pdf).

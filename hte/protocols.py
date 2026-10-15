@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .io import atomic_text, digest, new_output, object_digest, write_csv, write_json
+from .io import atomic_text, digest, new_output, object_digest, write_csv, write_json, wells
 from .planning import dosing_rows, stock_plan, tip_budget, transfer_operations, validate_config, validate_dosing
 
 
@@ -21,16 +21,12 @@ def run(protocol: protocol_api.ProtocolContext):
     adapter = hs.load_adapter(CONFIG["robot"]["heater_adapter"])
     plate = (protocol.load_labware_from_definition(DEFINITIONS["reaction"], 3, "Glass vial reaction block")
              if "reaction" in DEFINITIONS else protocol.load_labware(CONFIG["robot"]["reaction_labware"], 3, "Reaction plate"))
-    has_predose = any(op["stage"] == "round2_predose" for op in OPERATIONS)
-    if STAGE == "dose_and_react" and has_predose:
-        lc = (protocol.load_labware_from_definition(DEFINITIONS["reaction"], 6, "Round-two substrate block")
-              if "reaction" in DEFINITIONS else protocol.load_labware(CONFIG["robot"]["reaction_labware"], 6, "Round-two substrate block"))
-    else:
-        lc = (protocol.load_labware_from_definition(DEFINITIONS["lc"], 6, "LC dilution plate")
-              if "lc" in DEFINITIONS else protocol.load_labware(CONFIG["robot"]["lc_labware"], 6, "LC dilution plate"))
+    lc = (protocol.load_labware_from_definition(DEFINITIONS["lc"], 6, "LC dilution plate")
+          if "lc" in DEFINITIONS else protocol.load_labware(CONFIG["robot"]["lc_labware"], 6, "LC dilution plate"))
     racks = {slot: protocol.load_labware("opentrons_24_tuberack_eppendorf_1.5ml_safelock_snapcap", slot)
              for slot in [1, 4]}
-    reservoir = protocol.load_labware("nest_12_reservoir_15ml", 2)
+    reservoir = (protocol.load_labware_from_definition(DEFINITIONS["reservoir"], 2, "Common liquid sources")
+                 if "reservoir" in DEFINITIONS else protocol.load_labware(CONFIG["robot"]["reservoir_labware"], 2))
     single_key = "p20" if CONFIG["robot"]["single"] == "p20_single_gen2" else "p300_single"
     single_tiprack = "opentrons_96_tiprack_20ul" if single_key == "p20" else "opentrons_96_tiprack_300ul"
     tips_single = protocol.load_labware(single_tiprack, 5)
@@ -60,6 +56,9 @@ def run(protocol: protocol_api.ProtocolContext):
         multiplier = p["sample_flow_rate_multiplier"] if sampling else 1
         pipette.flow_rate.aspirate = p[op["pipette"]+"_aspirate_ul_s"] * multiplier
         pipette.flow_rate.dispense = p[op["pipette"]+"_dispense_ul_s"] * multiplier
+        if op["stage"] in ("workup", "dilution"):
+            pipette.flow_rate.aspirate = p["workup_aspirate_ul_s"]
+            pipette.flow_rate.dispense = p["workup_dispense_ul_s"]
         source_height = p["sample_aspirate_height_mm"] if sampling else p["aspirate_height_mm"]
         source_location = source.bottom(source_height)
         aspirate_pause = p["sample_pause_seconds"] if sampling else p["post_aspirate_seconds"]
@@ -91,9 +90,9 @@ def run(protocol: protocol_api.ProtocolContext):
         if not op["retain_tip_for_next"]:
             pipette.drop_tip()
 
-    def transfer_stage(stage):
+    def transfer_stage(stage, batch=None):
         for op in OPERATIONS:
-            if op["stage"] == stage:
+            if op["stage"] == stage and (batch is None or op.get("lc_batch")==batch):
                 transfer(op)
 
     def onto_heater():
@@ -107,68 +106,81 @@ def run(protocol: protocol_api.ProtocolContext):
         hs.open_labware_latch()
         protocol.move_labware(plate, 3, use_gripper=False)
 
-    protocol.pause("Verify exact plate definitions, offsets, source volumes in deck_loads.csv, and fresh tips. Slots 7 and 11 must be empty. Remove source-tube caps only for dosing. Resume locally.")
+    protocol.pause("Verify exact plate definitions, offsets, source volumes in deck_loads.csv, and fresh tips. Slots 7 and 11 must be empty. Remove ALL reaction-vial screw caps before pipetting and source-tube caps for dosing. Keep caps identified and clean. Resume locally.")
     if STAGE == "dose_and_react":
         if any(op["stage"] == "substrate" for op in OPERATIONS):
             transfer_stage("substrate")
+            protocol.move_labware(plate, protocol_api.OFF_DECK, use_gripper=False)
+            protocol.pause("Evaporate ALL substrate DCM using HTEL's approved ventilated method, before adding any mesitylene, catalyst or toluene. Verify dry-down and substrate retention, record actual time, cool the block, and prepare to return it to slot 3. Do not evaporate DCM into an unventilated robot enclosure.")
+            protocol.move_labware(plate, 3, use_gripper=False)
         else:
-            protocol.pause("Round two: use the ten capped wells predosed by round one. Verify sample mapping and substrate/IS amounts in round2_predose.csv, retained toluene volume and approved storage interval. Uncap only for dosing. Do not evaporate or add substrate/IS again; the retained stock solvent counts in the final reaction volume.")
+            protocol.pause("Round two: remove/archive the 48 first-round vials after sampling. Fit the 23 NEW, labeled substrate-predosed vials into the SAME block following round2_predose.csv. Confirm ALL DCM was removed, 25 umol SM remains per vial, and NO mesitylene or catalyst was predosed. Check orientation and any required empty dummy vials. No substrate redosing.")
+        transfer_stage("internal_standard")
         transfer_stage("assembly")
-        protocol.pause("Seal every reaction well using the validated toluene-compatible 95 C seal. Check seal and clamp before resuming. Retain source stocks capped. Prepare assay standards while reactions run.")
+        protocol.pause("TIGHTEN every occupied vial screw cap BY HAND before heating/shaking. Use HTEL's compatible septum screw caps and mounting procedure for 95 C. Check no vial remains open. Cap remaining source stocks. No stir bars. Resume for the module's heat/shake cycle.")
         onto_heater()
         try:
             hs.set_and_wait_for_temperature(CONFIG["chemistry"]["temperature_C"])
             hs.set_and_wait_for_shake_speed(CONFIG["chemistry"]["rpm"])
             if CONFIG["chemistry"].get("thermal_equilibration_minutes", 0):
                 protocol.delay(minutes=CONFIG["chemistry"]["thermal_equilibration_minutes"])
-            hold_start = time.monotonic()
-            if has_predose:
-                protocol.pause("Before round-two substrate predosing: confirm A1 substrate stock concentration/load remains valid and remove every cover obstructing reservoir aspiration. Other stocks can remain capped. Resume promptly; this pause is part of the reaction hold.")
-                transfer_stage("round2_predose")
-                protocol.pause("Round-two substrate dosing complete in slot 6. Cap every predosed vial promptly with the validated closure and label the mapping; retain the stock toluene and store under the approved conditions. Cap/remove unused sources. Do not evaporate. Resume promptly. Run calibration standards on LC during this first reaction hold.")
-            elapsed = 0 if protocol.is_simulating() else (time.monotonic()-hold_start)/60
-            if elapsed >= CONFIG["chemistry"]["reaction_minutes"]:
-                raise RuntimeError("Reaction hold exceeded during predosing/pause. Stop and record the actual hold time.")
-            protocol.delay(minutes=CONFIG["chemistry"]["reaction_minutes"]-elapsed)
+            if ROUND == 1:
+                protocol.comment("DURING this 4 h hold: prepare/inject the 14 calibration samples. Separately hand-dose the 23 second-round glass vials with substrate stock in an ordinary OFF-DECK rack following round2_predose.csv; evaporate DCM under the approved method, cap/label and preserve dry SM. Do not add mesitylene/catalyst yet, move the active block or touch the running robot. Only ONE reaction block is used.")
+            protocol.delay(minutes=CONFIG["chemistry"]["reaction_minutes"])
         finally:
             hs.deactivate_shaker()
             hs.deactivate_heater()
-        protocol.pause("Reaction hold complete. At the next manual-move prompt, use the HTE-validated thermal handling SOP to move the sealed block off the heater to slot 3 for cooling. If that SOP requires a cool module, wait for white status first. Keep sealed until cooled to the validated opening temperature.")
+        protocol.pause("Reaction hold complete. At the next manual-move prompt, use HTEL's approved thermal handling procedure to move the sealed block off the heater to slot 3. Keep sealed until cooled to the approved opening temperature and record cooling time.")
         off_heater()
-        protocol.comment("Start workup protocol with the cooled reaction plate in slot 3. Preserve all sample IDs and well positions.")
+        protocol.comment("Start workup with the cooled block in slot 3. Keep reaction-vial and LC-well mappings distinct. Archive first-round vials after sampling before changing to round two.")
     else:
-        is_instruction = ("Naphthalene was added with substrate; use IS-free workup and LC diluent."
-                          if CONFIG["liquids"].get("naphthalene_addition_stage") == "substrate_stock"
-                          else "Use the configured naphthalene concentration in the workup reagent.")
-        protocol.pause("Reaction plate must be cooled and in slot 3. Open seal under HTE SOP. Confirm homogeneous extraction method and workup composition. " + is_instruction)
+        protocol.pause("Cooled reaction block in slot 3; open seal under HTEL SOP. Mesitylene is already in each reaction: workup and LC diluent contain NO added internal standard. Confirm the approved homogeneous extraction composition before proceeding.")
         transfer_stage("workup")
+        protocol.pause("SCREW every vial cap back on BY HAND before vigorous shaking. Check tightness and mounting. Do not shake open vials at high rpm.")
         onto_heater()
         hs.set_and_wait_for_shake_speed(CONFIG["liquids"]["mix_rpm"])
         protocol.delay(minutes=2)
         off_heater()
-        protocol.pause("Inspect extraction: one homogeneous phase, no precipitate, no aspiration-path bubbles. Use the validated mixing-to-sampling interval; remix under the approved method if delayed. Do not sample one phase or assume pipette prewetting dissolves solids. Confirm sample-specific bottom clearance and immersion at the lowest remaining volume.")
-        transfer_stage("dilution")
-        transfer_stage("sampling")
-        protocol.pause("Seal LC plate and shake 2 minutes with the HTE-validated LC plate/adapter method. Let bubbles clear for the validated interval; check seal, autosampler needle height and minimum remaining sample volume. Submit only after mixing. Use lc_sequence.csv for well/sample mapping. If a transfer was uncertain, quarantine its LC well and prepare a fresh documented dilution; never top it up or restart the whole workup.")
+        protocol.pause("After vigorous shaking, keep ALL reaction vials screw-capped until their sampling batch. Let bubbles clear briefly. No stir bars are present.")
+        protocol.pause("Sample promptly after vigorous mixing and bubble settling. If distinct layers, solids in the aspiration path or bubbles are obvious, pause for review; do not choose a layer or assume repeated aspiration dissolves solids. Keep the tip above the bottom and below the liquid surface.")
+        batches=sorted({op["lc_batch"] for op in OPERATIONS if op["stage"]=="sampling"})
+        for batch in batches:
+            active=[op["source_well"] for op in OPERATIONS if op["stage"]=="sampling" and op["lc_batch"]==batch]
+            active=list(dict.fromkeys(active))
+            protocol.pause("Sampling batch "+str(batch)+": while these vials are CAPPED, gently invert/remix them, let visible bubbles settle, then UNSCREW/REMOVE the caps ONLY from "+", ".join(active)+". Keep all other reaction vials capped. Confirm caps lie below the 45 mm labware clearance envelope. Resume only with these aspiration targets open.")
+            transfer_stage("dilution",batch)
+            transfer_stage("sampling",batch)
+            protocol.pause("LC preparation batch "+str(batch)+" complete. Robot is PAUSED. RECAP the reaction vials just sampled by hand; keep the remaining vials capped. Keep the preparation plate seated in slot 6. Using the matching rows in lc_sequence.csv, with one fresh manual-pipette tip per sample, gently mix its completed LC well by aspirating/dispensing 500 uL five times without blowing air into the liquid, then transfer 900 uL into its fresh labeled HPLC screw-cap vial. Discard that tip before the next sample. Tighten the HPLC vial caps by hand, invert/mix briefly and submit this completed batch for LC injection BEFORE resuming the robot. Do not transfer wells whose sample has not been added. Never move the preparation plate during this pause. Start the next LC sequence only after its vials are ready; combine exports via the provided local script. No optimization until ALL first-round injections finish.")
+        protocol.comment("All sample dilutions prepared. Retain reaction-vial archives and LC plate residuals, and record actual sample/vial identities and batch start times.")
 '''
 
 
 def validate_definition_geometry(config, definitions, rows):
     """Reject incompatible well maps and multichannel pitch before making protocols."""
-    from .io import finite, wells
+    from .io import finite, reaction_wells
     for kind, definition in definitions.items():
-        needed = {row["well"] for row in rows}
-        if kind == "reaction" and config["design"].get("round2_predosed"):
-            needed.update(wells()[:config["design"]["round2_total"]])
+        if kind == "reservoir":
+            from .planning import reservoir_source_pools
+            needed = {w for pool in reservoir_source_pools(config).values() for w in pool}
+            if not needed.issubset(definition["wells"]):
+                raise ValueError("Reservoir definition lacks source channels")
+            if any(definition["wells"][w]["totalLiquidVolume"] < config["stock_preparation"]["reservoir_max_fill_ul"] for w in needed):
+                raise ValueError("Reservoir definition capacity is less than the configured fill limit")
+            continue
+        needed = {row["lc_well"] if kind == "lc" else row["well"] for row in rows}
+        if kind == "lc" and config["robot"].get("pad_lc_diluent_columns"):
+            needed = {f"{r}{well[1:]}" for well in needed for r in "ABCDEFGH"}
         defined = definition.get("wells", {})
         if not needed.issubset(defined):
-            raise ValueError(f"{kind} definition lacks campaign well addresses; 24-vial racks require a different protocol and heating plan")
+            raise ValueError(f"{kind} definition lacks campaign well addresses; supply the matching rack geometry")
         volume = (config["chemistry"]["reaction_volume_ul"]+config["liquids"]["workup_ul"]
                   if kind == "reaction" else config["liquids"]["aliquot_ul"]+config["liquids"]["diluent_ul"])
         for key in needed:
             if finite(defined[key]["totalLiquidVolume"], "well capacity", 0) < volume:
                 raise ValueError(f"{kind} well {key} capacity is less than the planned liquid volume")
         for col in range(1, 13):
+            if kind == "reaction" and not config["robot"]["reaction_multichannel"]:
+                break
             column = [f"{r}{col}" for r in "ABCDEFGH"]
             if not set(column).issubset(needed):
                 continue
@@ -188,7 +200,7 @@ def export(config, inventory, design, output, live=False, history=None, stage="a
     validate_config(config, live=live, live_scope=scope)
     definitions = {}
     from .io import read_json
-    for kind in ("reaction", "lc"):
+    for kind in ("reaction", "lc", "reservoir"):
         definition = config["robot"].get(kind+"_definition_path")
         if definition:
             definitions[kind] = read_json(definition)
@@ -219,35 +231,46 @@ def export(config, inventory, design, output, live=False, history=None, stage="a
     write_csv(output / "stock_preparation.csv", stocks)
     # Different source loads for dose vs workup. Common reservoir stock bottles stay off deck.
     deck = []
-    for deck_stage, members in [("dose_and_react", {"substrate", "assembly", "round2_predose"}), ("workup", {"workup", "dilution"})]:
+    for deck_stage, members in [("dose_and_react", {"substrate", "internal_standard", "assembly"}), ("workup", {"workup", "dilution"})]:
         from collections import defaultdict
         use = defaultdict(float)
         for op in ops:
             if op["stage"] in members:
                 use[(op["reagent"],op["source_slot"],op["source_well"])] += op["aspirated_ul_per_channel"] * op["channels"]
         for r in stocks:
-            address = (r["reagent"],r["source_slot"],r["source_well"])
+            address = (r["reagent"],int(r["source_slot"]),r["source_well"])
             if address in use:
                 deck.append({"protocol": deck_stage, "reagent": r["reagent"], "source_slot": r["source_slot"],
                              "source_well": r["source_well"], "load_ul": math_ceil10(use[address] + r["dead_ul"]),
-                             "stock_mM": r["stock_mM"], "naphthalene_stock_mM": r["naphthalene_stock_mM"],
+                             "stock_mM": r["stock_mM"],
                              "solvent": r["solvent"]})
     write_csv(output / "deck_loads.csv", deck)
     write_json(output / "operations.json", ops)
     write_json(output / "tip_budget.json", tip_budget(ops))
-    write_csv(output / "lc_sequence.csv", [{"sample_id": r["sample_id"], "well": r["well"], "round": r["round"]} for r in rows])
-    if any(op["stage"] == "round2_predose" for op in ops):
-        from .io import wells
+    sequence=[{"sample_id":r["sample_id"],"well":r["lc_well"],"reaction_well":r["well"],
+               "lc_batch":wells().index(r["lc_well"])//config["robot"]["lc_batch_size"]+1,"round":r["round"]} for r in rows]
+    write_csv(output / "lc_sequence.csv",sequence)
+    for batch in sorted({r["lc_batch"] for r in sequence}):
+        write_csv(output/f"lc_batch{batch:02d}_injections.csv",[
+            {"inj_no":i,"sample_id":r["sample_id"],"method_id":config["analytics"]["method_id"] or "",
+             "vial_position":"","injection_name":"","type":""}
+            for i,r in enumerate([r for r in sequence if r["lc_batch"]==batch],1)])
+    occupied={r["lc_well"] for r in rows}
+    padding=sorted({w for op in ops if op["stage"]=="dilution" for w in op["destination_wells"]}-occupied)
+    write_csv(output/"lc_padding_wells.csv",[{"well":w,"contents":"Diluent only; NO sample; DO NOT INJECT"} for w in padding],fields=["well","contents"])
+    if int(rows[0]["round"]) == 1 and config["design"]["round2_predosed"]:
+        from .io import reaction_wells
         n0 = config["chemistry"]["substrate_molarity_M"]*config["chemistry"]["reaction_volume_ul"]
         write_csv(output/"round2_predose.csv", [{"round": 2, "sample_id": f"R2-{i:03d}", "well": well,
-                  "substrate_umol": n0, "sm_stock_ul": n0/config["liquids"]["substrate_stock_mM"]*1000,
-                  "naphthalene_predosed_umol": n0*config["liquids"].get("naphthalene_substrate_stock_mM", 0)/config["liquids"]["substrate_stock_mM"],
-                  "storage": "Cap promptly; retain 25 uL stock toluene (or configured dose); no evaporation; verify retained volume before catalysts"}
-                  for i, well in enumerate(wells()[:config["design"]["round2_total"]], 1)])
+                  "lc_well": wells()[i-1], "substrate_umol": n0,
+                  "sm_stock_ul": n0/config["liquids"]["substrate_stock_mM"]*1000,
+                  "internal_standard_predosed_umol": 0, "substrate_solvent_retained_ul": 0,
+                  "storage": "MANUAL OFF DECK during R1; dose SM only in DCM, evaporate completely under HTEL method, cap/label dry SM. Add mesitylene/catalysts only after loading the SAME block for R2."}
+                  for i, well in enumerate(reaction_wells(config)[:config["design"]["round2_total"]], 1)])
     stages = ("dose_and_react", "workup") if stage == "all" else (stage,)
     for protocol_stage in stages:
         prefix = "# Generated, self-contained. Keep this file with its dosing and deck-load CSVs.\n"
-        prefix += f"STAGE = {protocol_stage!r}\nDEMO = {not live!r}\nCONFIG = {config!r}\nOPERATIONS = {ops!r}\nDEFINITIONS = {definitions!r}\n"
+        prefix += f"STAGE = {protocol_stage!r}\nROUND = {int(rows[0]['round'])!r}\nDEMO = {not live!r}\nCONFIG = {config!r}\nOPERATIONS = {ops!r}\nDEFINITIONS = {definitions!r}\n"
         protocol_name = f"Dual-ligand HTE R{rows[0]['round']} {protocol_stage}"
         runtime = RUNTIME.replace('"protocolName": "Dual-ligand HTE"', '"protocolName": '+repr(protocol_name))
         atomic_text(output / f"{protocol_stage}.py", prefix + runtime)
