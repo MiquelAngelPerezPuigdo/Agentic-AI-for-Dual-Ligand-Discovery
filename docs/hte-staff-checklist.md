@@ -6,7 +6,7 @@
 
 - Fit **p300 single GEN2 left; p300 multi GEN2 right**. Single only for 13 mm-pitch reaction vials. Check block/latch, offsets, cap height <=45 mm and tips >1 mm above bottoms. Simulate released Python locally.
 - Use matching `dosing.csv`, `stock_preparation.csv`, `deck_loads.csv`, `lc_sequence.csv` and `round2_predose.csv`. A software colleague handles release and LC imports. Stocks and initial scoring are outside the clock.
-- Have 71 reaction vials/caps, 71 sample HPLC vials/caps plus standards, two LC preparation plates, fresh tip racks and >=71 manual sample tips. Confirm the **full 1.7-min LC cycle** and batch handoff.
+- Have 71 reaction vials/caps, 71 autosampler-compatible HPLC vials/caps plus standards, two 96-well deep-well preparation plates matching the supplied VWR 2.2 mL definition, fresh tip racks and >=71 manual sample tips. Confirm the **full 1.7-min LC cycle** and batch handoff.
 
 ## Prepare stocks
 
@@ -26,8 +26,8 @@ Correct masses for assay. **Load stage-specific CSV volumes, not bulk preparatio
 |---|---|
 | 1 / 4 | Ligand source racks; exact CSV addresses; L07 absent |
 | 2 | A1 SM/DCM; A2 Pd; A3 toluene; A8 mesitylene. Quench A4/A6/A9; diluent A5/A7/A10/A11/A12 |
-| 3 / 10 | Reaction block for pipetting / heater-shaker with flat adapter |
-| 6 | 96-well LC preparation plate; keep seated during sampling |
+| 3 / 10 | Reaction block: staff move it by hand at App prompts; pipetting / heater-shaker |
+| 6 | 96-well 2.2 mL deep-well LC preparation plate; stays here, no module shaking |
 | 5 / 8 / 9 | Single tips / multi tips / multi tips. Keep 7 and 11 empty |
 
 ## Calibration during hold one - 14 injections
@@ -50,7 +50,7 @@ Follow App pauses. Open only the indicated vials; hand-tighten all caps before h
 | 4 / Cool | Move the sealed block off the heater. Cool before opening. Load workup and its matching sources. |
 | 5 / Quench | Add **500 µL quench** per vial. Hand-recap ALL. Shake **1500 rpm, 2 min**, heater off; return to slot 3. |
 | 6 / Sample | Remix the indicated capped batch; let bubbles settle, then uncap only those vials. Robot adds **20 µL extract to 980 µL diluent** with fresh sample tips. |
-| 7 / LC handoff | At pause, recap reaction vials. Keep plate seated. Fresh manual tip per completed well: **mix 500 µL x5**, avoiding air; transfer **900 µL** to labelled HPLC vial. Cap/invert. **Start LC batch before resuming robot.** Never take unfinished wells. |
+| 7 / LC handoff | At pause, recap reaction vials. LC plate stays in slot 6; no shaker move. Fresh manual tip per completed 1 mL well: **mix 500 µL x5**, avoiding air; transfer **900 µL** to labelled HPLC vial. Cap/invert. **Start LC batch before resuming robot.** Never take unfinished wells. |
 | 8 / Select R2 | After all **48 results** pass QC, software selects **22 new pairs + L17 reference**. Archive R1 vials; fit the 23 dry predosed vials into the SAME block. Check orientation. |
 | 9 / R2 | Refill from R2 deck loads. **No SM redose.** Add selected stocks; reference uses **75 µL L17**, no ligand B. Cap; repeat 4 h reaction/workup. Sample 8/8/7. LC well **H3 is diluent only: do not inject.** |
 
