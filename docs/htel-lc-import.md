@@ -1,8 +1,10 @@
-# HTEL Chromeleon import / calibration
+# HTEL peak CSV import and algorithmic quantification
 
 Use calibrated integrated UV peak areas for yield; MS is identity support. The old supplied CSV establishes format only. Its RTs, names and wavelength settings do not validate the requested 1.7-minute method. The supplied Thermo RAW is MS data, not raw DAD for MOCCA.
 
-**Processing chain:** HTEL's LC method → Chromeleon peak integration → exported UV areas → our SM/product calibration against mesitylene → yield/QC → Claude feedback. Standards are required. Chromeleon can calculate concentrations for comparison; feed **areas** into Python and apply calibration once.
+**Processing chain:** HTEL integrated-peak CSV → Python calibration and mesitylene normalization → yield/QC → Claude feedback. Our workstation needs no Chromeleon installation or concentration export. HTEL's instrument software performs acquisition/peak integration upstream; the importer retains compatibility with its supplied CSV layout. Standards remain required.
+
+**Yield calculation is deterministic.** Python matches peaks to measured reference windows, fits analyte/IS area ratios against known standard concentrations, applies the recorded workup/dilution volumes and divides product amount by starting SM amount. With the current 750 µL extract, 50-fold LC dilution and 25 µmol SM, `yield (%) = 0.15 × product concentration in the LC vial (µM)`. Invalid results fail QC; nondetections can be bounds rather than fabricated zeros. Claude receives accepted measurements and selects conditions; it does not calculate or estimate experimental yields.
 
 ## Configure once from authentic standards
 
@@ -12,7 +14,7 @@ The 14-sample plan is `hte_inputs/calibration_template.csv`: each analyte blank 
 
 ## One explicit mapping per acquisition sequence
 
-Chromeleon's wide export lacks method ID and may repeat names. Copy each generated `lc_batchNN_injections.csv`, fill actual `method_id` and optionally actual `vial_position`, `injection_name`, `type`. Map `inj_no` to the canonical sample ID. Do not assume numbering continues across batches. Maps must describe actual accepted injections, not just intended order; archive replacements/rejections and keep one accepted measurement per sample.
+HTEL's wide peak export lacks method ID and may repeat names. Copy each generated `lc_batchNN_injections.csv`, fill actual `method_id` and optionally actual `vial_position`, `injection_name`, `type`. Map `inj_no` to the canonical sample ID. Do not assume numbering continues across batches. Maps must describe actual accepted injections, not just intended order; archive replacements/rejections and keep one accepted measurement per sample.
 
 ```csv
 inj_no,sample_id,method_id
@@ -37,7 +39,7 @@ python -m hte.cli --config local_data/campaign.json \
   --output local_data/calibration.csv
 ```
 
-Fit blank plus five levels; exclude independent checks. Wrong method/channel, ambiguous/missing peaks, poor fit or failed checks stop publication. For a truly absent calibration-blank analyte omitted by Chromeleon, add `--reviewed-absences local_data/calibration-absences.csv` to `calibration-from-peaks`. Fields: `sample_id,analyte,method_id,reviewed_by,note`. Enter actual review details after inspecting the blank; `practice-analytics` supplies an empty template. Only planned zero-analyte blanks qualify; reviews conflicting with measured peaks are rejected. A reviewed zero area is recorded without inventing a chromatogram peak or RT.
+Fit blank plus five levels; exclude independent checks. Wrong method/channel, ambiguous/missing peaks, poor fit or failed checks stop publication. For a truly absent calibration-blank analyte omitted from the export, add `--reviewed-absences local_data/calibration-absences.csv` to `calibration-from-peaks`. Fields: `sample_id,analyte,method_id,reviewed_by,note`. Enter actual review details after inspecting the blank; `practice-analytics` supplies an empty template. Only planned zero-analyte blanks qualify; reviews conflicting with measured peaks are rejected. A reviewed zero area is recorded without inventing a chromatogram peak or RT.
 
 Configure measured LOQs. For reaction nondetections, `missing_analyte_policy="censor"` uses those LOQs to give upper bounds; default is rejection. Pilot/calibration absence reviews do not change this reaction policy.
 
@@ -52,10 +54,9 @@ No key or paid calls. Outputs:
 - `pilot_preparation.csv`: seven manually prepared 1 mL samples using independent 10 mM SM/product check masters, 5 mM analytical mesitylene and matched matrix.
 - `pilot_plan.csv`: expected concentrations. Mixtures contain SM +product =666.667 µM; mesitylene stays at 66.667 µM. Sequence: 0/10/50/90/100% product, analyte-free IS blank immediately after the high-product sample, then an independently prepared 50/50 repeat.
 - `pilot_injection_map.csv`, `calibration_injection_map.csv`, `absence_review_template.csv`: fill actual method/sequence and reviewer details locally.
-- `chromeleon_concentrations_template.csv`: optional table for concentrations calculated inside Chromeleon; values start blank.
 - `practice_report.json`, labelled `synthetic/`: mock vendor exports → 14-injection calibration → pilot replay, plus nine challenges. Synthetic reviews, methods and RTs are never real setup evidence.
 
-Run real pilot samples with the intended method, injection volume, wavelength and Chromeleon processing/export settings. Prefer a pre-hackathon run, or schedule during hold one if LC access permits. Seven extra injections take nominally 11.9 min at a verified 1.7-min cycle. They are separate from the 14 calibration injections and 71 reaction samples; the reaction schedule/configuration is unchanged.
+Run real pilot samples with the intended method, injection volume, wavelength and HTEL processing/export settings. Prefer a pre-hackathon run, or schedule during hold one if LC access permits. Seven extra injections take nominally 11.9 min at a verified 1.7-min cycle. They are separate from the 14 calibration injections and 71 reaction samples; the reaction schedule/configuration is unchanged.
 
 After acquiring actual files, record reviewed zero-analyte absences and run:
 
@@ -70,8 +71,6 @@ python -m hte.cli --config local_data/campaign.json verify-pilot \
 ```
 
 Keep the concentration key out of integration/assignment; compare after processing. Replay requires exact sample coverage, valid calibration and each quantifiable analyte within **15% relative error** of its known concentration. Expected zeros require a named absence review and no detected peak in their window; they remain bounds. Failures return a nonzero command exit and write `pilot_report.json`/`comparisons.csv`. Replay never selects reactions, changes release flags or calls Claude. `PILOT-` IDs cannot substitute for real reaction results.
-
-For an independent Chromeleon concentration cross-check, have HTEL apply the same standards/calibration in Chromeleon and export or copy its calculated values into `chromeleon_concentrations_template.csv`. Columns: `sample_id,analyte,concentration_uM,method_id,channel`; all 14 sample/analyte rows must be present, in µM. Add `--chromeleon-concentrations local_data/pilot-chromeleon-concentrations.csv` to `verify-pilot`. The replay compares these values with truth and Python, using the same 15% tolerance (pairwise error divided by the expected concentration); disagreements fail the pilot. Expected-zero native results must be at or below the configured LOQ. Native concentrations are never treated as peak areas or calibrated again. This optional comparison interface is tested with synthetic values; no actual native-concentration export has been provided yet.
 
 Optionally append post-workup Pd/ligand matrix-spike samples with `PILOT-` IDs and independently known final concentrations, accounting for background. These test interference in the chosen matrices, without establishing every ligand's recovery or quench completeness.
 
@@ -88,7 +87,7 @@ Open `output/mock-hplc/mock-hplc-report.html` locally. The offline report lets y
 
 Six valid cases test low/high yield, small RT drift, shared injection-area loss and a resolved impurity. Six faults test RT assignment, ambiguous peaks, missing/outlier IS, incomplete export and missing selected UV area. The remaining two deliberately show hidden coelution and product-area loss passing ordinary QC but failing a known-mixture check. Truth stays separate from the concentration calculation; rejected numeric values are removed from usable feedback. No optimizer is called.
 
-The original file contains integrated areas, not raw traces. Peak widths, 1.7-minute RTs, detector responses and noise here are invented. Trace component areas are numerically checked, but integrated export decisions are imposed explicitly: this tests the importer/calibration/QC workflow, not actual Chromeleon integration or a real 1.7-minute separation. No API key or robot connection is used; campaign settings and the frozen first batch are unchanged.
+The original file contains integrated areas, not raw traces. Peak widths, 1.7-minute RTs, detector responses and noise here are invented. Trace component areas are numerically checked, but integrated export decisions are imposed explicitly: this tests the importer/calibration/QC workflow, not upstream peak integration or a real 1.7-minute separation. No API key or robot connection is used; campaign settings and the frozen first batch are unchanged.
 
 ## Reaction results and final 22
 

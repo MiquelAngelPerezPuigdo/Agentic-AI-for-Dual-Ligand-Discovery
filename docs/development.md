@@ -7,7 +7,7 @@
 | `hte/inventory.py`, `io.py` | Immutable ligand IDs, availability, checked CSV/JSON and hashes |
 | `hte/embeddings.py` | Frozen T5 embedding generation/loading; model downloads are optional |
 | `hte/scoring.py`, `design.py` | Small cached Claude requests, strict scores, repeated aggregation and pair selection |
-| `hte/analytics.py`, `ingestion.py` | Chromeleon normalization, calibration/QC and complete-batch joins |
+| `hte/analytics.py`, `ingestion.py` | HTEL peak-table normalization, calibration/QC and complete-batch joins |
 | `hte/analytical_practice.py`, `scripts/mock-hplc-trials.py` | Calibration/pilot replay and visual mock-LC fault challenges |
 | `hte/planning.py`, `protocols.py` | Stoichiometry, reserves, deck loads, timing and standalone local OT-2 Python |
 | `hte/workflow.py` | Complete LC event → measured-feedback scoring → next batch, with replay guards |

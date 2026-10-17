@@ -39,7 +39,7 @@ def main():
     n = commands.add_parser("normalize")
     n.add_argument("input")
     n.add_argument("--output", required=True)
-    n.add_argument("--injections", help="Explicit Chromeleon inj_no to sample_id/method_id mapping CSV")
+    n.add_argument("--injections", help="Explicit HTEL export inj_no to sample_id/method_id mapping CSV")
     cal = commands.add_parser("calibration-from-peaks", help="Build and QC calibration from normalized authentic-standard peaks")
     cal.add_argument("--peaks", required=True)
     cal.add_argument("--plan", default="hte_inputs/calibration_template.csv")
@@ -53,7 +53,6 @@ def main():
     pilot.add_argument("--calibration", required=True)
     pilot.add_argument("--plan", required=True)
     pilot.add_argument("--reviewed-absences")
-    pilot.add_argument("--chromeleon-concentrations", help="Optional long-format concentration_uM table for independent comparison")
     pilot.add_argument("--output", required=True)
     ready = commands.add_parser("complete-export", help="Invoke only after every expected LC injection completed")
     for key in ("peaks", "dosing", "output"):
@@ -92,8 +91,7 @@ def main():
         if args.command == "verify-pilot":
             from .analytical_practice import verify
             report=verify(read_json(args.config),args.exports,args.injections,args.calibration,
-                          args.plan,args.output,args.reviewed_absences,
-                          native_concentrations_path=args.chromeleon_concentrations)
+                          args.plan,args.output,args.reviewed_absences)
             print(report)
             if not read_json(report)["pilot_pass"]:
                 raise ValueError("Known-mixture pilot failed; inspect pilot_report.json")

@@ -32,7 +32,7 @@ Correct masses for assay. **Load stage-specific CSV volumes, not bulk preparatio
 
 ## Calibration during hold one - 14 injections
 
-**Each SM and product:** blank + **10, 50, 150, 350, 800 µM**, plus independent **666.7 µM** check. **Mesitylene stays at 66.7 µM in every vial.** Use matched matrix and [calibration recipes](stocks-and-calibration.md). Chromeleon exports UV areas; Python calibrates and calculates yields. The software colleague handles method/RT settings and [pilot checks](htel-lc-import.md).
+**Each SM and product:** blank + **10, 50, 150, 350, 800 µM**, plus independent **666.7 µM** check. **Mesitylene stays at 66.7 µM in every vial.** Use matched matrix and [calibration recipes](stocks-and-calibration.md). HTEL exports UV areas; Python calibrates and calculates yields. The software colleague handles method/RT settings and [pilot checks](htel-lc-import.md).
 
 ---
 
