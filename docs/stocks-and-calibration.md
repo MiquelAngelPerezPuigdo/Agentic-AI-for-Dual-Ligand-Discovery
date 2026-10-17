@@ -45,4 +45,4 @@ Prepare seven **1.00 mL vials per analyte**. Every vial, including blank/check, 
 
 Fit blank +five levels; exclude the check. Require **R² >=0.995**, **check error <=15%**, separation and measured LOQs on the actual method. The lowest standard is not automatically the LOQ. Record method, wavelength and injection volume.
 
-Maximum sample: 666.667 µM analyte; 64.7 µg/mL product or 107.4 µg/mL SM. Calibration must establish the detector range. Follow [LC import instructions](htel-lc-import.md); omitted peaks need review, not automatic zeros. Retain failed checks/rejected measurements.
+Maximum sample: 666.667 µM analyte; 64.7 µg/mL product or 107.4 µg/mL SM. Calibration must establish the detector range. [LC import and pilot replay](htel-lc-import.md) covers reviewed blank absences and optional mixed-standard practice. Retain failed checks/rejected measurements.

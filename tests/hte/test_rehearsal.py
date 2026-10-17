@@ -37,6 +37,8 @@ def test_offline_loop_scores_feedback_without_network_or_repeated_events(tmp_pat
     assert report["first_round_qc_pass"] and report["incomplete_export_ignored"]
     assert report["duplicate_event_ignored"] and report["no_pair_repeats"] and report["no_substrate_redose"]
     assert report["no_internal_standard_redose"]
+    assert report["analytical_practice_pass"]
+    assert (report_path.parent/report["analytical_practice_report"]).exists()
     next_dosing = report_path.parent/report["next_dosing_csv"]
     rows = read_csv(next_dosing)
     assert sum(row["selection_method"] == "llm" for row in rows)==22

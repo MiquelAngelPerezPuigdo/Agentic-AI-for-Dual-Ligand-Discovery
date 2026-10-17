@@ -44,6 +44,17 @@ def main():
     cal.add_argument("--peaks", required=True)
     cal.add_argument("--plan", default="hte_inputs/calibration_template.csv")
     cal.add_argument("--output", required=True)
+    cal.add_argument("--reviewed-absences", help="Human-reviewed absent peaks for zero-analyte calibration blanks")
+    practice = commands.add_parser("practice-analytics", help="Offline calibration/pilot challenges and real pilot preparation templates")
+    practice.add_argument("--output", required=True)
+    pilot = commands.add_parser("verify-pilot", help="Check real known-mixture LC exports; never call Claude or select reactions")
+    pilot.add_argument("--exports", nargs="+", required=True)
+    pilot.add_argument("--injections", nargs="+", required=True)
+    pilot.add_argument("--calibration", required=True)
+    pilot.add_argument("--plan", required=True)
+    pilot.add_argument("--reviewed-absences")
+    pilot.add_argument("--chromeleon-concentrations", help="Optional long-format concentration_uM table for independent comparison")
+    pilot.add_argument("--output", required=True)
     ready = commands.add_parser("complete-export", help="Invoke only after every expected LC injection completed")
     for key in ("peaks", "dosing", "output"):
         ready.add_argument("--"+key, required=True)
@@ -73,6 +84,19 @@ def main():
         if args.command == "rehearse-loop":
             from .rehearsal import run
             print(run(args.output, args.inventory, args.config, args.evidence, args.embeddings))
+            return
+        if args.command == "practice-analytics":
+            from .analytical_practice import run
+            print(run(args.output,args.config))
+            return
+        if args.command == "verify-pilot":
+            from .analytical_practice import verify
+            report=verify(read_json(args.config),args.exports,args.injections,args.calibration,
+                          args.plan,args.output,args.reviewed_absences,
+                          native_concentrations_path=args.chromeleon_concentrations)
+            print(report)
+            if not read_json(report)["pilot_pass"]:
+                raise ValueError("Known-mixture pilot failed; inspect pilot_report.json")
             return
         config = read_json(args.config)
         inv = campaign_inventory(args.inventory, config)
@@ -139,7 +163,7 @@ def main():
             normalize_export(config, args.input, args.output, injections_path=args.injections)
         elif args.command == "calibration-from-peaks":
             from .analytics import calibration_from_peaks
-            calibration_from_peaks(config, args.peaks, args.plan, args.output)
+            calibration_from_peaks(config, args.peaks, args.plan, args.output, args.reviewed_absences)
         elif args.command == "complete-export":
             from .analytics import complete_export
             complete_export(config, args.peaks, args.dosing, args.output)

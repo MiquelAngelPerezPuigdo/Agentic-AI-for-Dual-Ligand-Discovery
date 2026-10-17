@@ -147,6 +147,8 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
     _,second_peaks=fixtures(config,next_dosing)
     write_csv(out/"round2_peaks.csv",second_peaks)
     _,second_report=analyze(config,next_dosing,second_peaks,calibration,out/"analysis2")
+    from .analytical_practice import run as practice_analytics
+    analytical_report=practice_analytics(out/"analytical_practice",config_path)
     report = {"synthetic_only": True, "paid_api_calls": 0, "physical_execution_allowed": False,
               "prompt_caching_enabled": prompt_cache_settings(scoring_config["llm"])["enabled"],
               "live_cache_hits_verified": False,
@@ -159,6 +161,8 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
               "feedback_samples": len(results), "remaining_pairs_scored": len(pairs)-len(tested),
               "round2_pairs":sum(row["kind"]=="pair" for row in next_dosing), "round2_reference_wells":1,
               "second_round_qc_pass":second_report["batch_qc_pass"], "no_pair_repeats": no_repeats,
+              "analytical_practice_pass":read_json(analytical_report)["all_expected_outcomes_passed"],
+              "analytical_practice_report":str(analytical_report.relative_to(out)),
               "no_substrate_redose": no_redose, "no_internal_standard_redose": correct_is,
               "incomplete_export_ignored": not ignored,
               "duplicate_event_ignored": replay == state and len(calls) == after,
