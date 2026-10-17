@@ -215,6 +215,7 @@ def input_record(staff=False):
         "software_validation.json", "scripts/build-hte-pdf.py", "hte/planning.py", "hte/io.py",
     ]
     paths += ["hte/protocols.py", "hte/scoring.py", "hte/analytics.py", "hte/analytical_practice.py", "hte/cli.py",
+              "hte/ingestion.py", "hte/workflow.py", "scripts/hte-lc-results.py",
               "hte_inputs/labware/paradox_48_wellplate_2000ul_hs.json",
               "hte_inputs/labware/vwr_96_wellplate_2200ul_hs.json",
               "campaigns/hackathon2026/round1_design.csv", "campaigns/hackathon2026/scoring/campaign_provenance.json"]

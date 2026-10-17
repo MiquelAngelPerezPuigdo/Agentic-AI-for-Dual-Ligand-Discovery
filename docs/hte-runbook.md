@@ -36,7 +36,7 @@ Round one: **48 distinct pairs, all 30 available ligands**; L07 is unavailable. 
 
 ## Workup and LC sampling
 
-1. **Cool sealed vials off the heater.** Open for addition; add **500 µL 9:1 ACN/water +0.15% formic acid**. Nominal extract: 750 µL, 0.1% acid, 1.25 mL headspace. Quench and diluent contain no IS.
+1. **Cool sealed vials off the heater before opening.** The App separately waits for module temperature <=30 °C before workup; its reading does not establish vial temperature. Open for addition; add **500 µL 9:1 ACN/water +0.15% formic acid**. Nominal extract: 750 µL, 0.1% acid, 1.25 mL headspace. Quench and diluent contain no IS.
 2. **Hand-recap every vial.** Shake **1500 rpm, 2 min**, heater off; return to slot 3. The block must have cooled for workup.
 3. **One LC plate per round.** Let bubbles settle after the automated extract shake; open the indicated reaction vials for sampling. Other vials stay capped.
 4. **Robot dilution:** fresh tip per sample; two slow same-well prewet cycles, without blowing air into the extract. Aspirate 21 µL at 1.5 mm, retain 1 µL reverse surplus, add 2 µL air gap and dispense nominal **20 µL into 980 µL LC diluent**, noncontact. Discard the tip; never revisit the source after destination contact.
@@ -57,6 +57,6 @@ For an uncertain LC dilution, remix the original extract and prepare a fresh doc
 
 ## Changeover and finish
 
-During R1 LC, after all R1 sampling is complete, archive those vials and fit the 23 dry predosed vials into the same block; verify orientation. After all **48 R1 results** pass QC, the pipeline selects **22 new pairs +L17 reference**. Refill sources from R2 deck loads and add the selected stocks. **No SM redosing; mesitylene is added once after dry-down.** Repeat reaction/workup.
+During R1 LC, after all R1 sampling is complete, archive those vials and fit the 23 dry predosed vials into the same block; verify orientation. After all **48 R1 results** pass QC, the pipeline selects **22 new pairs +L17 reference**. The R2 pause confirms this changeover; do not replace already-loaded new vials again. Refill R2 deck loads and **remove all 23 caps before dosing**. **No SM redosing; mesitylene is added once after dry-down.** Repeat reaction/workup.
 
 Stop the clock after all 23 final injections and quantitative analysis. Archive source exports, maps, assay/stock records, method/channel, calibration, QC, times, scoring/cache records, final CSVs, matching protocols and robot JSON logs. Keep experimental data private pending team agreement.

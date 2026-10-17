@@ -14,11 +14,85 @@ from hte.inventory import candidates, campaign_inventory, load_inventory
 from hte.io import file_lock, read_csv, read_json, write_csv
 from hte.planning import (dosing_rows, required_validations, schedule,
                           validate_config, validate_dosing)
-from hte.protocols import export
+from hte.protocols import export, validate_definition_geometry
 from hte.scoring import score_candidates
 from hte.workflow import iterate, watch
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+@pytest.mark.parametrize("fault,message", [
+    ("uncentered_reservoir", "centerMultichannel"),
+    ("short_reservoir", "span all eight"),
+    ("high_reservoir_aspiration", "outside the source"),
+    ("high_sample_aspiration", "outside the vial"),
+    ("centered_lc", "individual well centers"),
+])
+def test_dangerous_custom_geometry_is_rejected_before_export(files, data, fault, message):
+    config, _, doses = data
+    definitions = {kind: read_json(config["robot"][kind+"_definition_path"])
+                   for kind in ("reaction", "lc", "reservoir")}
+    if fault == "uncentered_reservoir":
+        definitions["reservoir"]["parameters"]["quirks"].remove("centerMultichannelOnWells")
+    elif fault == "short_reservoir":
+        definitions["reservoir"]["wells"]["A5"]["yDimension"] = 60
+    elif fault == "high_reservoir_aspiration":
+        config["pipetting"]["aspirate_height_mm"] = 40
+    elif fault == "high_sample_aspiration":
+        config["pipetting"]["sample_aspirate_height_mm"] = 32
+    else:
+        definitions["lc"]["parameters"]["quirks"] = ["centerMultichannelOnWells"]
+    with pytest.raises(ValueError, match=message):
+        validate_definition_geometry(config, definitions, doses)
+
+
+@pytest.mark.parametrize("mode,round_number,fault", [("final", 2, "edited_dose"),
+    ("final", 1, "wrong_round"), ("next", 2, "wrong_round")])
+def test_staff_helper_rejects_wrong_or_edited_dosing_before_ingestion(files, tmp_path, monkeypatch, mode, round_number, fault):
+    import runpy
+    import sys
+    doses = read_csv(files/f"round{round_number}/dosing.csv")
+    if fault == "edited_dose": doses[0]["aliquot_ul"] = "10"
+    dosing = tmp_path/"dosing.csv"; write_csv(dosing, doses)
+    monkeypatch.setattr(sys, "argv", ["hte-lc-results.py", mode, "--config", str(files/"campaign.json"),
+        "--dosing", str(dosing), "--exports", "unused.csv", "--injections", "unused-map.csv", "--output", str(tmp_path/"staff")])
+    with pytest.raises(SystemExit) as stopped:
+        runpy.run_path(str(ROOT/"scripts/hte-lc-results.py"), run_name="__main__")
+    assert stopped.value.code == 2 and not (tmp_path/"staff").exists()
+
+
+def test_cli_analyze_returns_failure_when_quantitative_qc_fails(files, tmp_path, monkeypatch):
+    import sys
+    from hte.cli import main
+    peaks = read_csv(files/"round1_peaks.csv")
+    # Keep all samples present but remove one IS peak: completion alone is insufficient.
+    config = read_json(files/"campaign.json")
+    rt = config["analytics"]["references"]["internal_standard"]["retention_time_min"]
+    before = len(peaks)
+    peaks = [p for p in peaks if not (p["sample_id"] == "R1-001" and abs(float(p["retention_time_min"])-rt) < 0.03)]
+    assert len(peaks) == before-1
+    source = tmp_path/"peaks.csv"; write_csv(source, peaks)
+    ready = tmp_path/"ready.json"
+    complete_export(config, source, files/"round1/dosing.csv", ready)
+    monkeypatch.setattr(sys, "argv", ["hte", "--config", str(files/"campaign.json"), "analyze",
+        "--dosing", str(files/"round1/dosing.csv"), "--peaks", str(source), "--ready", str(ready),
+        "--calibration", str(files/"calibration.csv"), "--output", str(tmp_path/"analysis")])
+    with pytest.raises(SystemExit) as stopped: main()
+    assert stopped.value.code == 2
+    assert not read_json(tmp_path/"analysis/qc_report.json")["batch_qc_pass"]
+
+
+def test_modified_vendor_file_cannot_publish_a_completion_marker(files, tmp_path, monkeypatch):
+    from hte.ingestion import ingest_exports
+    source = tmp_path/"vendor.csv"; source.write_text("original vendor content")
+    mapping = tmp_path/"map.csv"; mapping.write_text("original map content")
+    def changing_export(config, source_path, target, injections_path):
+        write_csv(target, read_csv(files/"round1_peaks.csv"))
+        source_path.write_text("replaced while being read")
+    monkeypatch.setattr("hte.ingestion.normalize_export", changing_export)
+    with pytest.raises(ValueError, match="changed during ingestion"):
+        ingest_exports(read_json(files/"campaign.json"), [source], [mapping], files/"round1/dosing.csv", tmp_path/"ingestion")
+    assert not (tmp_path/"ingestion/peaks.ready.json").exists()
 
 
 @pytest.fixture(scope="module")

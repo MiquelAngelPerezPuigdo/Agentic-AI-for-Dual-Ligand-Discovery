@@ -11,6 +11,7 @@ def ingest_exports(config, exports, mappings, dosing_path, output):
     if len({str(Path(p).resolve()) for p in exports}) != len(exports):
         raise ValueError("An LC export was supplied more than once")
     output = new_output(output)
+    source_hashes = {str(path): digest(path) for path in [*exports, *mappings, dosing_path]}
     peaks, seen, provenance = [], set(), []
     for index, (source, mapping) in enumerate(zip(exports, mappings), 1):
         normalized = output / f"part-{index:02d}.csv"
@@ -26,6 +27,8 @@ def ingest_exports(config, exports, mappings, dosing_path, output):
                            "samples": sorted(samples)})
     combined = output / "peaks.csv"
     ready = output / "peaks.ready.json"
+    if any(digest(path) != checksum for path, checksum in source_hashes.items()):
+        raise ValueError("LC source, mapping or dosing changed during ingestion; publish stable completed files")
     write_csv(combined, peaks)
     # Partial batches cannot release the optimizer, regardless of filenames/order.
     complete_export(config, combined, dosing_path, ready)

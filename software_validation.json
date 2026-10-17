@@ -1,8 +1,8 @@
 {
-  "created_utc": "2026-10-17T10:32:33.414486+00:00",
+  "created_utc": "2026-10-17T10:51:05.062464+00:00",
   "campaign": "hackathon2026-paradox48",
   "tests": {
-    "tests": 177,
+    "tests": 190,
     "failures": 0,
     "errors": 0,
     "skipped": 0
@@ -24,7 +24,9 @@
     "R2 dosing/reaction, 23 new predosed vials",
     "R2 automated final LC plate; H3 diluent only and excluded",
     "Generic synthetic 24-well multi-plate regression only; disabled by campaign policy",
-    "Fresh-tip mode, rack replacement and alternative p20 split transfers"
+    "Fresh-tip mode, rack replacement and alternative p20 split transfers",
+    "Actual SDK current_temperature branch exercised for both workup rounds; strict SDK hot-module cooling pause",
+    "R2 new-vial uncapping checked before first aspiration"
   ],
   "language_model_pair_embeddings": {
     "model": "google-t5/t5-base",
@@ -57,7 +59,6 @@
       "pairs": 435,
       "dimensions": 768
     },
-    "mocked_requests": 650,
     "round1_pairs": 48,
     "round1_reference_wells": 0,
     "round1_ligands_covered_in_pairs": 30,
@@ -70,22 +71,23 @@
     "round2_reference_wells": 1,
     "second_round_qc_pass": true,
     "no_pair_repeats": true,
+    "analytical_practice_pass": true,
+    "analytical_practice_report": "analytical_practice/practice_report.json",
     "no_substrate_redose": true,
     "no_internal_standard_redose": true,
     "incomplete_export_ignored": true,
     "duplicate_event_ignored": true,
-    "next_dosing_csv": "feedback_loop/iteration-1a618cf543e56409/next_dosing.csv",
+    "next_dosing_csv": "feedback_loop/iteration-cedff85a73d1f70e/next_dosing.csv",
     "cache_summaries": [
       "initial_scoring/cache_summary.json",
-      "feedback_loop/iteration-1a618cf543e56409/scoring/cache_summary.json"
+      "feedback_loop/iteration-cedff85a73d1f70e/scoring/cache_summary.json"
     ],
     "result_interpretation": "Synthetic yields and mocked rankings validate data flow only.",
-    "analytical_practice_pass": true,
-    "analytical_practice_report": "analytical_practice/practice_report.json",
+    "mocked_requests": 650,
     "initial_mock_requests": 340,
     "feedback_mock_requests": 310,
     "both_prompt_stages_include_17_SI_yields": true,
-    "source_report": "output/automated-lc-rehearsal/rehearsal_report.json"
+    "source_report": "output/final-audit/rehearsal/rehearsal_report.json"
   },
   "live_initial_scoring": {
     "date": "2026-10-16",
@@ -137,7 +139,7 @@
     "round2_paid_selection_has_run": false
   },
   "scoring_prompt": {
-    "version": 6,
+    "version": 7,
     "individual_ligand_ids_names_smiles": 30,
     "full_pair_catalog_in_prompt": false,
     "maximum_anchor_partners_per_request": 8,
@@ -154,7 +156,8 @@
     "ligand_cooperativity_explicit": true,
     "max_output_tokens": 512,
     "output": "ID-keyed scores JSON; only partner IDs",
-    "strict_contract_and_budget_stop_tested": true
+    "strict_contract_and_budget_stop_tested": true,
+    "version_7_change": "Score instruction now names partner_ligand_ids, matching the existing query/schema; chemistry, evidence, scores and frozen R1 selection unchanged. Frozen paid requests remain v6."
   },
   "prompt_caching": {
     "enabled_by_default": true,
@@ -450,5 +453,67 @@
     "chemistry_unchanged": true,
     "r1_single_lc_plate": true,
     "paid_calls_this_update": 0
+  },
+  "full_campaign_review": {
+    "date": "2026-10-17",
+    "report": "docs/rehearsal-results.md#campaign-review---17-october",
+    "new_regression_cases": 13,
+    "all_tests_passed": true,
+    "four_stage_simulation_commands": [
+      {
+        "round": 1,
+        "stage": "dose_and_react",
+        "passed": true,
+        "commands": 2242,
+        "manual_pauses": 5,
+        "source": "output/final-audit/frozen-r1/dose_and_react.py",
+        "log": "output/final-audit/r1-dose_and_react-simulation.json"
+      },
+      {
+        "round": 1,
+        "stage": "workup",
+        "passed": true,
+        "commands": 1735,
+        "manual_pauses": 8,
+        "source": "output/final-audit/frozen-r1/workup.py",
+        "log": "output/final-audit/r1-workup-simulation.json"
+      },
+      {
+        "round": 2,
+        "stage": "dose_and_react",
+        "passed": true,
+        "commands": 942,
+        "manual_pauses": 4,
+        "source": "output/final-audit/rehearsal/round2/dose_and_react.py",
+        "log": "output/final-audit/r2-dose_and_react-simulation.json"
+      },
+      {
+        "round": 2,
+        "stage": "workup",
+        "passed": true,
+        "commands": 858,
+        "manual_pauses": 8,
+        "source": "output/final-audit/rehearsal/round2/workup.py",
+        "log": "output/final-audit/r2-workup-simulation.json"
+      }
+    ],
+    "frozen_initial_design_byte_identical": true,
+    "corrected_real_hardware_api_property": "HeaterShakerContext.current_temperature",
+    "cool_module_guard_before_quench_and_lc": true,
+    "vial_cooling_separately_confirmed_by_operator": true,
+    "manual_cap_and_R2_changeover_prompts_checked": true,
+    "source_geometry_faults_rejected": true,
+    "final_staff_command_validates_dosing_complete_R2_and_input_hashes": true,
+    "cli_analysis_failure_exit_on_failed_qc": true,
+    "changed_vendor_inputs_rejected_before_completion_marker": true,
+    "paid_calls": 0,
+    "physical_robot_runs": 0,
+    "live_release_flags_changed": false,
+    "pending_local_facts": [
+      "Block/LC plate fit, caps, offsets and shaking",
+      "Actual solvent delivery and vial heating/cooling",
+      "Authentic-standard 1.7-min method, quantitative channel/RTs/LOQs",
+      "Full LC-cycle and all handling times within operating budget"
+    ]
   }
 }

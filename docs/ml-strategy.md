@@ -41,7 +41,7 @@ The instruction explicitly asks Claude to assess **ligand cooperativity**, steri
 {"scores":{"L02":61.5,"L03":72}}
 ```
 
-Each key is a requested partner; the anchor is in the query. These numbers score the **pair**, on a 0-100 scale of relative promise. Their values are not calibrated yield predictions. Scores are aggregated directly across cohorts without a fitted cross-cohort calibration; consistency of the common scale is an assumption. The schema/parser rejects extra/missing/duplicate IDs, strings, booleans, nulls, nonfinite numbers and out-of-range scores. An incomplete response cannot release a selection. [Exact accepted prompt](claude-scoring-prompt.txt), [scoring implementation](../hte/scoring.py).
+Each key is a requested partner; the anchor is in the query. These numbers score the **pair**, on a 0-100 scale of relative promise. Their values are not calibrated yield predictions. Scores are aggregated directly across cohorts without a fitted cross-cohort calibration; consistency of the common scale is an assumption. The schema/parser rejects extra/missing/duplicate IDs, strings, booleans, nulls, nonfinite numbers and out-of-range scores. An incomplete response cannot release a selection. [Current prompt preview](claude-scoring-prompt.txt), [scoring implementation](../hte/scoring.py).
 
 Each pair receives **five scores**. Cohort membership stays fixed across repeats, while partner order is shuffled deterministically. Store the arithmetic mean and sample standard deviation. The mean ranks performance promise; the SD describes repeat-to-repeat scoring variability and does not enter selection. It is neither experimental uncertainty nor a calibrated posterior uncertainty. Shared priors, fixed cohorts and the same model can correlate repeated scores. The initial run used **Claude Opus 4.8, 340 requests, 2,175 validated pair scores**.
 
@@ -82,6 +82,8 @@ Accepted initial scoring cost **\$2.7599745**, with **311/340 cache-hit requests
 The current per-campaign cap is **\$20**, using incremental conservative cold-cache reservations before each request and provider usage afterward. The initial all-miss bound was \$28.99; caching made its actual completion cheaper. No SDK retries are enabled; uncertain attempts require explicit review before repayment, and partial scores cannot select a batch. Usage-based estimates are not an account-wide spending limit. Cache/resume/budget records remain with each run. Initial scoring used two workers; feedback uses four. API latency and its five-minute schedule allowance remain unmeasured for real feedback.
 
 ## Reproduction and interpretation
+
+The frozen initial scoring used prompt format 6. Current format 7 corrects the score instruction to refer to `partner_ligand_ids`, matching the query/schema already used; chemistry, evidence and scoring policy are unchanged. [Current prompt preview](claude-scoring-prompt.txt); the original accepted request remains in the frozen scoring record. This wording correction does not rerun scoring or replace the initial selection.
 
 [The campaign folder](../campaigns/hackathon2026/README.md) retains repeated scores, mean/SD ranking, source hashes, model/settings, example request and selection trace. [Development commands](development.md) reproduce the initial design without an API call. Practice loops generate synthetic yields and mocked Claude responses only; they verify data flow and never establish chemical performance. The real second selection waits for experimental results.
 
