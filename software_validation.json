@@ -1,10 +1,10 @@
 {
-  "created_utc": "2026-10-17T09:30:40.312271+00:00",
+  "created_utc": "2026-10-17T10:16:39.327149+00:00",
   "campaign": "hackathon2026-paradox48",
   "tests": {
-    "tests": 169,
-    "errors": 0,
+    "tests": 174,
     "failures": 0,
+    "errors": 0,
     "skipped": 0
   },
   "versions": {
@@ -23,7 +23,7 @@
     "R1 workup, automated one-plate dilution and uncovered LC shaking",
     "R2 dosing/reaction, 23 new predosed vials",
     "R2 automated final LC plate; H3 diluent only and excluded",
-    "Both rounds in optional 24-well split-plate mode",
+    "Generic synthetic 24-well multi-plate regression only; disabled by campaign policy",
     "Fresh-tip mode, rack replacement and alternative p20 split transfers"
   ],
   "language_model_pair_embeddings": {
@@ -396,10 +396,40 @@
     "hardware_cooling_guard_unit_tested": true,
     "plate_sealed_after_shaking_for_autosampler": true,
     "new_acceptance_checks": 9,
-    "optional_split_r1_plate_count": 2,
-    "optional_split_total_moves": 6,
     "physical_fit_and_splash_free_speed_validated": false,
     "twelve_hour_plan_validated": false,
+    "paid_calls_this_update": 0,
+    "single_plate_per_round_required": true,
+    "r1_split_allowed": false
+  },
+  "workup_timing_audit": {
+    "physical_duration_measured": false,
+    "r1_single_lc_plate": true,
+    "full_workup_allowance_minutes": 72,
+    "calculated_subtotal_minutes": 33.530722222222224,
+    "calculated_subtotal_by_round_minutes": [
+      21.162055555555554,
+      12.368666666666666
+    ],
+    "pump_and_programmed_wait_minutes_by_stage": {
+      "workup": 9.813277777777774,
+      "dilution": 3.0952222222222217,
+      "sampling": 12.622222222222225
+    },
+    "shaking_minutes": 8,
+    "individual_screw_cap_actions": 284,
+    "tip_pickup_drop_cycles": 84,
+    "manual_workup_block_and_lc_moves": 8,
+    "simulator_pump_delay_crosschecks": 4,
+    "r2_counts_independent_of_ligand_selection": true,
+    "excluded": [
+      "gantry travel and vertical motion",
+      "tip pickup/drop motion and rack changes",
+      "module ramp/latch time and residual cooling",
+      "all staff pauses, screw caps, plate moves/sealing and LC loading"
+    ],
+    "report_per_export": "workup_timing.json",
+    "seventy_two_minutes_is_a_retained_allowance_not_a_measured_duration": true,
     "paid_calls_this_update": 0
   }
 }

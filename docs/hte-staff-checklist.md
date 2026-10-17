@@ -60,4 +60,4 @@ Stop the clock after **23 final injections and quantitative analysis**. Save exp
 
 Pause for layers, solids at aspiration, persistent bubbles, air uptake or tip contact. Repeated aspiration does not fix solubility. Reuse tips only for approved same-stock/noncontact dosing; samples always get fresh tips. Replace an uncertain dilution with a fresh documented one; do not guess a top-up.
 
-**Timing: 752.7 /720 min with retained allowances.** Measure faster handling or approve a timed split-plate plan before release. **Four LC-plate moves total**, excluding initial loading. [Full procedure and local commands](HTE-operator-handbook.pdf).
+**Timing: 752.7 /720 min with retained allowances.** Workup allowance: 72 min across both rounds; calculated pumping/waits/shaking alone: 33.5 min, excluding caps/movement. Time actual handling before release. **Four LC-plate moves total**, excluding initial loading. [Full procedure and local commands](HTE-operator-handbook.pdf).

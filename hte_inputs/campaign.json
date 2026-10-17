@@ -103,7 +103,8 @@
     "pad_lc_diluent_columns": true,
     "lc_batch_size": 48,
     "capped_clearance_height_mm": 45,
-    "lc_plate_workflow_status": "One final autosampler plate per round, filled in slot 6, manually moved to cooled heater-shaker slot 10, shaken uncovered with heater off, then moved directly to HPLC and sealed. 1000 rpm for 2 min is provisional; confirm mounting, no splashing, plate/seal/carrier and needle-depth compatibility locally."
+    "lc_plate_workflow_status": "One final autosampler plate per round, filled in slot 6, manually moved to cooled heater-shaker slot 10, shaken uncovered with heater off, then moved directly to HPLC and sealed. 1000 rpm for 2 min is provisional; confirm mounting, no splashing, plate/seal/carrier and needle-depth compatibility locally.",
+    "lc_single_plate_per_round": true
   },
   "pipetting": {
     "aspirate_height_mm": 1.5,
@@ -235,7 +236,7 @@
       "1": 0,
       "2": 0
     },
-    "handling_status": "Previous 72 min workup allowance retained pending timing of automated plate preparation. No manual sample-vial transfers. Minimum-move plan currently exceeds 720 min by 32.7 min; measure handling or use a timed split-plate plan before live release."
+    "handling_status": "One LC plate per round, explicitly no R1 split. The 72 min workup allowance remains unmeasured. Per-export workup_timing.json derives pumping/waits/shaking from actual transfer operations and lists excluded motion/manual handling; it is a subtotal, not a complete duration."
   },
   "validation": {
     "chemistry_confirmed": true,

@@ -9,7 +9,7 @@ import pytest
 from hte.demo import run, synthetic_config
 from hte.inventory import campaign_inventory
 from hte.io import read_csv, read_json
-from hte.planning import schedule, validate_config
+from hte.planning import schedule, validate_config, workup_timing
 from hte.protocols import RUNTIME, export
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -27,6 +27,8 @@ def test_final_plate_simulations_preserve_doses_and_move_only_complete_plates(ca
     from opentrons.simulate import simulate
     config = read_json(campaign/"campaign.json")
     config["robot"]["lc_batch_size"] = batch_size
+    if batch_size == 24:
+        config["robot"]["lc_single_plate_per_round"] = False  # Generic synthetic regression, outside this campaign.
     inv = campaign_inventory(ROOT/"hte_inputs/ligands.csv", config)
     out = tmp_path/"protocols"
     export(config, inv, read_csv(campaign/f"round{round_number}_design.csv"), out)
@@ -114,9 +116,45 @@ def test_plate_geometry_is_unchanged_and_split_overlap_is_round_specific():
     derived = read_json(ROOT/"hte_inputs/labware/vwr_96_wellplate_2200ul_hs.json")
     assert original["wells"] == derived["wells"] and original["ordering"] == derived["ordering"]
     c = synthetic_config(ROOT/"hte_inputs/campaign.json")
+    c["robot"]["lc_single_plate_per_round"] = False  # Generic timing regression only.
     c["robot"]["lc_batch_size"] = 24
     c["timing"].update(staged_lc_overlap_minutes=35, staged_lc_overlap_minutes_by_round={"1":35, "2":0})
     assert schedule(c)["manual_lc_plate_moves"] == 6
     assert schedule(c)["planned_total_minutes"] == pytest.approx(717.7)
     c["timing"]["staged_lc_overlap_minutes_by_round"] = {"1":25, "2":10}
     with pytest.raises(ValueError, match="preceding injection windows"): schedule(c)
+
+
+def test_campaign_forbids_r1_plate_splitting():
+    config = synthetic_config(ROOT/"hte_inputs/campaign.json")
+    assert config["robot"]["lc_single_plate_per_round"]
+    config["robot"]["lc_batch_size"] = 24
+    with pytest.raises(ValueError, match="splitting R1 is disabled"):
+        validate_config(config)
+
+
+@pytest.mark.parametrize("round_number,reuse", [(1, True), (2, True), (1, False), (2, False)])
+def test_timing_subtotal_matches_actual_simulator_pumps_and_delays(campaign, tmp_path, round_number, reuse):
+    import re
+    from opentrons.simulate import simulate
+    config = read_json(campaign/"campaign.json")
+    config["pipetting"]["reuse_tips"] = reuse
+    inv = campaign_inventory(ROOT/"hte_inputs/ligands.csv", config)
+    out = tmp_path/"protocols"
+    export(config, inv, read_csv(campaign/f"round{round_number}_design.csv"), out)
+    report = read_json(out/"workup_timing.json")
+    with (out/"workup.py").open() as f:
+        commands, _ = simulate(f)
+    seconds = 0
+    for command in commands:
+        payload = command["payload"]
+        text = payload.get("text", "")
+        pump = re.match(r"(?:Aspirating|Dispensing) ([\d.]+) uL .* at ([\d.]+) uL/sec", text)
+        if pump:
+            seconds += float(pump[1])/float(pump[2])
+        elif text.startswith("Delaying for"):
+            seconds += payload["minutes"]*60+payload["seconds"]
+    assert seconds/60 == pytest.approx(report["calculated_subtotal_minutes"])
+    assert report["individual_screw_cap_actions"] == 4*(48 if round_number == 1 else 23)
+    assert report["manual_workup_block_and_lc_moves"] == 4
+    assert not report["physical_run_measured"] and report["excluded"]
