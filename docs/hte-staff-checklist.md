@@ -47,12 +47,12 @@ Follow App pauses. Hand-tighten reaction-vial caps before heating/shaking; the L
 | 1 / SM | Dose **50 µL SM/DCM** into 48 vials. At pause, move off deck; evaporate fully by HTEL's ventilated procedure. Cool; return to slot 3. |
 | 2 / Reaction | Add **25 µL mesitylene +37.5 µL ligand A +37.5 µL ligand B +75 µL Pd +75 µL toluene =250 µL**. Hand-cap; move/latch as prompted. **95 °C, 500 rpm, 4 h.** |
 | 3 / During hold | Run calibration. Hand-dose **23 labelled NEW vials with 50 µL SM/DCM each** in an off-deck rack. Evaporate fully; cap dry SM. No mesitylene/catalyst yet. |
-| 4 / Cool | Move the sealed block off the heater. Cool before opening. Load workup and its matching sources. |
+| 4 / Cool | Move the sealed block off the heater. Cool vials before opening; App also waits for module <=30 °C. Load workup sources. |
 | 5 / Quench | Add **500 µL quench** per vial. Hand-recap ALL. Shake **1500 rpm, 2 min**, heater off; return to slot 3. |
 | 6 / Sample | Let bubbles settle after shaking; uncap the indicated reaction vials. Robot adds **20 µL extract to 980 µL diluent** with fresh sample tips. |
 | 7 / LC handoff | Recap reaction vials. Move the completed LC plate **6 → cooled shaker 10** at App prompt. Robot shakes **UNCOVERED, heater OFF, 1000 rpm, 2 min** (locally confirmed splash-free speed). Move **10 → HPLC**, apply compatible seal. Inject directly from this plate; **no manual dilution/mixing or vial transfers**. |
 | 8 / R2 setup/select | During R1 LC, archive sampled R1 vials; fit the 23 dry predosed vials into the SAME block and check orientation. After all 48 results pass QC, software selects 22 new pairs +L17 reference. Add catalysts after selection. |
-| 9 / R2 | Refill from R2 deck loads. **No SM redose.** Add selected stocks; reference uses **75 µL L17**, no ligand B. Cap; repeat 4 h reaction/workup. Prepare all 23 in one new LC plate. LC well **H3 is diluent only: do not inject.** |
+| 9 / R2 | Refill R2 deck loads; **uncap all 23 NEW vials before dosing. No SM redose.** Add stocks; reference uses **75 µL L17**, no B. Cap; repeat 4 h reaction/workup. One new LC plate; **H3 is diluent only: do not inject.** |
 
 Stop the clock after **23 final injections and quantitative analysis**. Save exports, maps, QC, protocols, times and robot JSON logs.
 

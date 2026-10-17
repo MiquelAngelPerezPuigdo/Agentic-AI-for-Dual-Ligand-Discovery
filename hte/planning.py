@@ -207,7 +207,7 @@ def validate_config(config, live=False, live_scope="all"):
             raise ValueError("Synthetic LC settings cannot release live protocols")
         timing = schedule(config)
         if not timing["fits_planned_estimate"]:
-            raise ValueError(f"Measured timing plan exceeds the competition deadline: {timing['planned_total_minutes']:g} > {timing['deadline_minutes']:g} min")
+            raise ValueError(f"Configured timing allowances exceed the competition deadline: {timing['planned_total_minutes']:g} > {timing['deadline_minutes']:g} min; replace allowances with the timed local plan")
     return config
 
 

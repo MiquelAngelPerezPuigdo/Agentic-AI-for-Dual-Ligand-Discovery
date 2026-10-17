@@ -11,10 +11,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from hte.analytics import analyze
+from hte.analytics import analyze, read_completed_inputs
 from hte.ingestion import ingest_exports
 from hte.inventory import campaign_inventory
-from hte.io import read_csv, read_json
+from hte.io import object_digest, read_csv, read_json, write_json
+from hte.planning import validate_dosing
 from hte.workflow import iterate
 
 
@@ -33,6 +34,12 @@ def main():
     try:
         config = read_json(args.config)
         inventory = campaign_inventory(args.inventory, config, confirmed=True)
+        doses = read_csv(args.dosing)
+        validate_dosing(config, inventory, doses)
+        expected_round = 1 if args.mode == "next" else 2
+        if (len(doses) != config["design"][f"round{expected_round}_total"]
+                or {str(row["round"]) for row in doses} != {str(expected_round)}):
+            raise ValueError(f"{args.mode} requires the complete round-{expected_round} dosing table")
         output = Path(args.output)
         peaks, ready = ingest_exports(config, args.exports, args.injections, args.dosing, output / "ingestion")
         if args.mode == "next":
@@ -42,12 +49,16 @@ def main():
             print(read_json(iteration / "complete.json")["hardware_status"])
             print("Expected: 22 new pairs + one L17 reference. Review deck loads and import/start the released Python locally.")
         else:
-            _, report = analyze(config, read_csv(args.dosing), read_csv(peaks),
-                                read_csv(args.calibration), output / "analysis")
+            tables, hashes = read_completed_inputs(config, args.dosing, peaks, ready, args.calibration)
+            validate_dosing(config, inventory, tables["dosing"])
+            _, report = analyze(config, tables["dosing"], tables["peaks"],
+                                tables["calibration"], output / "analysis")
+            write_json(output / "analysis/inputs.json", {
+                "config": object_digest(config), "inventory": object_digest(inventory), **hashes})
             print("FINAL RESULTS:", output / "analysis/results.csv")
             if not report["batch_qc_pass"]:
                 raise ValueError("Final analytical QC failed; inspect qc_report.json")
-    except (ValueError, FileNotFoundError) as error:
+    except (ValueError, KeyError, FileNotFoundError, ImportError) as error:
         parser.exit(2, f"HTE stopped: {error}\n")
 
 

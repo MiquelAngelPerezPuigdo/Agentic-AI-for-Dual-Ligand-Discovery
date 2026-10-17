@@ -110,13 +110,17 @@ def run(protocol: protocol_api.ProtocolContext):
         return (protocol.load_labware_from_definition(DEFINITIONS["lc"], 6, label)
                 if "lc" in DEFINITIONS else protocol.load_labware(CONFIG["robot"]["lc_labware"], 6, label))
 
+    def wait_for_cool_module():
+        # Module temperature does not establish the temperature inside the vials.
+        hs.deactivate_heater()
+        if not protocol.is_simulating():
+            while hs.current_temperature is None or hs.current_temperature > CONFIG["liquids"]["lc_max_module_temperature_C"]:
+                protocol.pause("Wait until the heater-shaker has cooled to at most " + str(CONFIG["liquids"]["lc_max_module_temperature_C"]) + " C before workup or LC mixing. Heater is OFF; then resume. Separately confirm the sealed reaction vials have cooled before opening.")
+
     def shake_and_release_lc(batch):
         # The reaction block stays in slot 3. No pipetting occurs on the module.
         # off_heater() already stopped shaking before opening the latch.
-        hs.deactivate_heater()
-        if not protocol.is_simulating():
-            while hs.temperature is None or hs.temperature > CONFIG["liquids"]["lc_max_module_temperature_C"]:
-                protocol.pause("Wait until the heater-shaker has cooled to at most " + str(CONFIG["liquids"]["lc_max_module_temperature_C"]) + " C before moving the LC plate. Heater is OFF; then resume.")
+        wait_for_cool_module()
         protocol.pause("LC plate R"+str(ROUND)+"-LC"+str(batch).zfill(2)+" is complete. RECAP the sampled reaction vials. Leave the LC plate UNCOVERED for shaking. At the next manual move, take only this LC plate from slot 6 to the cooled flat adapter in slot 10; preserve A1 orientation. No manual sample pipetting or HPLC-vial transfers.")
         hs.open_labware_latch()
         protocol.move_labware(lc, adapter, use_gripper=False)
@@ -131,15 +135,16 @@ def run(protocol: protocol_api.ProtocolContext):
         protocol.move_labware(lc, protocol_api.OFF_DECK, use_gripper=False)
         protocol.pause("LC plate R"+str(ROUND)+"-LC"+str(batch).zfill(2)+": move DIRECTLY from the shaker to the HPLC handoff. Apply the confirmed autosampler-compatible pierceable seal, check orientation/carrier and needle depth, and inject only the sample wells in lc_sequence.csv. Do not inject padding wells. Start this plate's sequence before resuming. Keep plate ID and actual injection mapping. No optimization until ALL first-round measurements finish.")
 
-    protocol.pause("Verify exact plate definitions, offsets, source volumes in deck_loads.csv, and fresh tips. Slots 7 and 11 must be empty. Remove ALL reaction-vial screw caps before pipetting and source-tube caps for dosing. Keep caps identified and clean. Resume locally.")
+    protocol.pause("Verify exact plate definitions, offsets, source volumes in deck_loads.csv, and fresh tips. Slots 7 and 11 must be empty. Keep caps identified and clean. For workup, keep reaction vials CAPPED until the explicit cooled-opening pause. Resume locally.")
     if STAGE == "dose_and_react":
         if any(op["stage"] == "substrate" for op in OPERATIONS):
+            protocol.pause("Confirm the 48 first-round reaction vials are empty and correctly loaded. REMOVE ALL reaction-vial screw caps and open the required sources before pipetting.")
             transfer_stage("substrate")
             protocol.move_labware(plate, protocol_api.OFF_DECK, use_gripper=False)
-            protocol.pause("Evaporate ALL substrate DCM using HTEL's approved ventilated method, before adding any mesitylene, catalyst or toluene. Verify dry-down and substrate retention, record actual time, cool the block, and prepare to return it to slot 3. Do not evaporate DCM into an unventilated robot enclosure.")
+            protocol.pause("Evaporate ALL substrate DCM using HTEL's approved ventilated method, before adding any mesitylene, catalyst or toluene. Verify dry-down and substrate retention, record actual time, cool the block, and prepare to return it to slot 3 with ALL reaction-vial caps/seals REMOVED and required sources open. Do not evaporate DCM into an unventilated robot enclosure.")
             protocol.move_labware(plate, 3, use_gripper=False)
         else:
-            protocol.pause("Round two: remove/archive the 48 first-round vials after sampling. Fit the 23 NEW, labeled substrate-predosed vials into the SAME block following round2_predose.csv. Confirm ALL DCM was removed, 25 umol SM remains per vial, and NO mesitylene or catalyst was predosed. Check orientation and any required empty dummy vials. No substrate redosing.")
+            protocol.pause("Round two: CONFIRM the 48 first-round vials were archived after sampling and the 23 NEW, labeled substrate-predosed vials are fitted into the SAME block following round2_predose.csv. If this changeover was already completed during R1 LC, do not repeat it. Confirm ALL DCM was removed, 25 umol SM remains per vial, and NO mesitylene or catalyst was predosed. REMOVE ALL 23 reaction-vial screw caps and open required sources BEFORE resuming pipetting. Check orientation and any required empty dummy vials. No substrate redosing.")
         transfer_stage("internal_standard")
         transfer_stage("assembly")
         protocol.pause("TIGHTEN every occupied vial screw cap BY HAND before heating/shaking. Use HTEL's compatible septum screw caps and mounting procedure for 95 C. Check no vial remains open. Cap remaining source stocks. No stir bars. Resume for the module's heat/shake cycle.")
@@ -159,12 +164,17 @@ def run(protocol: protocol_api.ProtocolContext):
         off_heater()
         protocol.comment("Start workup with the cooled block in slot 3. Keep reaction-vial and LC-well mappings distinct. Archive first-round vials after sampling before changing to round two.")
     else:
-        protocol.pause("Cooled reaction block in slot 3; open seal under HTEL SOP. Mesitylene is already in each reaction: workup and LC diluent contain NO added internal standard. Confirm the approved homogeneous extraction composition before proceeding.")
+        wait_for_cool_module()
+        protocol.pause("Separately CONFIRM the sealed reaction vials have cooled to HTEL's approved opening temperature in slot 3, then UNSCREW/REMOVE all occupied reaction-vial caps under HTEL SOP and open workup sources. Mesitylene is already in each reaction: workup and LC diluent contain NO added internal standard. Confirm the approved extraction composition before proceeding.")
         transfer_stage("workup")
         protocol.pause("SCREW every vial cap back on BY HAND before vigorous shaking. Check tightness and mounting. Do not shake open vials at high rpm.")
         onto_heater()
-        hs.set_and_wait_for_shake_speed(CONFIG["liquids"]["mix_rpm"])
-        protocol.delay(minutes=2)
+        try:
+            hs.set_and_wait_for_shake_speed(CONFIG["liquids"]["mix_rpm"])
+            protocol.delay(minutes=2)
+        finally:
+            hs.deactivate_shaker()
+            hs.deactivate_heater()
         off_heater()
         protocol.pause("After vigorous shaking, keep ALL reaction vials screw-capped until their sampling batch. Let bubbles clear briefly. No stir bars are present.")
         protocol.pause("Sample promptly after vigorous mixing and bubble settling. If distinct layers, solids in the aspiration path or bubbles are obvious, pause for review; do not choose a layer or assume repeated aspiration dissolves solids. Keep the tip above the bottom and below the liquid surface.")
@@ -195,6 +205,14 @@ def validate_definition_geometry(config, definitions, rows):
                 raise ValueError("Reservoir definition lacks source channels")
             if any(definition["wells"][w]["totalLiquidVolume"] < config["stock_preparation"]["reservoir_max_fill_ul"] for w in needed):
                 raise ValueError("Reservoir definition capacity is less than the configured fill limit")
+            if "centerMultichannelOnWells" not in definition.get("parameters", {}).get("quirks", []):
+                raise ValueError("Reservoir requires centerMultichannelOnWells for eight-channel diluent aspiration")
+            for well in needed:
+                geometry = definition["wells"][well]
+                if geometry.get("shape") != "rectangular" or geometry.get("yDimension", 0) < 63:
+                    raise ValueError("Reservoir channels must span all eight tips (at least 63 mm along Y)")
+                if config["pipetting"]["aspirate_height_mm"] >= geometry["depth"]:
+                    raise ValueError("Reservoir aspiration height is outside the source channel")
             continue
         needed = {row["lc_well"] if kind == "lc" else row["well"] for row in rows}
         if kind == "lc" and config["robot"].get("pad_lc_diluent_columns"):
@@ -207,6 +225,10 @@ def validate_definition_geometry(config, definitions, rows):
         for key in needed:
             if finite(defined[key]["totalLiquidVolume"], "well capacity", 0) < volume:
                 raise ValueError(f"{kind} well {key} capacity is less than the planned liquid volume")
+            if kind == "reaction" and config["pipetting"]["sample_aspirate_height_mm"] >= defined[key]["depth"]:
+                raise ValueError("Reaction sampling height is outside the vial")
+        if kind == "lc" and "centerMultichannelOnWells" in definition.get("parameters", {}).get("quirks", []):
+            raise ValueError("LC plate must use individual well centers, not reservoir multichannel centering")
         for col in range(1, 13):
             if kind == "reaction" and not config["robot"]["reaction_multichannel"]:
                 break

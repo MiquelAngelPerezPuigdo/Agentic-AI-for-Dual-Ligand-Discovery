@@ -3,6 +3,7 @@ import ast
 from collections import defaultdict
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import create_autospec
 
 import pytest
 
@@ -82,26 +83,57 @@ def test_final_plate_simulations_preserve_doses_and_move_only_complete_plates(ca
 
 
 def test_lc_module_cooling_guard_waits_before_loading():
+    from opentrons.protocol_api import HeaterShakerContext
     tree = ast.parse(RUNTIME)
-    function = next(n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef) and n.name == "shake_and_release_lc")
+    functions = [n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)
+                 and n.name in ("wait_for_cool_module", "shake_and_release_lc")]
     events = []
-    hs = SimpleNamespace(temperature=55)
+    # Use the actual SDK contract: a fabricated temperature attribute hid a robot-only bug.
+    hs = create_autospec(HeaterShakerContext, instance=True, spec_set=True)
+    hs.current_temperature = 55
     for name in ("deactivate_heater", "deactivate_shaker", "open_labware_latch", "close_labware_latch"):
         setattr(hs, name, lambda n=name: events.append(n))
-    hs.set_and_wait_for_shake_speed = lambda rpm: events.append(("shake", rpm, hs.temperature))
+    hs.set_and_wait_for_shake_speed = lambda rpm: events.append(("shake", rpm, hs.current_temperature))
     def pause(message):
         events.append(message)
-        if message.startswith("Wait until"): hs.temperature = 25
+        if message.startswith("Wait until"): hs.current_temperature = 25
     protocol = SimpleNamespace(is_simulating=lambda: False, pause=pause,
-        move_labware=lambda *a, **k: events.append(("move", hs.temperature)),
+        move_labware=lambda *a, **k: events.append(("move", hs.current_temperature)),
         delay=lambda **k: events.append(k))
     ns = dict(hs=hs, protocol=protocol, CONFIG=read_json(ROOT/"hte_inputs/campaign.json"),
               ROUND=1, lc="plate", adapter="adapter", protocol_api=SimpleNamespace(OFF_DECK="off-deck"))
-    exec(compile(ast.Module(body=[function], type_ignores=[]), "cooling-guard", "exec"), ns)
+    exec(compile(ast.Module(body=functions, type_ignores=[]), "cooling-guard", "exec"), ns)
     ns["shake_and_release_lc"](1)
     assert any(isinstance(e, str) and e.startswith("Wait until") for e in events)
     assert ("shake", 1000, 25) in events
     assert all(e[1] <= 30 for e in events if isinstance(e, tuple) and e[0] == "move")
+
+
+@pytest.mark.parametrize("round_number", [1, 2])
+def test_actual_sdk_executes_live_cooling_branch_before_quench(campaign, round_number):
+    from io import StringIO
+    from opentrons.simulate import simulate
+    source = (campaign/f"round{round_number}/workup.py").read_text()
+    # Exercise the normally skipped hardware-temperature read in the real SDK's
+    # simulated context. DEMO remains True: this never releases runnable hardware code.
+    source = source.replace("if not protocol.is_simulating():", "if True:")
+    commands, _ = simulate(StringIO(source))
+    texts = [c["payload"].get("text", "") for c in commands]
+    opening = next(i for i, t in enumerate(texts) if "Separately CONFIRM" in t)
+    quench = next(i for i, t in enumerate(texts) if t.startswith("workup:"))
+    assert any("Deactivating Heater" in t for t in texts[:opening])
+    assert opening < quench
+
+
+def test_round2_changeover_confirms_new_vials_are_uncapped_before_dosing(campaign):
+    from opentrons.simulate import simulate
+    with (campaign/"round2/dose_and_react.py").open() as stream:
+        commands, _ = simulate(stream)
+    texts = [c["payload"].get("text", "") for c in commands]
+    changeover = next(i for i, t in enumerate(texts) if "Round two: CONFIRM" in t)
+    first_dose = next(i for i, t in enumerate(texts) if t.startswith("Aspirating"))
+    assert changeover < first_dose
+    assert "REMOVE ALL 23" in texts[changeover] and "do not repeat it" in texts[changeover]
 
 
 @pytest.mark.parametrize("key,value", [("lc_mix_rpm", 0), ("lc_mix_minutes", 0), ("lc_max_module_temperature_C", 60)])

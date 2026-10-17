@@ -175,6 +175,8 @@ def main():
             _, report = analyze(config, tables["dosing"], tables["peaks"], tables["calibration"], args.output)
             write_json(Path(args.output)/"inputs.json", {"config": object_digest(config), "inventory": object_digest(inv), **hashes})
             print(report)
+            if not report["batch_qc_pass"]:
+                raise ValueError("Analytical QC failed; inspect qc_report.json")
         elif args.command == "iterate":
             from .workflow import iterate
             print(iterate(config, inv, read_json(args.evidence), args.dosing, args.peaks, args.ready, args.calibration, args.output))
