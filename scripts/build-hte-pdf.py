@@ -216,6 +216,7 @@ def input_record(staff=False):
     ]
     paths += ["hte/protocols.py", "hte/scoring.py", "hte/analytics.py", "hte/analytical_practice.py", "hte/cli.py",
               "hte_inputs/labware/paradox_48_wellplate_2000ul_hs.json",
+              "hte_inputs/labware/vwr_96_wellplate_2200ul_hs.json",
               "campaigns/hackathon2026/round1_design.csv", "campaigns/hackathon2026/scoring/campaign_provenance.json"]
     hashes = {name: hashlib.sha256((ROOT/name).read_bytes()).hexdigest() for name in paths}
     fingerprint = hashlib.sha256(json.dumps(hashes, sort_keys=True).encode()).hexdigest()

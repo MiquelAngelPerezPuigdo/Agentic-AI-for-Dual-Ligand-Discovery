@@ -12,7 +12,7 @@ Reviewed 17 October 2026 against Johannes's reply, all 21 presentation slides an
 
 ## Timing
 
-Two four-hour holds plus 71 ×1.7-minute reaction injections consume **600.7 minutes**. Current handling/decision allowances add152 minutes. Planned staged LC overlap subtracts35 minutes, giving **717.7 minutes /720**, with2.3 minutes spare (serial752.7 minutes). Calibration and second-round SM predosing occur during the first hold. These allowances are unmeasured; use [remaining HTEL setup facts](hte-questions.md) to confirm a workable local plan.
+Two four-hour holds plus 71×1.7-minute reaction injections consume **600.7 minutes**. Retained handling/decision allowances add 152 minutes. The current automated one-plate-per-round LC route has no preparation/injection overlap: **752.7 /720 minutes**, 32.7 minutes over. It replaces the earlier manual-vial plan and its unmeasured 35-minute overlap. Calibration and R2 SM predosing occur during hold one. Time the new handling or use a measured split-plate plan before release.
 
 ## Team deadlines from supplied slides
 

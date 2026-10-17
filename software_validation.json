@@ -1,8 +1,8 @@
 {
-  "created_utc": "2026-10-17T08:21:00.523591+00:00",
+  "created_utc": "2026-10-17T09:30:40.312271+00:00",
   "campaign": "hackathon2026-paradox48",
   "tests": {
-    "tests": 160,
+    "tests": 169,
     "errors": 0,
     "failures": 0,
     "skipped": 0
@@ -20,11 +20,11 @@
   },
   "opentrons_simulations": [
     "R1 dosing/reaction with supplied-derived 48-vial JSON",
-    "R1 workup and staged LC/cap pauses",
+    "R1 workup, automated one-plate dilution and uncovered LC shaking",
     "R2 dosing/reaction, 23 new predosed vials",
-    "R2 workup, 8/8/7 samples, H3 diluent only",
-    "Fresh-tip mode and rack replacement",
-    "Alternative p20 split transfers"
+    "R2 automated final LC plate; H3 diluent only and excluded",
+    "Both rounds in optional 24-well split-plate mode",
+    "Fresh-tip mode, rack replacement and alternative p20 split transfers"
   ],
   "language_model_pair_embeddings": {
     "model": "google-t5/t5-base",
@@ -45,12 +45,18 @@
     "calibration_minutes_hidden_in_reaction": 23.8,
     "serial_total_minutes": 752.7,
     "deadline_minutes": 720,
-    "staged_lc_overlap_minutes": 35.0,
-    "planned_total_minutes": 717.7,
-    "remaining_minutes": 2.2999999999999545,
+    "staged_lc_overlap_minutes": 0.0,
+    "planned_total_minutes": 752.7,
+    "remaining_minutes": -32.700000000000045,
     "fits_serial_estimate": false,
-    "fits_planned_estimate": true,
-    "assumptions": "Full injection cycle. All R1 measurements required before decision. Staged LC saves only the explicitly budgeted second-batch preparation time while the first batch is injected."
+    "fits_planned_estimate": false,
+    "lc_plates_by_round": [
+      1,
+      1
+    ],
+    "manual_lc_plate_moves": 4,
+    "minimum_workup_shaking_minutes": 8,
+    "assumptions": "Full injection cycle. All R1 measurements required before decision. One LC plate per round gives no within-round preparation/injection overlap. Split plates save only explicitly budgeted, measured preparation time while a preceding completed plate is injected. Workup includes both extract and LC shaking, moves and manual caps."
   },
   "analytical_plan": {
     "substrate_umol": 25.0,
@@ -90,17 +96,18 @@
     "no_internal_standard_redose": true,
     "incomplete_export_ignored": true,
     "duplicate_event_ignored": true,
-    "next_dosing_csv": "feedback_loop/iteration-816fd8660cf208c3/next_dosing.csv",
+    "next_dosing_csv": "feedback_loop/iteration-1a618cf543e56409/next_dosing.csv",
     "cache_summaries": [
       "initial_scoring/cache_summary.json",
-      "feedback_loop/iteration-816fd8660cf208c3/scoring/cache_summary.json"
+      "feedback_loop/iteration-1a618cf543e56409/scoring/cache_summary.json"
     ],
     "result_interpretation": "Synthetic yields and mocked rankings validate data flow only.",
+    "analytical_practice_pass": true,
+    "analytical_practice_report": "analytical_practice/practice_report.json",
     "initial_mock_requests": 340,
     "feedback_mock_requests": 310,
     "both_prompt_stages_include_17_SI_yields": true,
-    "analytical_practice_pass": true,
-    "analytical_practice_report": "analytical_practice/practice_report.json"
+    "source_report": "output/automated-lc-rehearsal/rehearsal_report.json"
   },
   "live_initial_scoring": {
     "date": "2026-10-16",
@@ -363,6 +370,36 @@
     "removed_vendor_concentration_feature_tests": 4,
     "full_offline_rehearsal_retested": true,
     "visual_mock_trials_retested": 14,
+    "paid_calls_this_update": 0
+  },
+  "automated_lc_plates": {
+    "plate_definition": "hte_inputs/labware/vwr_96_wellplate_2200ul_hs.json",
+    "preserves_supplied_well_coordinates": true,
+    "physical_plate_identity_confirmed": false,
+    "samples_by_round": [
+      48,
+      23
+    ],
+    "plates_by_round": [
+      1,
+      1
+    ],
+    "manual_lc_plate_moves": 4,
+    "initial_plate_loading_included_in_move_count": false,
+    "manual_sample_pipetting_required": false,
+    "manual_hplc_vial_transfers_required": false,
+    "shaking_uncovered": true,
+    "lc_mix_rpm_provisional": 1000,
+    "lc_mix_minutes": 2,
+    "heater_on_during_lc_shake": false,
+    "maximum_module_temperature_C": 30,
+    "hardware_cooling_guard_unit_tested": true,
+    "plate_sealed_after_shaking_for_autosampler": true,
+    "new_acceptance_checks": 9,
+    "optional_split_r1_plate_count": 2,
+    "optional_split_total_moves": 6,
+    "physical_fit_and_splash_free_speed_validated": false,
+    "twelve_hour_plan_validated": false,
     "paid_calls_this_update": 0
   }
 }

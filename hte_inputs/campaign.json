@@ -78,7 +78,10 @@
     "workup_formic_acid_percent": 0.15,
     "lc_diluent_formic_acid_percent": 0.1,
     "quench_acetonitrile_fraction": 0.9,
-    "lc_diluent_acetonitrile_fraction": 0.5
+    "lc_diluent_acetonitrile_fraction": 0.5,
+    "lc_mix_rpm": 1000,
+    "lc_mix_minutes": 2,
+    "lc_max_module_temperature_C": 30
   },
   "robot": {
     "p300": "p300_multi_gen2",
@@ -87,7 +90,7 @@
     "reaction_definition_path": "hte_inputs/labware/paradox_48_wellplate_2000ul_hs.json",
     "reaction_working_volume_ul": 1000,
     "lc_labware": null,
-    "lc_definition_path": "hte_inputs/labware/vwr_96_wellplate_2200ul.json",
+    "lc_definition_path": "hte_inputs/labware/vwr_96_wellplate_2200ul_hs.json",
     "lc_working_volume_ul": 2000,
     "heater_adapter": "opentrons_universal_flat_adapter",
     "reservoir_working_volume_ul": 11900,
@@ -98,8 +101,9 @@
     "reservoir_definition_path": "hte_inputs/labware/axygen_12_reservoir_12000ul.json",
     "heater_stack_status": "Derived HTEL JSON: zero-overlap flat stacking and a conservative 45 mm capped clearance envelope. All supplied well coordinates are unchanged; no pipetting on the module. Local setup checks mounting/latch and that caps fit within 45 mm.",
     "pad_lc_diluent_columns": true,
-    "lc_batch_size": 8,
-    "capped_clearance_height_mm": 45
+    "lc_batch_size": 48,
+    "capped_clearance_height_mm": 45,
+    "lc_plate_workflow_status": "One final autosampler plate per round, filled in slot 6, manually moved to cooled heater-shaker slot 10, shaken uncovered with heater off, then moved directly to HPLC and sealed. 1000 rpm for 2 min is provisional; confirm mounting, no splashing, plate/seal/carrier and needle-depth compatibility locally."
   },
   "pipetting": {
     "aspirate_height_mm": 1.5,
@@ -226,11 +230,12 @@
     "decision_minutes": 5,
     "other_minutes": 5,
     "cycle_status": "User requests HTEL existing 1.7-minute method; injection-to-injection cycle and analyte separation remain unvalidated",
-    "staged_lc_overlap_minutes": 35,
+    "staged_lc_overlap_minutes": 0,
     "staged_lc_overlap_minutes_by_round": {
-      "1": 25,
-      "2": 10
-    }
+      "1": 0,
+      "2": 0
+    },
+    "handling_status": "Previous 72 min workup allowance retained pending timing of automated plate preparation. No manual sample-vial transfers. Minimum-move plan currently exceeds 720 min by 32.7 min; measure handling or use a timed split-plate plan before live release."
   },
   "validation": {
     "chemistry_confirmed": true,
@@ -247,7 +252,8 @@
     "round2_predose_storage_validated": false,
     "substrate_evaporation_validated": false,
     "homogeneity_study_waived_by_user": true,
-    "staged_lc_timing_confirmed": false
+    "staged_lc_timing_confirmed": false,
+    "lc_plate_workflow_validated": false
   },
   "schema_version": 2
 }

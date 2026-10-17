@@ -31,7 +31,7 @@ Capped glass bulk reserves; ordinary plastic working racks, maximum 1.4 mL/tube;
 
 ## Calibration during hold one - 14 injections
 
-Prepare seven **1.00 mL vials per analyte**. Every vial, including blank/check, receives **13.333 µL of 5 mM mesitylene** (66.667 µM final IS). Add the quantities below; cap, mix and use `calibration_template.csv` IDs.
+Prepare seven **1.00 mL standards per analyte**, in a separate compatible calibration plate or confirmed vials. Every standard, including blank/check, receives **13.333 µL of 5 mM mesitylene** (66.667 µM final IS). Add the quantities below; mix, seal and use `calibration_template.csv` IDs.
 
 | Analyte, µM | Role | Stock, mM | Analyte, µL | Matrix, µL |
 |---:|---|---:|---:|---:|

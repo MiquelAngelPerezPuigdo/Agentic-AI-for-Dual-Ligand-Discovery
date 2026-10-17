@@ -7,7 +7,7 @@ from .io import finite, well_name, wells, reaction_wells
 
 
 VALIDATIONS = ["chemistry_confirmed", "plate_adapter_seal_validated", "solvent_pipetting_validated",
-               "heating_validated",
+               "heating_validated", "lc_plate_workflow_validated",
                "lc_calibration_validated", "local_app_simulation_passed", "round2_predose_storage_validated",
                "injection_cycle_validated", "simultaneous_heating_capacity_validated",
                "substrate_evaporation_validated"]
@@ -140,6 +140,9 @@ def validate_config(config, live=False, live_scope="all"):
     batch=config["robot"].get("lc_batch_size",24)
     if type(batch) is not int or batch<8 or batch>96 or batch%8:
         raise ValueError("LC preparation batches must contain a positive multiple of eight wells")
+    finite(liquid["lc_mix_rpm"], "uncovered LC plate shaking", 200, 3000)
+    finite(liquid["lc_mix_minutes"], "LC plate mixing time", 0.01)
+    finite(liquid["lc_max_module_temperature_C"], "maximum LC module temperature", 20, 40)
     if type(p["sample_prewet_cycles"]) is not int or not 0 <= p["sample_prewet_cycles"] <= 5:
         raise ValueError("Choose 0-5 sample prewet cycles")
     finite(p["sample_aspirate_height_mm"], "sample aspiration height", 0.1)
@@ -391,13 +394,15 @@ def transfer_operations(config, inventory, rows):
             raise ValueError(f"Reservoir source capacity exceeded for {key}; add a validated source channel")
         op["source_well"] = pool[index[key]]
         spent[(key,op["source_well"])] += withdrawal
-    for i, op in enumerate(operations):
+    for op in operations:
         if op["stage"] in ("dilution","sampling"):
             op["lc_batch"] = wells().index(op["destination_wells"][0])//config["robot"]["lc_batch_size"]+1
+    for i, op in enumerate(operations):
         previous = operations[i-1] if i else None
         following = operations[i+1] if i+1 < len(operations) else None
         def same(other):
             return bool(other and config["pipetting"].get("reuse_tips") and op["source_slot"] != 3
+                        and op.get("lc_batch") == other.get("lc_batch")
                         and all(op[k] == other[k] for k in ["stage", "reagent", "source_slot", "source_well", "pipette"]))
         op["retained_tip_from_previous"] = same(previous)
         op["retain_tip_for_next"] = same(following)
@@ -520,6 +525,10 @@ def schedule(config):
         available=((count-1)//batch)*batch*cycle
         if hidden>available:
             raise ValueError("Staged LC overlap exceeds its preceding injection windows")
+    lc_plates = [math.ceil(count/batch) for count in counts]
+    minimum_shaking = 2*2 + sum(lc_plates)*config["liquids"]["lc_mix_minutes"]
+    if t["workup_total_minutes"] < minimum_shaking:
+        raise ValueError("Workup budget omits reaction-extract and LC-plate shaking holds")
     planned=total-overlap
     return {"reaction_minutes": reaction, "lc_minutes": analysis, "overhead_minutes": overhead,
             "injections": injections, "minimum_reaction_plus_lc_minutes": reaction + analysis,
@@ -529,7 +538,9 @@ def schedule(config):
             "remaining_minutes": t["deadline_minutes"]-planned,
             "fits_serial_estimate": total <= t["deadline_minutes"],
             "fits_planned_estimate":planned<=t["deadline_minutes"],
-            "assumptions": "Full injection cycle. All R1 measurements required before decision. Staged LC saves only the explicitly budgeted second-batch preparation time while the first batch is injected."}
+            "lc_plates_by_round":lc_plates,"manual_lc_plate_moves":2*sum(lc_plates),
+            "minimum_workup_shaking_minutes":minimum_shaking,
+            "assumptions": "Full injection cycle. All R1 measurements required before decision. One LC plate per round gives no within-round preparation/injection overlap. Split plates save only explicitly budgeted, measured preparation time while a preceding completed plate is injected. Workup includes both extract and LC shaking, moves and manual caps."}
 
 
 def schedule_scenarios(config, cycles=(1.7, 2, 3, 5, 6)):

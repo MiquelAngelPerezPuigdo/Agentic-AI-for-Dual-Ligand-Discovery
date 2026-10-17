@@ -4,7 +4,7 @@ Use calibrated integrated UV peak areas for yield; MS is identity support. The o
 
 **Processing chain:** HTEL integrated-peak CSV → Python calibration and mesitylene normalization → yield/QC → Claude feedback. Our workstation needs no Chromeleon installation or concentration export. HTEL's instrument software performs acquisition/peak integration upstream; the importer retains compatibility with its supplied CSV layout. Standards remain required.
 
-**Yield calculation is deterministic.** Python matches peaks to measured reference windows, fits analyte/IS area ratios against known standard concentrations, applies the recorded workup/dilution volumes and divides product amount by starting SM amount. With the current 750 µL extract, 50-fold LC dilution and 25 µmol SM, `yield (%) = 0.15 × product concentration in the LC vial (µM)`. Invalid results fail QC; nondetections can be bounds rather than fabricated zeros. Claude receives accepted measurements and selects conditions; it does not calculate or estimate experimental yields.
+**Yield calculation is deterministic.** Python matches peaks to measured reference windows, fits analyte/IS area ratios against known standard concentrations, applies the recorded workup/dilution volumes and divides product amount by starting SM amount. With the current 750 µL extract, 50-fold LC dilution and 25 µmol SM, `yield (%) = 0.15 × product concentration in the LC well (µM)`. Invalid results fail QC; nondetections can be bounds rather than fabricated zeros. Claude receives accepted measurements and selects conditions; it does not calculate or estimate experimental yields.
 
 ## Configure once from authentic standards
 
@@ -14,7 +14,7 @@ The 14-sample plan is `hte_inputs/calibration_template.csv`: each analyte blank 
 
 ## One explicit mapping per acquisition sequence
 
-HTEL's wide peak export lacks method ID and may repeat names. Copy each generated `lc_batchNN_injections.csv`, fill actual `method_id` and optionally actual `vial_position`, `injection_name`, `type`. Map `inj_no` to the canonical sample ID. Do not assume numbering continues across batches. Maps must describe actual accepted injections, not just intended order; archive replacements/rejections and keep one accepted measurement per sample.
+HTEL's wide peak export lacks method ID and may repeat names. Copy each generated `lc_batchNN_injections.csv`, fill actual `method_id` and optionally actual `vial_position`, `injection_name`, `type`. The generated map includes expected `lc_plate_id` and `well`; these identify the physical plate to load. Map `inj_no` to the canonical sample ID. Do not assume numbering continues across batches. Maps must describe actual accepted injections, not just intended order; archive replacements/rejections and keep one accepted measurement per sample.
 
 ```csv
 inj_no,sample_id,method_id
@@ -22,7 +22,7 @@ inj_no,sample_id,method_id
 2,R1-002,ACTUAL_METHOD_ID
 ```
 
-Blank mapping fields are optional identity cross-checks; supplied nonempty fields must match the source. Calibration has its own 14-row mapping using the calibration-plan sample IDs. Reaction maps and LC preparation coordinates come from the matching generated sequence; the 48-well reaction coordinates differ from the 96-well preparation plate.
+Blank mapping fields are optional identity cross-checks; supplied nonempty fields must match the source. Calibration has its own 14-row mapping using the calibration-plan sample IDs. Reaction maps, final LC plate IDs and well coordinates come from the matching generated sequence; the 48-well reaction coordinates differ from the 96-well preparation plate.
 
 ## Calibration command sequence
 
@@ -99,7 +99,7 @@ The configured dilution gives about 0.667% v/v toluene (63 mM using assumed dens
 
 ## Reaction results and final 22
 
-After all 48 injections, run `scripts/hte-lc-results.py next` as shown on the [start page](start-here.md), giving six exports and six maps in corresponding order. It normalizes each sequence separately, rejects duplicate files/samples, combines them, and publishes a completion marker only for full expected sample coverage. Calibration/QC must then pass before any paid Claude call. The result is 22 new pairs plus one L17 reference, with local release status printed. Use `final` after the 23 final samples; it analyzes without Claude.
+After all 48 injections, run `scripts/hte-lc-results.py next` as shown on the [start page](start-here.md), giving one plate export and its map by default (or each split-plate export/map in corresponding order). It normalizes each sequence separately, rejects duplicate files/samples, combines them, and publishes a completion marker only for full expected sample coverage. Calibration/QC must then pass before any paid Claude call. The result is 22 new pairs plus one L17 reference, with local release status printed. Use `final` after the 23 final samples; it analyzes without Claude.
 
 Alternatively use the separate `normalize`, `complete-export`, `analyze`/`iterate` commands or the local watcher. Do not run both helper and watcher on the same campaign deliberately: use one workflow and preserve its idempotent state. Corrected imports use fresh output directories. Retain hashes, source exports and map versions.
 
