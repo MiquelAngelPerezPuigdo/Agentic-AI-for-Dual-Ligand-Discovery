@@ -30,3 +30,5 @@ jobs:
         run: python -m pytest -q
       - name: Build offline initialization review
         run: python scripts/initialization-report.py --output output/initialization-review
+      - name: Replay visual mock LC challenges
+        run: python scripts/mock-hplc-trials.py --output output/mock-hplc
