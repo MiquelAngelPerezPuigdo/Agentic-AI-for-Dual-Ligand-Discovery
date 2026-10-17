@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from .io import atomic_text, digest, new_output, object_digest, write_csv, write_json, wells
-from .planning import dosing_rows, stock_plan, tip_budget, transfer_operations, validate_config, validate_dosing
+from .planning import dosing_rows, stock_plan, tip_budget, transfer_operations, validate_config, validate_dosing, workup_timing
 
 
 RUNTIME = '''
@@ -276,6 +276,7 @@ def export(config, inventory, design, output, live=False, history=None, stage="a
     write_csv(output / "deck_loads.csv", deck)
     write_json(output / "operations.json", ops)
     write_json(output / "tip_budget.json", tip_budget(ops))
+    write_json(output / "workup_timing.json", workup_timing(config, ops))
     sequence=[{"sample_id":r["sample_id"],"well":r["lc_well"],"reaction_well":r["well"],
                "lc_plate_id":f"R{r['round']}-LC{wells().index(r['lc_well'])//config['robot']['lc_batch_size']+1:02d}",
                "lc_batch":wells().index(r["lc_well"])//config["robot"]["lc_batch_size"]+1,"round":r["round"]} for r in rows]

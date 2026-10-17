@@ -99,7 +99,7 @@ The configured dilution gives about 0.667% v/v toluene (63 mM using assumed dens
 
 ## Reaction results and final 22
 
-After all 48 injections, run `scripts/hte-lc-results.py next` as shown on the [start page](start-here.md), giving one plate export and its map by default (or each split-plate export/map in corresponding order). It normalizes each sequence separately, rejects duplicate files/samples, combines them, and publishes a completion marker only for full expected sample coverage. Calibration/QC must then pass before any paid Claude call. The result is 22 new pairs plus one L17 reference, with local release status printed. Use `final` after the 23 final samples; it analyzes without Claude.
+After all 48 injections, run `scripts/hte-lc-results.py next` as shown on the [start page](start-here.md), giving one plate export and its map per round. It normalizes each sequence separately, rejects duplicate files/samples, combines them, and publishes a completion marker only for full expected sample coverage. Calibration/QC must then pass before any paid Claude call. The result is 22 new pairs plus one L17 reference, with local release status printed. Use `final` after the 23 final samples; it analyzes without Claude.
 
 Alternatively use the separate `normalize`, `complete-export`, `analyze`/`iterate` commands or the local watcher. Do not run both helper and watcher on the same campaign deliberately: use one workflow and preserve its idempotent state. Corrected imports use fresh output directories. Retain hashes, source exports and map versions.
 

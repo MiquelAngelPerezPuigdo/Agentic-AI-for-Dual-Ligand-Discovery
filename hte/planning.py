@@ -140,6 +140,8 @@ def validate_config(config, live=False, live_scope="all"):
     batch=config["robot"].get("lc_batch_size",24)
     if type(batch) is not int or batch<8 or batch>96 or batch%8:
         raise ValueError("LC preparation batches must contain a positive multiple of eight wells")
+    if config["robot"].get("lc_single_plate_per_round") and batch < max(config["design"][f"round{r}_total"] for r in (1, 2)):
+        raise ValueError("This campaign requires one LC plate per round; splitting R1 is disabled")
     finite(liquid["lc_mix_rpm"], "uncovered LC plate shaking", 200, 3000)
     finite(liquid["lc_mix_minutes"], "LC plate mixing time", 0.01)
     finite(liquid["lc_max_module_temperature_C"], "maximum LC module temperature", 20, 40)
@@ -493,6 +495,59 @@ def tip_budget(operations):
         if not op.get("retained_tip_from_previous"):
             count[f"{stage}_{op['pipette']}"] += op["channels"]
     return dict(count)
+
+
+def workup_timing(config, operations):
+    """Calculate pumping/waits from emitted transfers, excluding unmeasured motion and staff time.
+
+    Eight-channel flow is per channel: simultaneous channels do not multiply elapsed time.
+    The calculation follows RUNTIME's prewet, air-gap and settling commands exactly.
+    """
+    p = config["pipetting"]
+    stages = {name: {"transfers": 0, "tip_pickups": 0, "pump_seconds": 0.0,
+                     "programmed_wait_seconds": 0.0} for name in ("workup", "dilution", "sampling")}
+    for op in operations:
+        if op["stage"] not in stages:
+            continue
+        sampling = op["stage"] == "sampling"
+        fresh = not op["retained_tip_from_previous"]
+        if sampling:
+            aspirate = p[op["pipette"]+"_aspirate_ul_s"]*p["sample_flow_rate_multiplier"]
+            dispense = p[op["pipette"]+"_dispense_ul_s"]*p["sample_flow_rate_multiplier"]
+            aspiration_wait = dispense_wait = p["sample_pause_seconds"]
+            cycles = p["sample_prewet_cycles"] if fresh else 0
+        else:
+            aspirate, dispense = p["workup_aspirate_ul_s"], p["workup_dispense_ul_s"]
+            aspiration_wait, dispense_wait = p["post_aspirate_seconds"], p["post_dispense_seconds"]
+            cycles = p["prewet_cycles"] if fresh else 0
+        air_flow = aspirate*(p["sample_air_gap_rate"] if sampling else 1)
+        pump = (op["aspirated_ul_per_channel"]/aspirate
+                + (op["volume_ul_per_channel"]+p["air_gap_ul"])/dispense
+                + p["air_gap_ul"]/air_flow
+                + cycles*op["aspirated_ul_per_channel"]*(1/aspirate+1/dispense))
+        wait = (aspiration_wait+dispense_wait)*(1+cycles if sampling else 1)
+        row = stages[op["stage"]]
+        row["transfers"] += 1
+        row["tip_pickups"] += int(fresh)
+        row["pump_seconds"] += pump
+        row["programmed_wait_seconds"] += wait
+    samples = [op for op in operations if op["stage"] == "sampling"]
+    sample_count = len({(op["lc_batch"], well) for op in samples for well in op["destination_wells"]})
+    lc_plates = len({op["lc_batch"] for op in samples})
+    for row in stages.values():
+        row["calculated_minutes"] = (row["pump_seconds"]+row["programmed_wait_seconds"])/60
+    liquid_minutes = sum(row["calculated_minutes"] for row in stages.values())
+    shaking = 2+lc_plates*config["liquids"]["lc_mix_minutes"] if samples else 0
+    return {"sample_count": sample_count, "lc_plates": lc_plates, "stages": stages,
+            "pump_and_programmed_wait_minutes": liquid_minutes, "shaking_minutes": shaking,
+            "calculated_subtotal_minutes": liquid_minutes+shaking,
+            "tip_pickup_events": sum(row["tip_pickups"] for row in stages.values()),
+            "individual_screw_cap_actions": 4*sample_count,
+            "manual_workup_block_and_lc_moves": 2+2*lc_plates if samples else 0,
+            "physical_run_measured": False,
+            "excluded": ["gantry travel and vertical motion", "tip pickup/drop motion and rack changes",
+                         "module ramp/latch time and residual cooling", "all staff pauses, screw caps, plate moves/sealing and LC loading"],
+            "interpretation": "Calculated pumping, programmed waits and shaking only; not a measured complete workup duration. Do not replace the full handling allowance with this subtotal."}
 
 
 def schedule(config):
