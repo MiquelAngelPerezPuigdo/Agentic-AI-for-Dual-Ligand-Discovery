@@ -16,11 +16,11 @@ The practice selects48 pairs covering30 ligands, accepts all48 synthetic LC resu
 
 ## Acceptance scope
 
-The active suite passes **160 tests**, including 12 analytical-practice checks and five visual mock-LC checks. Two obsolete GP/MOCCA adapter tests were removed during the earlier cleanup; all campaign checks remain. Four tests specific to the removed vendor-concentration comparison were retired with that optional feature; yield/import/QC tests remain. The initial design regenerates byte for byte from saved scores/vectors; robot/stock outputs are generated locally.
+The active suite passes **169 tests**, including 12 analytical-practice checks and five visual mock-LC checks. Two obsolete GP/MOCCA adapter tests were removed during the earlier cleanup; all campaign checks remain. Four tests specific to the removed vendor-concentration comparison were retired with that optional feature; yield/import/QC tests remain. The initial design regenerates byte for byte from saved scores/vectors; robot/stock outputs are generated locally.
 
 Tests cover stoichiometry/reserves/deck loads, supplied geometry and cap envelope, reaction-to-LC maps, acid/dilution arithmetic, ligand coverage, strict scoring, caching/budget stops and interrupted requests. HTEL peak-export batches with reset injection numbers require explicit maps and full coverage; partial/overlapping/duplicate exports are rejected. Calibration and quantitative QC are enforced.
 
-Actual Opentrons8.8.2 simulations execute both rounds with custom labware, manual moves/cap pauses and tip replacement. Unused historical GP/MOCCA adapters and checked-in generated runs have been removed. Active simulations and the offline scoring/LC rehearsal remain tested.
+Actual Opentrons8.8.2 simulations execute both rounds with custom labware, manual moves/cap pauses and tip replacement. Nine added checks cover automated final LC plates: both rounds in whole/split-plate modes, complete sample/diluent volumes, fresh sample tips, no retained tips across handoffs, uncovered 2-min shaking, heater-off/cooling guard, plate/well IDs and exclusion of H3 padding. No manual LC dilution, mixing or sample-vial transfer remains. The new adapter definition preserves supplied well coordinates; physical fit is still unconfirmed. Unused historical GP/MOCCA adapters and checked-in generated runs have been removed. Active simulations and the offline scoring/LC rehearsal remain tested.
 
 ## Visual mock LC trials
 
@@ -34,4 +34,4 @@ The full rehearsal now includes `practice-analytics`: mock HTEL peak tables, 14 
 
 Simulation does not establish physical fit, liquid temperature, extraction/IS recovery or LC separation. Formal separate homogeneity/solubility studies are not requested; pauses handle visible faults.
 
-The 1.7-min full-cycle assumption and35-min handling overlap give717.7 min (752.7 min serial). No physical trial has demonstrated12 h. Record actual timings and [remaining setup facts](hte-questions.md); generated previews retain physical-execution guards pending local release.
+The current automated final-plate route uses four LC-plate moves and no within-round preparation/injection overlap. At an assumed 1.7-min full cycle and retained handling allowances it takes 752.7 min, exceeding 720 by 32.7 min. The previous 717.7-min manual-vial estimate is superseded. No physical trial has demonstrated 12 h. Record actual timings and [remaining setup facts](hte-questions.md); generated previews retain physical-execution guards pending local release.

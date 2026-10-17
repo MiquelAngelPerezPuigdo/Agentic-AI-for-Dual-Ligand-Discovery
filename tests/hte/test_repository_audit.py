@@ -41,7 +41,7 @@ def released_fixture(config):
     for name in required_validations(config):
         config["validation"][name] = True
     config["analytics"].update(method_id="VALIDATED_TEST_METHOD", channel="VALIDATED_TEST_DAD")
-    config["timing"]["dosing_total_minutes"] = 20
+    config["timing"]["workup_total_minutes"] = 35  # Fictional test-only handling budget.
     return config
 
 

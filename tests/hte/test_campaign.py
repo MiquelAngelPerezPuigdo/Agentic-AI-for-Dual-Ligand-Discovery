@@ -113,8 +113,9 @@ def test_timing_calibrations_overlap_and_deadline_warning(cfg):
     assert timing["lc_minutes"] == pytest.approx(120.7)
     assert timing["reaction_minutes"] == 480
     assert timing["serial_total_minutes"] == pytest.approx(752.7)
-    assert timing["planned_total_minutes"] == pytest.approx(717.7)
-    assert not timing["fits_serial_estimate"] and timing["fits_planned_estimate"]
+    assert timing["planned_total_minutes"] == pytest.approx(752.7)
+    assert not timing["fits_serial_estimate"] and not timing["fits_planned_estimate"]
+    assert timing["manual_lc_plate_moves"] == 4 and timing["lc_plates_by_round"] == [1, 1]
     cfg["timing"]["calibration_injections_during_round1_reaction"] = 0
     assert schedule(cfg)["serial_total_minutes"] == pytest.approx(776.5)
 
@@ -137,7 +138,7 @@ def test_preloaded_is_bench_validation_is_required(cfg):
         validate_config(cfg, live=True)
     cfg["validation"]["pre_reaction_internal_standard_validated"] = True
     cfg["analytics"].update(method_id="VALIDATED_TEST_METHOD", channel="VALIDATED_TEST_DAD")
-    cfg["timing"]["dosing_total_minutes"] = 20  # Within the deadline in this unit-test fixture.
+    cfg["timing"]["workup_total_minutes"] = 35  # Fictional fast handling, for release tests only.
     validate_config(cfg, live=True)
 
 

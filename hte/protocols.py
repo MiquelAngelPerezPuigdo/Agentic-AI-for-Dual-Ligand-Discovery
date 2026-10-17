@@ -21,8 +21,8 @@ def run(protocol: protocol_api.ProtocolContext):
     adapter = hs.load_adapter(CONFIG["robot"]["heater_adapter"])
     plate = (protocol.load_labware_from_definition(DEFINITIONS["reaction"], 3, "Glass vial reaction block")
              if "reaction" in DEFINITIONS else protocol.load_labware(CONFIG["robot"]["reaction_labware"], 3, "Reaction plate"))
-    lc = (protocol.load_labware_from_definition(DEFINITIONS["lc"], 6, "LC dilution plate")
-          if "lc" in DEFINITIONS else protocol.load_labware(CONFIG["robot"]["lc_labware"], 6, "LC dilution plate"))
+    lc = (protocol.load_labware_from_definition(DEFINITIONS["lc"], 6, "R"+str(ROUND)+"-LC01")
+          if "lc" in DEFINITIONS else protocol.load_labware(CONFIG["robot"]["lc_labware"], 6, "R"+str(ROUND)+"-LC01"))
     racks = {slot: protocol.load_labware("opentrons_24_tuberack_eppendorf_1.5ml_safelock_snapcap", slot)
              for slot in [1, 4]}
     reservoir = (protocol.load_labware_from_definition(DEFINITIONS["reservoir"], 2, "Common liquid sources")
@@ -106,6 +106,31 @@ def run(protocol: protocol_api.ProtocolContext):
         hs.open_labware_latch()
         protocol.move_labware(plate, 3, use_gripper=False)
 
+    def load_lc_plate(label):
+        return (protocol.load_labware_from_definition(DEFINITIONS["lc"], 6, label)
+                if "lc" in DEFINITIONS else protocol.load_labware(CONFIG["robot"]["lc_labware"], 6, label))
+
+    def shake_and_release_lc(batch):
+        # The reaction block stays in slot 3. No pipetting occurs on the module.
+        # off_heater() already stopped shaking before opening the latch.
+        hs.deactivate_heater()
+        if not protocol.is_simulating():
+            while hs.temperature is None or hs.temperature > CONFIG["liquids"]["lc_max_module_temperature_C"]:
+                protocol.pause("Wait until the heater-shaker has cooled to at most " + str(CONFIG["liquids"]["lc_max_module_temperature_C"]) + " C before moving the LC plate. Heater is OFF; then resume.")
+        protocol.pause("LC plate R"+str(ROUND)+"-LC"+str(batch).zfill(2)+" is complete. RECAP the sampled reaction vials. Leave the LC plate UNCOVERED for shaking. At the next manual move, take only this LC plate from slot 6 to the cooled flat adapter in slot 10; preserve A1 orientation. No manual sample pipetting or HPLC-vial transfers.")
+        hs.open_labware_latch()
+        protocol.move_labware(lc, adapter, use_gripper=False)
+        hs.close_labware_latch()
+        try:
+            hs.set_and_wait_for_shake_speed(CONFIG["liquids"]["lc_mix_rpm"])
+            protocol.delay(minutes=CONFIG["liquids"]["lc_mix_minutes"])
+        finally:
+            hs.deactivate_shaker()
+            hs.deactivate_heater()
+        hs.open_labware_latch()
+        protocol.move_labware(lc, protocol_api.OFF_DECK, use_gripper=False)
+        protocol.pause("LC plate R"+str(ROUND)+"-LC"+str(batch).zfill(2)+": move DIRECTLY from the shaker to the HPLC handoff. Apply the confirmed autosampler-compatible pierceable seal, check orientation/carrier and needle depth, and inject only the sample wells in lc_sequence.csv. Do not inject padding wells. Start this plate's sequence before resuming. Keep plate ID and actual injection mapping. No optimization until ALL first-round measurements finish.")
+
     protocol.pause("Verify exact plate definitions, offsets, source volumes in deck_loads.csv, and fresh tips. Slots 7 and 11 must be empty. Remove ALL reaction-vial screw caps before pipetting and source-tube caps for dosing. Keep caps identified and clean. Resume locally.")
     if STAGE == "dose_and_react":
         if any(op["stage"] == "substrate" for op in OPERATIONS):
@@ -145,13 +170,17 @@ def run(protocol: protocol_api.ProtocolContext):
         protocol.pause("Sample promptly after vigorous mixing and bubble settling. If distinct layers, solids in the aspiration path or bubbles are obvious, pause for review; do not choose a layer or assume repeated aspiration dissolves solids. Keep the tip above the bottom and below the liquid surface.")
         batches=sorted({op["lc_batch"] for op in OPERATIONS if op["stage"]=="sampling"})
         for batch in batches:
+            if batch != batches[0]:
+                protocol.pause("Load a NEW empty LC autosampler plate in slot 6 for R"+str(ROUND)+"-LC"+str(batch).zfill(2)+". Keep the preceding plate at HPLC; do not reuse it. Use the exact wells in lc_sequence.csv, which retain their campaign column numbers.")
+                lc = load_lc_plate("R"+str(ROUND)+"-LC"+str(batch).zfill(2))
+                labware[6] = lc
             active=[op["source_well"] for op in OPERATIONS if op["stage"]=="sampling" and op["lc_batch"]==batch]
             active=list(dict.fromkeys(active))
-            protocol.pause("Sampling batch "+str(batch)+": while these vials are CAPPED, gently invert/remix them, let visible bubbles settle, then UNSCREW/REMOVE the caps ONLY from "+", ".join(active)+". Keep all other reaction vials capped. Confirm caps lie below the 45 mm labware clearance envelope. Resume only with these aspiration targets open.")
+            protocol.pause("Label the LC plate R"+str(ROUND)+"-LC"+str(batch).zfill(2)+". Sampling batch "+str(batch)+": let visible bubbles settle after the automated extract shake, then UNSCREW/REMOVE the caps ONLY from "+", ".join(active)+". Keep all other reaction vials capped. Confirm caps lie below the 45 mm labware clearance envelope. Resume only with these aspiration targets open.")
             transfer_stage("dilution",batch)
             transfer_stage("sampling",batch)
-            protocol.pause("LC preparation batch "+str(batch)+" complete. Robot is PAUSED. RECAP the reaction vials just sampled by hand; keep the remaining vials capped. Keep the preparation plate seated in slot 6. Using the matching rows in lc_sequence.csv, with one fresh manual-pipette tip per sample, gently mix its completed LC well by aspirating/dispensing 500 uL five times without blowing air into the liquid, then transfer 900 uL into its fresh labeled HPLC screw-cap vial. Discard that tip before the next sample. Tighten the HPLC vial caps by hand, invert/mix briefly and submit this completed batch for LC injection BEFORE resuming the robot. Do not transfer wells whose sample has not been added. Never move the preparation plate during this pause. Start the next LC sequence only after its vials are ready; combine exports via the provided local script. No optimization until ALL first-round injections finish.")
-        protocol.comment("All sample dilutions prepared. Retain reaction-vial archives and LC plate residuals, and record actual sample/vial identities and batch start times.")
+            shake_and_release_lc(batch)
+        protocol.comment("All final LC plates prepared and shaken automatically. Retain reaction-vial archives and LC plates, and record actual plate/well identities and sequence start times.")
 '''
 
 
@@ -248,16 +277,28 @@ def export(config, inventory, design, output, live=False, history=None, stage="a
     write_json(output / "operations.json", ops)
     write_json(output / "tip_budget.json", tip_budget(ops))
     sequence=[{"sample_id":r["sample_id"],"well":r["lc_well"],"reaction_well":r["well"],
+               "lc_plate_id":f"R{r['round']}-LC{wells().index(r['lc_well'])//config['robot']['lc_batch_size']+1:02d}",
                "lc_batch":wells().index(r["lc_well"])//config["robot"]["lc_batch_size"]+1,"round":r["round"]} for r in rows]
     write_csv(output / "lc_sequence.csv",sequence)
+    plate_rows=[]
     for batch in sorted({r["lc_batch"] for r in sequence}):
+        members=[r for r in sequence if r["lc_batch"]==batch]
+        plate_rows.append({"lc_plate_id":members[0]["lc_plate_id"],"lc_batch":batch,
+                           "sample_count":len(members),"sample_wells":",".join(r["well"] for r in members),
+                           "final_ul_per_sample":config["liquids"]["aliquot_ul"]+config["liquids"]["diluent_ul"],
+                           "route":"slot 6 -> heater-shaker slot 10 -> HPLC (OFF_DECK)",
+                           "uncovered_shake_rpm":config["liquids"]["lc_mix_rpm"],
+                           "shake_minutes":config["liquids"]["lc_mix_minutes"],"heater":"OFF",
+                           "seal":"After shaking, before HPLC: confirmed pierceable autosampler seal"})
         write_csv(output/f"lc_batch{batch:02d}_injections.csv",[
             {"inj_no":i,"sample_id":r["sample_id"],"method_id":config["analytics"]["method_id"] or "",
+             "lc_plate_id":r["lc_plate_id"],"well":r["well"],
              "vial_position":"","injection_name":"","type":""}
             for i,r in enumerate([r for r in sequence if r["lc_batch"]==batch],1)])
+    write_csv(output/"lc_plates.csv",plate_rows)
     occupied={r["lc_well"] for r in rows}
     padding=sorted({w for op in ops if op["stage"]=="dilution" for w in op["destination_wells"]}-occupied)
-    write_csv(output/"lc_padding_wells.csv",[{"well":w,"contents":"Diluent only; NO sample; DO NOT INJECT"} for w in padding],fields=["well","contents"])
+    write_csv(output/"lc_padding_wells.csv",[{"lc_plate_id":f"R{rows[0]['round']}-LC{wells().index(w)//config['robot']['lc_batch_size']+1:02d}","well":w,"contents":"Diluent only; NO sample; DO NOT INJECT"} for w in padding],fields=["lc_plate_id","well","contents"])
     if int(rows[0]["round"]) == 1 and config["design"]["round2_predosed"]:
         from .io import reaction_wells
         n0 = config["chemistry"]["substrate_molarity_M"]*config["chemistry"]["reaction_volume_ul"]

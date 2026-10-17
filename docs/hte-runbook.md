@@ -13,14 +13,14 @@ Round one: **48 distinct pairs, all 30 available ligands**; L07 is unavailable. 
 - Fit **p300 single GEN2 left; p300 eight-channel GEN2 right**. Reaction vials have 13 mm pitch: use the single only. The multi serves the standard 96-well LC preparation plate.
 - Check the supplied block on the flat adapter: secure mounting, latch closure, cap clearance within **45 mm**, offsets and thermal transfer. Pipette **1.5 mm above the bottom** by default; check actual immersion. Caps are manual; no stir bars or gripper.
 - Confirm the existing **1.7-min full LC cycle**, method ID, injection volume, UV channel/wavelength and authentic-standard RT/LOQ settings. Requested 210 nm is provisional; the old example wavelengths are not our method. Record local evidence before release.
-- Prepare stocks, caps, tips, 71 fresh reaction vials, 71 autosampler-compatible HPLC vials plus standards, and two 96-well deep-well LC preparation plates. The supplied VWR definition is 2.2 mL/well; match the physical plate before use. App-simulate the released Python. [Open setup details](hte-questions.md).
+- Prepare stocks, caps, tips, 71 fresh reaction vials, two final autosampler-compatible 96-well deep-well LC plates with pierceable seals, plus standards. The supplied VWR definition is 2.2 mL/well; confirm the physical plate fits BOTH the flat adapter and autosampler, including seal, carrier and needle depth. The derived `_hs.json` adds movement geometry only; it does not establish physical compatibility. App-simulate the released Python. [Open setup details](hte-questions.md).
 
 | Slot | Load |
 |---|---|
 | 1 / 4 | Ligand source racks; exact CSV addresses, L07 absent |
 | 2 | A1 SM/DCM; A2 Pd; A3 toluene; A8 mesitylene. Quench A4/A6/A9; diluent A5/A7/A10/A11/A12 |
 | 3 / 10 | Reaction block: staff move it by hand at App prompts; pipetting / heater-shaker |
-| 6 | VWR 96-well 2.2 mL deep-well preparation plate, or matching configured replacement; stays here |
+| 6 | VWR 96-well 2.2 mL deep-well preparation plate, or matching configured replacement; fill here, shake on 10, then directly to HPLC |
 | 5 / 8 / 9 | Single tips / multi tips / multi tips. Keep slots 7 and 11 empty |
 
 ## Dose and react
@@ -30,7 +30,7 @@ Round one: **48 distinct pairs, all 30 available ligands**; L07 is unavailable. 
 3. Hand-tighten all caps. Move/latch at the local pauses; run **95 °C, 500 rpm, 4 h**. Every block move, cap change and tip-rack replacement is manual.
 4. During hold one, run the **14 calibration injections**. Hand-dose **23 labelled fresh vials with SM/DCM only** in an ordinary off-deck rack; evaporate fully and cap the dry SM. Add mesitylene/catalysts only after round two is selected. Reuse the same reaction block.
 
-**Timing:** 717.7 min planned against 720 min, requiring 35 min LC/handling overlap. This remains unmeasured, with about two minutes spare. Record actual heating, cooling, cap handling and LC cycle times.
+**Timing:** one LC plate per round minimizes handling: four LC-plate moves total, excluding initial loading. Retained allowances give **752.7 /720 min**, with no within-round LC overlap. Measure automated preparation/caps/cooling: total handling must fall by **32.7 min**. Alternatively use a timed split-plate plan; live release rejects an overrun.
 
 ---
 
@@ -38,12 +38,14 @@ Round one: **48 distinct pairs, all 30 available ligands**; L07 is unavailable. 
 
 1. **Cool sealed vials off the heater.** Open for addition; add **500 µL 9:1 ACN/water +0.15% formic acid**. Nominal extract: 750 µL, 0.1% acid, 1.25 mL headspace. Quench and diluent contain no IS.
 2. **Hand-recap every vial.** Shake **1500 rpm, 2 min**, heater off; return to slot 3. The block must have cooled for workup.
-3. **Sample eight at a time.** Gently remix the indicated capped vials; let bubbles settle. Open only that batch. Other vials stay capped.
+3. **One LC plate per round.** Let bubbles settle after the automated extract shake; open the indicated reaction vials for sampling. Other vials stay capped.
 4. **Robot dilution:** fresh tip per sample; two slow same-well prewet cycles, without blowing air into the extract. Aspirate 21 µL at 1.5 mm, retain 1 µL reverse surplus, add 2 µL air gap and dispense nominal **20 µL into 980 µL LC diluent**, noncontact. Discard the tip; never revisit the source after destination contact.
-5. **At the pause:** recap sampled reaction vials. The LC plate stays in slot 6; it is **not shaken on the module**. With a fresh manual tip per completed 1 mL LC well, mix **500 µL five times**, avoiding air; transfer **900 µL** to the labelled HPLC vial. Cap and invert briefly.
-6. **Start that LC batch before resuming the robot.** Never transfer unfinished wells. R1: six batches of eight. R2: 8/8/7; preparation well **H3 is diluent only and must not be injected**. Reaction A1-F8 and LC A1-H6 are different maps.
+5. **Recap sampled reaction vials.** The reaction block stays in slot 3. At the App move prompt, take the completed LC plate **slot 6 → cooled heater-shaker slot 10**. Keep A1 orientation. Robot latches and shakes the plate **UNCOVERED, heater OFF, 1000 rpm for 2 min**; use the locally confirmed splash-free speed. It waits for module temperature ≤30 °C before loading. No manual sample mixing/pipetting.
+6. **Move directly 10 → HPLC** at the prompt; apply the confirmed pierceable autosampler seal. Load the correct carrier, plate definition and needle depth. R1 plate **R1-LC01: A1-H6, 48 samples**; R2 **R2-LC01: A1-H2 plus A3-G3, 23 samples**, column-wise. **H3 contains diluent only: do not inject.** Use `lc_plates.csv` and `lc_sequence.csv`; the 48-vial reaction map differs from the LC map. Inject directly from the plate; no individual sample-vial transfers.
 
-Final sample: 1.00 mL; maximum SM/product **666.7 µM**; mesitylene **66.7 µM**; formic acid **0.1%**; toluene **0.667%**. Set injection volume from the actual calibrated method.
+Optional timing route: set `robot.lc_batch_size=24`, then regenerate protocols/maps. R1 uses two fresh LC plates (A1-H3 and A4-H6); R2 uses one. **Six LC-plate moves total.** Keep these actual well coordinates; do not renumber the second plate. Start each completed plate before resuming robot preparation. Set overlap only from a timed rehearsal, exclusively R1; R2 has no preparation overlap. A claimed 35-min R1 overlap fits its 40.8-min injection window but is not demonstrated.
+
+Final sample: 1.00 mL; maximum SM/product **666.7 µM**; mesitylene **66.7 µM**; formic acid **0.1%**; toluene **0.667%**. Set injection volume from the actual calibrated method. Final LC plates and their headspace remain unchanged during injection; seal after shaking to limit evaporation.
 
 ## Pipetting and transfer faults
 

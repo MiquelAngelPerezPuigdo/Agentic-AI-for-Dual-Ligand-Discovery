@@ -206,6 +206,7 @@ def test_first_reaction_only_release_allows_parallel_calibration_but_workup_and_
                                quantification_limit_uM={"substrate":None,"product":None})
     for key in required_validations(config): config["validation"][key] = True
     config["validation"]["lc_calibration_validated"] = False
+    config["timing"]["workup_total_minutes"] = 35  # Fictional release-test timing only.
     inv = campaign_inventory(ROOT/"hte_inputs/ligands.csv",config)
     first, second = [read_csv(tmp_path/f"demo/round{i}_design.csv") for i in (1,2)]
     export(config,inv,first,tmp_path/"first_reaction",live=True,stage="dose_and_react")
