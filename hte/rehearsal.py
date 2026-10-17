@@ -9,7 +9,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from .adapters import load_embeddings
+from .embeddings import load_embeddings
 from .demo import fixtures, synthetic_config
 from .design import consensus_select, ligand_coverage, make_design, round1_required_ligands
 from .inventory import candidates, campaign_inventory

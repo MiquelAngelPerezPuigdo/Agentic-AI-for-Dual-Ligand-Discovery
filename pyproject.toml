@@ -12,7 +12,6 @@ dependencies = ["numpy>=1.26,<3", "rdkit>=2024.3", "anthropic>=0.125,<1"]
 [project.optional-dependencies]
 sources = ["openpyxl>=3.1", "pypdf>=5"]
 test = ["pytest>=8", "opentrons==8.8.2"]
-analytics = ["mocca2==0.1.18"]
 embeddings = ["torch>=2.3", "transformers>=4.43,<5"]
 docs = ["reportlab>=4.4,<5", "mistune>=3.1,<4", "pypdf>=5,<7"]
 
@@ -21,9 +20,6 @@ hte = "hte.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["hte*"]
-
-[tool.setuptools.package-data]
-"hte.vendor" = ["*.txt"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests/hte"]

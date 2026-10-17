@@ -16,12 +16,14 @@ The practice selects48 pairs covering30 ligands, accepts all48 synthetic LC resu
 
 ## Acceptance scope
 
+The active suite passes **143 tests** after removal of two obsolete GP/MOCCA adapter tests. All campaign checks remain. The initial design regenerates byte for byte from saved scores/vectors, and complete robot/stock outputs are generated locally rather than checked in.
+
 Tests cover stoichiometry/reserves/deck loads, supplied geometry and cap envelope, reaction-to-LC maps, acid/dilution arithmetic, ligand coverage, strict scoring, caching/budget stops and interrupted requests. Chromeleon batches with reset injection numbers require explicit maps and full coverage; partial/overlapping/duplicate exports are rejected. Calibration and quantitative QC are enforced.
 
-Actual Opentrons8.8.2 simulations execute both rounds with custom labware, manual moves/cap pauses and tip replacement. Optional MOCCA and GoLLuM adapters are tested on synthetic data, without establishing performance for this chemistry.
+Actual Opentrons8.8.2 simulations execute both rounds with custom labware, manual moves/cap pauses and tip replacement. Unused historical GP/MOCCA adapters and checked-in generated runs have been removed. Active simulations and the offline scoring/LC rehearsal remain tested.
 
 ## Practical limits
 
 Simulation does not establish physical fit, liquid temperature, extraction/IS recovery or LC separation. Formal separate homogeneity/solubility studies are not requested; pauses handle visible faults.
 
-The 1.7-min full-cycle assumption and35-min handling overlap give717.7 min (752.7 min serial). No physical trial has demonstrated12 h. Record actual timings and [remaining setup facts](hte-questions.md); public protocols retain physical-execution guards pending local release.
+The 1.7-min full-cycle assumption and35-min handling overlap give717.7 min (752.7 min serial). No physical trial has demonstrated12 h. Record actual timings and [remaining setup facts](hte-questions.md); generated previews retain physical-execution guards pending local release.

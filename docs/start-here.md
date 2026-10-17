@@ -2,15 +2,17 @@
 
 Use the [two-page staff checklist](HTE-staff-checklist.pdf) at the robot. This page is for the colleague running the local optimizer. The initial **48-pair design is already prepared** in `campaigns/hackathon2026/round1_design.csv`. Do not rerun paid initial scoring unless deliberately making a new campaign.
 
+Generate stock/deck CSVs and simulation files with the preview export in [development.md](development.md#reproduce-the-real-first-batch-without-spending). Generated outputs are kept locally; the frozen design/scores are the versioned record.
+
 ## Local setup before the timed run
 
 Run commands from the repository root. Use Python 3.12; HTEL's normal `uv sync --python 3.12 --extra sources` and `uv run` are supported. Alternatively install the project with `python -m pip install -e '.[sources]'` inside an activated virtual environment.
 
 ```bash
 mkdir -p local_data
-cp hte_inputs/campaign.json local_data/campaign.json
-cp hte_inputs/calibration_template.csv local_data/calibration-plan.csv
-cp anthropic.key.example anthropic.key
+cp -n hte_inputs/campaign.json local_data/campaign.json
+cp -n hte_inputs/calibration_template.csv local_data/calibration-plan.csv
+cp -n anthropic.key.example anthropic.key
 ```
 
 Do not overwrite an existing key. Open `anthropic.key`, replace its single placeholder line with the raw Claude key, save, and restrict access with `chmod 600 anthropic.key`. Never paste it into a protocol, CSV, GitHub or an email. No robot credentials are required.
