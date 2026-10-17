@@ -1,8 +1,8 @@
 {
-  "created_utc": "2026-10-15T22:55:10.130955+00:00",
+  "created_utc": "2026-10-17T05:06:13.942937+00:00",
   "campaign": "hackathon2026-paradox48",
   "tests": {
-    "tests": 145,
+    "tests": 143,
     "errors": 0,
     "failures": 0,
     "skipped": 0
@@ -12,12 +12,11 @@
     "numpy": "1.26.4",
     "rdkit": "2026.3.6",
     "opentrons": "8.8.2",
-    "mocca2": "0.1.18",
-    "torch": "2.14.1",
-    "transformers": "4.57.6",
-    "botorch": "0.18.1",
-    "gpytorch": "1.15.2",
-    "pytest": "9.1.1"
+    "openpyxl": "3.1.5",
+    "pypdf": "6.19.0",
+    "pytest": "9.1.1",
+    "reportlab": "4.5.1",
+    "mistune": "3.3.4"
   },
   "opentrons_simulations": [
     "R1 dosing/reaction with supplied-derived 48-vial JSON",
@@ -26,10 +25,6 @@
     "R2 workup, 8/8/7 samples, H3 diluent only",
     "Fresh-tip mode and rack replacement",
     "Alternative p20 split transfers"
-  ],
-  "actual_adapters_tested_on_synthetic_data": [
-    "MOCCA raw DAD integration",
-    "GoLLuM upstream optimizer with local projected GP"
   ],
   "language_model_pair_embeddings": {
     "model": "google-t5/t5-base",
@@ -242,5 +237,22 @@
     "partial_duplicate_and_overlapping_exports_rejected": true
   },
   "source_review": "hte_inputs/htel_source_review.json",
-  "scope_note": "Bench compatibility, analytical method and twelve-hour throughput are not established by software tests."
+  "scope_note": "Bench compatibility, analytical method and twelve-hour throughput are not established by software tests.",
+  "review_date": "2026-10-17",
+  "repository_cleanup": {
+    "date": "2026-10-17",
+    "removed": [
+      "checked-in generated demo and robot exports",
+      "unused GP optimizer and vendored code",
+      "unused MOCCA integration/templates",
+      "obsolete optional dependencies and shell wrapper",
+      "duplicate prompt/caching guides"
+    ],
+    "active_tests_removed": 0,
+    "obsolete_adapter_tests_removed": 2,
+    "initial_design_byte_identical_after_cleanup": true,
+    "paid_calls_this_update": 0,
+    "model_or_chemistry_changed": false,
+    "generated_robot_files": "local output/ via export; not versioned"
+  }
 }

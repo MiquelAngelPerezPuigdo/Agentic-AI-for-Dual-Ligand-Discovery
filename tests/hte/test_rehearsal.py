@@ -15,9 +15,6 @@ def test_offline_loop_scores_feedback_without_network_or_repeated_events(tmp_pat
         raise AssertionError("The offline rehearsal attempted to create an online client")
 
     monkeypatch.setattr(anthropic, "Anthropic", reject_online_client)
-    def reject_gollum_optimizer(*args, **kwargs):
-        raise AssertionError("The campaign called a GoLLuM yield optimizer")
-    monkeypatch.setattr("hte.adapters.gollum_acquisition", reject_gollum_optimizer)
     monkeypatch.setenv("ANTHROPIC_API_KEY", "synthetic_existing_key")
     report_path = run(tmp_path/"loop", ROOT/"hte_inputs/ligands.csv", ROOT/"hte_inputs/campaign.json",
                       ROOT/"hte_inputs/literature.json", ROOT/"hte_inputs/pair_embeddings_t5-base.npz")

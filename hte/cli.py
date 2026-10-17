@@ -61,16 +61,6 @@ def main():
     emb.add_argument("--model", required=True)
     emb.add_argument("--output", required=True)
     emb.add_argument("--download", action="store_true")
-    g = commands.add_parser("gollum", help="Historical adapter validation only; outside the two-round campaign")
-    g.add_argument("--embeddings", required=True)
-    g.add_argument("--priors", required=True)
-    g.add_argument("--output", required=True)
-    m = commands.add_parser("mocca")
-    m.add_argument("--manifest", required=True)
-    m.add_argument("--settings", default="hte_inputs/mocca_settings.json")
-    m.add_argument("--output", required=True)
-    demo = commands.add_parser("demo")
-    demo.add_argument("--output", required=True)
     rehearsal = commands.add_parser("rehearse-loop", help="Offline watcher/scoring rehearsal; no API key or paid calls")
     rehearsal.add_argument("--output", required=True)
     rehearsal.add_argument("--embeddings", default="hte_inputs/pair_embeddings_t5-base.npz")
@@ -79,10 +69,6 @@ def main():
         if args.command == "import-inventory":
             import_workbook(args.workbook, args.output)
             print(args.output)
-            return
-        if args.command == "demo":
-            from .demo import run
-            print(run(args.output, args.inventory, args.config))
             return
         if args.command == "rehearse-loop":
             from .rehearsal import run
@@ -113,7 +99,7 @@ def main():
                   f"requests reported hits, {cache['cache_read_input_tokens']} cached read tokens")
         elif args.command == "design":
             from .design import consensus_select, ligand_coverage, make_design, pair_features, round1_required_ligands
-            from .adapters import load_embeddings
+            from .embeddings import load_embeddings
             if config["design"].get("require_lm_embeddings") and not args.embeddings:
                 raise ValueError("This campaign requires LM embeddings; pass --embeddings")
             features = load_embeddings(args.embeddings, inv, pairs) if args.embeddings else pair_features(inv, pairs)
@@ -172,15 +158,8 @@ def main():
             from .workflow import watch
             watch(config, inv, read_json(args.evidence), args.inbox, args.dosing, args.calibration, args.output, args.once)
         elif args.command == "embeddings":
-            from .adapters import build_embeddings
+            from .embeddings import build_embeddings
             build_embeddings(inv, pairs, args.model, args.output, args.download)
-        elif args.command == "gollum":
-            from .adapters import load_embeddings, gollum_acquisition
-            gollum_acquisition(load_embeddings(args.embeddings, inv, pairs), pairs, read_csv(args.priors), args.output,
-                               object_digest(config["chemistry"]), config["design"]["seed"])
-        elif args.command == "mocca":
-            from .adapters import process_mocca
-            process_mocca(args.manifest, read_json(args.settings), args.output)
     except (ValueError, KeyError, FileNotFoundError, ImportError) as error:
         parser.exit(2, f"HTE stopped: {error}\n")
 

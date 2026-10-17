@@ -4,7 +4,7 @@ import sys
 
 import pytest
 
-from hte.adapters import load_embeddings
+from hte.embeddings import load_embeddings
 from hte.cli import main
 from hte.demo import synthetic_config
 from hte.design import (consensus_select, ligand_coverage, make_design,

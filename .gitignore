@@ -19,10 +19,11 @@ secrets*.json
 
 # Experimental outputs, local exports and temporary files
 output/
+demo/
 local_data/
 *.log
 pytest.xml
 .coverage
 htmlcov/
 
-# Preserve the published synthetic demonstration and frozen input embeddings.
+# Frozen campaign evidence and input embeddings remain versioned.

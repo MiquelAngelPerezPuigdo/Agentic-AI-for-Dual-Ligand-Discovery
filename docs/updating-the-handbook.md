@@ -31,7 +31,7 @@ Specify another destination or edition date when needed:
 
 ```bash
 python scripts/build-hte-pdf.py --output docs/HTE-operator-handbook.pdf
-python scripts/build-hte-pdf.py --date 2026-10-16
+python scripts/build-hte-pdf.py --date 2026-10-17
 ```
 
 ## Which source to edit
@@ -43,12 +43,12 @@ python scripts/build-hte-pdf.py --date 2026-10-16
 | Operator sequence, deck, pipetting, analytics and live handoff | `docs/hte-runbook.md` |
 | Separate SM/mesitylene stocks, containers and five-level calibration | `docs/stocks-and-calibration.md` |
 | Questions awaiting HTE confirmation | `docs/hte-questions.md` |
-| Prompt caching | `docs/prompt-caching.md` |
+| ML/LLM strategy and caching (expert document) | `docs/ml-strategy.md` |
 | Actual software verification evidence | `docs/rehearsal-results.md`, `software_validation.json` |
 | Fixed chemistry, volumes, analytics, timing and validated settings | `hte_inputs/campaign.json` |
 
 The cover reads the current campaign configuration and validation record. The chapters reproduce the current procedures; update their wording whenever the corresponding configuration or pipeline changes. Rebuilding alone cannot reconcile a stale manual description with a changed experiment.
 
-After editing, review the affected pages, confirm links and tables, and share the new PDF together with its manifest. Commit source changes to the shared repository so both of us work from the same version. For public snapshots, rebuild/copy both PDFs and manifests into `docs/` and commit them with the sources. Use `--staff --output docs/HTE-staff-checklist.pdf` for the short sheet. Keep algorithm explanations in the reference guide; staff need actions and quantities.
+After editing, review the affected pages, confirm links and tables, and share the new PDF together with its manifest. Commit source changes to the shared repository so both of us work from the same version. For public snapshots, rebuild/copy both PDFs and manifests into `docs/` and commit them with the sources. Use `--staff --output docs/HTE-staff-checklist.pdf` for the short sheet. Keep algorithm explanations in docs/ml-strategy.md; staff need actions and quantities.
 
 Private correspondence, API keys, experimental data and synthetic dosing tables are not appended to this handbook. Real campaign stock/deck/dosing CSVs remain separate, generated from the confirmed configuration and real selection.

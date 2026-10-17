@@ -23,27 +23,6 @@ def pair_features(inventory, candidates):
                      for c in candidates])
 
 
-def maxmin(candidates, features, count, exclude=(), seed=42):
-    """Deterministic diversity initialization. This is NOT a trained GoLLuM surrogate."""
-    excluded = set(exclude)
-    available = [i for i, c in enumerate(candidates) if c["pair_id"] not in excluded]
-    if len(available) < count or count < 0:
-        raise ValueError("Insufficient exploration candidates")
-    if count == 0:
-        return []
-    x = np.asarray(features, dtype=float)
-    if x.ndim != 2 or len(x) != len(candidates) or not np.isfinite(x).all():
-        raise ValueError("Invalid exploration features")
-    chosen = [random.Random(seed).choice(available)]
-    distance = ((x - x[chosen[0]]) ** 2).sum(axis=1)
-    while len(chosen) < count:
-        options = [i for i in available if i not in chosen]
-        pick = max(options, key=lambda i: (distance[i], candidates[i]["pair_id"]))
-        chosen.append(pick)
-        distance = np.minimum(distance, ((x - x[pick]) ** 2).sum(axis=1))
-    return [candidates[i]["pair_id"] for i in chosen]
-
-
 def ranked_ids(rows, candidates):
     expected = {c["pair_id"] for c in candidates}
     if len(rows) != len(expected) or {r["pair_id"] for r in rows} != expected:
@@ -71,14 +50,14 @@ def rank_percentiles(values):
 
 
 def consensus_select(candidates, ranking, features, count, weight=0.5, minimum_percentile=0.25,
-                     acquisition=None, required_ligands=()):
+                     required_ligands=()):
     """Greedy rank consensus, with mandatory ligand coverage before ordinary filling.
 
     Coverage can override the LLM floor; every choice still uses both rank signals.
     The campaign's complete unordered-pair library permits a two-ligand-per-well
     completion bound. Final validation also rejects incomplete sparse selections.
     """
-    order = ranked_ids(ranking, candidates)
+    ranked_ids(ranking, candidates)
     n = len(candidates)
     if not 0 <= weight <= 1 or not 0 <= minimum_percentile <= 1 or not 0 <= count <= n:
         raise ValueError("Invalid consensus settings")
@@ -96,12 +75,6 @@ def consensus_select(candidates, ranking, features, count, weight=0.5, minimum_p
         raise ValueError("Required ligands have no candidate pairs: "+", ".join(sorted(missing-candidate_ligands)))
     if (len(missing)+1)//2 > count:
         raise ValueError("Too few pair wells to cover all required ligands")
-    if acquisition is not None:
-        if set(acquisition) != set(order):
-            raise ValueError("GoLLuM acquisition file must cover every candidate")
-        fixed = [finite(acquisition[c["pair_id"]], "acquisition") for c in candidates]
-    else:
-        fixed = None
     selected, trace = [], []
     distance = ((features-features.mean(axis=0))**2).sum(axis=1)
     for step in range(count):
@@ -126,7 +99,7 @@ def consensus_select(candidates, ranking, features, count, weight=0.5, minimum_p
             phase = "consensus"
         if not choices:
             raise ValueError("Not enough candidates remain above the LLM percentile floor")
-        broad_rank = rank_percentiles({i: fixed[i] if fixed is not None else distance[i] for i in rank_pool})
+        broad_rank = rank_percentiles({i: distance[i] for i in rank_pool})
         choose = max(choices, key=lambda i: (weight*utility[candidates[i]["pair_id"]]+(1-weight)*broad_rank[i],
                                               utility[candidates[i]["pair_id"]], candidates[i]["pair_id"]))
         key = candidates[choose]["pair_id"]
@@ -135,7 +108,7 @@ def consensus_select(candidates, ranking, features, count, weight=0.5, minimum_p
         missing.difference_update(newly_covered)
         trace.append({"pair_id": key, "llm_percentile": utility[key], "exploration_percentile": broad_rank[choose],
                       "consensus_score": weight*utility[key]+(1-weight)*broad_rank[choose],
-                      "exploration_method": "trained_gollum_acquisition" if fixed is not None else "diversity_initialization",
+                      "exploration_method": "diversity_initialization",
                       "selection_step": step+1, "selection_phase": phase,
                       "new_ligands_covered": ";".join(newly_covered), "uncovered_ligands_remaining": len(missing),
                       "llm_floor_override": choose not in above_floor})

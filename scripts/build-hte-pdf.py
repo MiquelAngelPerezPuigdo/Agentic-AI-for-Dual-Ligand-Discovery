@@ -38,7 +38,6 @@ CHAPTERS = [
     ("hte-runbook.md", "Complete operator runbook"),
     ("stocks-and-calibration.md", "Stocks and analytical calibration"),
     ("hte-questions.md", "Facts to confirm with HTE"),
-    ("prompt-caching.md", "Claude prompt caching and costs"),
     ("rehearsal-results.md", "Software rehearsal evidence"),
 ]
 BLUE = colors.HexColor("#183B56")
@@ -271,9 +270,6 @@ def build(output, edition):
         heading.bookmark, heading.toc_level = f"chapter-{number}", 0
         story.extend([heading, Paragraph(f'<link href="{REPO}/blob/main/docs/{filename}" color="#087E8B">Editable source: docs/{filename}</link>', sheet["small"])])
         source = (ROOT/"docs"/filename).read_text()
-        if filename == "rehearsal-results.md" and "## Historical 31-ligand rehearsal" in source:
-            source = source.split("## Historical 31-ligand rehearsal", 1)[0]
-            source += "\nHistorical runs and earlier API cost records remain in the linked editable source.\n"
         story.extend(markdown_blocks(parser(source), sheet, number, [0]))
     output.parent.mkdir(parents=True, exist_ok=True)
     Handbook(output, edition, source_hash).multiBuild(story)
