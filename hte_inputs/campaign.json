@@ -236,7 +236,8 @@
       "1": 0,
       "2": 0
     },
-    "handling_status": "One LC plate per round, explicitly no R1 split. The 72 min workup allowance remains unmeasured. Per-export workup_timing.json derives pumping/waits/shaking from actual transfer operations and lists excluded motion/manual handling; it is a subtotal, not a complete duration."
+    "handling_status": "One LC plate per round, explicitly no R1 split. The 72 min workup allowance remains unmeasured. Per-export workup_timing.json derives pumping/waits/shaking from actual transfer operations and lists excluded motion/manual handling; it is a subtotal, not a complete duration.",
+    "presentation_status": "Use the deadline-derived operating budget as a target allocation, not a validated completion-time forecast. Confirm the full injection cycle and complete handling plan locally. Calibration and R2 SM predosing run during hold one; R2 physical changeover can overlap R1 LC after sampling. One LC plate per round; no R1 split."
   },
   "validation": {
     "chemistry_confirmed": true,

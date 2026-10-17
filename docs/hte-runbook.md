@@ -30,7 +30,7 @@ Round one: **48 distinct pairs, all 30 available ligands**; L07 is unavailable. 
 3. Hand-tighten all caps. Move/latch at the local pauses; run **95 °C, 500 rpm, 4 h**. Every block move, cap change and tip-rack replacement is manual.
 4. During hold one, run the **14 calibration injections**. Hand-dose **23 labelled fresh vials with SM/DCM only** in an ordinary off-deck rack; evaporate fully and cap the dry SM. Add mesitylene/catalysts only after round two is selected. Reuse the same reaction block.
 
-**Timing:** one LC plate per round minimizes handling: four LC-plate moves total, excluding initial loading. Retained allowances give **752.7 /720 min**, with no within-round LC overlap. Measure automated preparation/caps/cooling: total handling must fall by **32.7 min**. R1 stays on one LC plate. The 72-min workup allowance is unmeasured; the calculated pumping/waits/shaking subtotal is 33.5 min across both rounds, excluding movement and caps. Live release rejects an overrun.
+**12-hour operating target:** 480 min reaction holds +120.7 min LC; **119.3 min for all remaining handling, workups, decisions, final analysis and contingency**. Calibration and R2 SM predosing overlap hold one. After R1 sampling, prepare the R2 block while LC runs; catalyst dosing waits for all 48 results and selection. One LC plate per round, four moves total; no R1 split. Confirm the full cycle and handling times locally before release.
 
 ---
 
@@ -57,6 +57,6 @@ For an uncertain LC dilution, remix the original extract and prepare a fresh doc
 
 ## Changeover and finish
 
-After all **48 R1 results** pass analytical QC, the local pipeline selects **22 new pairs + L17 reference**. Archive R1 vials; fit the 23 dry predosed vials into the same block and verify orientation. Refill sources using R2 deck loads. **No SM redosing; mesitylene is added once after dry-down.** Repeat reaction and workup.
+During R1 LC, after all R1 sampling is complete, archive those vials and fit the 23 dry predosed vials into the same block; verify orientation. After all **48 R1 results** pass QC, the pipeline selects **22 new pairs +L17 reference**. Refill sources from R2 deck loads and add the selected stocks. **No SM redosing; mesitylene is added once after dry-down.** Repeat reaction/workup.
 
 Stop the clock after all 23 final injections and quantitative analysis. Archive source exports, maps, assay/stock records, method/channel, calibration, QC, times, scoring/cache records, final CSVs, matching protocols and robot JSON logs. Keep experimental data private pending team agreement.

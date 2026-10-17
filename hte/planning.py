@@ -585,6 +585,16 @@ def schedule(config):
     if t["workup_total_minutes"] < minimum_shaking:
         raise ValueError("Workup budget omits reaction-extract and LC-plate shaking holds")
     planned=total-overlap
+    operating_budget = {
+        "target_total_minutes": t["deadline_minutes"],
+        "reaction_minutes": reaction,
+        "lc_minutes_outside_reaction_holds": analysis,
+        "handling_decision_and_contingency_cap_minutes": t["deadline_minutes"]-reaction-analysis,
+        "calibration_minutes_parallel_to_round1_hold": parallel*cycle,
+        "fixed_tasks_fit_window": reaction+analysis <= t["deadline_minutes"],
+        "status": "Target allocation; complete physical timing has not been validated",
+        "interpretation": "Remaining time is a cap for ALL dosing, evaporation, heating/cooling, workups, manual handling, decisions, final analysis and contingency. It is not an estimate of those tasks or evidence that they fit."
+    }
     return {"reaction_minutes": reaction, "lc_minutes": analysis, "overhead_minutes": overhead,
             "injections": injections, "minimum_reaction_plus_lc_minutes": reaction + analysis,
             "calibration_minutes_hidden_in_reaction": parallel*cycle,
@@ -595,7 +605,9 @@ def schedule(config):
             "fits_planned_estimate":planned<=t["deadline_minutes"],
             "lc_plates_by_round":lc_plates,"manual_lc_plate_moves":2*sum(lc_plates),
             "minimum_workup_shaking_minutes":minimum_shaking,
-            "assumptions": "Full injection cycle. All R1 measurements required before decision. One LC plate per round gives no within-round preparation/injection overlap. Split plates save only explicitly budgeted, measured preparation time while a preceding completed plate is injected. Workup includes both extract and LC shaking, moves and manual caps."}
+            "operating_budget":operating_budget,
+            "scenario_status":"Unmeasured handling-allowance scenario; not a validated completion-time forecast",
+            "assumptions": "Full injection cycle. All R1 measurements required before decision. One LC plate per round gives no within-round preparation/injection overlap. The target budget does not replace measured handling allowances. Workup includes both extract and LC shaking, moves and manual caps."}
 
 
 def schedule_scenarios(config, cycles=(1.7, 2, 3, 5, 6)):

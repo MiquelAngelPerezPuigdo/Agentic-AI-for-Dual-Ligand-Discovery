@@ -51,7 +51,7 @@ Follow App pauses. Hand-tighten reaction-vial caps before heating/shaking; the L
 | 5 / Quench | Add **500 µL quench** per vial. Hand-recap ALL. Shake **1500 rpm, 2 min**, heater off; return to slot 3. |
 | 6 / Sample | Let bubbles settle after shaking; uncap the indicated reaction vials. Robot adds **20 µL extract to 980 µL diluent** with fresh sample tips. |
 | 7 / LC handoff | Recap reaction vials. Move the completed LC plate **6 → cooled shaker 10** at App prompt. Robot shakes **UNCOVERED, heater OFF, 1000 rpm, 2 min** (locally confirmed splash-free speed). Move **10 → HPLC**, apply compatible seal. Inject directly from this plate; **no manual dilution/mixing or vial transfers**. |
-| 8 / Select R2 | After all **48 results** pass QC, software selects **22 new pairs + L17 reference**. Archive R1 vials; fit the 23 dry predosed vials into the SAME block. Check orientation. |
+| 8 / R2 setup/select | During R1 LC, archive sampled R1 vials; fit the 23 dry predosed vials into the SAME block and check orientation. After all 48 results pass QC, software selects 22 new pairs +L17 reference. Add catalysts after selection. |
 | 9 / R2 | Refill from R2 deck loads. **No SM redose.** Add selected stocks; reference uses **75 µL L17**, no ligand B. Cap; repeat 4 h reaction/workup. Prepare all 23 in one new LC plate. LC well **H3 is diluent only: do not inject.** |
 
 Stop the clock after **23 final injections and quantitative analysis**. Save exports, maps, QC, protocols, times and robot JSON logs.
@@ -60,4 +60,4 @@ Stop the clock after **23 final injections and quantitative analysis**. Save exp
 
 Pause for layers, solids at aspiration, persistent bubbles, air uptake or tip contact. Repeated aspiration does not fix solubility. Reuse tips only for approved same-stock/noncontact dosing; samples always get fresh tips. Replace an uncertain dilution with a fresh documented one; do not guess a top-up.
 
-**Timing: 752.7 /720 min with retained allowances.** Workup allowance: 72 min across both rounds; calculated pumping/waits/shaking alone: 33.5 min, excluding caps/movement. Time actual handling before release. **Four LC-plate moves total**, excluding initial loading. [Full procedure and local commands](HTE-operator-handbook.pdf).
+**12-hour operating target:** 8 h reaction holds +120.7 min LC; **119.3 min for all other tasks and contingency**. Calibration/R2 SM predosing overlap hold one; R2 block changeover can overlap R1 LC after sampling. Confirm actual cycle/handling times before release. **Four LC-plate moves; no R1 split.** [Full procedure and local commands](HTE-operator-handbook.pdf).

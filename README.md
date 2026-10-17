@@ -44,6 +44,8 @@ For a visual test, install `.[reports]` and run `python scripts/mock-hplc-trials
 
 ## Evidence and scope
 
-[Validation record](software_validation.json), [human-readable verification](docs/rehearsal-results.md). Automated LC preparation uses **one final plate per round**, uncovered OT-2 shaking and direct plate injection, with four LC-plate moves total. Retained handling allowances and the requested 1.7-minute LC cycle give **752.7 /720 minutes**; R1 remains on one LC plate. Workup has an unmeasured 72-min allowance; generated pumping/waits/shaking alone total 33.5 min across both rounds, excluding caps and robot motion; physical setup, calibration and throughput remain HTEL checks. Operation uses local App import/start.
+**The campaign targets completion within the 12-hour competition window.** Two reaction holds use 480 min; 71 LC injections at the requested 1.7-min full cycle use 120.7 min. The remaining **119.3 min** is the budget for all dosing, evaporation, heating/cooling, workups, manual handling, optimization, final analysis and contingency. Calibration and R2 SM predosing run during hold one; R2 physical changeover can overlap R1 LC after sampling.
+
+Use **one final LC plate per round**, with uncovered OT-2 shaking and direct plate injection: four LC-plate moves total; no R1 split. This is a target allocation, subject to timed handling and LC-cycle confirmation. [Software evidence and timing audit](docs/rehearsal-results.md), [machine-readable record](software_validation.json). Local App import/start and physical setup checks remain required.
 
 The method builds on the [thesis benchmark](https://github.com/MiquelAngelPerezPuigdo/Agentic-AI-for-Catalyst-Design) and [GoLLuM's representation/diversity initialization](https://github.com/schwallergroup/gollum). Original project code is [MIT licensed](LICENSE).

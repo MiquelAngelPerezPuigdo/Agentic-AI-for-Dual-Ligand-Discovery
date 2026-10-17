@@ -16,7 +16,7 @@ chmod 600 anthropic.key
 
 Put the raw Claude key in **`anthropic.key`**; preserve any existing key. Never send it to the robot, Git or email.
 
-In `local_data/campaign.json`, set actual method/channel, full LC cycle, measured reference RTs/LOQs and applicable release evidence. Confirm final-plate shaker/autosampler compatibility and uncovered shake speed; revise the 752.7-min timing before release. [HTEL setup facts](hte-questions.md).
+In `local_data/campaign.json`, set actual method/channel, full LC cycle, measured reference RTs/LOQs and applicable release evidence. Confirm final-plate shaker/autosampler compatibility and uncovered shake speed; confirm the measured handling plan within the 119.3-min remaining budget before release. Enter measured stage totals under `timing` (both rounds combined); `check` separates the target from those allowances. [HTEL setup facts](hte-questions.md).
 
 ```bash
 python -m hte.cli --config local_data/campaign.json check
@@ -59,4 +59,4 @@ After all 23 R2 injections, run the helper with **`final`**, R2 `dosing.csv`, th
 
 Practice: `python -m hte.cli practice-analytics --output output/pilot`; [real pilot replay](htel-lc-import.md). `rehearse-loop` also mocks feedback; no paid calls. Use fresh import folders and review interrupted scoring before retrying.
 
-**174 tests passed; protocols simulated; initial design reproducible.** Bench results/calibration and feedback latency remain unmeasured. [Validation](rehearsal-results.md), [ML strategy](ml-strategy.md), [PDF updates](updating-the-handbook.md).
+**177 tests passed; protocols simulated; initial design reproducible.** Bench results/calibration and feedback latency remain unmeasured. [Validation](rehearsal-results.md), [ML strategy](ml-strategy.md), [PDF updates](updating-the-handbook.md).

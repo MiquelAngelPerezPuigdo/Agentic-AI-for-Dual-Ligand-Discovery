@@ -116,8 +116,37 @@ def test_timing_calibrations_overlap_and_deadline_warning(cfg):
     assert timing["planned_total_minutes"] == pytest.approx(752.7)
     assert not timing["fits_serial_estimate"] and not timing["fits_planned_estimate"]
     assert timing["manual_lc_plate_moves"] == 4 and timing["lc_plates_by_round"] == [1, 1]
+    budget = timing["operating_budget"]
+    assert budget["target_total_minutes"] == 720
+    assert budget["handling_decision_and_contingency_cap_minutes"] == pytest.approx(119.3)
+    assert (budget["reaction_minutes"]+budget["lc_minutes_outside_reaction_holds"]
+            +budget["handling_decision_and_contingency_cap_minutes"]) == 720
+    assert budget["fixed_tasks_fit_window"]
+    # A target fitting the deadline must never turn the unmeasured allowance scenario into a pass.
+    assert not timing["fits_planned_estimate"]
     cfg["timing"]["calibration_injections_during_round1_reaction"] = 0
     assert schedule(cfg)["serial_total_minutes"] == pytest.approx(776.5)
+
+
+@pytest.mark.parametrize("cycle,remaining,fixed_fit", [(3, 27, True), (6, -186, False)])
+def test_operating_budget_exposes_method_time_constraints(cfg, cycle, remaining, fixed_fit):
+    cfg["timing"]["injection_cycle_minutes"] = cycle
+    result = schedule(cfg)
+    assert result["operating_budget"]["handling_decision_and_contingency_cap_minutes"] == remaining
+    assert result["operating_budget"]["fixed_tasks_fit_window"] is fixed_fit
+    assert not result["fits_planned_estimate"]
+
+
+def test_check_reports_target_and_unvalidated_allowances_separately(monkeypatch, capsys):
+    import ast
+    import sys
+    from hte.cli import main
+    monkeypatch.setattr(sys, "argv", ["hte", "check"])
+    main()
+    report = ast.literal_eval(capsys.readouterr().out)
+    assert report["operating_budget"]["target_total_minutes"] == 720
+    assert report["timing_allowance_audit"]["scenario_status"].startswith("Unmeasured")
+    assert not report["timing_allowance_audit"]["fits_planned_estimate"]
 
 
 def test_real_export_requires_bench_validation(cfg):
