@@ -204,7 +204,9 @@ def static_map(output, inventory, ids, coordinates, variance, method, sources):
                   "No experimental pair yields are available.", fontsize=10)
     metadata = {"Title": "Frozen ligand initialization", "Description": "Design SHA256 "+sources["design"],
                 "Date": None}
-    fig.savefig(output/"initialization-map.svg", metadata=metadata)
+    svg = output/"initialization-map.svg"
+    fig.savefig(svg, metadata=metadata)
+    svg.write_text("\n".join(line.rstrip() for line in svg.read_text().splitlines())+"\n")
     fig.savefig(output/"initialization-map.png", dpi=180)
     plt.close(fig)
 
