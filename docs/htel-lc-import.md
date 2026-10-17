@@ -2,6 +2,8 @@
 
 Use calibrated integrated UV peak areas for yield; MS is identity support. The old supplied CSV establishes format only. Its RTs, names and wavelength settings do not validate the requested 1.7-minute method. The supplied Thermo RAW is MS data, not raw DAD for MOCCA.
 
+**Processing chain:** HTEL's LC method → Chromeleon peak integration → exported UV areas → our SM/product calibration against mesitylene → yield/QC → Claude feedback. Standards are required. Chromeleon can calculate concentrations for comparison; feed **areas** into Python and apply calibration once.
+
 ## Configure once from authentic standards
 
 In `local_data/campaign.json`, set the actual `analytics.method_id`, one quantitative `channel` (`UV_VIS_1` to `UV_VIS_4`), `references` and `quantification_limit_uM`. References require `substrate`, `product`, `internal_standard`, each with measured `retention_time_min` and `window_min`; windows must not overlap. Record actual detector wavelength and injection volume alongside the method. We request 210 nm initially; the example's channels at 253/270/300/370 nm are historical settings. Do not sum wavelengths or substitute TIC for UV area.
@@ -35,7 +37,45 @@ python -m hte.cli --config local_data/campaign.json \
   --output local_data/calibration.csv
 ```
 
-Fit blank plus five levels and exclude independent checks from fitting. Wrong method/channel, ambiguous/missing peaks, poor fit or failed checks stop publication. A verified zero may require an explicitly reviewed integrated measurement in the template if the vendor omits zero peaks. No signal is silently set to zero. Configure measured LOQs; if missing-analyte censoring is desired, set `missing_analyte_policy="censor"` only with those LOQs, yielding upper bounds rather than invented zero yields. Default is rejection.
+Fit blank plus five levels; exclude independent checks. Wrong method/channel, ambiguous/missing peaks, poor fit or failed checks stop publication. For a truly absent calibration-blank analyte omitted by Chromeleon, add `--reviewed-absences local_data/calibration-absences.csv` to `calibration-from-peaks`. Fields: `sample_id,analyte,method_id,reviewed_by,note`. Enter actual review details after inspecting the blank; `practice-analytics` supplies an empty template. Only planned zero-analyte blanks qualify; reviews conflicting with measured peaks are rejected. A reviewed zero area is recorded without inventing a chromatogram peak or RT.
+
+Configure measured LOQs. For reaction nondetections, `missing_analyte_policy="censor"` uses those LOQs to give upper bounds; default is rejection. Pilot/calibration absence reviews do not change this reaction policy.
+
+## Practice, then replay actual known mixtures
+
+```bash
+python -m hte.cli practice-analytics --output output/analytics-practice
+```
+
+No key or paid calls. Outputs:
+
+- `pilot_preparation.csv`: seven manually prepared 1 mL samples using independent 10 mM SM/product check masters, 5 mM analytical mesitylene and matched matrix.
+- `pilot_plan.csv`: expected concentrations. Mixtures contain SM +product =666.667 µM; mesitylene stays at 66.667 µM. Sequence: 0/10/50/90/100% product, analyte-free IS blank immediately after the high-product sample, then an independently prepared 50/50 repeat.
+- `pilot_injection_map.csv`, `calibration_injection_map.csv`, `absence_review_template.csv`: fill actual method/sequence and reviewer details locally.
+- `chromeleon_concentrations_template.csv`: optional table for concentrations calculated inside Chromeleon; values start blank.
+- `practice_report.json`, labelled `synthetic/`: mock vendor exports → 14-injection calibration → pilot replay, plus nine challenges. Synthetic reviews, methods and RTs are never real setup evidence.
+
+Run real pilot samples with the intended method, injection volume, wavelength and Chromeleon processing/export settings. Prefer a pre-hackathon run, or schedule during hold one if LC access permits. Seven extra injections take nominally 11.9 min at a verified 1.7-min cycle. They are separate from the 14 calibration injections and 71 reaction samples; the reaction schedule/configuration is unchanged.
+
+After acquiring actual files, record reviewed zero-analyte absences and run:
+
+```bash
+python -m hte.cli --config local_data/campaign.json verify-pilot \
+  --exports local_data/pilot-vendor.csv \
+  --injections local_data/pilot-map.csv \
+  --calibration local_data/calibration.csv \
+  --plan output/analytics-practice/pilot_plan.csv \
+  --reviewed-absences local_data/pilot-absences.csv \
+  --output output/real-pilot
+```
+
+Keep the concentration key out of integration/assignment; compare after processing. Replay requires exact sample coverage, valid calibration and each quantifiable analyte within **15% relative error** of its known concentration. Expected zeros require a named absence review and no detected peak in their window; they remain bounds. Failures return a nonzero command exit and write `pilot_report.json`/`comparisons.csv`. Replay never selects reactions, changes release flags or calls Claude. `PILOT-` IDs cannot substitute for real reaction results.
+
+For an independent Chromeleon concentration cross-check, have HTEL apply the same standards/calibration in Chromeleon and export or copy its calculated values into `chromeleon_concentrations_template.csv`. Columns: `sample_id,analyte,concentration_uM,method_id,channel`; all 14 sample/analyte rows must be present, in µM. Add `--chromeleon-concentrations local_data/pilot-chromeleon-concentrations.csv` to `verify-pilot`. The replay compares these values with truth and Python, using the same 15% tolerance (pairwise error divided by the expected concentration); disagreements fail the pilot. Expected-zero native results must be at or below the configured LOQ. Native concentrations are never treated as peak areas or calibrated again. This optional comparison interface is tested with synthetic values; no actual native-concentration export has been provided yet.
+
+Optionally append post-workup Pd/ligand matrix-spike samples with `PILOT-` IDs and independently known final concentrations, accounting for background. These test interference in the chosen matrices, without establishing every ligand's recovery or quench completeness.
+
+Have HTEL review actual pilot chromatograms for separation, identity, integration and detector clipping, using available DAD/MS support. Area-only CSVs cannot prove peak purity. The offline challenge shows merged interference/area loss passing unknown-sample QC while known pilot concentrations expose the tested biases. Freeze successful settings and retain real exports/maps/plan/reviews as a local regression set. Formal extraction-homogeneity studies remain outside scope.
 
 ## Reaction results and final 22
 

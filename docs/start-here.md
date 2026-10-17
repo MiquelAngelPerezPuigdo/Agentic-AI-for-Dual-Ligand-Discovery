@@ -1,6 +1,6 @@
 # Local pipeline
 
-The **initial 48 pairs are ready** in `campaigns/hackathon2026/round1_design.csv`; no new initial scoring is needed. Run from the repository root on the local workstation. Staff use the [bench sheet](HTE-staff-checklist.pdf).
+The **initial 48 pairs are ready** in `campaigns/hackathon2026/round1_design.csv`. Use the local workstation. Chromeleon exports UV areas; Python applies our standards/calibration and calculates yields. Staff use the [bench sheet](HTE-staff-checklist.pdf).
 
 ## Set up before the clock
 
@@ -57,6 +57,6 @@ After all 23 R2 injections, run the helper with **`final`**, R2 `dosing.csv`, th
 
 ## Practice and recovery
 
-`python -m hte.cli rehearse-loop --output output/practice` uses synthetic yields/mocked Claude, with no paid calls. Corrected imports need fresh folders. Resume scoring from its original directory; inspect uncertain attempt records before repayment or restarting a watcher.
+For analytical challenges and pilot recipes, run `python -m hte.cli practice-analytics --output output/pilot`. [Real pilot replay and blank reviews](htel-lc-import.md). The full `rehearse-loop` includes this plus mocked feedback. No paid calls. Use fresh import folders; review uncertain scoring attempts before retrying.
 
-**143 tests passed; protocols simulated; initial design reproducible.** Bench results/calibration and feedback latency remain unmeasured. [Validation](rehearsal-results.md), [ML strategy](ml-strategy.md), [PDF updates](updating-the-handbook.md).
+**159 tests passed; protocols simulated; initial design reproducible.** Bench results/calibration and feedback latency remain unmeasured. [Validation](rehearsal-results.md), [ML strategy](ml-strategy.md), [PDF updates](updating-the-handbook.md).

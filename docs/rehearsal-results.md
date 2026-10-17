@@ -16,13 +16,15 @@ The practice selects48 pairs covering30 ligands, accepts all48 synthetic LC resu
 
 ## Acceptance scope
 
-The active suite passes **143 tests** after removal of two obsolete GP/MOCCA adapter tests. All campaign checks remain. The initial design regenerates byte for byte from saved scores/vectors, and complete robot/stock outputs are generated locally rather than checked in.
+The active suite passes **159 tests**, including 16 added analytical-practice checks. Two obsolete GP/MOCCA adapter tests were removed during the earlier cleanup; all campaign checks remain. The initial design regenerates byte for byte from saved scores/vectors; robot/stock outputs are generated locally.
 
 Tests cover stoichiometry/reserves/deck loads, supplied geometry and cap envelope, reaction-to-LC maps, acid/dilution arithmetic, ligand coverage, strict scoring, caching/budget stops and interrupted requests. Chromeleon batches with reset injection numbers require explicit maps and full coverage; partial/overlapping/duplicate exports are rejected. Calibration and quantitative QC are enforced.
 
 Actual Opentrons8.8.2 simulations execute both rounds with custom labware, manual moves/cap pauses and tip replacement. Unused historical GP/MOCCA adapters and checked-in generated runs have been removed. Active simulations and the offline scoring/LC rehearsal remain tested.
 
 ## Practical limits
+
+The full rehearsal now includes `practice-analytics`: mock Chromeleon files, 14 calibration injections with reviewed blank absences, seven known-mixture pilot injections and nine perturbation scenarios. It verifies clean data/extra peaks/IS-corrected injection scaling, rejects shifted/ambiguous/missing/incomplete peaks, and catches the tested hidden area biases using the known concentration key. Those biases can still pass ordinary unknown-sample QC. `verify-pilot` replays actual HTEL files without LLM calls; no actual campaign pilot files have been acquired or validated.
 
 Simulation does not establish physical fit, liquid temperature, extraction/IS recovery or LC separation. Formal separate homogeneity/solubility studies are not requested; pauses handle visible faults.
 

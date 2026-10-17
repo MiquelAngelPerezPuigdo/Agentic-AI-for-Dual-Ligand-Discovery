@@ -42,6 +42,7 @@ python scripts/build-hte-pdf.py --date 2026-10-17
 | Responsibilities, API-key setup and quickstart | `docs/start-here.md` |
 | Operator sequence, deck, pipetting, analytics and live handoff | `docs/hte-runbook.md` |
 | Separate SM/mesitylene stocks, containers and five-level calibration | `docs/stocks-and-calibration.md` |
+| LC import, reviewed blanks, pilot replay and Chromeleon comparison | `docs/htel-lc-import.md` (linked instructions) |
 | Questions awaiting HTE confirmation | `docs/hte-questions.md` |
 | ML/LLM strategy and caching (expert document) | `docs/ml-strategy.md` |
 | Actual software verification evidence | `docs/rehearsal-results.md`, `software_validation.json` |

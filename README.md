@@ -36,6 +36,8 @@ python -m hte.cli rehearse-loop --output output/practice
 
 Practice uses synthetic yields and mocked Claude responses, with zero paid calls. Robot protocols, CSV setup files and practice outputs are generated locally under ignored `output/`; [setup commands](docs/start-here.md) produce the matching files. The frozen initial selection remains versioned.
 
+The rehearsal includes Chromeleon-style calibration and known-mixture challenges. Run only those with `python -m hte.cli practice-analytics --output output/analytics-practice`; [LC instructions](docs/htel-lc-import.md) cover the generated preparation tables and `verify-pilot` replay of actual HTEL files. Chromeleon supplies integrated UV areas; our code applies the authentic-standard calibration and mesitylene normalization. MOCCA is not used.
+
 **API key:** create **`anthropic.key` in the repository root** from [the placeholder](anthropic.key.example), replacing its line with the raw key. Keep an existing key file. The pipeline reads it automatically; an environment `ANTHROPIC_API_KEY` takes precedence. Keys stay local and are excluded from Git and handoff packages.
 
 ## Evidence and scope

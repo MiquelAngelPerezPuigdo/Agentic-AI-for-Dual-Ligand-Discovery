@@ -157,11 +157,31 @@ def normalize_export(config, input_path, output, injections_path=None):
     write_csv(output, normalized)
 
 
-def calibration_from_peaks(config, peaks_path, plan_path, output):
+def reviewed_absences(path, method_id):
+    """Explicit human review of absent peaks; never inferred from planned zeros."""
+    if path is None:
+        return {}
+    result = {}
+    for row in read_csv(path):
+        key = (row.get("sample_id"), row.get("analyte"))
+        if (not key[0] or key[1] not in ("substrate", "product") or key in result
+                or row.get("method_id") != method_id
+                or not row.get("reviewed_by", "").strip() or not row.get("note", "").strip()):
+            raise ValueError("Absence reviews need unique sample/analyte, matching method, reviewer and note")
+        result[key] = row
+    return result
+
+
+def calibration_from_peaks(config, peaks_path, plan_path, output, reviewed_absences_path=None):
     """Join measured authentic-standard peaks to the explicit concentration plan."""
     validate_analytics_settings(config)
     settings = config["analytics"]
     plan = read_csv(plan_path)
+    absences = reviewed_absences(reviewed_absences_path, settings["method_id"])
+    allowed_absences = {(row["sample_id"], row["analyte"]) for row in plan
+                        if finite(row["concentration_uM"], "planned concentration", 0) == 0}
+    if not set(absences) <= allowed_absences:
+        raise ValueError("Calibration absence reviews are allowed only for planned zero-analyte blanks")
     ids = {row["sample_id"] for row in plan}
     selected = defaultdict(list)
     for row in read_csv(peaks_path):
@@ -178,6 +198,10 @@ def calibration_from_peaks(config, peaks_path, plan_path, output):
         reference = settings["references"][analyte]
         matches = [row for row in selected[sample] if
                    abs(float(row["retention_time_min"])-reference["retention_time_min"]) <= reference["window_min"]]
+        if not matches and (sample, analyte) in absences:
+            return 0.0  # Reviewed blank area; no artificial peak/retention time is created.
+        if matches and (sample, analyte) in absences:
+            raise ValueError("Absence review conflicts with a measured peak")
         if len(matches) != 1:
             raise ValueError(f"Calibration {sample}: requires one measured {analyte} area, including measured zero for blanks")
         return finite(matches[0]["area"], "calibration area", 0)
@@ -193,7 +217,9 @@ def calibration_from_peaks(config, peaks_path, plan_path, output):
     fit_calibration(config, rows)  # Independent checks and the fitted range must pass before publication.
     write_csv(output, rows)
     write_json(str(output)+".inputs.json", {"peaks_sha256":digest(peaks_path), "plan_sha256":digest(plan_path),
-               "config_digest":object_digest(config), "output_sha256":digest(output)})
+               "config_digest":object_digest(config), "output_sha256":digest(output),
+               "reviewed_absences_sha256":digest(reviewed_absences_path) if reviewed_absences_path else None,
+               "reviewed_absences":list(absences.values())})
 
 
 def fit_calibration(config, rows):
