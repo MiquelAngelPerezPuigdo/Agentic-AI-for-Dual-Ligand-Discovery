@@ -25,6 +25,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e '.[sources,test]'
+          python -m pip install -e '.[sources,test,reports]'
       - name: Run acceptance checks
         run: python -m pytest -q
+      - name: Build offline initialization review
+        run: python scripts/initialization-report.py --output output/initialization-review

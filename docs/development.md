@@ -50,6 +50,17 @@ This writes self-contained guarded Python, stock preparation/deck loads, LC mapp
 
 `preview-prompts --output output/prompt-preview` exports exact requests with no API call. `score` is for a deliberately new paid campaign; normal setup reuses the prepared first batch. Keep corrected imports in fresh output folders and inspect uncertain request records before retrying.
 
+## Review initialization maps and statistics
+
+```bash
+python -m pip install -e '.[reports]'
+python scripts/initialization-report.py --output output/initialization-review
+```
+
+Open `output/initialization-review/initialization-review.html` for hoverable pair identities, a ligand network, use counts and a dropdown comparing cached-score weight previews. The folder includes SVG/PNG, JSON statistics and comparison/count CSVs. No API key or model download is required. The script validates the frozen design against the current selector before drawing it; alternative selections remain previews and do not change campaign files.
+
+The compact [published overview](initialization-review.md) stores only Markdown and SVG. Deliberately refresh those two files with `--publish-docs` after reviewing a newly generated report. Full interactive outputs remain in ignored `output/`.
+
 ## Maintaining the project
 
 Keep practical instructions in the staff/runbook sources and expert algorithm details in [ml-strategy.md](ml-strategy.md). Change configuration plus corresponding prose together, run the relevant checks, rebuild/visually inspect [the PDFs](updating-the-handbook.md), and refresh `software_validation.json`. Preserve frozen paid scores and source provenance; a new selection should be a new campaign record. Tests generate their own fixtures in temporary directories. GitHub CI runs the active acceptance suite and PDF builds independently. No network access or Claude key is required by tests.
