@@ -59,4 +59,4 @@ After all 23 R2 injections, run the helper with **`final`**, R2 `dosing.csv`, th
 
 For analytical challenges and pilot recipes, run `python -m hte.cli practice-analytics --output output/pilot`. [Real pilot replay and blank reviews](htel-lc-import.md). The full `rehearse-loop` includes this plus mocked feedback. No paid calls. Use fresh import folders; review uncertain scoring attempts before retrying.
 
-**159 tests passed; protocols simulated; initial design reproducible.** Bench results/calibration and feedback latency remain unmeasured. [Validation](rehearsal-results.md), [ML strategy](ml-strategy.md), [PDF updates](updating-the-handbook.md).
+**164 tests passed; protocols simulated; initial design reproducible.** Bench results/calibration and feedback latency remain unmeasured. [Validation](rehearsal-results.md), [ML strategy](ml-strategy.md), [PDF updates](updating-the-handbook.md).

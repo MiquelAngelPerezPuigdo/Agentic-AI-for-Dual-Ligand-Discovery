@@ -16,11 +16,17 @@ The practice selects48 pairs covering30 ligands, accepts all48 synthetic LC resu
 
 ## Acceptance scope
 
-The active suite passes **159 tests**, including 16 added analytical-practice checks. Two obsolete GP/MOCCA adapter tests were removed during the earlier cleanup; all campaign checks remain. The initial design regenerates byte for byte from saved scores/vectors; robot/stock outputs are generated locally.
+The active suite passes **164 tests**, including 16 analytical-practice checks and five visual mock-LC checks. Two obsolete GP/MOCCA adapter tests were removed during the earlier cleanup; all campaign checks remain. The initial design regenerates byte for byte from saved scores/vectors; robot/stock outputs are generated locally.
 
 Tests cover stoichiometry/reserves/deck loads, supplied geometry and cap envelope, reaction-to-LC maps, acid/dilution arithmetic, ligand coverage, strict scoring, caching/budget stops and interrupted requests. Chromeleon batches with reset injection numbers require explicit maps and full coverage; partial/overlapping/duplicate exports are rejected. Calibration and quantitative QC are enforced.
 
 Actual Opentrons8.8.2 simulations execute both rounds with custom labware, manual moves/cap pauses and tip replacement. Unused historical GP/MOCCA adapters and checked-in generated runs have been removed. Active simulations and the offline scoring/LC rehearsal remain tested.
+
+## Visual mock LC trials
+
+`python scripts/mock-hplc-trials.py --output output/mock-hplc` generates an interactive offline report with 14 illustrative chromatograms and HTEL-format integrated exports. The real calibration/import/strict reaction-QC path accepts six valid cases and blocks six detectable faults. Two hidden biases pass unknown-sample QC: a true 50% mixture reports 59.3% with added coelution area and 40.2% with omitted product area (seed1707). The separate known-mixture audit fails both. All 14 responses match expectations declared before replay; no API calls or optimizer feedback occur.
+
+The original example contributes format only, with source hash recorded when supplied. Peak shapes, response factors and 1.7-minute RTs are invented. Component trace areas are numerically checked, but exported integration decisions are imposed explicitly. This does not exercise actual Chromeleon integration or validate the physical method. [Commands and scope](htel-lc-import.md#visual-mock-chromatograms).
 
 ## Practical limits
 

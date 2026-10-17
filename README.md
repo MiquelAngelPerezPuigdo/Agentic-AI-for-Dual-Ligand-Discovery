@@ -38,6 +38,8 @@ Practice uses synthetic yields and mocked Claude responses, with zero paid calls
 
 The rehearsal includes Chromeleon-style calibration and known-mixture challenges. Run only those with `python -m hte.cli practice-analytics --output output/analytics-practice`; [LC instructions](docs/htel-lc-import.md) cover the generated preparation tables and `verify-pilot` replay of actual HTEL files. Chromeleon supplies integrated UV areas; our code applies the authentic-standard calibration and mesitylene normalization. MOCCA is not used.
 
+For a visual test, install `.[reports]` and run `python scripts/mock-hplc-trials.py --output output/mock-hplc`. Open the generated `mock-hplc-report.html` to compare 14 illustrative chromatograms with the pipeline's accepted, blocked and undetected-bias outcomes. No API calls or actual raw-trace integration are involved.
+
 **API key:** create **`anthropic.key` in the repository root** from [the placeholder](anthropic.key.example), replacing its line with the raw key. Keep an existing key file. The pipeline reads it automatically; an environment `ANTHROPIC_API_KEY` takes precedence. Keys stay local and are excluded from Git and handoff packages.
 
 ## Evidence and scope

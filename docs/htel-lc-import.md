@@ -77,6 +77,19 @@ Optionally append post-workup Pd/ligand matrix-spike samples with `PILOT-` IDs a
 
 Have HTEL review actual pilot chromatograms for separation, identity, integration and detector clipping, using available DAD/MS support. Area-only CSVs cannot prove peak purity. The offline challenge shows merged interference/area loss passing unknown-sample QC while known pilot concentrations expose the tested biases. Freeze successful settings and retain real exports/maps/plan/reviews as a local regression set. Formal extraction-homogeneity studies remain outside scope.
 
+### Visual mock chromatograms
+
+```bash
+python -m pip install -e '.[reports]'
+python scripts/mock-hplc-trials.py --output output/mock-hplc
+```
+
+Open `output/mock-hplc/mock-hplc-report.html` locally. The offline report lets you select 14 cases and inspect illustrative traces, exported peaks and pipeline responses. `trial-results.png`, `trial_summary.csv` and per-trial exports/maps/results accompany it. Optionally pass `--example /path/to/Chromatogram.csv` to verify the supplied HTEL schema and record its hash. Use a fresh output directory each time; `--seed` fixes simulated noise, and `--no-report` skips plotting dependencies.
+
+Six valid cases test low/high yield, small RT drift, shared injection-area loss and a resolved impurity. Six faults test RT assignment, ambiguous peaks, missing/outlier IS, incomplete export and missing selected UV area. The remaining two deliberately show hidden coelution and product-area loss passing ordinary QC but failing a known-mixture check. Truth stays separate from the concentration calculation; rejected numeric values are removed from usable feedback. No optimizer is called.
+
+The original file contains integrated areas, not raw traces. Peak widths, 1.7-minute RTs, detector responses and noise here are invented. Trace component areas are numerically checked, but integrated export decisions are imposed explicitly: this tests the importer/calibration/QC workflow, not actual Chromeleon integration or a real 1.7-minute separation. No API key or robot connection is used; campaign settings and the frozen first batch are unchanged.
+
 ## Reaction results and final 22
 
 After all 48 injections, run `scripts/hte-lc-results.py next` as shown on the [start page](start-here.md), giving six exports and six maps in corresponding order. It normalizes each sequence separately, rejects duplicate files/samples, combines them, and publishes a completion marker only for full expected sample coverage. Calibration/QC must then pass before any paid Claude call. The result is 22 new pairs plus one L17 reference, with local release status printed. Use `final` after the 23 final samples; it analyzes without Claude.

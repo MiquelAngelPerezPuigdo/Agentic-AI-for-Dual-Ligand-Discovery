@@ -1,8 +1,8 @@
 {
-  "created_utc": "2026-10-17T07:23:19.417583+00:00",
+  "created_utc": "2026-10-17T07:41:03.963631+00:00",
   "campaign": "hackathon2026-paradox48",
   "tests": {
-    "tests": 159,
+    "tests": 164,
     "errors": 0,
     "failures": 0,
     "skipped": 0
@@ -335,5 +335,23 @@
     "reaction_schedule_changed": false,
     "optional_chromeleon_concentration_comparison": true,
     "actual_chromeleon_concentration_export_available": false
+  },
+  "visual_mock_hplc_trials": {
+    "synthetic_only": true,
+    "api_calls": 0,
+    "trials": 14,
+    "valid_cases_accepted": 6,
+    "faults_blocked": 6,
+    "hidden_bias_cases_not_detected_by_unknown_sample_qc": 2,
+    "all_declared_expectations_matched": true,
+    "calibration_injections": 14,
+    "pilot_injections_per_trial": 7,
+    "illustrative_trace_component_areas_numerically_checked": true,
+    "raw_trace_integration_executed": false,
+    "chromeleon_executed": false,
+    "real_method_validated": false,
+    "new_acceptance_checks": 5,
+    "command": "python scripts/mock-hplc-trials.py --output output/mock-hplc",
+    "scope": "Mock integrated exports and illustrative traces; real importer/calibration/strict reaction QC and separate known-mixture replay. Two hidden biases pass unknown-sample QC, as explicitly expected."
   }
 }
