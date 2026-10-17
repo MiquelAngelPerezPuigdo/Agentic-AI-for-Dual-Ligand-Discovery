@@ -12,7 +12,7 @@ Reviewed 17 October 2026 against Johannes's reply, all 21 presentation slides an
 
 ## Timing
 
-Two four-hour holds plus 71×1.7-minute reaction injections consume **600.7 minutes**. Retained handling/decision allowances add 152 minutes. The current automated one-plate-per-round LC route has no preparation/injection overlap: **752.7 /720 minutes**, 32.7 minutes over. It replaces the earlier manual-vial plan and its unmeasured 35-minute overlap. Calibration and R2 SM predosing occur during hold one. R1 stays on one LC plate. Audit/timing of the full handling allowance is required before release.
+The project targets the **12-hour competition window**. Two four-hour holds and 71×1.7-minute reaction injections allocate **600.7 min**; **119.3 min remains for every other task and contingency**. Calibration and R2 SM predosing run during hold one. After R1 sampling, R2 block changeover may overlap R1 LC. One LC plate per round; no R1 split. This is a deadline allocation; full LC-cycle and handling times need local confirmation. The engineering audit retains unmeasured allowance scenarios separately from this target.
 
 ## Team deadlines from supplied slides
 

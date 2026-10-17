@@ -102,9 +102,11 @@ def main():
         if args.command == "check":
             from .planning import schedule, validate_config, required_validations
             validate_config(config)
+            timing = schedule(config)
             print({"ligands": len(inv), "pairs": len(pairs), "unresolved_identities": [k for k,v in inv.items() if v["identity_confirmed"] != "true"],
                    "missing_bench_validation": [k for k in required_validations(config) if config["validation"].get(k) is not True],
-                   "schedule": schedule(config)})
+                   "operating_budget": timing["operating_budget"],
+                   "timing_allowance_audit": {k:v for k,v in timing.items() if k != "operating_budget"}})
         elif args.command == "preview-prompts":
             from .scoring import export_prompt_preview
             from .analytics import observations

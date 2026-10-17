@@ -1,8 +1,8 @@
 {
-  "created_utc": "2026-10-17T10:16:39.327149+00:00",
+  "created_utc": "2026-10-17T10:32:33.414486+00:00",
   "campaign": "hackathon2026-paradox48",
   "tests": {
-    "tests": 174,
+    "tests": 177,
     "failures": 0,
     "errors": 0,
     "skipped": 0
@@ -36,28 +36,6 @@
   "physical_robot_runs": 0,
   "real_chemistry_yields_available": false,
   "physical_bench_validation_complete": false,
-  "schedule": {
-    "reaction_minutes": 480,
-    "lc_minutes": 120.7,
-    "overhead_minutes": 152.0,
-    "injections": 85,
-    "minimum_reaction_plus_lc_minutes": 600.7,
-    "calibration_minutes_hidden_in_reaction": 23.8,
-    "serial_total_minutes": 752.7,
-    "deadline_minutes": 720,
-    "staged_lc_overlap_minutes": 0.0,
-    "planned_total_minutes": 752.7,
-    "remaining_minutes": -32.700000000000045,
-    "fits_serial_estimate": false,
-    "fits_planned_estimate": false,
-    "lc_plates_by_round": [
-      1,
-      1
-    ],
-    "manual_lc_plate_moves": 4,
-    "minimum_workup_shaking_minutes": 8,
-    "assumptions": "Full injection cycle. All R1 measurements required before decision. One LC plate per round gives no within-round preparation/injection overlap. Split plates save only explicitly budgeted, measured preparation time while a preceding completed plate is injected. Workup includes both extract and LC shaking, moves and manual caps."
-  },
   "analytical_plan": {
     "substrate_umol": 25.0,
     "extract_ul": 750,
@@ -430,6 +408,48 @@
     ],
     "report_per_export": "workup_timing.json",
     "seventy_two_minutes_is_a_retained_allowance_not_a_measured_duration": true,
+    "paid_calls_this_update": 0
+  },
+  "operating_budget": {
+    "target_total_minutes": 720,
+    "reaction_minutes": 480,
+    "lc_minutes_outside_reaction_holds": 120.7,
+    "handling_decision_and_contingency_cap_minutes": 119.3,
+    "calibration_minutes_parallel_to_round1_hold": 23.8,
+    "fixed_tasks_fit_window": true,
+    "status": "Target allocation; complete physical timing has not been validated",
+    "interpretation": "Remaining time is a cap for ALL dosing, evaporation, heating/cooling, workups, manual handling, decisions, final analysis and contingency. It is not an estimate of those tasks or evidence that they fit."
+  },
+  "timing_allowance_audit": {
+    "reaction_minutes": 480,
+    "lc_minutes": 120.7,
+    "overhead_minutes": 152.0,
+    "injections": 85,
+    "minimum_reaction_plus_lc_minutes": 600.7,
+    "calibration_minutes_hidden_in_reaction": 23.8,
+    "serial_total_minutes": 752.7,
+    "deadline_minutes": 720,
+    "staged_lc_overlap_minutes": 0.0,
+    "planned_total_minutes": 752.7,
+    "remaining_minutes": -32.700000000000045,
+    "fits_serial_estimate": false,
+    "fits_planned_estimate": false,
+    "lc_plates_by_round": [
+      1,
+      1
+    ],
+    "manual_lc_plate_moves": 4,
+    "minimum_workup_shaking_minutes": 8,
+    "scenario_status": "Unmeasured handling-allowance scenario; not a validated completion-time forecast",
+    "assumptions": "Full injection cycle. All R1 measurements required before decision. One LC plate per round gives no within-round preparation/injection overlap. The target budget does not replace measured handling allowances. Workup includes both extract and LC shaking, moves and manual caps."
+  },
+  "timing_presentation": {
+    "deadline_target_minutes": 720,
+    "target_is_not_a_measured_forecast": true,
+    "generic_handling_allowances_unchanged": true,
+    "live_deadline_gate_unchanged": true,
+    "chemistry_unchanged": true,
+    "r1_single_lc_plate": true,
     "paid_calls_this_update": 0
   }
 }
