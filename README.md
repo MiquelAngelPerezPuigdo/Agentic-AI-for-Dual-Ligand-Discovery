@@ -12,7 +12,7 @@ A local OT-2 / LC workflow to search for productive dual-ligand systems in Pd-ca
 | Developer | **[Architecture, testing and reproduction](docs/development.md)** |
 | Stock / analytical preparation | [Stock and calibration recipes](docs/stocks-and-calibration.md) |
 
-The [operator handbook](docs/HTE-operator-handbook.pdf) combines the detailed practical instructions. Its [Markdown sources remain editable](docs/updating-the-handbook.md).
+The [four-page operator reference](docs/HTE-operator-handbook.pdf) covers the experiment, calibration and local pipeline. Its [Markdown sources remain editable](docs/updating-the-handbook.md).
 
 ## Campaign at a glance
 

@@ -14,36 +14,29 @@ from urllib.parse import urlparse
 from zoneinfo import ZoneInfo
 
 import mistune
-import reportlab
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_LEFT
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, StyleSheet1
 from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
     BaseDocTemplate, Frame, KeepTogether, ListFlowable, ListItem, PageBreak, PageTemplate,
     Paragraph, Preformatted, Spacer, Table, TableStyle,
 )
-from reportlab.platypus.tableofcontents import TableOfContents
 
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from hte.planning import required_validations, schedule  # noqa: E402
 
 REPO = "https://github.com/MiquelAngelPerezPuigdo/Agentic-AI-for-Dual-Ligand-Discovery"
 CHAPTERS = [
-    ("start-here.md", "Quickstart and responsibilities"),
-    ("hte-runbook.md", "Complete operator runbook"),
-    ("stocks-and-calibration.md", "Stocks and analytical calibration"),
-    ("hte-questions.md", "Facts to confirm with HTE"),
-    ("rehearsal-results.md", "Software rehearsal evidence"),
+    ("hte-runbook.md", "Experiment"),
+    ("stocks-and-calibration.md", "Stocks and calibration"),
+    ("start-here.md", "Local pipeline"),
 ]
-BLUE = colors.HexColor("#183B56")
-TEAL = colors.HexColor("#087E8B")
-GRAY = colors.HexColor("#52616B")
-PALE = colors.HexColor("#F2F6F9")
+INK = colors.HexColor("#242423")
+GRAY = colors.HexColor("#64645F")
+PALE = colors.HexColor("#F0EFEB")
 PAGE_WIDTH, PAGE_HEIGHT = A4
 MARGIN = 42
 WIDTH = PAGE_WIDTH - 2*MARGIN
@@ -57,27 +50,26 @@ def readable(text):
 
 
 def register_fonts():
-    fonts = Path(reportlab.__file__).parent/"fonts"
-    for name, filename in [("HTE", "Vera.ttf"), ("HTE-Bold", "VeraBd.ttf"),
-                           ("HTE-Italic", "VeraIt.ttf"), ("HTE-BoldItalic", "VeraBI.ttf")]:
-        pdfmetrics.registerFont(TTFont(name, str(fonts/filename)))
+    for name, face in [("HTE", "Helvetica"), ("HTE-Bold", "Helvetica-Bold"),
+                       ("HTE-Italic", "Helvetica-Oblique"), ("HTE-BoldItalic", "Helvetica-BoldOblique")]:
+        pdfmetrics.registerFont(pdfmetrics.Font(name, face, "WinAnsiEncoding"))
     pdfmetrics.registerFontFamily("HTE", normal="HTE", bold="HTE-Bold", italic="HTE-Italic", boldItalic="HTE-BoldItalic")
 
 
 def styles():
     sheet = StyleSheet1()
     specifications = {
-        "body": dict(fontName="HTE", fontSize=9.5, leading=14, spaceAfter=7, textColor=BLUE),
-        "chapter": dict(fontName="HTE-Bold", fontSize=19, leading=24, spaceAfter=12, textColor=BLUE, keepWithNext=True),
-        "section": dict(fontName="HTE-Bold", fontSize=12.4, leading=17, spaceBefore=14, spaceAfter=7, textColor=TEAL, keepWithNext=True),
-        "subsection": dict(fontName="HTE-Bold", fontSize=10.5, leading=15, spaceBefore=10, spaceAfter=6, textColor=BLUE, keepWithNext=True),
-        "small": dict(fontName="HTE", fontSize=8.1, leading=11.5, spaceAfter=8, textColor=GRAY),
-        "cell": dict(fontName="HTE", fontSize=8.3, leading=11.8, textColor=BLUE),
-        "cell_header": dict(fontName="HTE-Bold", fontSize=8.1, leading=11.5, textColor=colors.white),
-        "code": dict(fontName="Courier", fontSize=8, leading=11, spaceBefore=4, spaceAfter=12,
-                     borderPadding=9, backColor=PALE, textColor=BLUE),
-        "title": dict(fontName="HTE-Bold", fontSize=26, leading=32, textColor=BLUE, spaceAfter=12),
-        "subtitle": dict(fontName="HTE", fontSize=12, leading=17, textColor=GRAY, spaceAfter=18),
+        "body": dict(fontName="HTE", fontSize=9.5, leading=12.4, spaceAfter=4, textColor=INK),
+        "chapter": dict(fontName="HTE-Bold", fontSize=15, leading=19, spaceAfter=9, textColor=INK, keepWithNext=True),
+        "section": dict(fontName="HTE-Bold", fontSize=10.8, leading=14, spaceBefore=8, spaceAfter=4, textColor=INK, keepWithNext=True),
+        "subsection": dict(fontName="HTE-Bold", fontSize=9.7, leading=13, spaceBefore=8, spaceAfter=4, textColor=INK, keepWithNext=True),
+        "small": dict(fontName="HTE", fontSize=8, leading=11, spaceAfter=7, textColor=GRAY),
+        "cell": dict(fontName="HTE", fontSize=8.7, leading=11.2, textColor=INK),
+        "cell_header": dict(fontName="HTE-Bold", fontSize=8.5, leading=11.2, textColor=INK),
+        "code": dict(fontName="Courier", fontSize=7.7, leading=10, spaceBefore=3, spaceAfter=8,
+                     borderPadding=7, backColor=PALE, textColor=INK),
+        "title": dict(fontName="Times-Roman", fontSize=25, leading=29, textColor=INK, spaceAfter=5),
+        "subtitle": dict(fontName="HTE", fontSize=9, leading=13, textColor=GRAY, spaceAfter=13),
     }
     for name, attributes in specifications.items():
         sheet.add(ParagraphStyle(name, alignment=TA_LEFT, splitLongWords=True, allowWidows=0, allowOrphans=0, **attributes))
@@ -106,7 +98,7 @@ def inline(tokens, table=False, internal_chapters=True):
                 target = REPO+"/blob/main/"+path
                 if parsed.query: target += "?"+parsed.query
                 if parsed.fragment: target += "#"+parsed.fragment
-            output.append('<link href="'+escape(target, quote=True)+'" color="#087E8B">'+inline(children, table, internal_chapters)+"</link>")
+            output.append('<link href="'+escape(target, quote=True)+'" color="#6B5A37">'+inline(children, table, internal_chapters)+"</link>")
         elif kind == "inline_html": output.append(raw)
         else: raise ValueError(f"Unsupported Markdown inline type: {kind}; add support before rebuilding")
     return "".join(output)
@@ -119,29 +111,28 @@ def plain(token):
 class Handbook(BaseDocTemplate):
     def __init__(self, output, edition, source_hash, staff=False):
         self.staff = staff
-        self.document_title = "HTE staff checklist" if staff else "HTE operator handbook"
+        self.document_title = "Bench sheet" if staff else "Experiment & local pipeline"
         super().__init__(str(output), pagesize=A4, leftMargin=MARGIN, rightMargin=MARGIN,
                          topMargin=45, bottomMargin=42, title=self.document_title,
-                         author="Agentic AI for Dual-Ligand Discovery", subject="Local OT-2 dual-ligand screening; editable-source HTE handoff")
+                         author="Dual-ligand fluorination project", subject="HTEL / OT-2 experimental procedure")
         self.edition, self.source_hash = edition, source_hash
         frame = Frame(MARGIN, 42, WIDTH, PAGE_HEIGHT-87, leftPadding=0, rightPadding=0, topPadding=0, bottomPadding=0)
         self.addPageTemplates(PageTemplate(id="handbook", frames=frame, onPage=self.furniture))
 
     def furniture(self, canvas, doc):
         canvas.saveState()
-        canvas.setStrokeColor(colors.HexColor("#D8E1E8"))
+        canvas.setStrokeColor(colors.HexColor("#C9C7C0"))
         canvas.line(MARGIN, 33, PAGE_WIDTH-MARGIN, 33)
         canvas.setFillColor(GRAY)
         canvas.setFont("HTE", 7.4)
-        canvas.drawString(MARGIN, 21, f"{self.document_title} | {self.edition.isoformat()} | source {self.source_hash[:10]}")
-        canvas.drawRightString(PAGE_WIDTH-MARGIN, 21, f"Page {doc.page}")
+        canvas.drawString(MARGIN, 21, "HTEL / Dual-ligand fluorination")
+        canvas.drawRightString(PAGE_WIDTH-MARGIN, 21, f"{self.edition.strftime('%d %b %Y')}  /  {doc.page}")
         canvas.restoreState()
 
     def afterFlowable(self, flowable):
         if hasattr(flowable, "bookmark"):
             self.canv.bookmarkPage(flowable.bookmark)
             self.canv.addOutlineEntry(flowable.getPlainText(), flowable.bookmark, level=0 if self.staff else flowable.toc_level)
-            self.notify("TOCEntry", (flowable.toc_level, flowable.getPlainText(), self.page, flowable.bookmark))
 
 
 def markdown_blocks(tokens, sheet, chapter, counter, compact=False):
@@ -187,26 +178,32 @@ def markdown_blocks(tokens, sheet, chapter, counter, compact=False):
                 col_widths = [narrow, WIDTH-narrow]
             elif not compact and ncols == 2 and plain(source_rows[0][0]).strip() == "Action":
                 col_widths = [108, WIDTH-108]
+            elif ncols == 2 and plain(source_rows[0][0]).strip() == "Slot":
+                col_widths = [58, WIDTH-58]
+            elif ncols == 3 and plain(source_rows[0][0]).strip() == "Stock":
+                col_widths = [102, WIDTH-182, 80]
+            elif ncols == 3 and plain(source_rows[0][0]).strip() == "Solution":
+                col_widths = [65, WIDTH-205, 140]
             elif compact and ncols == 4:
                 col_widths = [70, 116, 154, WIDTH-340]
             rows = [[Paragraph(inline(cell["children"], table=True, internal_chapters=not compact), sheet["cell_header" if r == 0 else "cell"])
                      for cell in row] for r, row in enumerate(source_rows)]
             table = Table(rows, colWidths=col_widths, repeatRows=1, hAlign="LEFT")
             table.setStyle(TableStyle([
-                ("BACKGROUND", (0, 0), (-1, 0), BLUE), ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("BACKGROUND", (0, 0), (-1, 0), PALE), ("VALIGN", (0, 0), (-1, -1), "TOP"),
                 ("LEFTPADDING", (0, 0), (-1, -1), 7), ("RIGHTPADDING", (0, 0), (-1, -1), 7),
-                ("TOPPADDING", (0, 0), (-1, -1), 3.5 if compact else 6),
-                ("BOTTOMPADDING", (0, 0), (-1, -1), 3.5 if compact else 6),
-                ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, PALE]),
-                ("LINEBELOW", (0, 0), (-1, -1), 0.3, colors.HexColor("#D8E1E8")),
+                ("TOPPADDING", (0, 0), (-1, -1), 3.5 if compact else 3),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 3.5 if compact else 3),
+                ("LINEBELOW", (0, 0), (-1, 0), 0.6, colors.HexColor("#A6A299")),
+                ("LINEBELOW", (0, 1), (-1, -1), 0.25, colors.HexColor("#DAD8D1")),
             ]))
             if len(rows) <= 9 and table.wrap(WIDTH, PAGE_HEIGHT)[1] <= 300:
-                output.append(KeepTogether([table, Spacer(1, 6 if compact else 12)]))
+                output.append(KeepTogether([table, Spacer(1, 6)]))
             else:
-                output.extend([table, Spacer(1, 6 if compact else 12)])
+                output.extend([table, Spacer(1, 6)])
         elif kind == "block_quote":
             output.extend(markdown_blocks(token["children"], sheet, chapter, counter, compact))
-        elif kind == "thematic_break": output.append(Spacer(1, 10))
+        elif kind == "thematic_break": output.append(PageBreak())
         else: raise ValueError(f"Unsupported Markdown block type: {kind}; add support before rebuilding")
     return output
 
@@ -227,57 +224,25 @@ def input_record(staff=False):
 def build(output, edition):
     register_fonts()
     sheet = styles()
-    config = json.loads((ROOT/"hte_inputs/campaign.json").read_text())
-    validation = json.loads((ROOT/"software_validation.json").read_text())
     source_hashes, source_hash = input_record()
-    timing = schedule(config)
-    chemistry, liquid = config["chemistry"], config["liquids"]
-    missing = [key for key in required_validations(config) if config["validation"].get(key) is not True]
-    story = [Paragraph("HTE operator handbook", sheet["title"]),
-             Paragraph("Local OT-2 dual-ligand fluorination screen", sheet["subtitle"]),
-             Paragraph(f"Edition: {edition.strftime('%d %B %Y')} (Europe/Zurich). Generated from editable repository sources.", sheet["small"])]
-    status = "HTE configuration review - bench checks remain open" if missing else "Recorded bench checks complete - use the campaign-specific generated handoff"
-    story.append(Paragraph(status, sheet["section"]))
-    cover_rows = [
-        ("Campaign", f"{config['design']['round1_total']} first-round wells; {config['design']['round2_total']} second-round wells"),
-        ("Reaction", f"{chemistry['substrate_molarity_M']*chemistry['reaction_volume_ul']:g} µmol substrate; {chemistry['reaction_volume_ul']:g} µL toluene; {chemistry['temperature_C']:g} °C; {chemistry['reaction_minutes']:g} min per round"),
-        ("Catalysts", f"{chemistry['ligand_a_mol_percent']:g} mol% each ligand; {chemistry['pd_mol_percent']:g} mol% Pd(COD)(DQ)"),
-        ("Sample dilution", f"{liquid['aliquot_ul']:g} µL extract + {liquid['diluent_ul']:g} µL IS-free LC diluent"),
-        ("Software evidence", f"{validation['tests']['tests']} local tests; {validation['tests']['failures']} failures. Initial Claude scores are real; practice chemistry and loop responses are synthetic."),
-        ("Bench readiness", f"{len(missing)} applicable validation fields still unconfirmed; exact hardware and analytical settings must be supplied by HTE."),
-        ("Provisional timing", f"{timing['planned_total_minutes']:g} min target with staged LC; {timing['serial_total_minutes']:g} min serial / {timing['deadline_minutes']:g} min limit. Handling and full LC cycle are unmeasured."),
-    ]
-    table = Table([[Paragraph(escape(label), sheet["cell"]), Paragraph(escape(readable(value)), sheet["cell"])]
-                   for label, value in cover_rows], colWidths=[126, WIDTH-126])
-    table.setStyle(TableStyle([("VALIGN", (0, 0), (-1, -1), "TOP"),
-                              ("BACKGROUND", (0, 0), (0, -1), PALE),
-                              ("TOPPADDING", (0, 0), (-1, -1), 7), ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
-                              ("LINEBELOW", (0, 0), (-1, -1), 0.3, colors.HexColor("#D8E1E8"))]))
-    story.extend([table, Spacer(1, 16), Paragraph("How to keep this handbook current", sheet["section"]),
-                  Paragraph("Edit the Markdown sources in <b>docs/</b> and the relevant campaign configuration, then regenerate locally or download the fresh GitHub workflow edition. The PDF is a dated export; the editable sources remain the master. Keep the PDF with its build manifest to check for later source changes.", sheet["body"]),
-                  Preformatted("python scripts/build-hte-pdf.py", sheet["code"]),
-                  Paragraph(f'<link href="{REPO}" color="#087E8B">Open the shared repository</link> - see <link href="{REPO}/blob/main/docs/updating-the-handbook.md" color="#087E8B">PDF update instructions</link>.', sheet["body"]),
-                  Paragraph("Generated quantities from the real selected campaign take precedence over the synthetic demo. This handbook includes the procedures and outstanding decisions; it does not supply unmeasured geometry or analytical settings.", sheet["small"]),
-                  PageBreak(), Paragraph("Contents", sheet["chapter"])])
-    toc = TableOfContents()
-    toc.levelStyles = [ParagraphStyle("toc0", fontName="HTE-Bold", fontSize=9.6, leading=11, spaceBefore=2, textColor=BLUE),
-                       ParagraphStyle("toc1", fontName="HTE", fontSize=8.8, leading=11, leftIndent=14, firstLineIndent=0, textColor=GRAY)]
-    story.append(toc)
+    story = [Paragraph("Dual-ligand fluorination", sheet["title"]),
+             Paragraph("HTEL / Experiment &amp; local pipeline / Local OT-2", sheet["subtitle"])]
     parser = mistune.create_markdown(renderer="ast", plugins=["table"])
     for number, (filename, title) in enumerate(CHAPTERS, 1):
-        story.append(PageBreak())
-        heading = Paragraph(f"{number}. {title}", sheet["chapter"])
+        if number > 1:
+            story.append(PageBreak())
+        heading = Paragraph(f"{number:02d} / {title}", sheet["chapter"])
         heading.bookmark, heading.toc_level = f"chapter-{number}", 0
-        story.extend([heading, Paragraph(f'<link href="{REPO}/blob/main/docs/{filename}" color="#087E8B">Editable source: docs/{filename}</link>', sheet["small"])])
+        story.append(heading)
         source = (ROOT/"docs"/filename).read_text()
         story.extend(markdown_blocks(parser(source), sheet, number, [0]))
     output.parent.mkdir(parents=True, exist_ok=True)
-    Handbook(output, edition, source_hash).multiBuild(story)
+    Handbook(output, edition, source_hash).build(story)
     from pypdf import PdfReader
-    reader = PdfReader(output)
+    pages = len(PdfReader(output).pages)
     manifest = {"edition_date": edition.isoformat(), "edition_timezone": "Europe/Zurich", "source_sha256": source_hash,
-                "sources": source_hashes, "pdf_sha256": hashlib.sha256(output.read_bytes()).hexdigest(), "pages": len(reader.pages),
-                "editable_master": "docs/*.md and hte_inputs/campaign.json; rebuild with scripts/build-hte-pdf.py",
+                "sources": source_hashes, "pdf_sha256": hashlib.sha256(output.read_bytes()).hexdigest(), "pages": pages,
+                "editable_master": "docs/hte-runbook.md, docs/stocks-and-calibration.md, docs/start-here.md; rebuild with scripts/build-hte-pdf.py",
                 "private_email_included": False, "api_calls": 0}
     output.with_suffix(".build.json").write_text(json.dumps(manifest, indent=2)+"\n")
     return manifest
@@ -286,13 +251,12 @@ def build(output, edition):
 def build_staff(output, edition):
     register_fonts()
     sheet = styles()
-    sheet["body"].fontSize, sheet["body"].leading, sheet["body"].spaceAfter = 9.5, 12, 4
+    sheet["body"].fontSize, sheet["body"].leading, sheet["body"].spaceAfter = 9.5, 12.5, 5
     for name in ("cell", "cell_header"):
-        sheet[name].fontSize, sheet[name].leading = 9, 11
+        sheet[name].fontSize, sheet[name].leading = 9, 11.6
     sheet["section"].fontSize, sheet["section"].spaceBefore, sheet["section"].spaceAfter = 11, 7, 5
     sheet["chapter"].fontSize, sheet["chapter"].spaceAfter = 17, 7
     hashes, source_hash = input_record(staff=True)
-    config = json.loads((ROOT/"hte_inputs/campaign.json").read_text())
     parts = (ROOT/"docs/hte-staff-checklist.md").read_text().split("\n---\n")
     if len(parts) != 2:
         raise ValueError("Staff source must have exactly two pages separated by a standalone ---")
@@ -301,9 +265,9 @@ def build_staff(output, edition):
     for number, part in enumerate(parts, 1):
         if number > 1:
             story.append(PageBreak())
-        title = "HTE staff checklist - "+("Setup" if number == 1 else "Run")
-        story.extend([Paragraph(title, sheet["chapter"]),
-                      Paragraph(f"Edition {edition.isoformat()} | Local OT-2 | {config['design']['round1_total']} first-round + {config['design']['round2_total']} second-round wells", sheet["small"])])
+        title = "Dual-ligand screen / "+("Setup" if number == 1 else "Run")
+        story.extend([Paragraph(title, sheet["title"]),
+                      Paragraph("HTEL / Bench sheet / Local OT-2", sheet["small"])])
         story.extend(markdown_blocks(parser(part), sheet, number, [0], compact=True))
     output.parent.mkdir(parents=True, exist_ok=True)
     Handbook(output, edition, source_hash, staff=True).build(story)

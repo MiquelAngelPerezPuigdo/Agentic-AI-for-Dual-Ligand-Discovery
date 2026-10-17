@@ -1,47 +1,62 @@
-# HTE operator reference
+# Experiment
 
-The [staff sheet](HTE-staff-checklist.pdf) is the action sequence. This reference explains the quantities, release steps and analytical handling. Use generated CSVs from the same export as the Python protocol; they are the authority for well identities and source loads.
+Use the [two-page bench sheet](HTE-staff-checklist.pdf) at the robot. Keep the protocol and its generated CSVs together; `dosing.csv` gives well identities and `deck_loads.csv` gives stage-specific source fills.
 
-## Fixed experiment and comparison
+## Reaction and design
 
-Substrate: **pyridine-2-sulfonyl fluoride / PyFluor**, `FS(C1=NC=CC=C1)(=O)=O`. Product: **2-fluoropyridine**, `FC1=NC=CC=C1`. Each 250 µL reaction contains 25 µmol substrate in toluene, each ligand 1.5 µmol, Pd(COD)(DQ) 3 µmol and mesitylene 2.5 µmol. Hold at 95 °C for four hours under air, 500 rpm. No added base or external fluoride. Prepare ligand stocks in the glovebox and preserve capped reserves.
+**Pyridine-2-sulfonyl fluoride (PyFluor) to 2-fluoropyridine.** Per vial: 25 µmol SM, 1.5 µmol each ligand, 3 µmol Pd(COD)(DQ), 2.5 µmol mesitylene; 250 µL toluene, 95 °C, 500 rpm, 4 h under air. No base or external fluoride.
 
-Round one is 48 distinct pairs covering all 30 available ligands. Round two is 22 untested pairs plus L17 tBuBrettPhos at **12 mol% total ligand**, otherwise identical. This gives a minimal measured single-ligand reference; without repeats or both corresponding single ligands, a higher pair yield supports improved performance relative to that reference, not a statistical or mechanistic proof of synergy.
+Round one: **48 distinct pairs, all 30 available ligands**; L07 is unavailable. Round two: **22 new pairs + L17 tBuBrettPhos at 12 mol% total ligand**. No repeats. A better pair yield establishes improvement against this reference; it does not establish reproducibility or ligand synergy.
 
-## Labware, pipettes and manual caps
+## Before the clock starts
 
-Use the supplied 48 × 2 mL JSON and derived heater-stack definition in `hte_inputs/labware/`. Wells have **13 mm pitch**, so reaction transfers use p300 single GEN2 on the left. The p300 multi GEN2 on the right doses the standard 96-well LC preparation plate, not the reaction block. Standard footprint does not establish multichannel compatibility.
+- Fit **p300 single GEN2 left; p300 eight-channel GEN2 right**. Reaction vials have 13 mm pitch: use the single only. The multi serves the standard 96-well LC preparation plate.
+- Check the supplied block on the flat adapter: secure mounting, latch closure, cap clearance within **45 mm**, offsets and thermal transfer. Pipette **1.5 mm above the bottom** by default; check actual immersion. Caps are manual; no stir bars or gripper.
+- Confirm the existing **1.7-min full LC cycle**, method ID, injection volume, UV channel/wavelength and authentic-standard RT/LOQ settings. Requested 210 nm is provisional; the old example wavelengths are not our method. Record local evidence before release.
+- Prepare stocks, caps, tips, 71 fresh reaction vials, 71 sample HPLC vials plus standards, and two LC preparation plates. App-simulate the released Python. [Open setup details](hte-questions.md).
 
-All vial pipetting happens in slot 3, away from the heater-shaker. Slot 10 has the universal flat adapter; slots 7 and 11 remain empty. The derived JSON preserves all supplied well coordinates and adds a zero-overlap flat stacking declaration and **45 mm capped travel envelope**. Local setup must establish secure mounting/latch closure and cap height within this envelope. The JSON/simulator cannot establish physical fit or temperature transfer. [Opentrons adapters](https://docs.opentrons.com/heater-shaker/adapters/).
+| Slot | Load |
+|---|---|
+| 1 / 4 | Ligand source racks; exact CSV addresses, L07 absent |
+| 2 | A1 SM/DCM; A2 Pd; A3 toluene; A8 mesitylene. Quench A4/A6/A9; diluent A5/A7/A10/A11/A12 |
+| 3 / 10 | Vial block for pipetting / heater-shaker with universal flat adapter |
+| 6 | Standard 96-well LC preparation plate; keep seated during sampling |
+| 5 / 8 / 9 | Single tips / multi tips / multi tips. Keep slots 7 and 11 empty |
 
-The OT-2 has no gripper. Every block move, cap opening/closing and tip-rack replacement is a local pause. Caps must be removed before aspiration and hand-tightened before reaction or high-speed workup shaking. During sampling, other vials stay capped; only the indicated batch is opened. No stir bars are used. Inspect actual source tubes and vial bottoms when setting offsets; defaults are **1.5 mm above bottom**, not bottom contact or assumed liquid-level tracking.
+## Dose and react
 
-## Dosing and overlapped preparation
+1. Robot doses **50 µL 500 mM SM/DCM** per vial. At the pause, move the block off deck and evaporate completely by HTEL's ventilated procedure. Cool; return to slot 3.
+2. Add **25 µL mesitylene +37.5 µL ligand A +37.5 µL ligand B +75 µL Pd +75 µL toluene =250 µL**. Stocks: mesitylene 100 mM; ligands/Pd 40 mM. Reference: use 75 µL L17 instead of the two ligand portions.
+3. Hand-tighten all caps. Move/latch at the local pauses; run **95 °C, 500 rpm, 4 h**. Every block move, cap change and tip-rack replacement is manual.
+4. During hold one, run the **14 calibration injections**. Hand-dose **23 labelled fresh vials with SM/DCM only** in an ordinary off-deck rack; evaporate fully and cap the dry SM. Add mesitylene/catalysts only after round two is selected. Reuse the same reaction block.
 
-Dose 50 µL of 500 mM SM in DCM. The protocol moves the block OFF_DECK at a pause for the facility's approved ventilated evaporation. Confirm dry SM before adding mesitylene or catalysts; residual DCM would alter the reaction solvent/volume. Return the cooled block to slot 3. Add 25 µL 100 mM mesitylene, 37.5 µL each 40 mM ligand, 75 µL 40 mM Pd, and 75 µL toluene: **250 µL total**. For L17 single reference, replace both ligand portions with 75 µL L17.
+**Timing:** 717.7 min planned against 720 min, requiring 35 min LC/handling overlap. This remains unmeasured, with about two minutes spare. Record actual heating, cooling, cap handling and LC cycle times.
 
-During the first four-hour hold, staff prepare/inject the 14 calibration samples and manually predose the 23 second-round vials with **SM only** in an ordinary off-deck rack. Evaporate, label and cap dry SM. Keep these separate from the active block. After first-round sampling, archive its 48 vials and reuse the one block with the 23 fresh predosed vials. Mesitylene is dosed once after dry-down in each round. Neither workup nor LC diluent contains additional IS.
+---
 
-Common stocks use the 12-channel Axygen reservoir; ligand stocks use ordinary plastic source racks in slots 1 and 4. Prepare bulk glass stocks separately and load only `deck_loads.csv` quantities. The stock table includes 50% working margin, dead volumes and conservative reserve for any second-round choice. Refill fresh stage sources; never pour recovered working liquid into bulk reserves.
+## Workup and LC sampling
 
-## Quench, mixing and representative sampling
+1. **Cool sealed vials off the heater.** Open for addition; add **500 µL 9:1 ACN/water +0.15% formic acid**. Nominal extract: 750 µL, 0.1% acid, 1.25 mL headspace. Quench and diluent contain no IS.
+2. **Hand-recap every vial.** Shake **1500 rpm, 2 min**, heater off; return to slot 3. The block must have cooled for workup.
+3. **Sample eight at a time.** Gently remix the indicated capped vials; let bubbles settle. Open only that batch. Other vials stay capped.
+4. **Robot dilution:** fresh tip per sample; two slow same-well prewet cycles, without blowing air into the extract. Aspirate 21 µL at 1.5 mm, retain 1 µL reverse surplus, add 2 µL air gap and dispense nominal **20 µL into 980 µL LC diluent**, noncontact. Discard the tip; never revisit the source after destination contact.
+5. **At the pause:** recap sampled reaction vials. Keep the preparation plate seated. With a fresh manual tip per completed LC well, mix **500 µL five times**, avoiding air; transfer **900 µL** to the labelled HPLC vial. Cap and invert briefly.
+6. **Start that LC batch before resuming the robot.** Never transfer unfinished wells. R1: six batches of eight. R2: 8/8/7; preparation well **H3 is diluent only and must not be injected**. Reaction A1-F8 and LC A1-H6 are different maps.
 
-Cool the sealed reaction block off the heater before opening. Add **500 µL 9:1 ACN/water +0.15% v/v formic acid**, giving nominal **750 µL extract, 0.1% acid** and 1.25 mL nominal headspace. Hand-recap every vial, then shake **1500 rpm for two minutes**, heater off, and return to slot 3. Ensure the module/block has cooled sufficiently for the intended workup temperature. High rpm mixes the liquid but does not establish chemical quench completeness or single-phase extraction.
+Final sample: 1.00 mL; maximum SM/product **666.7 µM**; mesitylene **66.7 µM**; formic acid **0.1%**; toluene **0.667%**. Set injection volume from the actual calibrated method.
 
-The ACN-rich mixture is chosen to reduce the phase-separation concern from adding equal water/ACN to toluene. Separate formal recovery/homogeneity studies are waived by the user. Inspect visible appearance; persistent separate layers, solids at the aspiration path or bubbles require a pause, not selecting whichever layer is convenient. Do not filter/centrifuge/decant without documenting and assessing analyte/IS recovery. [Toluene/ACN/water phase-equilibrium evidence](https://iris.uniroma1.it/handle/11573/457505).
+## Pipetting and transfer faults
 
-Sample in batches of eight to overlap LC with preparation. Before each batch, gently invert/remix the indicated **capped** vials, let obvious bubbles settle and remove only those caps. Fresh robot sample tips perform two slow same-well prewet cycles before the measured aspiration, with no air blowout into the sample. Then aspirate 21 µL at 1.5 mm, retain 1 µL reverse-pipetting surplus, add a 2 µL air gap, dispense the nominal **20 µL sample** noncontact into **980 µL diluent**, and discard the tip. The source is never revisited after LC contact.
+Condition fresh dosing tips twice in their own stock. Use slow aspiration, short settling delays, a small air gap and reverse surplus for the organic stocks. Keep active sources covered between stages and bulk reserves capped. Follow CSV fills and dead volumes; never return working liquid to bulk stock.
 
-At the robot pause, recap the sampled reaction vials. Keep the preparation plate seated in slot 6. With **one fresh manual tip per completed LC sample**, mix 500 µL five times without drawing air, transfer 900 µL into its labelled HPLC screw-cap vial, cap and invert briefly. Keep maps explicit: reaction A1-F8 is different from LC A1-H6. Submit each completed batch before resuming the robot. Round two has 8/8/7 samples; H3 gets only diluent and is excluded from LC injections.
+Reuse a tip only for consecutive **same-stock, noncontact** dosing above the destination top. Different ligands and all analytical samples use fresh tips. Avoid deep immersion, walls and bottoms. Repeated aspiration does not dissolve an insoluble stock and may introduce bubbles.
 
-## Solvent delivery and failed transfers
+Pause for persistent layers, solids at the aspiration point, bubbles, air uptake, dripping or tip contact. Do not sample an arbitrary layer. Do not filter, centrifuge or decant without recording its effect on analyte/IS recovery. High rpm alone does not establish quench completeness or extraction recovery; no separate homogeneity study is planned.
 
-Condition fresh dosing tips twice with their own source; work from capped reserves and uncover active sources immediately before use. Slow aspiration, short settling delays, a small air gap and reverse surplus are starting settings for volatile organic solutions. Avoid immersing tips too deeply or touching walls/bottoms. A source must stay above the aspiration point after dead-volume allowance. Do not aspirate a suspension as though it were a known stock concentration; repeated aspiration can add bubbles without dissolving solids.
+For an uncertain LC dilution, remix the original extract and prepare a fresh documented dilution. Do not guess a top-up. Retain rejected measurements with a reason and accept one result per sample; do not select the highest yield.
 
-Tip reuse is restricted to consecutive deliveries of the **same source stock**, with destination dispensing above the top and no contact, mixing or destination aspiration. Different ligands and every analytical sample require fresh tips. If source/destination contact, dripping or unintended air occurs, pause, change the tip and record the affected sample. Refill according to source maps rather than guessing a top-up. For an uncertain analytical dilution, prepare a new dilution from freshly remixed original extract and record its mapping; do not rescue it by estimated liquid addition. Keep one accepted measurement per sample, with rejected measurements retained and a reason. Do not choose the larger yield from repeats.
+## Changeover and finish
 
-## Local processing and records
+After all **48 R1 results** pass analytical QC, the local pipeline selects **22 new pairs + L17 reference**. Archive R1 vials; fit the 23 dry predosed vials into the same block and verify orientation. Refill sources using R2 deck loads. **No SM redosing; mesitylene is added once after dry-down.** Repeat reaction and workup.
 
-The [start page](start-here.md) gives initial release, LC helper and second-round export commands; [LC import](htel-lc-import.md) covers detector/method and calibration configuration. Robots remain islands: no API key or optimizer installation goes on the OT-2, and no script remotely starts it.
-
-Archive source exports/maps, stock preparation/assay records, actual method and wavelength, calibration/checks, ready markers, all QC results, paid scoring responses/cache ledger, final CSVs, matching generated protocols and robot JSON logs. Keep experimental data private until the team authorizes publication. The handoff does not contain a Claude key.
+Stop the clock after all 23 final injections and quantitative analysis. Archive source exports, maps, assay/stock records, method/channel, calibration, QC, times, scoring/cache records, final CSVs, matching protocols and robot JSON logs. Keep experimental data private pending team agreement.

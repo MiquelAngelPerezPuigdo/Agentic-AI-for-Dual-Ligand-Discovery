@@ -1,6 +1,6 @@
 # Updating the HTE PDFs
 
-The **two-page staff checklist** and **full reference handbook** are generated from the editable Markdown files in this repository. Edit those sources and rebuild; annotations or edits made directly to a PDF are not automatically incorporated into the master.
+The **two-page bench sheet** and **four-page operator reference** are generated from editable Markdown. Both use a plain print layout: serif title, sans-serif body, light table rules and a date/page footer. Edit the sources and rebuild; PDF annotations do not update the master.
 
 ## Update through GitHub
 
@@ -47,7 +47,7 @@ python scripts/build-hte-pdf.py --date 2026-10-17
 | Actual software verification evidence | `docs/rehearsal-results.md`, `software_validation.json` |
 | Fixed chemistry, volumes, analytics, timing and validated settings | `hte_inputs/campaign.json` |
 
-The cover reads the current campaign configuration and validation record. The chapters reproduce the current procedures; update their wording whenever the corresponding configuration or pipeline changes. Rebuilding alone cannot reconcile a stale manual description with a changed experiment.
+The reference contains the experiment/workup, stock/calibration recipes and local pipeline commands. Setup questions, software evidence and ML detail remain linked documents. There is no cover or contents page. Keep the wording aligned with the configuration and pipeline; a rebuild cannot correct stale instructions. Aim for four readable pages rather than reducing type size to fit new material.
 
 After editing, review the affected pages, confirm links and tables, and share the new PDF together with its manifest. Commit source changes to the shared repository so both of us work from the same version. For public snapshots, rebuild/copy both PDFs and manifests into `docs/` and commit them with the sources. Use `--staff --output docs/HTE-staff-checklist.pdf` for the short sheet. Keep algorithm explanations in docs/ml-strategy.md; staff need actions and quantities.
 

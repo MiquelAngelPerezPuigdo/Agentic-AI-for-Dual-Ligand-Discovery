@@ -1,18 +1,16 @@
 {
   "edition_date": "2026-10-17",
   "edition_timezone": "Europe/Zurich",
-  "source_sha256": "7559a395466a23df84a88b9910c01414affd4d49549750a3d434759b442c3cf8",
+  "source_sha256": "e52af1d868a2d4510d2a4bac989c174ff5dba45e9cf03a3b2e8f7796cfa94737",
   "sources": {
-    "docs/start-here.md": "35f1be309f73a6cd6b89b2126a820dfd64103e2b630fa2a99da76134c023ad11",
-    "docs/hte-runbook.md": "986cc16898ce5874e8213726e6913384925f31ab67166a55aa4ff7cc6e255ce0",
-    "docs/stocks-and-calibration.md": "6c2bbf09ea6b6ea77cca543a1132cc6e811a3ca51c3e2e3409d2d3d27cc154a3",
-    "docs/hte-questions.md": "43664769c48980a1a99bf526dba872e7747dc927dbf69ba8a421ed4f7f0b4f45",
-    "docs/rehearsal-results.md": "e2804c89b5c0389fd8cc75dee6c4bdea0a9ef162060cfff2672c53b4eb139353",
+    "docs/hte-runbook.md": "87df1f158fa83ccb7c494dd77f1d5857af371d0b137626baec9e81c62a8793ed",
+    "docs/stocks-and-calibration.md": "520df6fe234dda9ee1dec24ad31296e73c64d6b88e41ae9f01ee02c9b8ce5efa",
+    "docs/start-here.md": "f4266b5e120e77601ac3cd3db29579224a7bc39d582d7d584327b874711d7f8e",
     "hte_inputs/campaign.json": "02c1601b04a161140e5e0ced67045e9fa9aba80bb1d39650166c1c4d30354f18",
     "hte_inputs/calibration_template.csv": "b4e1960d710aaba9983583eb934b0a068864bce8cf7280ce5e985b06d821c644",
     "hte_inputs/ligands.csv": "a24c186b814eaeb8b5950e7a059e21b8df001764e83b19f127a3da179f4a5876",
     "software_validation.json": "3d9433c8b0022f5a6a57130ed948579e19916e312f69ce1543576f622faafe0a",
-    "scripts/build-hte-pdf.py": "345e8f033a30d7727f6db847ad5975f320a728979fbe0950b2e6b35d6215e182",
+    "scripts/build-hte-pdf.py": "b5b49c48a3a82d1d1b78a10f921c1f8d2d50451514f9b352c5bcc13cb224d5e6",
     "hte/planning.py": "55abd33199bc67c6c8f08dac6e2809cd9f00f3d56fc1c1ac6eb7e04e79444532",
     "hte/io.py": "786202cab5646cd4d9d21dd73bfda7d9249704761544a11cc0406964edbf6d2a",
     "hte/protocols.py": "9abca0891c27336e2a67c0467376f1ec785c1dac77c399fac7cfaef27b26d9a6",
@@ -21,9 +19,9 @@
     "campaigns/hackathon2026/round1_design.csv": "7c2ad21967f468857938989fcbe5901d2409a86dcae8d785f7247032ef301104",
     "campaigns/hackathon2026/scoring/campaign_provenance.json": "a97c2eec55f40228c5002f197a074dee898f26eacf24fdf2f61424707cca13fb"
   },
-  "pdf_sha256": "efd632d641e9ebaf55a68e1e76ca96b244d5b7b7adda51394c1e958907b2f69a",
-  "pages": 10,
-  "editable_master": "docs/*.md and hte_inputs/campaign.json; rebuild with scripts/build-hte-pdf.py",
+  "pdf_sha256": "55019d3f7a0c13b1d7017ea7c4ba5f0c85cb21ea4000d18e950804deeb018734",
+  "pages": 4,
+  "editable_master": "docs/hte-runbook.md, docs/stocks-and-calibration.md, docs/start-here.md; rebuild with scripts/build-hte-pdf.py",
   "private_email_included": false,
   "api_calls": 0
 }
