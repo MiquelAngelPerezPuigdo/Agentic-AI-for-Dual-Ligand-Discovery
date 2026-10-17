@@ -32,3 +32,5 @@ jobs:
         run: python scripts/initialization-report.py --output output/initialization-review
       - name: Replay visual mock LC challenges
         run: python scripts/mock-hplc-trials.py --output output/mock-hplc
+      - name: Build assumed LC separation scenarios and check numerical solver
+        run: python scripts/simulate-lc-separation.py --draws 64 --output output/lc-separation

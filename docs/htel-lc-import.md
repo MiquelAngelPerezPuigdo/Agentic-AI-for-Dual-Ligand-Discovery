@@ -89,6 +89,14 @@ Six valid cases test low/high yield, small RT drift, shared injection-area loss 
 
 The original file contains integrated areas, not raw traces. Peak widths, 1.7-minute RTs, detector responses and noise here are invented. Trace component areas are numerically checked, but integrated export decisions are imposed explicitly: this tests the importer/calibration/QC workflow, not upstream peak integration or a real 1.7-minute separation. No API key or robot connection is used; campaign settings and the frozen first batch are unchanged.
 
+### Assumed column and gradient scenarios
+
+With `.[reports]` installed, run `python scripts/simulate-lc-separation.py --output output/lc-separation`, then open `separation-report.html`. It explores SM, product, toluene and mesitylene on an **assumed** 50 ×2.1 mm C18 column, 1.9 µm, 40 °C and 0.6 mL/min, using three 1.7-minute water/ACN gradient programs with 0.1% formic acid. Compare equal-area and concentration-weighted traces, change the assumed tail fraction, and inspect deliberately compressed-selectivity cases.
+
+This is an uncalibrated linear-solvent-strength migration model. The starting retention coefficients use an explicitly invented relationship to RDKit cLogP; they are not a manufacturer's prediction or measured data. A 512-draw sensitivity sweep varies those coefficients and slopes; draw counts are not real coelution probabilities. Isocratic analytic-reference and numerical-convergence checks verify the solver only. Ionization, matrix peaks, detector saturation and full wash/re-equilibration throughput are outside the model. Gaussian-width resolution does not establish quantitative purity beside a large tailed solvent peak.
+
+The configured dilution gives about 0.667% v/v toluene (63 mM using assumed density 0.867 g/mL), versus 66.7 µM mesitylene. Relative UV responses are unknown; the weighted display assumes equal molar response. Reports, parameter tables and illustrative traces stay in the requested output folder. This script does not change the campaign method/configuration, create robot instructions or publish optimizer observations.
+
 ## Reaction results and final 22
 
 After all 48 injections, run `scripts/hte-lc-results.py next` as shown on the [start page](start-here.md), giving six exports and six maps in corresponding order. It normalizes each sequence separately, rejects duplicate files/samples, combines them, and publishes a completion marker only for full expected sample coverage. Calibration/QC must then pass before any paid Claude call. The result is 22 new pairs plus one L17 reference, with local release status printed. Use `final` after the 23 final samples; it analyzes without Claude.
