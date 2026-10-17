@@ -13,14 +13,14 @@ Round one: **48 distinct pairs, all 30 available ligands**; L07 is unavailable. 
 - Fit **p300 single GEN2 left; p300 eight-channel GEN2 right**. Reaction vials have 13 mm pitch: use the single only. The multi serves the standard 96-well LC preparation plate.
 - Check the supplied block on the flat adapter: secure mounting, latch closure, cap clearance within **45 mm**, offsets and thermal transfer. Pipette **1.5 mm above the bottom** by default; check actual immersion. Caps are manual; no stir bars or gripper.
 - Confirm the existing **1.7-min full LC cycle**, method ID, injection volume, UV channel/wavelength and authentic-standard RT/LOQ settings. Requested 210 nm is provisional; the old example wavelengths are not our method. Record local evidence before release.
-- Prepare stocks, caps, tips, 71 fresh reaction vials, 71 sample HPLC vials plus standards, and two LC preparation plates. App-simulate the released Python. [Open setup details](hte-questions.md).
+- Prepare stocks, caps, tips, 71 fresh reaction vials, 71 autosampler-compatible HPLC vials plus standards, and two 96-well deep-well LC preparation plates. The supplied VWR definition is 2.2 mL/well; match the physical plate before use. App-simulate the released Python. [Open setup details](hte-questions.md).
 
 | Slot | Load |
 |---|---|
 | 1 / 4 | Ligand source racks; exact CSV addresses, L07 absent |
 | 2 | A1 SM/DCM; A2 Pd; A3 toluene; A8 mesitylene. Quench A4/A6/A9; diluent A5/A7/A10/A11/A12 |
-| 3 / 10 | Vial block for pipetting / heater-shaker with universal flat adapter |
-| 6 | Standard 96-well LC preparation plate; keep seated during sampling |
+| 3 / 10 | Reaction block: staff move it by hand at App prompts; pipetting / heater-shaker |
+| 6 | VWR 96-well 2.2 mL deep-well preparation plate, or matching configured replacement; stays here |
 | 5 / 8 / 9 | Single tips / multi tips / multi tips. Keep slots 7 and 11 empty |
 
 ## Dose and react
@@ -40,7 +40,7 @@ Round one: **48 distinct pairs, all 30 available ligands**; L07 is unavailable. 
 2. **Hand-recap every vial.** Shake **1500 rpm, 2 min**, heater off; return to slot 3. The block must have cooled for workup.
 3. **Sample eight at a time.** Gently remix the indicated capped vials; let bubbles settle. Open only that batch. Other vials stay capped.
 4. **Robot dilution:** fresh tip per sample; two slow same-well prewet cycles, without blowing air into the extract. Aspirate 21 µL at 1.5 mm, retain 1 µL reverse surplus, add 2 µL air gap and dispense nominal **20 µL into 980 µL LC diluent**, noncontact. Discard the tip; never revisit the source after destination contact.
-5. **At the pause:** recap sampled reaction vials. Keep the preparation plate seated. With a fresh manual tip per completed LC well, mix **500 µL five times**, avoiding air; transfer **900 µL** to the labelled HPLC vial. Cap and invert briefly.
+5. **At the pause:** recap sampled reaction vials. The LC plate stays in slot 6; it is **not shaken on the module**. With a fresh manual tip per completed 1 mL LC well, mix **500 µL five times**, avoiding air; transfer **900 µL** to the labelled HPLC vial. Cap and invert briefly.
 6. **Start that LC batch before resuming the robot.** Never transfer unfinished wells. R1: six batches of eight. R2: 8/8/7; preparation well **H3 is diluent only and must not be injected**. Reaction A1-F8 and LC A1-H6 are different maps.
 
 Final sample: 1.00 mL; maximum SM/product **666.7 µM**; mesitylene **66.7 µM**; formic acid **0.1%**; toluene **0.667%**. Set injection volume from the actual calibrated method.
