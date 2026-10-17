@@ -34,17 +34,13 @@ def prepare(config, output):
     write_csv(out/"pilot_plan.csv",plan)
     write_csv(out/"pilot_preparation.csv",recipes)
     write_csv(out/"pilot_injection_map.csv",mapping)
-    write_csv(out/"chromeleon_concentrations_template.csv",[
-        {"sample_id":r["sample_id"],"analyte":name,"concentration_uM":"",
-         "method_id":config["analytics"].get("method_id") or "","channel":config["analytics"].get("channel") or ""}
-        for r in plan for name in ("substrate","product")])
     write_csv(out/"absence_review_template.csv",[],
               ["sample_id","analyte","method_id","reviewed_by","note"])
     return plan
 
 
 def verify(config, exports, mappings, calibration_path, plan_path, output,
-           reviewed_absences_path=None, tolerance=0.15, native_concentrations_path=None):
+           reviewed_absences_path=None, tolerance=0.15):
     """Replay real pilot exports against known concentrations; never optimizer feedback."""
     validate_analytics_settings(config)
     tolerance = finite(tolerance,"pilot relative-error tolerance",1e-9,1)
@@ -65,25 +61,12 @@ def verify(config, exports, mappings, calibration_path, plan_path, output,
                if float(r[name+"_uM"])==0}
     if not set(absences)<=allowed:
         raise ValueError("Pilot absence reviews are allowed only for expected-zero analytes")
-    native={}
-    if native_concentrations_path:
-        for row in read_csv(native_concentrations_path):
-            key=(row.get("sample_id"),row.get("analyte"))
-            if (key in native or key[0] not in ids or key[1] not in ("substrate","product")
-                    or row.get("method_id")!=config["analytics"]["method_id"]
-                    or row.get("channel")!=config["analytics"]["channel"]):
-                raise ValueError("Chromeleon concentrations need unique planned sample/analyte and matching method/channel")
-            native[key]=finite(row.get("concentration_uM"),"Chromeleon concentration in uM",0)
-        if set(native)!={(key,name) for key in ids for name in ("substrate","product")}:
-            raise ValueError("Chromeleon concentrations must cover both analytes for every pilot sample")
     inputs = {"config_digest":object_digest(config),"plan_sha256":digest(plan_path),
               "calibration_sha256":digest(calibration_path),
               "reviewed_absences_sha256":digest(reviewed_absences_path) if reviewed_absences_path else None,
-              "chromeleon_concentrations_sha256":digest(native_concentrations_path) if native_concentrations_path else None,
               "sources":[{"export_sha256":digest(p),"mapping_sha256":digest(m)} for p,m in zip(exports,mappings)]}
     paths=[plan_path,calibration_path,*exports,*mappings]
     if reviewed_absences_path:paths.append(reviewed_absences_path)
-    if native_concentrations_path:paths.append(native_concentrations_path)
     hashes={str(p):digest(p) for p in paths}
     out = new_output(output)
     peaks, seen = [], set()
@@ -128,18 +111,8 @@ def verify(config, exports, mappings, calibration_path, plan_path, output,
             else:
                 passed=result["qc_pass"] and not reviewed and measured is not None and relative<=tolerance
                 reason="within tolerance" if passed else "QC, nondetection or concentration error"
-            native_value=native.get((row["sample_id"],name))
-            native_truth_error=abs(native_value-expected)/expected if native_value is not None and expected>0 else None
-            native_python_error=abs(native_value-measured)/expected if native_value is not None and measured is not None and expected>0 else None
-            if native:
-                native_pass=(native_value<=config["analytics"]["quantification_limit_uM"][name] if expected==0
-                             else native_truth_error<=tolerance and native_python_error is not None and native_python_error<=tolerance)
-                if not native_pass:reason="Chromeleon concentration disagrees with truth or Python"
-                passed=passed and native_pass
             comparisons.append({"sample_id":row["sample_id"],"analyte":name,"expected_uM":expected,
                                 "measured_uM":measured,"relative_error":relative,"pass":bool(passed),"reason":reason,
-                                "chromeleon_uM":native_value,"chromeleon_vs_expected_relative_error":native_truth_error,
-                                "chromeleon_vs_python_error_fraction_of_expected":native_python_error,
                                 "qc_flags":result["qc_flags"]})
     passed=qc["batch_qc_pass"] and all(r["pass"] for r in comparisons)
     if any(digest(path)!=value for path,value in hashes.items()):
@@ -147,7 +120,6 @@ def verify(config, exports, mappings, calibration_path, plan_path, output,
     report={"pilot_pass":passed,"synthetic_only":bool(config.get("demo")),
             "samples":len(plan),"relative_error_tolerance":tolerance,
             "quantification_qc_pass":qc["batch_qc_pass"],"comparisons":comparisons,"inputs":inputs,
-            "chromeleon_concentrations_compared":bool(native),
             "reviewed_absences":list(absences.values()),"api_calls":0,"optimizer_feedback":False,
             "scope":"Known-mixture concentration checks; no automated peak-purity, saturation or extraction-recovery proof."}
     write_csv(out/"comparisons.csv",comparisons)

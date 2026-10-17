@@ -1,8 +1,8 @@
 {
-  "created_utc": "2026-10-17T07:41:03.963631+00:00",
+  "created_utc": "2026-10-17T08:21:00.523591+00:00",
   "campaign": "hackathon2026-paradox48",
   "tests": {
-    "tests": 164,
+    "tests": 160,
     "errors": 0,
     "failures": 0,
     "skipped": 0
@@ -322,19 +322,16 @@
     "all_expected_outcomes_passed": true,
     "real_method_validated": false,
     "scope": "Merged interference/area loss can pass unknown-sample QC; known pilot truth detects these simulated biases. Real chromatograms still need identity/separation review.",
-    "new_acceptance_checks": 16,
+    "new_acceptance_checks": 12,
     "command": "python -m hte.cli practice-analytics --output output/analytics-practice",
     "actual_file_replay": "python -m hte.cli --config local_data/campaign.json verify-pilot ...",
     "reviewed_calibration_blank_absences": true,
     "standards_required": true,
-    "calibration_calculated_by": "Python from Chromeleon integrated UV areas",
-    "chromeleon_concentration_crosscheck": "optional, never substituted for exported areas",
+    "calibration_calculated_by": "Local Python from HTEL integrated UV areas and authentic standards",
     "live_pilot_validation_complete": false,
     "pilot_results_used_for_optimizer_feedback": false,
     "optional_real_pilot_injections": 7,
-    "reaction_schedule_changed": false,
-    "optional_chromeleon_concentration_comparison": true,
-    "actual_chromeleon_concentration_export_available": false
+    "reaction_schedule_changed": false
   },
   "visual_mock_hplc_trials": {
     "synthetic_only": true,
@@ -353,5 +350,18 @@
     "new_acceptance_checks": 5,
     "command": "python scripts/mock-hplc-trials.py --output output/mock-hplc",
     "scope": "Mock integrated exports and illustrative traces; real importer/calibration/strict reaction QC and separate known-mixture replay. Two hidden biases pass unknown-sample QC, as explicitly expected."
+  },
+  "quantification_workflow": {
+    "engine": "local_python",
+    "deterministic_yield_calculation": true,
+    "inputs": "HTEL integrated-peak UV areas, injection maps and authentic-standard calibration",
+    "vendor_software_runtime_required": false,
+    "vendor_concentration_import_supported": false,
+    "claude_calculates_experimental_yields": false,
+    "standards_required": true,
+    "removed_vendor_concentration_feature_tests": 4,
+    "full_offline_rehearsal_retested": true,
+    "visual_mock_trials_retested": 14,
+    "paid_calls_this_update": 0
   }
 }

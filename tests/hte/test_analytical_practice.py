@@ -31,8 +31,6 @@ def test_raw_calibration_to_pilot_replay_and_hidden_area_biases(practice):
     assert all(sum(float(r[k]) for k in ("SM_10mM_ul","product_10mM_ul","mesitylene_5mM_ul","matched_matrix_ul"))==pytest.approx(1000) for r in recipes)
     assert all(not r["method_id"] for r in read_csv(out/"pilot_injection_map.csv"))
     assert len(read_csv(out/"calibration_injection_map.csv"))==14
-    native=read_csv(out/"chromeleon_concentrations_template.csv")
-    assert len(native)==14 and all(not r["concentration_uM"] for r in native)
 
 
 @pytest.mark.parametrize("fault",["missing_review","wrong_method","unplanned_absence","blank_peak_conflict"])
@@ -90,25 +88,3 @@ def test_pilot_cli_reports_failure_and_never_constructs_a_paid_client(practice,t
     with pytest.raises(SystemExit) as stopped:main()
     assert stopped.value.code==2
     assert not read_json(tmp_path/"failed/pilot_report.json")["pilot_pass"]
-
-
-@pytest.mark.parametrize("fault",[None,"biased_native_value","wrong_method","missing_native_result"])
-def test_optional_chromeleon_concentrations_are_compared_not_recalibrated(practice,tmp_path,fault):
-    out,_=practice;s=out/"synthetic";cfg=read_json(s/"campaign.json")
-    rows=[{"sample_id":r["sample_id"],"analyte":name,"concentration_uM":r[name+"_uM"],
-           "method_id":cfg["analytics"]["method_id"],"channel":cfg["analytics"]["channel"]}
-          for r in read_csv(out/"pilot_plan.csv") for name in ("substrate","product")]
-    if fault=="biased_native_value":rows[5]["concentration_uM"]=float(rows[5]["concentration_uM"])*1.2
-    elif fault=="wrong_method":rows[0]["method_id"]="OTHER"
-    elif fault=="missing_native_result":rows.pop()
-    write_csv(tmp_path/"native.csv",rows)
-    args=(cfg,[s/"clean/vendor.csv"],[s/"clean/map.csv"],s/"calibration.csv",out/"pilot_plan.csv",
-          tmp_path/"result",s/"pilot-absences.csv")
-    if fault in ("wrong_method","missing_native_result"):
-        with pytest.raises(ValueError):verify(*args,native_concentrations_path=tmp_path/"native.csv")
-    else:
-        report=read_json(verify(*args,native_concentrations_path=tmp_path/"native.csv"))
-        assert report["chromeleon_concentrations_compared"]
-        assert report["pilot_pass"] is (fault is None)
-        product=next(r for r in report["comparisons"] if r["sample_id"]=="PILOT-03" and r["analyte"]=="product")
-        assert product["measured_uM"]==pytest.approx(1000/3)

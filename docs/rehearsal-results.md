@@ -16,9 +16,9 @@ The practice selects48 pairs covering30 ligands, accepts all48 synthetic LC resu
 
 ## Acceptance scope
 
-The active suite passes **164 tests**, including 16 analytical-practice checks and five visual mock-LC checks. Two obsolete GP/MOCCA adapter tests were removed during the earlier cleanup; all campaign checks remain. The initial design regenerates byte for byte from saved scores/vectors; robot/stock outputs are generated locally.
+The active suite passes **160 tests**, including 12 analytical-practice checks and five visual mock-LC checks. Two obsolete GP/MOCCA adapter tests were removed during the earlier cleanup; all campaign checks remain. Four tests specific to the removed vendor-concentration comparison were retired with that optional feature; yield/import/QC tests remain. The initial design regenerates byte for byte from saved scores/vectors; robot/stock outputs are generated locally.
 
-Tests cover stoichiometry/reserves/deck loads, supplied geometry and cap envelope, reaction-to-LC maps, acid/dilution arithmetic, ligand coverage, strict scoring, caching/budget stops and interrupted requests. Chromeleon batches with reset injection numbers require explicit maps and full coverage; partial/overlapping/duplicate exports are rejected. Calibration and quantitative QC are enforced.
+Tests cover stoichiometry/reserves/deck loads, supplied geometry and cap envelope, reaction-to-LC maps, acid/dilution arithmetic, ligand coverage, strict scoring, caching/budget stops and interrupted requests. HTEL peak-export batches with reset injection numbers require explicit maps and full coverage; partial/overlapping/duplicate exports are rejected. Calibration and quantitative QC are enforced.
 
 Actual Opentrons8.8.2 simulations execute both rounds with custom labware, manual moves/cap pauses and tip replacement. Unused historical GP/MOCCA adapters and checked-in generated runs have been removed. Active simulations and the offline scoring/LC rehearsal remain tested.
 
@@ -26,11 +26,11 @@ Actual Opentrons8.8.2 simulations execute both rounds with custom labware, manua
 
 `python scripts/mock-hplc-trials.py --output output/mock-hplc` generates an interactive offline report with 14 illustrative chromatograms and HTEL-format integrated exports. The real calibration/import/strict reaction-QC path accepts six valid cases and blocks six detectable faults. Two hidden biases pass unknown-sample QC: a true 50% mixture reports 59.3% with added coelution area and 40.2% with omitted product area (seed1707). The separate known-mixture audit fails both. All 14 responses match expectations declared before replay; no API calls or optimizer feedback occur.
 
-The original example contributes format only, with source hash recorded when supplied. Peak shapes, response factors and 1.7-minute RTs are invented. Component trace areas are numerically checked, but exported integration decisions are imposed explicitly. This does not exercise actual Chromeleon integration or validate the physical method. [Commands and scope](htel-lc-import.md#visual-mock-chromatograms).
+The original example contributes format only, with source hash recorded when supplied. Peak shapes, response factors and 1.7-minute RTs are invented. Component trace areas are numerically checked, but exported integration decisions are imposed explicitly. This does not exercise upstream peak integration or validate the physical method. [Commands and scope](htel-lc-import.md#visual-mock-chromatograms).
 
 ## Practical limits
 
-The full rehearsal now includes `practice-analytics`: mock Chromeleon files, 14 calibration injections with reviewed blank absences, seven known-mixture pilot injections and nine perturbation scenarios. It verifies clean data/extra peaks/IS-corrected injection scaling, rejects shifted/ambiguous/missing/incomplete peaks, and catches the tested hidden area biases using the known concentration key. Those biases can still pass ordinary unknown-sample QC. `verify-pilot` replays actual HTEL files without LLM calls; no actual campaign pilot files have been acquired or validated.
+The full rehearsal now includes `practice-analytics`: mock HTEL peak tables, 14 calibration injections with reviewed blank absences, seven known-mixture pilot injections and nine perturbation scenarios. It verifies clean data/extra peaks/IS-corrected injection scaling, rejects shifted/ambiguous/missing/incomplete peaks, and catches the tested hidden area biases using the known concentration key. Those biases can still pass ordinary unknown-sample QC. `verify-pilot` replays actual HTEL files without LLM calls; no actual campaign pilot files have been acquired or validated.
 
 Simulation does not establish physical fit, liquid temperature, extraction/IS recovery or LC separation. Formal separate homogeneity/solubility studies are not requested; pauses handle visible faults.
 
