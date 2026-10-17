@@ -9,6 +9,7 @@
 | `hte/scoring.py`, `design.py` | Small cached Claude requests, strict scores, repeated aggregation and pair selection |
 | `hte/analytics.py`, `ingestion.py` | HTEL peak-table normalization, calibration/QC and complete-batch joins |
 | `hte/analytical_practice.py`, `scripts/mock-hplc-trials.py` | Calibration/pilot replay and visual mock-LC fault challenges |
+| `scripts/simulate-lc-separation.py` | Uncalibrated column/gradient scenarios; separate from campaign quantification |
 | `hte/planning.py`, `protocols.py` | Stoichiometry, reserves, deck loads, timing and standalone local OT-2 Python |
 | `hte/workflow.py` | Complete LC event → measured-feedback scoring → next batch, with replay guards |
 | `hte/rehearsal.py`, `demo.py` | Offline rehearsal / synthetic test fixtures generated on demand |
@@ -63,5 +64,7 @@ Open `output/initialization-review/initialization-review.html` for hoverable pai
 The compact [published overview](initialization-review.md) stores only Markdown and SVG. Deliberately refresh those two files with `--publish-docs` after reviewing a newly generated report. Full interactive outputs remain in ignored `output/`.
 
 ## Maintaining the project
+
+Explore assumed column/gradient scenarios with `python scripts/simulate-lc-separation.py --output output/lc-separation` after installing `.[reports]`. The standalone report includes explicit retention/peak/response assumptions, three gradients, overlap stresses and numerical checks. It does not fit a retention predictor or alter the analytical method. [Scope and assumptions](htel-lc-import.md#assumed-column-and-gradient-scenarios).
 
 Keep practical instructions in the staff/runbook sources and expert algorithm details in [ml-strategy.md](ml-strategy.md). Change configuration plus corresponding prose together, run the relevant checks, rebuild/visually inspect [the PDFs](updating-the-handbook.md), and refresh `software_validation.json`. Preserve frozen paid scores and source provenance; a new selection should be a new campaign record. Tests generate their own fixtures in temporary directories. GitHub CI runs the active acceptance suite and PDF builds independently. No network access or Claude key is required by tests.
