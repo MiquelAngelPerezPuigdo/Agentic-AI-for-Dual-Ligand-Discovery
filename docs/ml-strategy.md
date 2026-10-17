@@ -63,6 +63,8 @@ First enforce coverage of every available ligand in pair wells. Among candidates
 
 The **frozen real selection** completed coverage in 16 steps and added 32 further pairs, for **48 unique pairs, 30/30 ligand coverage and zero floor overrides**. [Step-by-step trace](../campaigns/hackathon2026/round1_design.csv.selection.csv), [coverage counts](../campaigns/hackathon2026/round1_design.csv.ligand_coverage.csv). Coverage guarantees ligand inclusion, not balanced frequencies, exhaustive pair exploration or a globally optimal design.
 
+The [initialization review](initialization-review.md) maps the frozen selection, reports individual ligand frequencies and compares score/diversity weights using the saved scores. Its PCA projection is for display only; all selection and distance statistics use the full vectors. Previews do not replace the frozen batch.
+
 ## 4. Experimental feedback → final 22
 
 After all **48 first-round samples** have completed, integrated UV areas are normalized with explicit injection maps. Authentic SM/product standards at fixed mesitylene concentration establish quantitative response; calibration, sample identity, method/channel, peak assignment and analytical QC must pass. Missing/rejected measurements are not converted to zero. Configured censoring retains an upper bound. [LC handling](htel-lc-import.md), [analysis](../hte/analytics.py).

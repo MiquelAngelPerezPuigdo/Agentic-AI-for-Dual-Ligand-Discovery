@@ -22,6 +22,8 @@ Each reaction: **250 µL, 0.1 M substrate, 95 °C /4 h, 6 mol% each ligand, 12 m
 
 The **[real initial batch is prepared](campaigns/hackathon2026/round1_design.csv)** using 50/50 Claude rank and T5 embedding diversity. Both scoring stages include ligand identities/SMILES and 17 available single-ligand SI yields. The second selection uses Claude with all 48 measured first-round results. [Frozen scores and selection audit](campaigns/hackathon2026/README.md).
 
+**[View the initialization map and statistics](docs/initialization-review.md)**: pair-space coverage, a ligand-pairing network, use counts for every ligand, and alternative weight previews from the same saved scores. All-ligand inclusion is enforced; use frequencies are unequal.
+
 ## Install and practice
 
 Use Python 3.12 on the local workstation. With uv: `uv sync --python 3.12 --extra sources`, then `uv run hte check`. With an activated virtual environment:

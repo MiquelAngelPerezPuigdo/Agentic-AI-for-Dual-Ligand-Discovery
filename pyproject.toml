@@ -13,6 +13,7 @@ dependencies = ["numpy>=1.26,<3", "rdkit>=2024.3", "anthropic>=0.125,<1"]
 sources = ["openpyxl>=3.1", "pypdf>=5"]
 test = ["pytest>=8", "opentrons==8.8.2"]
 embeddings = ["torch>=2.3", "transformers>=4.43,<5"]
+reports = ["matplotlib>=3.8,<4", "plotly>=6,<7"]
 docs = ["reportlab>=4.4,<5", "mistune>=3.1,<4", "pypdf>=5,<7"]
 
 [project.scripts]
