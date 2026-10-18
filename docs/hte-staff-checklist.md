@@ -6,7 +6,7 @@
 
 - Weigh labeled charges from **`weighed_charges_template.csv`**; enter actual masses/assays. Weigh ligands in the glovebox. Robot adjusts solvent addition; respect mass limits.
 - Coarse-load raw solvents to CSV minimum fills. Supplied **8 ×30 mL A1-H1 reservoir: single-channel ONLY**. No manual aliquoting or volumetric top-up.
-- Bulk carriers use slots **3/6** by ID. Confirm campaign-length solvent compatibility of provisional 15 mL conical containers, or supply exact compatible glass-source JSON. Retain capped reserves and original working tubes.
+- **Release blocked:** default bulk sources fail the conservative no-nozzle-entry check. Supply actual short, solvent-compatible stock containers/rack JSON; regenerate and check reach. Carrier slots **3/6**; retain capped reserves and original working tubes.
 - Have **three compatible 96-well LC plates**, 2.2 mL geometry, 1 mL/sample, carrier/seals. Confirm offsets, mounting, caps and actual 1.7-min method/cycle. Import/simulate locally.
 
 ## Pipettes
@@ -46,8 +46,8 @@ Follow App pauses and matching loading CSVs. Staff handle weighing, coarse liqui
 |---|---|
 | 1 / Stocks | Run **`prepare_stocks.py`** from actual weights. Load requested carriers uncapped; cap/store when removed. Retain the preparation manifest. Make the one right-pipette/tip-rack change after preparation. |
 | 2 / R2 predose first | Load **23 NEW R2 vials** in the SAME reaction block. R1 Python doses **25 µL SM/IS each**. Hand-cap/store them, then fit **48 NEW EMPTY R1 vials** and uncap. No manual pipetting. |
-| 3 / R1 reaction | Robot doses **25 µL SM/IS +75 µL ligand A +75 µL ligand B +75 µL Pd**. Hand-cap; move/latch. **95 °C, 500 rpm, 4 h.** |
-| 4 / During R1 hold | Leave reaction on 10. At prompts, load raw solvents in 3 and analytical rack in 4. Robot makes **14 calibration standards**, pipette-mixes them and prepares quench/diluent in 2. Move sealed calibration plate **6 → HPLC** and start its sequence. Remove raw reservoir from 3 and restore working rack 4. |
+| 3 / R1 reaction | Robot doses **25 µL SM/IS +75 µL ligand A +75 µL ligand B +75 µL Pd**. Hand-cap; move/latch. **95 °C, 500 rpm, 4 h. Start the external timer when the App announces the hold starts.** |
+| 4 / During R1 hold | Leave reaction on 10. Load raw solvents in 3 and analytical rack in 4 at prompts. Robot makes **14 standards** and quench/diluent in 2. Seal/move calibration plate **6 → HPLC**; start sequence. Restore rack 4; remove raw reservoir. **Monitor the timer:** pauses do not stop heating. If the deadline arrives while paused, stop heat/shaking via App and record the overrun; do not resume dosing. |
 | 5 / Cool / quench | Move sealed block to 3; cool before opening. Robot adds **500 µL quench**. Hand-recap ALL; shake **1500 rpm, 2 min**, heater off; return to 3. |
 | 6 / LC samples | Let bubbles clear; uncap indicated vials. Robot adds **20 µL extract to 980 µL diluent**, fresh sample tips. Recap reaction vials. |
 | 7 / Final plate | Move **6 → cooled shaker 10**. Robot shakes **UNCOVERED, heater OFF, 1000 rpm, 2 min** at confirmed splash-free speed. Move **10 → HPLC**, seal and inject directly. No manual dilution/vial transfers. |
@@ -58,4 +58,4 @@ Calibration: each analyte blank +**10, 50, 150, 350, 800 µM**, independent **66
 
 Pause for blocked tips, persistent bubbles, air uptake, obvious layers or tip contact. Do not guess liquid top-ups or repair a dilution by hand. Report deviations so stock accounting can be corrected.
 
-**Timing target:** two 4 h holds plus approximately **4 h for remaining tasks, including LC**. Record actual times; the target is advisory. Give logs/raw LC files/stock and deviation records to the pipeline operator; return them using **`python scripts/hte-return-package.py`**.
+**Timing:** 12 h is advisory, not demonstrated. Record actual times and hold deviations. Give logs/raw LC files/stock records to the pipeline operator; return using **`python scripts/hte-return-package.py`**.

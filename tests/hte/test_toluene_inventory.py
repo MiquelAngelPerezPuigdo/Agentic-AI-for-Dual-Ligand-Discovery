@@ -84,12 +84,16 @@ def test_worst_case_twenty_two_l17_pairs_and_reference_fit_two_ml_tube(tmp_path)
 
 def test_small_analytical_masters_have_independent_weighings_and_cover_optional_pilots():
     c,*_=inputs();rows=preparation(c)
+    # At 10 mM, a practical >=5 mg charge rounds to 4 mL SM or 6 mL product.
+    expected = {"substrate": (4000, 6.4464), "product": (6000, 5.8254)}
     for analyte in ("substrate","product"):
         masters=[r for r in rows if r["analyte"]==analyte and r["stock_mM"]==10]
         assert len(masters)==2
-        assert all(1 <= r["mass_mg"] < 3.3 for r in masters)
+        assert {r["role"] for r in masters} == {"fit", "independent_check_and_optional_pilot"}
+        assert all(r["prepare_ul"] == expected[analyte][0] for r in masters)
+        assert all(r["mass_mg"] == pytest.approx(expected[analyte][1]) for r in masters)
         assert all(r["prepare_ul"] >= r["required_master_ul"]*1.1 for r in masters)
-        assert sum(r["mass_mg"] for r in masters)<6.5
-    c["stock_preparation"]["analytical_minimum_weigh_mg"] = 5
+        assert sum(r["mass_mg"] for r in masters)<13
+    c["stock_preparation"]["analytical_minimum_weigh_mg"] = 10
     larger = [r for r in preparation(c) if r["stock_mM"]==10]
-    assert all(r["mass_mg"] >= 5 and "15 mL bulk" in r["storage_container"] for r in larger)
+    assert all(r["mass_mg"] >= 10 and "15 mL bulk" in r["storage_container"] for r in larger)

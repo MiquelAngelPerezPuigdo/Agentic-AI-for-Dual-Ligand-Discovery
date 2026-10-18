@@ -27,7 +27,8 @@
       "addition_stage": "reaction_stock"
     },
     "additives": [],
-    "scale_status": "250 uL reaction + 500 uL acidified quench = 750 uL in a nominal 2 mL vial; OT-2 heater-shaker, no stir bars; supplied rack geometry. Separate recovery/homogeneity study waived by user; inspect visibly before sampling."
+    "scale_status": "250 uL reaction + 500 uL acidified quench = 750 uL in a nominal 2 mL vial; OT-2 heater-shaker, no stir bars; supplied rack geometry. Separate recovery/homogeneity study waived by user; inspect visibly before sampling.",
+    "max_hold_overrun_seconds": 60
   },
   "design": {
     "round1_total": 48,
@@ -168,7 +169,7 @@
       "L03": 10,
       "Pd": 90
     },
-    "analytical_minimum_weigh_mg": 1,
+    "analytical_minimum_weigh_mg": 5,
     "analytical_margin_factor": 1.1,
     "fixed_stock_mass_mg": {
       "Pd": 90
@@ -252,7 +253,9 @@
       "UV_VIS_4": 370
     },
     "requested_method_duration_minutes": 1.7,
-    "requested_wavelength_nm": 210
+    "requested_wavelength_nm": 210,
+    "calibration_fit_tolerance_fraction": 0.15,
+    "calibration_lowest_level_tolerance_fraction": 0.2
   },
   "timing": {
     "deadline_minutes": 720,
@@ -272,10 +275,10 @@
       "1": 0,
       "2": 0
     },
-    "handling_status": "Planning allowance only. Robot stock preparation is inside the campaign; calibration and workup-fluid preparation run during the reaction holds.",
-    "presentation_status": "Two 4 h reaction holds and an approximately 4 h non-reaction allocation. Twelve hours is a target; runtime is recorded and an overrun does not block export.",
+    "handling_status": "Unmeasured scenario: 120 min initial preparation allowance includes motion/handling provisionally. Generated manifest reports actual programmed pumping/wait lower bound separately. Preparation is inside campaign; standards and workup fluids run during holds.",
+    "presentation_status": "Two 4 h holds plus a nominal 4 h target for other tasks. Current allowances do not demonstrate a 12 h finish. Record physical elapsed times; total deadline advisory; individual reaction hold deadlines remain checked.",
     "enforce_deadline": false,
-    "stock_preparation_total_minutes": 60
+    "stock_preparation_total_minutes": 120
   },
   "validation": {
     "chemistry_confirmed": true,
@@ -335,7 +338,7 @@
     "mix_ul": 250,
     "calibration_during_round1_hold": true,
     "workup_fluids_during_hold": true,
-    "bulk_container_status": "Provisional standard-library 15 mL conical source geometry. Confirm solvent compatibility for campaign-length contact or supply the exact compatible glass-container rack JSON before live release.",
+    "bulk_container_status": "REJECTED FOR LIVE USE: configured 117.5 mm-deep Falcon sources require 116 mm insertion at bottom(1.5), beyond attached tip reach. Supply actual short, solvent-compatible source/rack JSON and regenerate; release flags cannot override reach checks.",
     "preparation_large_pipette": "p1000_single_gen2",
     "preparation_manifest_path": "local_data/stock-prep/preparation_manifest.json",
     "prepare_optional_pilot": false,

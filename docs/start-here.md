@@ -4,9 +4,9 @@ Frozen **48 pairs**: `campaigns/hackathon2026/round1_design.csv`. Python quantif
 
 ## Install and configure
 
-Python 3.12: **`uv sync --python 3.12 --extra sources`**; prefix commands below with `uv run`. Or use a venv with `.[sources]`. Copy canonical config to **`local_data/campaign.json`**, calibration template to `local_data/calibration-plan.csv`, key example to **`anthropic.key`**. Put the raw Claude key in that file; preserve existing keys. Never send it to the robot/Git.
+Python 3.12: **`uv sync --python 3.12 --extra sources --extra robot`**; prefix commands with `uv run`. Or install `.[sources,robot]` in a venv. Copy config to **`local_data/campaign.json`**, calibration template to `local_data/calibration-plan.csv`, key example to **`anthropic.key`**. Put the raw Claude key there; preserve existing keys. Never send it to the robot/Git.
 
-Use schema **5**; replace old protocols/settings while preserving measured LC facts. Configure method/channel, full cycle, RTs/LOQs and physical release evidence, including containers/p1000 generation. Concentrations use nominal solvent addition. `timing.enforce_deadline=false`: 12 h advisory; record real times.
+Use schema **5**; replace old protocols while preserving measured LC facts. Configure method/channel, full cycle, RTs/LOQs and physical evidence. **Default bulk-source reach fails:** obtain actual suitable short-container/rack geometry before live release. Concentrations use nominal solvent addition. Twelve hours is advisory; record real times.
 
 ## Robot preparation, then R1
 
@@ -40,7 +40,7 @@ python scripts/hte-lc-results.py next \
   --injections local_data/r1-map*.csv --output output/r1-decision
 ```
 
-Calibration defaults to `local_data/calibration.csv`. QC precedes Claude: **387 untested pairs →22 +L17 reference**, L03 max four. Run printed **`refill_stocks.py` FIRST** with original carriers/tubes. Load the 23 robot-predosed vials and NEW EMPTY reservoir 2. Run R2 reaction then matching workup; no SM/IS redose. If unreleased, export `next_design.csv` with R1 `--history`, `--live` and a fresh folder. After all 23 injections, use helper **`final`** with R2 doses/exports/maps; no Claude.
+Calibration defaults to `local_data/calibration.csv`. QC precedes Claude: **387 untested pairs →22 +L17 reference**, L03 max four. **After interruption rerun the SAME command/output**; accepted scores are reused. Inspect uncertain API requests; a new folder may repeat charges. Run printed **`refill_stocks.py` FIRST** with original carriers/tubes, then R2 with predosed vials and NEW EMPTY reservoir 2; no SM/IS redose. If unreleased, export `next_design.csv` with R1 `--history`, `--live` and a new export folder. After 23 final injections, run helper **`final`**; no Claude.
 
 ## Return records
 

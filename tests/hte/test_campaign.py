@@ -113,8 +113,8 @@ def test_timing_calibrations_overlap_and_deadline_warning(cfg):
     timing = schedule(cfg)
     assert timing["lc_minutes"] == pytest.approx(120.7)
     assert timing["reaction_minutes"] == 480
-    assert timing["serial_total_minutes"] == pytest.approx(804.7)
-    assert timing["planned_total_minutes"] == pytest.approx(804.7)
+    assert timing["serial_total_minutes"] == pytest.approx(864.7)
+    assert timing["planned_total_minutes"] == pytest.approx(864.7)
     assert not timing["fits_serial_estimate"] and not timing["fits_planned_estimate"]
     assert timing["manual_lc_plate_moves"] == 4 and timing["lc_plates_by_round"] == [1, 1]
     budget = timing["operating_budget"]
@@ -126,7 +126,7 @@ def test_timing_calibrations_overlap_and_deadline_warning(cfg):
     # A target fitting the deadline must never turn the unmeasured allowance scenario into a pass.
     assert not timing["fits_planned_estimate"]
     cfg["timing"]["calibration_injections_during_round1_reaction"] = 0
-    assert schedule(cfg)["serial_total_minutes"] == pytest.approx(828.5)
+    assert schedule(cfg)["serial_total_minutes"] == pytest.approx(888.5)
 
 
 @pytest.mark.parametrize("cycle,remaining,fixed_fit", [(3, 27, True), (6, -186, False)])

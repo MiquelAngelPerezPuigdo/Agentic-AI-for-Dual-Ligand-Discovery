@@ -78,11 +78,110 @@ class Plan:
         raise ValueError("Raw source capacity exceeded for "+fluid)
 
     def report(self):
-        return dict(steps=self.steps,initial_liquids=[dict(location=list(k),volume_ul=v,dead_ul=self.dead[k]) for k,v in self.initial.items()],
+        result = dict(steps=self.steps,initial_liquids=[dict(location=list(k),volume_ul=v,dead_ul=self.dead[k]) for k,v in self.initial.items()],
                     expected_final_liquids=[dict(location=list(k),volume_ul=v) for k,v in self.amounts.items()],
                     discarded_surplus_ul=sum(self.discarded.values()),
                     concentration_basis="Nominal solvent addition; solute displacement and contraction are not measured",
                     physical_run_completed=False)
+        result["pumping_wait_lower_bound"] = preparation_timing(self.config, result)
+        result["source_reach_assessment"] = source_reach_assessment(self.config, result)
+        return result
+
+
+def preparation_timing(config, plan):
+    """Lower bound from the actual LIQUID_RUNTIME strokes, excluding all motion."""
+    seconds = 0.0
+    strokes = mixes = pauses = 0
+    p = config["pipetting"]
+    for step in plan["steps"]:
+        kind = step["type"]
+        pauses += kind == "pause"
+        if kind not in ("transfer", "mix"):
+            continue
+        large = step["pipette"] == "large"
+        aspirate, dispense = (200, 400) if large else (100, 150)
+        if kind == "mix":
+            mixes += 1
+            seconds += step["cycles"] * (step["volume_ul"] / aspirate + step["volume_ul"] / dispense + 1)
+            continue
+        capacity = 1000 if large else 20 if step["pipette"] == "single" and config["robot"]["single"] == "p20_single_gen2" else 300
+        count = math.ceil(step["volume_ul"] / (capacity - p["air_gap_ul"] - p["surplus_ul"]))
+        volume = step["volume_ul"] / count
+        strokes += count
+        seconds += p["prewet_cycles"] * (volume + p["surplus_ul"]) * (1 / aspirate + 1 / dispense)
+        seconds += (step["volume_ul"] + p["surplus_ul"] + count * p["air_gap_ul"]) / aspirate
+        seconds += (step["volume_ul"] + count * p["air_gap_ul"]) / dispense + count
+    return {"seconds": seconds, "minutes": seconds / 60, "transfer_strokes": strokes,
+            "mix_events": mixes, "manual_pause_count": pauses, "physical_duration_measured": False,
+            "excluded": ["gantry and vertical motion", "tip pickup/drop and tip-rack replacement",
+                         "manual pauses, caps, carrier changes and pipette installation"],
+            "interpretation": "Programmed pumping and liquid waits only; actual preparation takes longer."}
+
+
+def source_reach_assessment(config, plan):
+    """Reject nozzle entry into a source; simulation does not model pipette-body collisions.
+
+    Tip length minus the official tip overlap is a conservative reach ceiling,
+    not a certification of sidewall clearance or material compatibility.
+    """
+    try:
+        from opentrons.protocol_api.labware import get_labware_definition
+    except ImportError:
+        return {"status": "unavailable", "issues": ["Install the pinned Opentrons SDK (project robot extra) to check official source/tip geometry"],
+                "physical_clearance_validated": False}
+    cache = {}
+
+    def definition(name, path=None):
+        key = path or name
+        if key not in cache:
+            cache[key] = read_json(path) if path else get_labware_definition(name)
+        return cache[key]
+
+    def source_definition(key):
+        if key.startswith("BULK"):
+            return definition(config["automation"]["bulk_labware"], config["automation"].get("bulk_definition_path"))
+        if key.startswith("working") or key == "analytical":
+            return definition(config["robot"]["ligand_source_labware"])
+        if key == "raw":
+            return definition("", config["automation"]["raw_definition_path"])
+        kind = "lc" if key == "cal_plate" else "reservoir" if key == "reservoir" else None
+        if kind:
+            return definition(config["robot"].get(kind + "_labware"), config["robot"].get(kind + "_definition_path"))
+        raise ValueError("Unknown preparation source geometry: " + key)
+
+    issues, checked = [], set()
+    for step in plan["steps"]:
+        if step["type"] not in ("transfer", "mix"):
+            continue
+        location = step["source"] if step["type"] == "transfer" else step["location"]
+        tip_name = ("opentrons_96_tiprack_1000ul" if step["pipette"] == "large" else
+                    "opentrons_96_tiprack_20ul" if step["pipette"] == "single" and config["robot"]["single"] == "p20_single_gen2" else
+                    "opentrons_96_tiprack_300ul")
+        identity = (*location, tip_name)
+        if identity in checked:
+            continue
+        checked.add(identity)
+        well = source_definition(location[0])["wells"][location[1]]
+        parameters = definition(tip_name)["parameters"]
+        available = parameters["tipLength"] - parameters["tipOverlap"]
+        insertion = well["depth"] - 1.5  # Current runtime's explicit aspiration height.
+        if insertion > available:
+            issues.append({"source": location, "tiprack": tip_name, "source_depth_mm": well["depth"],
+                           "aspiration_height_mm": 1.5, "required_insertion_mm": insertion,
+                           "tip_length_mm": parameters["tipLength"], "tip_overlap_mm": parameters["tipOverlap"],
+                           "available_tip_reach_mm": available,
+                           "reason": "Aspiration would place the pipette nozzle inside the source container"})
+    return {"status": "blocked" if issues else "geometric_check_passed", "issues": issues,
+            "checked_source_tip_combinations": len(checked), "physical_clearance_validated": False,
+            "limitation": "Conservative tip/nozzle reach only; validate actual container fit, offsets, liquid depth and solvent compatibility locally."}
+
+
+def validate_source_reach(config, plan):
+    assessment = source_reach_assessment(config, plan)
+    if assessment["status"] != "geometric_check_passed":
+        first = assessment["issues"][0]
+        raise ValueError("Unsafe or unverified stock source reach; live release blocked. " + str(first))
+    return assessment
 
 
 def raw_sources(plan, phase):
@@ -284,9 +383,50 @@ def working_loads(config,operations,stocks):
 
 # Kept self-contained in every exported Python file; no project installation on the OT-2.
 LIQUID_RUNTIME = r'''
-def execute_liquid_plan(protocol, plan, labware, single, multi=None, large=None):
+class ReactionHoldTimer:
+    """Observe actual elapsed time; an operator must handle expiry while App-paused."""
+    def __init__(self, protocol, seconds, max_overrun_seconds, clock=None):
+        import time
+        self.protocol, self.target, self.tolerance = protocol, seconds, max_overrun_seconds
+        self.clock = clock or time.monotonic
+        self.start = self.clock()
+        self.simulation = protocol.is_simulating()
+        self.failed = False
+        self.record("started")
+
+    def elapsed(self):
+        return self.clock() - self.start
+
+    def record(self, event):
+        import json
+        elapsed = None if self.simulation else self.elapsed()
+        self.protocol.comment("HOLD_TIMING " + json.dumps({"event": event, "target_seconds": self.target,
+            "elapsed_seconds": elapsed, "overrun_seconds": None if elapsed is None else max(0, elapsed - self.target),
+            "maximum_recording_overrun_seconds": self.tolerance, "simulation": self.simulation,
+            "physical_duration_measured": not self.simulation, "failed": self.failed}, sort_keys=True))
+
+    def check(self):
+        if not self.simulation and self.elapsed() >= self.target:
+            self.failed = True
+            self.record("preparation_deadline_exceeded")
+            raise RuntimeError("Reaction hold expired during preparation. Heater/shaker will stop; reject this run pending deviation review. An App pause cannot be interrupted by this Python guard.")
+
+    def remaining(self):
+        return self.target if self.simulation else max(0, self.target - self.elapsed())
+
+    def finish(self):
+        if not self.simulation and self.elapsed() > self.target + self.tolerance:
+            self.failed = True
+            self.record("hold_overrun_rejected")
+            raise RuntimeError("Reaction hold exceeded its recorded timing tolerance; reject this run pending deviation review.")
+        self.record("hold_completed")
+
+
+def execute_liquid_plan(protocol, plan, labware, single, multi=None, large=None, check_deadline=None):
     from opentrons.types import Point
     import math
+    def check():
+        if check_deadline is not None: check_deadline()
     def tip(pipette):
         try: pipette.pick_up_tip()
         except protocol_api.labware.OutOfTipsError:
@@ -294,6 +434,7 @@ def execute_liquid_plan(protocol, plan, labware, single, multi=None, large=None)
             pipette.reset_tipracks();pipette.pick_up_tip()
     p=CONFIG["pipetting"]
     for step in plan["steps"]:
+        check()
         kind=step["type"]
         if kind=="pause":protocol.pause(step["message"])
         elif kind=="load":
@@ -306,6 +447,7 @@ def execute_liquid_plan(protocol, plan, labware, single, multi=None, large=None)
             pipette.flow_rate.aspirate=200 if pipette is large else 100;pipette.flow_rate.dispense=400 if pipette is large else 150
             well=labware[step["location"][0]][step["location"][1]]
             for cycle in range(step["cycles"]):
+                check()
                 spread=step.get("spread_mm",0)*(1 if cycle%2 else -1)
                 pipette.aspirate(step["volume_ul"],well.bottom(1.5).move(Point(x=spread,y=0,z=0)));protocol.delay(seconds=.5)
                 pipette.dispense(step["volume_ul"],well.bottom(3 if spread else 1.5).move(Point(x=-spread,y=0,z=0)));protocol.delay(seconds=.5)
@@ -319,13 +461,16 @@ def execute_liquid_plan(protocol, plan, labware, single, multi=None, large=None)
             volume=step["volume_ul"]/count
             protocol.comment("ROBOT PREPARATION: "+step["label"]+", "+str(step["volume_ul"])+" uL nominal")
             for _ in range(p["prewet_cycles"]):
+                check()
                 pipette.aspirate(volume+p["surplus_ul"],source.bottom(1.5));pipette.dispense(volume+p["surplus_ul"],source.bottom(1.5))
             for stroke in range(count):
+                check()
                 pipette.aspirate(volume+(p["surplus_ul"] if stroke==0 else 0),source.bottom(1.5));protocol.delay(seconds=.5)
                 pipette.air_gap(p["air_gap_ul"])
                 pipette.dispense(volume+p["air_gap_ul"],target.top(2));protocol.delay(seconds=.5)
             pipette.drop_tip()
         else:raise RuntimeError("Unknown preparation action")
+        check()
 '''
 
 
@@ -381,6 +526,7 @@ def load_preparation(config,inventory,path,live=False):
         raise ValueError("Stock preparation manifest does not match this campaign recipe/inventory")
     if live and not report.get("actual_weighed_charges_supplied"):
         raise ValueError("Live run requires stock preparation generated from actual weighed charges")
+    if live: validate_source_reach(config, report)
     return report
 
 
@@ -388,6 +534,7 @@ def export_stock_preparation(config,inventory,design,output,charges=None,live=Fa
     validate_config(config,live=live,live_scope="first_reaction")
     if live and charges is None:raise ValueError("Live stock preparation requires the actual weighed charges CSV")
     plan=build_stock_preparation(config,inventory,design,charges)
+    if live: validate_source_reach(config, plan)
     plan["recipe_digest"]=recipe_digest(config)
     out=new_output(output);write_json(out/"preparation_manifest.json",plan)
     if charges is not None:write_csv(out/"weighed_charges_used.csv",charges)
@@ -513,6 +660,10 @@ def build_hold_preparation(config,operations,round_number,prep=None):
         plan.raw("water",target,volume*(1-acn-acid/.1),pools);plan.mix(target,channels=8)
     plan.steps += [dict(type="pause",message="Workup liquids are now robot-prepared in slot 2. Cover them until workup. Remove the RAW reservoir from slot 3 at the next move prompt, so the reaction block can return there. Leave the prepared reservoir 2 in place. No hand refilling."),dict(type="off",key="raw")]
     result=plan.report();result.update(raw_loads=raw_loads,calibration_recipes=calibration_recipes(config) if round_number==1 else [],pilot_recipes=pilot_recipes(config) if round_number==1 and config["automation"].get("prepare_optional_pilot") else [])
+    result["hold_timing_policy"] = {"reaction_seconds": config["chemistry"]["reaction_minutes"] * 60,
+        "max_hold_overrun_seconds": finite(config["chemistry"].get("max_hold_overrun_seconds", 60), "hold overrun recording tolerance", 0),
+        "external_operator_timer_required": True,
+        "limitation": "The Python guard stops work and rejects an expired hold after App resume; it cannot stop the module while a manual pause blocks execution."}
     return result
 
 
@@ -553,6 +704,7 @@ def build_refill(config,inventory,design,history,prep):
 
 
 def refill_source(config,plan,live=False):
+    if live: validate_source_reach(config, plan)
     source='from opentrons import protocol_api\n'+repr_constants(config,plan,live)
     source+='requirements={"robotType":"OT-2","apiLevel":"2.18"}\nmetadata={"protocolName":"Automatic R2 stock refill"}\n'+LIQUID_RUNTIME
     source+='''

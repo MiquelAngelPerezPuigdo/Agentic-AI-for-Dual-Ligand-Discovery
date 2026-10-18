@@ -88,7 +88,8 @@ def test_invalid_availability_exclusions_fail(fault):
 def test_lc_scenarios_include_short_method_and_fail_longer_serial_plan():
     config = read_json(ROOT/"hte_inputs/campaign.json")
     rows = schedule_scenarios(config)
-    assert [row["serial_total_minutes"] for row in rows] == pytest.approx([804.7,826,897,1039,1110])
+    # 480 min reaction +264 min handling allowances +71 full sample cycles.
+    assert [row["serial_total_minutes"] for row in rows] == pytest.approx([864.7,886,957,1099,1170])
     assert [row["fits_serial_estimate"] for row in rows] == [False, False, False, False, False]
     assert not config["validation"]["injection_cycle_validated"]
 

@@ -144,7 +144,7 @@ def draw(output):
     text(sx,10.17,"ROBOT PREPARATION",12,weight="bold")
     ax.plot([sx,15.96],[9.91,9.91],color=LINE,lw=.9)
     text(sx,9.58,"1  Weighed chemicals + raw liquids",12,weight="bold")
-    text(sx,9.23,"Labeled bulk carriers in slots 3 / 6, by ID.",10.3)
+    text(sx,9.23,"Bulk carriers 3 / 6: suitable geometry PENDING.",10.3,color=AMBER)
     text(sx,8.92,"Raw 8-channel reservoir in slot 2; single only.",10.3)
     text(sx,8.61,"Left p300 single + RIGHT p1000 single.",10.3)
     text(sx,8.24,"Robot adds solvent, mixes and fills tubes.",10.5,weight="bold")
@@ -181,7 +181,7 @@ def draw(output):
     text(8.83,1.16,"20 µL extract + 980 µL diluent • one final plate per round",10.6)
     text(8.83,.82,"Shake uncovered: heater OFF / 1000 rpm / 2 min; then seal for LC",10.1)
     text(8.83,.49,"Reaction block stays in slot 3 while the LC plate occupies the shaker.",9.1,color=MUTED)
-    text(.65,.16,"Schematic, not to scale. Confirm mounting, offsets, seals and splash-free speeds locally. Confirm solvent-compatible stock containers. Source racks stay off the heater-shaker.",8.5,color=MUTED)
+    text(.65,.16,"PREVIEW: current 15 mL bulk sources fail tip reach. Replace with actual suitable geometry before release. Schematic only; validate mounting, offsets, solvent delivery and shaking.",8.5,color=MUTED)
 
     output.parent.mkdir(parents=True,exist_ok=True)
     fig.savefig(output.with_suffix(".svg"),facecolor="white",metadata={"Date":None})

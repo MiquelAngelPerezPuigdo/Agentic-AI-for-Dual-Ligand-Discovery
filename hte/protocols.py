@@ -162,20 +162,23 @@ def run(protocol: protocol_api.ProtocolContext):
         transfer_stage("assembly")
         protocol.pause("TIGHTEN every occupied vial screw cap BY HAND before heating/shaking. Use HTEL's compatible septum screw caps and mounting procedure for 95 C. Check no vial remains open. Cap remaining source stocks. No stir bars. Resume for the module's heat/shake cycle.")
         onto_heater()
+        hold_timer = None
         try:
             hs.set_and_wait_for_temperature(CONFIG["chemistry"]["temperature_C"])
             hs.set_and_wait_for_shake_speed(CONFIG["chemistry"]["rpm"])
             if CONFIG["chemistry"].get("thermal_equilibration_minutes", 0):
                 protocol.delay(minutes=CONFIG["chemistry"]["thermal_equilibration_minutes"])
-            hold_start=time.monotonic()
+            hold_timer = ReactionHoldTimer(protocol, CONFIG["chemistry"]["reaction_minutes"]*60,
+                CONFIG["chemistry"].get("max_hold_overrun_seconds", 60))
+            protocol.comment("Start the independent operator reaction timer now. Python cannot stop heating while the App is paused. Respond to preparation prompts promptly; at the four-hour endpoint stop the run/module if a prompt remains blocked and record the deviation.")
             if HOLD_PLAN:
-                execute_liquid_plan(protocol,HOLD_PLAN,{"working1":racks[1],"working4":racks[4],"reservoir":reservoir,"cal_plate":lc},single,multi)
-            remaining=CONFIG["chemistry"]["reaction_minutes"]*60
-            if not protocol.is_simulating():remaining=max(0,remaining-(time.monotonic()-hold_start))
-            protocol.delay(seconds=remaining)
+                execute_liquid_plan(protocol,HOLD_PLAN,{"working1":racks[1],"working4":racks[4],"reservoir":reservoir,"cal_plate":lc},single,multi,check_deadline=hold_timer.check)
+            protocol.delay(seconds=hold_timer.remaining())
+            hold_timer.finish()
         finally:
             hs.deactivate_shaker()
             hs.deactivate_heater()
+            if hold_timer is not None: hold_timer.record("module_shutdown")
         protocol.pause("Reaction hold complete. At the next manual-move prompt, use HTEL's approved thermal handling procedure to move the sealed block off the heater to slot 3. Keep sealed until cooled to the approved opening temperature and record cooling time.")
         off_heater()
         protocol.comment("Start workup with the cooled block in slot 3. Keep reaction-vial and LC-well mappings distinct. Archive first-round vials after sampling before changing to round two.")
@@ -292,7 +295,7 @@ def export(config, inventory, design, output, live=False, history=None, stage="a
     ops = transfer_operations(config, inventory, rows)
     stocks = stock_plan(config, inventory, ops, reserve_round2=int(rows[0]["round"]) == 1)
     from .preparation import (build_hold_preparation,build_refill,build_stock_preparation,
-        definitions as prep_definitions,LIQUID_RUNTIME,load_preparation,refill_source)
+        definitions as prep_definitions,LIQUID_RUNTIME,load_preparation,refill_source,validate_source_reach)
     explicit_preparation=preparation_path
     preparation_path=preparation_path or config.get("automation",{}).get("preparation_manifest_path")
     if preparation_path and not Path(preparation_path).exists() and not live and not explicit_preparation:preparation_path=None
@@ -304,6 +307,9 @@ def export(config, inventory, design, output, live=False, history=None, stage="a
     if prep is None and int(rows[0]["round"])==1:prep=build_stock_preparation(config,inventory,design)
     hold=build_hold_preparation(config,ops,int(rows[0]["round"]),prep)
     refill=build_refill(config,inventory,design,history,prep) if int(rows[0]["round"])==2 and history and prep else None
+    if live:
+        validate_source_reach(config,hold)
+        if refill: validate_source_reach(config,refill)
     if any(not r["capacity_ok"] for r in stocks):
         raise ValueError("Deck source capacity exceeded: " + ", ".join(r["reagent"] for r in stocks if not r["capacity_ok"]))
     if live:

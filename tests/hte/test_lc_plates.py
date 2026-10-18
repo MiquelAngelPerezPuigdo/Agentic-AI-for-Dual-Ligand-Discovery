@@ -152,7 +152,7 @@ def test_plate_geometry_is_unchanged_and_split_overlap_is_round_specific():
     c["robot"]["lc_batch_size"] = 24
     c["timing"].update(staged_lc_overlap_minutes=35, staged_lc_overlap_minutes_by_round={"1":35, "2":0})
     assert schedule(c)["manual_lc_plate_moves"] == 6
-    assert schedule(c)["planned_total_minutes"] == pytest.approx(769.7)
+    assert schedule(c)["planned_total_minutes"] == pytest.approx(829.7)
     c["timing"]["staged_lc_overlap_minutes_by_round"] = {"1":25, "2":10}
     with pytest.raises(ValueError, match="preceding injection windows"): schedule(c)
 

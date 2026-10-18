@@ -2,6 +2,8 @@
 
 A local OT-2 / LC workflow to search for productive dual-ligand systems in Pd-catalyzed desulfonylative fluorination of pyridine-2-sulfonyl fluoride to 2-fluoropyridine.
 
+**Release status: preparation preview only.** The independent audit found that bottom aspiration in the configured 15 mL bulk tubes requires the pipette nozzle to enter far below the rim. Clearance and liquid contact are unverified; the conservative no-nozzle-entry check blocks live release pending suitable source geometry. [Audit and remaining evidence](docs/rehearsal-results.md).
+
 ## Start with your role
 
 | Reader | Start here |
@@ -32,10 +34,10 @@ The **[real initial batch is prepared](campaigns/hackathon2026/round1_design.csv
 
 ## Install and practice
 
-Use Python 3.12 on the local workstation. With uv: `uv sync --python 3.12 --extra sources`, then `uv run hte check`. With an activated virtual environment:
+Use Python 3.12 on the local workstation. With uv: `uv sync --python 3.12 --extra sources --extra robot`, then `uv run hte check`. With an activated virtual environment:
 
 ```bash
-python -m pip install -e '.[sources]'
+python -m pip install -e '.[sources,robot]'
 python -m hte.cli check
 python -m hte.cli rehearse-loop --output output/practice
 ```
@@ -54,7 +56,7 @@ Keep correspondence, meeting notes, registration details and team schedules outs
 
 ## Evidence and scope
 
-**Timing target: two 4 h reaction holds plus approximately 4 h for remaining tasks, including LC.** Stock preparation is inside the campaign; calibration and workup-fluid preparation overlap reaction holds. Actual stage times are recorded. The 12 h target is advisory and does not block export.
+**Timing target: two 4 h reaction holds plus approximately 4 h for remaining tasks, including LC.** Stock preparation is inside the campaign; calibration and workup-fluid preparation overlap reaction holds. The target is advisory, and the present plan does not demonstrate a 12 h finish. Preparation manifests report a pumping/wait lower bound, excluding motion and staff handling. Use an external timer during heated manual pauses; the robot cannot enforce a deadline while paused.
 
 Use one final LC plate per round, with automated dilution/shaking and direct plate injection; no R1 split. Calibration uses a separate plate, pipette-mixed during hold one. [Software evidence](docs/rehearsal-results.md) and [machine-readable record](software_validation.json) distinguish simulation from physical execution. Local mounting, source-container compatibility, pipetting and actual LC validation remain required.
 

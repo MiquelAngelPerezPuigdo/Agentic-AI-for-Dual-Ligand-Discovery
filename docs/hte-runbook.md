@@ -6,12 +6,12 @@ Use the [two-page bench sheet](HTE-staff-checklist.pdf). Every precise liquid tr
 
 **Pyridine-2-sulfonyl fluoride → 2-fluoropyridine.** Nominal per vial: 25 µmol SM, 1.5 µmol each ligand, 3 µmol Pd(COD)(DQ), 2.5 µmol mesitylene; 250 µL toluene, 95 °C, 500 rpm, 4 h under air. No base/external fluoride. Solvent addition defines nominal concentrations; solute displacement/contraction are accepted approximations.
 
-R1: **48 distinct pairs covering all 30 available ligands**; L07 excluded. R2: **22 new pairs +L17 tBuBrettPhos at 12 mol% total ligand**; L03 at most four wells. No repeats. Better yield than this reference establishes improvement for this screen, without establishing reproducibility or cooperativity experimentally.
+R1: **48 pairs covering all 30 ligands**; L07 excluded. R2: **22 pairs +L17 tBuBrettPhos at 12 mol% total ligand**; L03 at most four wells. No repeats. Higher yield than the reference identifies a preliminary candidate; R1 comparisons also confound batch effects. Reproducibility and cooperativity require later matched controls.
 
 ## Robot stock preparation
 
 1. Generate `weighed_charges_template.csv`; weigh labeled charges and enter **actual masses/assays**. Ligands are weighed in the glovebox; preserve original reagent bottles there. Stock preparation is under air on the OT-2. The robot calculates solvent volumes, adds neat mesitylene, mixes stocks and fills working tubes. Stock preparation is inside the campaign.
-2. Load carrier IDs/positions from `bulk_carriers.csv`; coarse-load raw solvents from `raw_reagents_to_load.csv`. Standard-library **15 mL conical geometry is provisional**: confirm actual container/solvent compatibility for the campaign, or supply the exact compatible glass-source definition. No assumed glass-vial dimensions.
+2. **Live release is blocked:** bottom aspiration in the configured 15 mL tubes requires unverified nozzle entry; the conservative reach check fails. Obtain actual short, solvent-compatible stock containers and matching rack JSON, then regenerate and check reach/capacity. Follow carrier/raw-load CSVs; no invented glass-vial dimensions.
 3. Run `prepare_stocks.py`: **p300 single left, p1000 single right**; tips 5 /8-9 respectively. Carriers occupy 3/6 temporarily; working racks 1/4. The supplied horizontal 8 ×30 mL reservoir in 2 is **single-channel only**. Robot prepares analytical matrix/masters/working stocks too.
 4. Cap/store reserve carriers and the prepared analytical rack. Leave working tubes in mapped positions. Change right pipette to **p300 eight-channel GEN2**, replace tips 8/9 with 300 µL racks using the local App installation/calibration workflow. Keep left p300 single.
 
@@ -29,7 +29,9 @@ Confirm block/adapter/latch, offsets, <=45 mm cap clearance and liquid immersion
 
 Start R1 Python with **23 NEW R2 vials** in the SAME block. Robot adds **25 µL combined SM/IS** each. Cap/store those vials; replace them with 48 EMPTY R1 vials and uncap. Robot then doses R1: **25 µL SM/IS +75 µL each ligand +75 µL Pd**. No evaporation or separate reaction IS addition.
 
-Hand-cap all R1 vials; move/latch at App prompts. Run **95 °C /500 rpm /4 h**. During this hold the robot prepares the **14 calibration standards**, pipette-mixes them and prepares quench/diluent from raw solvents. Staff swap the analytical rack into 4, raw reservoir into 3, and move the completed calibration plate directly 6→HPLC, sealing before injection. **Do not move the reaction block from 10.** Restore working rack 4 and remove raw reservoir 3 when prompted. Hardware uses elapsed time to count preparation within the four-hour hold.
+Hand-cap all R1 vials; move/latch at App prompts. Run **95 °C /500 rpm /4 h**. During this hold the robot prepares **14 standards** and quench/diluent. Swap analytical rack into 4, raw reservoir into 3; seal/move calibration plate 6→HPLC. **Reaction stays on 10.** Restore rack 4 and remove raw reservoir when prompted.
+
+**Start a 4 h external timer at the App's hold-start message, in both rounds.** Preparation and pauses count. Code checks/logs time but cannot stop heat while App-paused. At deadline, stop heat/shaking through the App; record deviations and do not resume dosing. The 60-second logging tolerance does not establish chemical equivalence.
 
 
 ---

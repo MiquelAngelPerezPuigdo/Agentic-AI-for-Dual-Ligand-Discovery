@@ -7111,7 +7111,7 @@ L 1149.12 692.64
     <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #242c31" x="794.16" y="177.357656" transform="rotate(-0 794.16 177.357656)">1  Weighed chemicals + raw liquids</text>
    </g>
    <g id="text_112">
-    <text style="font-size: 10.3px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #242c31" x="794.16" y="202.115988" transform="rotate(-0 794.16 202.115988)">Labeled bulk carriers in slots 3 / 6, by ID.</text>
+    <text style="font-size: 10.3px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #a96e24" x="794.16" y="202.115988" transform="rotate(-0 794.16 202.115988)">Bulk carriers 3 / 6: suitable geometry PENDING.</text>
    </g>
    <g id="text_113">
     <text style="font-size: 10.3px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #242c31" x="794.16" y="224.435988" transform="rotate(-0 794.16 224.435988)">Raw 8-channel reservoir in slot 2; single only.</text>
@@ -7210,7 +7210,7 @@ L 1149.12 692.64
     <text style="font-size: 9.1px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #5c666b" x="635.76" y="831.084223" transform="rotate(-0 635.76 831.084223)">Reaction block stays in slot 3 while the LC plate occupies the shaker.</text>
    </g>
    <g id="text_145">
-    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #5c666b" x="46.8" y="854.68834" transform="rotate(-0 46.8 854.68834)">Schematic, not to scale. Confirm mounting, offsets, seals and splash-free speeds locally. Confirm solvent-compatible stock containers. Source racks stay off the heater-shaker.</text>
+    <text style="font-size: 8.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #5c666b" x="46.8" y="854.68834" transform="rotate(-0 46.8 854.68834)">PREVIEW: current 15 mL bulk sources fail tip reach. Replace with actual suitable geometry before release. Schematic only; validate mounting, offsets, solvent delivery and shaking.</text>
    </g>
   </g>
  </g>

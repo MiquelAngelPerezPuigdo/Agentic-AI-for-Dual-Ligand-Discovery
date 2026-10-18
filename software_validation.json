@@ -1,13 +1,13 @@
 {
-  "created_utc": "2026-10-18T22:01:46.712351+00:00",
+  "created_utc": "2026-10-18T23:43:44.730740+00:00",
   "campaign": "hackathon2026-paradox48",
   "schema_version": 5,
   "tests": {
-    "tests": 230,
+    "tests": 255,
     "failures": 0,
     "errors": 0,
     "skipped": 0,
-    "report": "output/robot-prep-update/tests-final.xml"
+    "report": "output/independent-audit/tests.xml"
   },
   "versions": {
     "anthropic": "0.125.0",
@@ -351,7 +351,9 @@
       "raw-source/carrier maps",
       "refill plan/protocol",
       "all generated Python"
-    ]
+    ],
+    "unchanged_input_staff_retry_preserves_scoring_records": true,
+    "retry_rejects_changed_source_or_archive": true
   },
   "physical_robot_runs": 0,
   "real_chemistry_yields_available": false,
@@ -359,46 +361,76 @@
   "paid_API_calls_this_update": 0,
   "opentrons_simulations": [
     {
-      "stage": "stock-preparation/prepare_stocks.py",
+      "stage": "stock_preparation",
+      "protocol": "output/independent-audit/rehearsal/stock-preparation/prepare_stocks.py",
+      "protocol_sha256": "5a255c5595a9f236f625cc6a92d9cbba56bc4ea5b4616d27307dfdce5b115009",
       "passed": true,
-      "commands": 3598,
-      "source": "output/robot-prep-update/final-rehearsal-v3/stock-preparation/prepare_stocks.py",
-      "log": "output/robot-prep-update/stock-preparation-prepare_stocks-simulation.json"
+      "command_count": 3966,
+      "simulation_wall_seconds": 1.3372840830124915,
+      "log": "output/independent-audit/simulations/stock_preparation.log",
+      "commands_json": "output/independent-audit/simulations/stock_preparation.commands.json",
+      "hardware_executed": false,
+      "physical_geometry_certified": false
     },
     {
-      "stage": "round1/dose_and_react.py",
+      "stage": "round1_dosing",
+      "protocol": "output/independent-audit/rehearsal/round1/dose_and_react.py",
+      "protocol_sha256": "82bfdcf0ff087e075aeeb0ce2407e9a41d40f731f1782762b14646d1d1c33111",
       "passed": true,
-      "commands": 6232,
-      "source": "output/robot-prep-update/final-rehearsal-v3/round1/dose_and_react.py",
-      "log": "output/robot-prep-update/round1-dose_and_react-simulation.json"
+      "command_count": 6236,
+      "simulation_wall_seconds": 2.5862420829944313,
+      "log": "output/independent-audit/simulations/round1_dosing.log",
+      "commands_json": "output/independent-audit/simulations/round1_dosing.commands.json",
+      "hardware_executed": false,
+      "physical_geometry_certified": false
     },
     {
-      "stage": "round1/workup.py",
+      "stage": "round1_workup",
+      "protocol": "output/independent-audit/rehearsal/round1/workup.py",
+      "protocol_sha256": "9a966463d65cf93372f38359ce188d6eeb0754efdbf971f62d8766340e87bebf",
       "passed": true,
-      "commands": 1735,
-      "source": "output/robot-prep-update/final-rehearsal-v3/round1/workup.py",
-      "log": "output/robot-prep-update/round1-workup-simulation.json"
+      "command_count": 1735,
+      "simulation_wall_seconds": 0.7381872910191305,
+      "log": "output/independent-audit/simulations/round1_workup.log",
+      "commands_json": "output/independent-audit/simulations/round1_workup.commands.json",
+      "hardware_executed": false,
+      "physical_geometry_certified": false
     },
     {
-      "stage": "round2/refill_stocks.py",
+      "stage": "round2_refill",
+      "protocol": "output/independent-audit/rehearsal/round2/refill_stocks.py",
+      "protocol_sha256": "ec53f6196c3d7a9a23da695ca0fbc112d7671cdb6b7f44469dea2dfd02b46a03",
       "passed": true,
-      "commands": 1619,
-      "source": "output/robot-prep-update/final-rehearsal-v3/round2/refill_stocks.py",
-      "log": "output/robot-prep-update/round2-refill_stocks-simulation.json"
+      "command_count": 1619,
+      "simulation_wall_seconds": 0.451652791001834,
+      "log": "output/independent-audit/simulations/round2_refill.log",
+      "commands_json": "output/independent-audit/simulations/round2_refill.commands.json",
+      "hardware_executed": false,
+      "physical_geometry_certified": false
     },
     {
-      "stage": "round2/dose_and_react.py",
+      "stage": "round2_dosing",
+      "protocol": "output/independent-audit/rehearsal/round2/dose_and_react.py",
+      "protocol_sha256": "9ecded5248b076779b063dcea49ed16914ce44a80f30efdfe098f1bd27fd678b",
       "passed": true,
-      "commands": 2219,
-      "source": "output/robot-prep-update/final-rehearsal-v3/round2/dose_and_react.py",
-      "log": "output/robot-prep-update/round2-dose_and_react-simulation.json"
+      "command_count": 2223,
+      "simulation_wall_seconds": 0.7871599590289406,
+      "log": "output/independent-audit/simulations/round2_dosing.log",
+      "commands_json": "output/independent-audit/simulations/round2_dosing.commands.json",
+      "hardware_executed": false,
+      "physical_geometry_certified": false
     },
     {
-      "stage": "round2/workup.py",
+      "stage": "round2_workup",
+      "protocol": "output/independent-audit/rehearsal/round2/workup.py",
+      "protocol_sha256": "aeeb178d42108a737abaa7f59b8e309a8894f06c7d4ceefbcb13013a19719126",
       "passed": true,
-      "commands": 858,
-      "source": "output/robot-prep-update/final-rehearsal-v3/round2/workup.py",
-      "log": "output/robot-prep-update/round2-workup-simulation.json"
+      "command_count": 858,
+      "simulation_wall_seconds": 0.32891962496796623,
+      "log": "output/independent-audit/simulations/round2_workup.log",
+      "commands_json": "output/independent-audit/simulations/round2_workup.commands.json",
+      "hardware_executed": false,
+      "physical_geometry_certified": false
     }
   ],
   "offline_lc_feedback_rehearsal": {
@@ -436,17 +468,17 @@
     "no_internal_standard_redose": true,
     "incomplete_export_ignored": true,
     "duplicate_event_ignored": true,
-    "next_dosing_csv": "feedback_loop/iteration-37e1f6b0ca43f87c/next_dosing.csv",
+    "next_dosing_csv": "feedback_loop/iteration-aea9c2c628b7ee0b/next_dosing.csv",
     "cache_summaries": [
       "initial_scoring/cache_summary.json",
-      "feedback_loop/iteration-37e1f6b0ca43f87c/scoring/cache_summary.json"
+      "feedback_loop/iteration-aea9c2c628b7ee0b/scoring/cache_summary.json"
     ],
     "result_interpretation": "Synthetic yields and mocked rankings validate data flow only.",
-    "mocked_requests": 650,
-    "initial_mock_requests": 340,
-    "feedback_mock_requests": 310,
-    "both_prompt_stages_include_17_SI_yields": true,
-    "source_report": "output/robot-prep-update/final-rehearsal-v3/rehearsal_report.json"
+    "mocked_request_count": 650,
+    "mocked_initial_request_count": 340,
+    "mocked_feedback_request_count": 310,
+    "source_report": "output/independent-audit/rehearsal/rehearsal_report.json",
+    "both_prompt_stages_include_17_SI_yields": true
   },
   "robot_stock_preparation": {
     "enabled": true,
@@ -478,7 +510,11 @@
     "frozen_R1_sha256": "7c2ad21967f468857938989fcbe5901d2409a86dcae8d785f7247032ef301104",
     "preview_liquid_ledger_balance_verified": true,
     "invalid_mass_assay_coverage_and_manifest_changes_rejected": true,
-    "stock_preparation_atmosphere": "air on OT-2 after glovebox weighing"
+    "stock_preparation_atmosphere": "air on OT-2 after glovebox weighing",
+    "bulk_source_reach_check": "Blocked: source aspiration would place the nozzle below the tube rim; actual clearance/immersion unverified",
+    "source_reach_physical_collision_proven": false,
+    "analytical_minimum_weigh_mg": 5,
+    "initial_programmed_pumping_wait_minutes": 97.54363593208576
   },
   "pd_budget": {
     "weigh_mg": 90,
@@ -537,7 +573,14 @@
     "optional_known_mixture_pilot": "Seven robotic CHECK-master mixtures on A3-G3 if enabled before preparation; off by default",
     "calibration_plate_moves": 1,
     "total_LC_plates": 3,
-    "nominal_matrix_acetonitrile_percent": 50.2
+    "nominal_matrix_acetonitrile_percent": 50.2,
+    "fit_backcalculation_tolerance_fraction": 0.15,
+    "lowest_fit_level_tolerance_fraction": 0.2,
+    "effective_quantitative_lower_bound": "max(measured LOQ, lowest nonzero calibrator)",
+    "SM_master_target_mass_mg": 6.4464,
+    "SM_master_nominal_ul": 4000,
+    "product_master_target_mass_mg": 5.8254,
+    "product_master_nominal_ul": 6000
   },
   "operating_budget": {
     "target_total_minutes": 720,
@@ -554,15 +597,15 @@
   "timing_allowance_audit": {
     "reaction_minutes": 480,
     "lc_minutes": 120.7,
-    "overhead_minutes": 204.0,
+    "overhead_minutes": 264.0,
     "injections": 85,
     "minimum_reaction_plus_lc_minutes": 600.7,
     "calibration_minutes_hidden_in_reaction": 23.8,
-    "serial_total_minutes": 804.7,
+    "serial_total_minutes": 864.7,
     "deadline_minutes": 720,
     "staged_lc_overlap_minutes": 0.0,
-    "planned_total_minutes": 804.7,
-    "remaining_minutes": -84.70000000000005,
+    "planned_total_minutes": 864.7,
+    "remaining_minutes": -144.70000000000005,
     "fits_serial_estimate": false,
     "fits_planned_estimate": false,
     "lc_plates_by_round": [
@@ -574,13 +617,169 @@
     "scenario_status": "Unmeasured handling-allowance scenario; not a validated completion-time forecast",
     "assumptions": "Full injection cycle. All R1 measurements required before decision. One LC plate per round gives no within-round preparation/injection overlap. The target budget does not replace measured handling allowances. Workup includes both extract and LC shaking, moves and manual caps."
   },
-  "timing_note": "12 h advisory target; eight hours reaction holds leave approximately four hours for remaining tasks incl LC. Stock preparation counts inside campaign. Generic 60 min preparation allowance is unmeasured; no completion-time guarantee.",
+  "timing_note": "12h advisory, not attainable by current programmed serial components: partial lower bound731.77min already excludes reaction dosing, R2 refill, motion, tips, heating/cooling and staff pauses. Initial preparation97.54min pumping/waits alone; 120min full-preparation scenario unmeasured. No physical runtime measurement.",
   "pending_local_facts": [
-    "Solvent-compatible bulk/working containers and exact matching source geometry",
+    "Actual short solvent-compatible stock sources/rack JSON; current no-nozzle-entry reach check fails",
     "Actual p1000 generation and App pipette change/calibration",
     "Block/LC-plate fit, caps, offsets, shaking and liquid delivery",
     "Vial heating/cooling and actual whole-campaign timing",
     "Authentic-standard 1.7-min separation, quantitative UV channel, RTs/LOQs and calibration"
   ],
-  "scope_note": "Software and simulations validate code/data flow only; all physical release flags remain false in canonical settings. Earlier revision-specific records remain in Git history."
+  "scope_note": "Software and simulations validate code/data flow only; all physical release flags remain false in canonical settings. Earlier revision-specific records remain in Git history.",
+  "independent_audit": {
+    "source_parent_commit": "b2f634705ba02e55592993b59ea644cb89d158e9",
+    "release_status": "blocked_pending_stock_source_geometry_and_other_local_validation",
+    "summary": "Software defects fixed and covered by regression tests. Tip-only reach policy is conservative; no certain collision inferred from tip length alone. No physical or real chemical validation performed.",
+    "tests_added": 25,
+    "paid_API_calls": 0,
+    "source_hashes": {
+      "hte/preparation.py": "0d3da2f4e10207d88ff0572b58c11c0d134799205ee039d41e43c8ce582bd9f6",
+      "hte/protocols.py": "a078ecc46d10b7c704f2fe761ddd4981eefe8f6408738bb8bbda7b9a40645d14",
+      "hte/planning.py": "a79632c8ff23662d6e87fdb396a04d10eed1f845c05c6d6ec07238556b5c0169",
+      "hte_inputs/campaign.json": "3ed39dc4574348f19584af786d3496e96c2baeabb9d054696f1a43a1f7b08e1d",
+      "hte_inputs/ligands.csv": "a24c186b814eaeb8b5950e7a059e21b8df001764e83b19f127a3da179f4a5876",
+      "hte_inputs/literature.json": "bdc36fcbaa06c5635064218629d7baeca35738d02cb9e5a0481e159a2e94a7be",
+      "campaigns/hackathon2026/round1_design.csv": "7c2ad21967f468857938989fcbe5901d2409a86dcae8d785f7247032ef301104"
+    },
+    "fixes": [
+      "Per-level calibration recovery and effective quantitative lower bound",
+      "Unchanged-input staff command resumes original ingestion/scoring ledger",
+      "Conservative no-nozzle-entry check for live stock/preparation/refill release",
+      "Reaction hold deadline checks/elapsed logs and explicit manual-pause limitation",
+      "Preparation pumping/wait lower bounds; analytical charges at least5mg"
+    ],
+    "plans": {
+      "stock_preparation": {
+        "plan": "output/independent-audit/rehearsal/stock-preparation/preparation_manifest.json",
+        "pumping_wait_lower_bound": {
+          "seconds": 5852.618155925145,
+          "minutes": 97.54363593208576,
+          "transfer_strokes": 255,
+          "mix_events": 45,
+          "manual_pause_count": 16,
+          "physical_duration_measured": false,
+          "excluded": [
+            "gantry and vertical motion",
+            "tip pickup/drop and tip-rack replacement",
+            "manual pauses, caps, carrier changes and pipette installation"
+          ],
+          "interpretation": "Programmed pumping and liquid waits only; actual preparation takes longer."
+        },
+        "reach": {
+          "status": "blocked",
+          "checked_source_tip_combinations": 74,
+          "physical_clearance_validated": false,
+          "limitation": "Conservative tip/nozzle reach only; validate actual container fit, offsets, liquid depth and solvent compatibility locally."
+        },
+        "reach_issue_count": 51,
+        "physical_run_completed": false
+      },
+      "round1_hold": {
+        "plan": "output/independent-audit/rehearsal/round1/hold_preparation_plan.json",
+        "pumping_wait_lower_bound": {
+          "seconds": 4161.801042393613,
+          "minutes": 69.36335070656021,
+          "transfer_strokes": 467,
+          "mix_events": 25,
+          "manual_pause_count": 5,
+          "physical_duration_measured": false,
+          "excluded": [
+            "gantry and vertical motion",
+            "tip pickup/drop and tip-rack replacement",
+            "manual pauses, caps, carrier changes and pipette installation"
+          ],
+          "interpretation": "Programmed pumping and liquid waits only; actual preparation takes longer."
+        },
+        "reach": {
+          "status": "geometric_check_passed",
+          "checked_source_tip_combinations": 39,
+          "physical_clearance_validated": false,
+          "limitation": "Conservative tip/nozzle reach only; validate actual container fit, offsets, liquid depth and solvent compatibility locally."
+        },
+        "reach_issue_count": 0,
+        "physical_run_completed": false,
+        "hold_timing_policy": {
+          "reaction_seconds": 14400,
+          "max_hold_overrun_seconds": 60.0,
+          "external_operator_timer_required": true,
+          "limitation": "The Python guard stops work and rejects an expired hold after App resume; it cannot stop the module while a manual pause blocks execution."
+        }
+      },
+      "round2_hold": {
+        "plan": "output/independent-audit/rehearsal/round2/hold_preparation_plan.json",
+        "pumping_wait_lower_bound": {
+          "seconds": 1526.886743589744,
+          "minutes": 25.448112393162397,
+          "transfer_strokes": 178,
+          "mix_events": 6,
+          "manual_pause_count": 2,
+          "physical_duration_measured": false,
+          "excluded": [
+            "gantry and vertical motion",
+            "tip pickup/drop and tip-rack replacement",
+            "manual pauses, caps, carrier changes and pipette installation"
+          ],
+          "interpretation": "Programmed pumping and liquid waits only; actual preparation takes longer."
+        },
+        "reach": {
+          "status": "geometric_check_passed",
+          "checked_source_tip_combinations": 10,
+          "physical_clearance_validated": false,
+          "limitation": "Conservative tip/nozzle reach only; validate actual container fit, offsets, liquid depth and solvent compatibility locally."
+        },
+        "reach_issue_count": 0,
+        "physical_run_completed": false,
+        "hold_timing_policy": {
+          "reaction_seconds": 14400,
+          "max_hold_overrun_seconds": 60.0,
+          "external_operator_timer_required": true,
+          "limitation": "The Python guard stops work and rejects an expired hold after App resume; it cannot stop the module while a manual pause blocks execution."
+        }
+      },
+      "round2_refill": {
+        "plan": "output/independent-audit/rehearsal/round2/refill_plan.json",
+        "pumping_wait_lower_bound": {
+          "seconds": 1546.7511111111105,
+          "minutes": 25.779185185185174,
+          "transfer_strokes": 29,
+          "mix_events": 38,
+          "manual_pause_count": 13,
+          "physical_duration_measured": false,
+          "excluded": [
+            "gantry and vertical motion",
+            "tip pickup/drop and tip-rack replacement",
+            "manual pauses, caps, carrier changes and pipette installation"
+          ],
+          "interpretation": "Programmed pumping and liquid waits only; actual preparation takes longer."
+        },
+        "reach": {
+          "status": "blocked",
+          "checked_source_tip_combinations": 38,
+          "physical_clearance_validated": false,
+          "limitation": "Conservative tip/nozzle reach only; validate actual container fit, offsets, liquid depth and solvent compatibility locally."
+        },
+        "reach_issue_count": 19,
+        "physical_run_completed": false
+      }
+    },
+    "partial_serial_lower_bound": {
+      "components_minutes": {
+        "reaction_holds": 480,
+        "LC_outside_holds": 120.7,
+        "initial_preparation": 97.54363593208576,
+        "workup_pumping_waits_shaking": 33.530722222222224
+      },
+      "total_minutes": 731.7743581543081,
+      "excludes": [
+        "reaction dosing",
+        "R2 stock refill",
+        "gantry and tip handling",
+        "heat ramps and cooling",
+        "all operator pauses/caps/moves",
+        "LLM decision"
+      ],
+      "interpretation": "Even before these omitted tasks, programmed serial components exceed 12 h under the requested 1.7 min full LC cycle and no R1 sample split. This is not a physical runtime measurement."
+    },
+    "report": "docs/rehearsal-results.md"
+  }
 }

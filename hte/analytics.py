@@ -283,6 +283,29 @@ def fit_calibration(config, rows):
         r2 = 1-float(np.sum((y-(slope*x+intercept))**2))/ss_total if ss_total else 0
         if r2 < settings["minimum_calibration_r2"]:
             raise ValueError(f"Calibration R2 for {analyte}: {r2:.5f} below acceptance threshold")
+        # A broad concentration range can hide a badly fitted low standard in an
+        # excellent global R2. Check each nonzero level in concentration space.
+        # These are project acceptance limits, not a claim of regulatory validation.
+        fit_tolerance = finite(settings.get("calibration_fit_tolerance_fraction", 0.15),
+                               "calibration fit tolerance", 0, 1)
+        low_tolerance = finite(settings.get("calibration_lowest_level_tolerance_fraction", 0.20),
+                               "lowest calibration level tolerance", 0, 1)
+        lowest = float(min(value for value in x if value > 0))
+        fit_results = []
+        for row, expected, signal in zip(points, x, y):
+            measured = float((signal-intercept)/slope)
+            # A zero blank has no defined relative error. Keep its back-calculated
+            # value in the report; measured-blank/absence checks remain upstream.
+            relative_error = abs(measured-expected)/expected if expected > 0 else None
+            tolerance = low_tolerance if expected == lowest else fit_tolerance
+            if relative_error is not None and relative_error > tolerance:
+                raise ValueError(f"Calibration back-calculation failed for {analyte} "
+                                 f"at {expected:g} uM ({row['sample_id']}): "
+                                 f"{relative_error:.1%} error exceeds {tolerance:.1%}")
+            fit_results.append({"sample_id": row["sample_id"], "expected_uM": float(expected),
+                                "measured_uM": measured,
+                                "relative_error": float(relative_error) if relative_error is not None else None,
+                                "tolerance_fraction": tolerance if expected > 0 else None})
         check_results = []
         if checks:
             tolerance = finite(settings.get("calibration_check_tolerance_fraction", 0.15), "calibration check tolerance", 0, 1)
@@ -298,8 +321,10 @@ def fit_calibration(config, rows):
                                       "measured_uM": measured, "relative_error": relative_error})
         models[analyte] = {"slope": float(slope), "intercept": float(intercept), "r2": r2,
                            "minimum_uM": float(x.min()), "maximum_uM": float(x.max()),
+                           "minimum_nonzero_uM": lowest,
                            "mean_is_area": float(np.mean(is_areas)) if is_areas else None,
-                           "fit_measurements": len(points), "independent_checks": check_results}
+                           "fit_measurements": len(points), "fit_level_checks": fit_results,
+                           "independent_checks": check_results}
     return models
 
 
@@ -371,8 +396,12 @@ def analyze(config, dosing, peaks, calibration, output):
         finite(row["retention_time_min"], "retention time", 0)
         groups[row["sample_id"]].append(row)
     models = fit_calibration(config, calibration)
-    loq = {name: finite(settings["quantification_limit_uM"][name], name+" LOQ", 0.000001)
-           for name in ("substrate", "product")}
+    measured_loq = {name: finite(settings["quantification_limit_uM"][name], name+" LOQ", 0.000001)
+                    for name in ("substrate", "product")}
+    # A blank anchors the fit but does not establish quantitative accuracy below
+    # the lowest nonzero calibrator, even if the independently measured LOQ is lower.
+    loq = {name: max(value, models[name]["minimum_nonzero_uM"])
+           for name, value in measured_loq.items()}
     if any(loq[name] > models[name]["maximum_uM"] for name in loq):
         raise ValueError("LOQ must lie within the calibration range")
     references = settings["references"]
@@ -459,6 +488,10 @@ def analyze(config, dosing, peaks, calibration, output):
     report = {"calibration": models, "samples": len(results), "rejected": rejected,
               "batch_qc_pass": not control_failed and rejected/len(results) <= settings["maximum_rejected_fraction"],
               "method_id": settings["method_id"], "channel": settings["channel"],
+              "quantification_limits_uM": {
+                  name: {"measured_loq": measured_loq[name],
+                         "lowest_nonzero_calibrator": models[name]["minimum_nonzero_uM"],
+                         "effective_lower_bound": loq[name]} for name in loq},
               "quantification": "Calibrated detector response; area percent is not yield."}
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
