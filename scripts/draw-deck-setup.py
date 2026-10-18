@@ -63,14 +63,14 @@ def draw(output):
                                      linewidth=1.2,color=color))
 
     text(.65,11.53,"OT-2 / experimental setup",25,fontfamily="DejaVu Serif")
-    text(.67,11.03,"Round 1 deck map  •  48 × 2 mL Para-Dox  •  load only the current stage’s CSV volumes",11.5,color=MUTED)
+    text(.67,11.03,"Reaction deck  •  48 × 2 mL Para-Dox  •  robot prepares stocks, standards and workup liquids",11.5,color=MUTED)
     text(.67,10.65,"LEFT MOUNT   p300 single GEN2",10,weight="bold")
     text(5.56,10.65,"RIGHT MOUNT   p300 eight-channel GEN2",10,weight="bold")
 
     # OT-2 deck convention: slots 1–3 at the front, 10–12 at the back.
     slots={s:(.65+((s-1)%3)*3.30,2.97+((s-1)//3)*1.90) for s in range(1,13)}
     titles={1:"Ligand rack",2:"12-channel reservoir",3:"48-vial reaction block",4:"Working stock rack",
-            5:"Single-channel tips",6:"Final LC plate",7:"Keep empty",8:"Eight-channel tips",
+            5:"Single-channel tips",6:"Calibration / final LC",7:"Keep empty",8:"Eight-channel tips",
             9:"Eight-channel tips",10:"Heater-shaker",11:"Keep empty",12:"Fixed tip waste"}
     for slot,(x,y) in slots.items():
         empty=slot in (7,11)
@@ -89,6 +89,9 @@ def draw(output):
             labels[c["stock_preparation"]["substrate_source_well"]]=("SM/IS",BLUE)
         for source in budget["source_loads"]:
             if source["slot"]==slot: labels[source["well"]]=("Pd",AMBER)
+        for key,label,color in (("neat_is_source","IS neat",BLUE),("initial_acid_source","10% FA",AMBER)):
+            location=c["automation"][key]
+            if location["slot"]==slot:labels[location["well"]]=(label,color)
         left,bottom,width,height=x+.37,y+.28,2.59,.93
         dx,dy=width/6,height/4
         for col in range(6):
@@ -102,8 +105,8 @@ def draw(output):
                 label,color=labels.get(key,("",LINE))
                 ax.add_patch(Circle((cx,cy),.105,facecolor=color if label else "white",edgecolor=color,
                                     linewidth=.8,alpha=.15 if label else 1))
-                text(cx,cy,label,6.9 if label=="SM/IS" else 7.3,weight="bold",ha="center",color=color)
-        note="L01–L24; L07 position empty" if slot==1 else "L25–L31 + SM/IS + two Pd sources"
+                text(cx,cy,label,6.2 if len(label)>3 else 7.3,weight="bold",ha="center",color=color)
+        note="Ligands + neat IS; RockPhos retained in C1" if slot==1 else "Ligands + SM/IS + Pd; FA only during prep"
         text(x+1.575,y+.115,note,8.1,color=MUTED,ha="center")
 
     x,y=slots[2]
@@ -122,7 +125,7 @@ def draw(output):
     x,y=slots[3];grid(x+.18,y+.35,2.79,.84,6,8,PURPLE)
     text(x+1.575,y+.135,"Glass vials • 13 mm pitch • single only",8.4,color=MUTED,ha="center")
     x,y=slots[6];grid(x+.18,y+.35,2.79,.84,8,12,BLUE,{(r,col) for r in range(8) for col in range(6)})
-    text(x+1.575,y+.135,"96 wells / 2.2 mL • 1 mL per LC sample",8.4,color=MUTED,ha="center")
+    text(x+1.575,y+.135,"96 wells / 2.2 mL • 1 mL per sample",8.4,color=MUTED,ha="center")
     x,y=slots[10]
     box(x+.18,y+.45,2.79,.73,"#DDE1E0",edge="#9DA8AB",r=.10)
     box(x+.40,y+.57,2.35,.48,"#F3F5F4",edge="#89989B",r=.07)
@@ -136,32 +139,32 @@ def draw(output):
     text(5.50,2.70,"FRONT / OPERATOR",9,color=MUTED,ha="center")
     arrow(4.12,2.70,4.53,2.70,color=MUTED);arrow(6.87,2.70,6.46,2.70,color=MUTED)
 
-    # Off-deck materials and the local analytical/decision route.
+    # Preparation stages use temporary carriers; all precise transfers are robotic.
     sx=11.03
-    text(sx,10.17,"OFF DECK",12,weight="bold")
+    text(sx,10.17,"ROBOT PREPARATION",12,weight="bold")
     ax.plot([sx,15.96],[9.91,9.91],color=LINE,lw=.9)
-    vial(sx+.05,8.72,TEAL)
-    text(sx+.69,9.41,"Ligand bulk stocks",12,weight="bold")
-    text(sx+.69,9.08,"20 mM in toluene • capped glass",10.3)
-    text(sx+.69,8.78,"Prepare in glovebox; mix off deck",10.3)
-    text(sx,8.27,"Working tubes: 2 mL; maximum fill 1.95 mL.",10,color=MUTED)
-    text(sx,7.98,"Gently invert capped tubes; let bubbles clear.",10,color=MUTED)
+    text(sx,9.58,"1  Weighed chemicals + raw liquids",12,weight="bold")
+    text(sx,9.23,"Labeled bulk carriers in slots 3 / 6, by ID.",10.3)
+    text(sx,8.92,"Raw 8-channel reservoir in slot 2; single only.",10.3)
+    text(sx,8.61,"Left p300 single + RIGHT p1000 single.",10.3)
+    text(sx,8.24,"Robot adds solvent, mixes and fills tubes.",10.5,weight="bold")
+    text(sx,7.93,"Then change right p1000 → p300 eight-channel.",10.0,color=MUTED)
 
-    vial(sx+.05,6.46,AMBER)
-    text(sx+.69,7.26,"Pd(COD)(DQ) — ONE bulk",12,weight="bold")
-    text(sx+.69,6.92,f"{budget['weigh_mg']:g} mg → {budget['make_to_final_ul']/1000:.2f} mL final",11.2)
-    text(sx+.69,6.60,"40 mM • toluene • 8 mL glass vial",10.3)
-    text(sx,6.12,"R1: slot 4 A3/B3, 1.91 mL each",10.4,weight="bold")
-    text(sx,5.82,"R2: fresh A3, 1.83 mL from the SAME bulk",10.4)
-    text(sx,5.51,"Keep 10 mg solid for scope. Recipe at 100% assay;",9.1,color=MUTED)
-    text(sx,5.27,"adjust final volume for the actual assay.",9.1,color=MUTED)
+    text(sx,7.47,"2  Working sources for both rounds",12,weight="bold")
+    text(sx,7.11,f"Pd: {budget['weigh_mg']:g} mg → {budget['make_to_final_ul']/1000:.2f} mL nominal / 40 mM",10.5,color=AMBER)
+    text(sx,6.80,"R1: 4 A3/B3, 1.91 mL each; retain tubes.",10.3)
+    text(sx,6.49,"Robot tops up A3 for R2 from the SAME bulk.",10.3)
+    text(sx,6.18,"Keep 10 mg Pd solid for scope.",10.0,color=MUTED)
+    text(sx,5.80,"SM/IS: 1 M / 100 mM; 2 mL nominal bulk.",10.3,color=BLUE)
+    text(sx,5.49,"Robot loads 1.88 mL in 4 D2 for all 71 vials.",10.3)
+    text(sx,5.18,"R2 SM predosed automatically BEFORE R1.",10.0,weight="bold")
 
-    vial(sx+.05,3.86,BLUE)
-    text(sx+.69,4.56,"Combined SM + mesitylene",12,weight="bold")
-    text(sx+.69,4.24,"1 M + 100 mM in toluene • 2 mL bulk",10.3)
-    text(sx+.69,3.93,"R1: slot 4 D2, 1.31 mL",10.3)
-    text(sx,3.54,"Keep 575 µL off deck for the 23 R2 predoses.",10,color=MUTED)
-    text(sx,3.15,"LC UV areas → local Python → Claude → R2 CSV",10,weight="bold")
+    text(sx,4.73,"3  During each four-hour reaction",12,weight="bold")
+    text(sx,4.39,"Raw solvents in slot 3; reaction stays on 10.",10.3)
+    text(sx,4.08,"R1: analytical rack replaces rack 4 temporarily.",10.3)
+    text(sx,3.77,"Robot makes calibration + workup liquids.",10.3)
+    text(sx,3.42,"Human: weigh, caps, whole carriers, local starts.",9.8,color=MUTED)
+    text(sx,3.11,"UV CSV → Python yields/QC → Claude → R2 CSV",10,weight="bold")
 
     ax.plot([.65,15.96],[2.38,2.38],color=LINE,lw=.9)
     text(.65,2.09,"MANUAL MOVES / REACTION BLOCK",10,weight="bold")
@@ -178,7 +181,7 @@ def draw(output):
     text(8.83,1.16,"20 µL extract + 980 µL diluent • one final plate per round",10.6)
     text(8.83,.82,"Shake uncovered: heater OFF / 1000 rpm / 2 min; then seal for LC",10.1)
     text(8.83,.49,"Reaction block stays in slot 3 while the LC plate occupies the shaker.",9.1,color=MUTED)
-    text(.65,.16,"Schematic, not to scale. Confirm mounting, offsets, seals and splash-free speeds locally. Source racks stay off the heater-shaker.",8.5,color=MUTED)
+    text(.65,.16,"Schematic, not to scale. Confirm mounting, offsets, seals and splash-free speeds locally. Confirm solvent-compatible stock containers. Source racks stay off the heater-shaker.",8.5,color=MUTED)
 
     output.parent.mkdir(parents=True,exist_ok=True)
     fig.savefig(output.with_suffix(".svg"),facecolor="white",metadata={"Date":None})

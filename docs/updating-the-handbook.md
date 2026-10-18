@@ -41,7 +41,7 @@ python scripts/build-hte-pdf.py --date 2026-10-17
 | Short action sheet for staff | `docs/hte-staff-checklist.md` |
 | Responsibilities, API-key setup and quickstart | `docs/start-here.md` |
 | Operator sequence, deck, pipetting, analytics and live handoff | `docs/hte-runbook.md` |
-| Separate SM/mesitylene stocks, containers and five-level calibration | `docs/stocks-and-calibration.md` |
+| Robotic stock/standard preparation, source containers and five-level calibration | `docs/stocks-and-calibration.md` |
 | LC import, reviewed blanks and algorithmic pilot replay | `docs/htel-lc-import.md` (linked instructions) |
 | Questions awaiting HTE confirmation | `docs/hte-questions.md` |
 | ML/LLM strategy and caching (expert document) | `docs/ml-strategy.md` |

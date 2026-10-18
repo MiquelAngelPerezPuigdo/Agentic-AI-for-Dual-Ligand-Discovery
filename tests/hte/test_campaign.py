@@ -66,7 +66,7 @@ def test_two_rounds_and_reference_stoichiometry(demo, cfg, inventory):
     assert [r["well"] for r in manifest]==[r["well"] for r in second]
     assert all(float(r["internal_standard_predosed_umol"])==2.5 and float(r["sm_stock_ul"])==25 for r in manifest)
     deck_stock=next(r for r in read_csv(demo/"round1/deck_loads.csv") if r["reagent"]=="substrate_stock")
-    assert float(deck_stock["load_ul"])==1310
+    assert float(deck_stock["load_ul"])==1880
 
 
 @pytest.mark.parametrize("reuse", [True, False])
@@ -81,7 +81,8 @@ def test_tip_capacity_source_ledger_and_predose(demo, cfg, inventory, reuse):
         assert op["aspirated_ul_per_channel"]+residual == op["volume_ul_per_channel"]+p["surplus_ul"]
         assert op["source_slot"] != 3 or not op["retain_tip_for_next"]
     predose = [op for op in ops if op["stage"] == "round2_predose"]
-    assert not predose  # One block: round-two SM is hand-dosed off deck during round one.
+    assert len(predose)==23 and sum(op["volume_ul_per_channel"] for op in predose)==575
+    assert not predose[-1]["retain_tip_for_next"]  # Drop before the manual vial change.
     assert sum(op["volume_ul_per_channel"]*op["channels"] for op in ops if op["stage"] == "sampling") == 48*20
     plan = stock_plan(cfg, inventory, ops)
     assert all(r["capacity_ok"] for r in plan)
@@ -96,7 +97,7 @@ def test_tip_capacity_source_ledger_and_predose(demo, cfg, inventory, reuse):
     assert mixed["internal_standard_mM"]==100 and mixed["internal_standard_mass_mg"]==pytest.approx(24.038)
     assert not any(r["reagent"]=="internal_standard" for r in plan)
     assert mixed["source_slot"] == 4 and mixed["source_well"] == "D2"
-    assert "glass" in mixed["storage_container"]
+    assert "Compatible bulk source" in mixed["storage_container"]
 
 
 def test_consensus_all_wells_combine_ranks(demo, inventory):
@@ -112,8 +113,8 @@ def test_timing_calibrations_overlap_and_deadline_warning(cfg):
     timing = schedule(cfg)
     assert timing["lc_minutes"] == pytest.approx(120.7)
     assert timing["reaction_minutes"] == 480
-    assert timing["serial_total_minutes"] == pytest.approx(744.7)
-    assert timing["planned_total_minutes"] == pytest.approx(744.7)
+    assert timing["serial_total_minutes"] == pytest.approx(804.7)
+    assert timing["planned_total_minutes"] == pytest.approx(804.7)
     assert not timing["fits_serial_estimate"] and not timing["fits_planned_estimate"]
     assert timing["manual_lc_plate_moves"] == 4 and timing["lc_plates_by_round"] == [1, 1]
     budget = timing["operating_budget"]
@@ -125,7 +126,7 @@ def test_timing_calibrations_overlap_and_deadline_warning(cfg):
     # A target fitting the deadline must never turn the unmeasured allowance scenario into a pass.
     assert not timing["fits_planned_estimate"]
     cfg["timing"]["calibration_injections_during_round1_reaction"] = 0
-    assert schedule(cfg)["serial_total_minutes"] == pytest.approx(768.5)
+    assert schedule(cfg)["serial_total_minutes"] == pytest.approx(828.5)
 
 
 @pytest.mark.parametrize("cycle,remaining,fixed_fit", [(3, 27, True), (6, -186, False)])
@@ -317,20 +318,30 @@ def test_both_analytes_nondetected_still_requires_valid_is(demo, cfg, tmp_path):
 
 
 @pytest.mark.parametrize("round_name,stage", [("round1","dose_and_react"),("round1","workup"),("round2","dose_and_react"),("round2","workup")])
-def test_opentrons_real_simulator(demo, round_name, stage):
+def test_opentrons_real_simulator(demo, round_name, stage, monkeypatch):
     from opentrons.simulate import simulate
+    from opentrons.protocol_api import InstrumentContext
+    from functools import wraps
+    original=InstrumentContext.aspirate
+    checked=[]
+    @wraps(original)
+    def aspirate(pipette,volume=None,location=None,*args,**kwargs):
+        # Check while the well is on deck; its context may later move OFF_DECK.
+        if hasattr(location,"labware") and location.labware.is_well:
+            assert location.point.z > location.labware.as_well().bottom().point.z
+            checked.append(location.point.z)
+        return original(pipette,volume,location,*args,**kwargs)
+    monkeypatch.setattr(InstrumentContext,"aspirate",aspirate)
     with (demo/round_name/(stage+".py")).open() as stream:
         commands, _ = simulate(stream)
-    assert len(commands) > 20
-    liquid_aspirates = [c["payload"]["location"] for c in commands if c["payload"].get("text", "").startswith("Aspirating")]
-    assert liquid_aspirates
-    assert all(location.point.z > location.labware.as_well().bottom().point.z for location in liquid_aspirates)
+    assert len(commands) > 20 and checked
 
 
 def test_fresh_tip_mode_and_tip_replacement_simulate(demo, cfg, inventory, tmp_path):
     from hte.protocols import export
     from opentrons.simulate import simulate
     cfg["pipetting"]["reuse_tips"] = False
+    cfg["stock_preparation"]["substrate_margin_factor"] = 1.2  # Fresh-tip alternative needs a larger bulk; campaign default stays 2 mL.
     export(cfg,inventory,read_csv(demo/"round1_design.csv"),tmp_path/"fresh")
     with (tmp_path/"fresh/dose_and_react.py").open() as handle:
         commands,_=simulate(handle)

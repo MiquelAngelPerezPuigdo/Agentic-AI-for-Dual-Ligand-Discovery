@@ -52,6 +52,8 @@ def main():
             print("NEXT DOSING:", iteration / "next_dosing.csv")
             print(read_json(iteration / "complete.json")["hardware_status"])
             if (iteration / "protocols/dose_and_react.py").exists():
+                if (iteration/"protocols/refill_stocks.py").exists():
+                    print("RUN R2 AUTOMATIC STOCK REFILL FIRST:",iteration/"protocols/refill_stocks.py")
                 print("R2 PROTOCOL:", iteration / "protocols/dose_and_react.py")
                 print("R2 DECK LOADS:", iteration / "protocols/deck_loads.csv")
             print("Expected: 22 new pairs + one L17 reference. Review deck loads and import/start the released Python locally.")

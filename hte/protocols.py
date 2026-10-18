@@ -22,7 +22,7 @@ def run(protocol: protocol_api.ProtocolContext):
     adapter = hs.load_adapter(CONFIG["robot"]["heater_adapter"])
     plate = (protocol.load_labware_from_definition(DEFINITIONS["reaction"], 3, "Glass vial reaction block")
              if "reaction" in DEFINITIONS else protocol.load_labware(CONFIG["robot"]["reaction_labware"], 3, "Reaction plate"))
-    lc = (protocol.load_labware_from_definition(DEFINITIONS["lc"], 6, "R"+str(ROUND)+"-LC01")
+    lc = (protocol.load_labware_from_definition(DEFINITIONS["lc"], 6, "CALIBRATION" if STAGE=="dose_and_react" and ROUND==1 else "R"+str(ROUND)+"-LC01")
           if "lc" in DEFINITIONS else protocol.load_labware(CONFIG["robot"]["lc_labware"], 6, "R"+str(ROUND)+"-LC01"))
     racks = {slot: protocol.load_labware(CONFIG["robot"]["ligand_source_labware"], slot)
              for slot in [1, 4]}
@@ -148,8 +148,11 @@ def run(protocol: protocol_api.ProtocolContext):
 
     protocol.pause("Verify exact plate definitions, offsets, source volumes in deck_loads.csv, and fresh tips. Slots 7 and 11 must be empty. Keep caps identified and clean. For workup, keep reaction vials CAPPED until the explicit cooled-opening pause. Resume locally.")
     if STAGE == "dose_and_react":
-        protocol.pause("BEFORE DOSING: mix tightly capped GLASS bulk catalyst stocks off deck by hand inversion or a suitable vortex holder. Gently invert capped working tubes; let bubbles clear, return every tube to its exact CSV position, then OPEN the required source caps. Pd is in source-rack tubes, NOT reservoir A2. Use the same ONE 90 mg Pd bulk for both rounds; keep the separate 10 mg scope reserve untouched. Do not put plastic tube racks on the heater-shaker. Robot source-only mixing helps limit settling; record suspensions and pause for aggregates, persistent bubbles, blocked tips or air uptake.")
+        protocol.pause("BEFORE DOSING: use the ROBOT-PREPARED working sources, at their exact CSV addresses. No hand aliquoting. Keep the 10 mg Pd scope reserve untouched. Open required source caps; let bubbles clear. Source racks stay off the heater-shaker. Pause for aggregates, persistent bubbles, blocked tips or air uptake.")
         if any(op["stage"] == "substrate" for op in OPERATIONS):
+            protocol.pause("FIRST load the SAME reaction block with the 23 NEW, labeled R2 vials, UNCAPPED, following round2_predose.csv. The robot will predose SM/IS now, before the first reaction. No catalyst yet.")
+            transfer_stage("round2_predose")
+            protocol.pause("CAP the 23 robot-predosed R2 vials and store them labeled until R2. Replace them with 48 NEW EMPTY R1 vials in the SAME block. Remove all 48 caps before resuming. No hand pipetting; retain toluene in R2 vials.")
             protocol.pause("Confirm the 48 first-round reaction vials are empty and correctly loaded. REMOVE ALL reaction-vial screw caps and open the required sources before pipetting.")
             transfer_stage("substrate")
             protocol.comment("Combined stock supplies SM AND mesitylene in 25 uL retained toluene. No evaporation and no separate IS dose.")
@@ -164,9 +167,12 @@ def run(protocol: protocol_api.ProtocolContext):
             hs.set_and_wait_for_shake_speed(CONFIG["chemistry"]["rpm"])
             if CONFIG["chemistry"].get("thermal_equilibration_minutes", 0):
                 protocol.delay(minutes=CONFIG["chemistry"]["thermal_equilibration_minutes"])
-            if ROUND == 1:
-                protocol.comment("DURING this 4 h hold: prepare/inject the 14 calibration samples. Separately hand-dose the 23 NEW second-round vials with 25 uL combined SM/mesitylene stock from the OFF-DECK reserve following round2_predose.csv; cap promptly to retain toluene and label. No evaporation. Do not add catalyst yet, move the active block or touch the running robot. Only ONE reaction block is used.")
-            protocol.delay(minutes=CONFIG["chemistry"]["reaction_minutes"])
+            hold_start=time.monotonic()
+            if HOLD_PLAN:
+                execute_liquid_plan(protocol,HOLD_PLAN,{"working1":racks[1],"working4":racks[4],"reservoir":reservoir,"cal_plate":lc},single,multi)
+            remaining=CONFIG["chemistry"]["reaction_minutes"]*60
+            if not protocol.is_simulating():remaining=max(0,remaining-(time.monotonic()-hold_start))
+            protocol.delay(seconds=remaining)
         finally:
             hs.deactivate_shaker()
             hs.deactivate_heater()
@@ -253,7 +259,7 @@ def validate_definition_geometry(config, definitions, rows):
                     raise ValueError(f"{kind} definition is incompatible with 9 mm eight-channel geometry")
 
 
-def export(config, inventory, design, output, live=False, history=None, stage="all"):
+def export(config, inventory, design, output, live=False, history=None, stage="all",preparation_path=None):
     if stage not in ("all", "dose_and_react", "workup"):
         raise ValueError("Unknown export stage")
     # Calibration runs during R1. Only the first reaction may start before it.
@@ -285,6 +291,19 @@ def export(config, inventory, design, output, live=False, history=None, stage="a
             validate_design(config, inventory, design, history)
     ops = transfer_operations(config, inventory, rows)
     stocks = stock_plan(config, inventory, ops, reserve_round2=int(rows[0]["round"]) == 1)
+    from .preparation import (build_hold_preparation,build_refill,build_stock_preparation,
+        definitions as prep_definitions,LIQUID_RUNTIME,load_preparation,refill_source)
+    explicit_preparation=preparation_path
+    preparation_path=preparation_path or config.get("automation",{}).get("preparation_manifest_path")
+    if preparation_path and not Path(preparation_path).exists() and not live and not explicit_preparation:preparation_path=None
+    prep=load_preparation(config,inventory,preparation_path,live=live) if preparation_path else None
+    if prep and int(rows[0]["round"])==1:
+        from .preparation import design_signature
+        if prep["design_signature"]!=design_signature(design):raise ValueError("Stock preparation differs from this first-round design")
+    if live and not prep:raise ValueError("Run robot stock preparation from actual weights and supply --preparation or automation.preparation_manifest_path")
+    if prep is None and int(rows[0]["round"])==1:prep=build_stock_preparation(config,inventory,design)
+    hold=build_hold_preparation(config,ops,int(rows[0]["round"]),prep)
+    refill=build_refill(config,inventory,design,history,prep) if int(rows[0]["round"])==2 and history and prep else None
     if any(not r["capacity_ok"] for r in stocks):
         raise ValueError("Deck source capacity exceeded: " + ", ".join(r["reagent"] for r in stocks if not r["capacity_ok"]))
     if live:
@@ -295,11 +314,12 @@ def export(config, inventory, design, output, live=False, history=None, stage="a
     output = new_output(output)
     write_csv(output / "dosing.csv", rows)
     write_csv(output / "stock_preparation.csv", stocks)
-    from .analytical_stocks import preparation
-    write_csv(output / "analytical_stock_preparation.csv", preparation(config))
-    # Different source loads for dose vs workup. Common reservoir stock bottles stay off deck.
+    if int(rows[0]["round"])==1:
+        from .analytical_stocks import preparation
+        write_csv(output / "analytical_stock_preparation.csv", preparation(config))
+    # Different source loads for dose vs robot-prepared workup fluids.
     deck = []
-    for deck_stage, members in [("dose_and_react", {"substrate", "internal_standard", "assembly"}), ("workup", {"workup", "dilution"})]:
+    for deck_stage, members in [("dose_and_react", {"substrate", "round2_predose", "internal_standard", "assembly"}), ("workup", {"workup", "dilution"})]:
         from collections import defaultdict
         use = defaultdict(float)
         for op in ops:
@@ -309,11 +329,25 @@ def export(config, inventory, design, output, live=False, history=None, stage="a
             address = (r["reagent"],int(r["source_slot"]),r["source_well"])
             if address in use:
                 deck.append({"protocol": deck_stage, "reagent": r["reagent"], "source_slot": r["source_slot"],
-                             "source_well": r["source_well"], "load_ul": math_ceil10(use[address] + r["dead_ul"]),
+                             "source_well": r["source_well"], "load_ul": max(math_ceil10(use[address] + r["dead_ul"]),r["on_deck_ul"]) if deck_stage=="dose_and_react" else math_ceil10(use[address]+r["dead_ul"]),
                              "stock_mM": r["stock_mM"],
                              "solvent": r["solvent"]})
     write_csv(output / "deck_loads.csv", deck)
     write_json(output / "operations.json", ops)
+    write_json(output/"hold_preparation_plan.json",hold)
+    if preparation_path:write_json(output/"source_preparation_manifest.json",prep)
+    if hold["pilot_recipes"]:
+        write_csv(output/"pilot_preparation.csv",hold["pilot_recipes"])
+        write_csv(output/"pilot_injection_map.csv",[dict(inj_no=i,sample_id=r["sample_id"],method_id=config["analytics"].get("method_id") or "",lc_plate_id=r["plate_id"],well=r["well"]) for i,r in enumerate(hold["pilot_recipes"],1)])
+    if hold["calibration_recipes"]:
+        write_csv(output/"calibration_preparation.csv",hold["calibration_recipes"])
+        write_csv(output/"calibration_injection_map.csv",[
+            dict(inj_no=i,sample_id=r["sample_id"],method_id=config["analytics"]["method_id"] or "",lc_plate_id="CALIBRATION",well=r["well"])
+            for i,r in enumerate(hold["calibration_recipes"],1)])
+    write_csv(output/"raw_reagents_to_load.csv",hold["raw_loads"])
+    if refill:
+        write_json(output/"refill_plan.json",refill)
+        atomic_text(output/"refill_stocks.py",refill_source(config,refill,live))
     write_json(output / "pd_material_budget.json", pd_material_budget(config, ops, reserve_round2=int(rows[0]["round"]) == 1))
     write_json(output / "catalyst_mixing_timing.json", catalyst_mixing_timing(config, ops))
     write_json(output / "tip_budget.json", tip_budget(ops))
@@ -349,15 +383,15 @@ def export(config, inventory, design, output, live=False, history=None, stage="a
                   "sm_stock_ul": n0/config["liquids"]["substrate_stock_mM"]*1000,
                   "internal_standard_predosed_umol": n0*config["chemistry"]["preloaded_internal_standard"]["mol_percent_relative_to_substrate"]/100,
                   "substrate_solvent_retained_ul": n0/config["liquids"]["substrate_stock_mM"]*1000,
-                  "storage": "MANUAL OFF DECK during R1; dose combined SM/mesitylene in toluene, CAP promptly and label. No evaporation. Add catalysts only after loading the SAME block for R2; no SM/IS redosing."}
+                  "storage": "ROBOT PREDOSE before R1 in the SAME block. Staff CAP, label and store these 23 vials, then replace with 48 empty R1 vials. No manual pipetting. Retain toluene; no SM/IS redose."}
                   for i, well in enumerate(reaction_wells(config)[:config["design"]["round2_total"]], 1)])
     stages = ("dose_and_react", "workup") if stage == "all" else (stage,)
     for protocol_stage in stages:
         prefix = "# Generated, self-contained. Keep this file with its dosing and deck-load CSVs.\n"
-        prefix += f"STAGE = {protocol_stage!r}\nROUND = {int(rows[0]['round'])!r}\nDEMO = {not live!r}\nCONFIG = {config!r}\nOPERATIONS = {ops!r}\nDEFINITIONS = {definitions!r}\n"
+        prefix += f"STAGE = {protocol_stage!r}\nROUND = {int(rows[0]['round'])!r}\nDEMO = {not live!r}\nCONFIG = {config!r}\nOPERATIONS = {ops!r}\nDEFINITIONS = {definitions!r}\nHOLD_PLAN = {hold!r}\nPREP_DEFINITIONS = {prep_definitions(config)!r}\n"
         protocol_name = f"Dual-ligand HTE R{rows[0]['round']} {protocol_stage}"
         runtime = RUNTIME.replace('"protocolName": "Dual-ligand HTE"', '"protocolName": '+repr(protocol_name))
-        atomic_text(output / f"{protocol_stage}.py", prefix + runtime)
+        atomic_text(output / f"{protocol_stage}.py", prefix + 'from opentrons import protocol_api\n'+LIQUID_RUNTIME+runtime)
     write_json(output / "export_manifest.json", {
         "live": live, "released_stages": list(stages), "validation_scope": scope,
         "sample_ids": [r["sample_id"] for r in rows],

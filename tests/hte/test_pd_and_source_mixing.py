@@ -44,8 +44,9 @@ def test_same_ninety_mg_bulk_covers_both_rounds_without_reweighing(assay):
     assert [r["on_deck_ul"] for r in plans] == [1910, 1910, 1830]
     assert [(int(r["source_slot"]), r["source_well"]) for r in plans] == [(4,"A3"),(4,"B3"),(4,"A3")]
     assert sum(r["mass_mg"] for r in plans) == 90
-    assert "8 mL capped glass" in plans[0]["storage_container"]
-    assert all("ALIQUOT" in r["preparation_action"] for r in plans[1:])
+    assert "Compatible bulk source" in plans[0]["storage_container"]
+    assert "Robot" in plans[1]["preparation_action"]
+    assert "NO new weighing" in plans[2]["preparation_action"]
     # 71 x 3 umol = 80.6844 mg active Pd reagent; source losses remain within 90 mg.
     assert sum(o["volume_ul_per_channel"] for o in all_ops if o["reagent"] == "Pd")*.04*378.8/1000 == pytest.approx(80.6844)
 

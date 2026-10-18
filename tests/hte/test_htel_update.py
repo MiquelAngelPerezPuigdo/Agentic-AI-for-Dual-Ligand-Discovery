@@ -44,7 +44,7 @@ def test_toluene_and_combined_is_are_retained_in_both_rounds(tmp_path, single):
         assert len(heating) == 1 and "95" in heating[0]
         manifest = out/"round2_predose.csv"
         if round_number == 1:
-            assert all(float(r["sm_stock_ul"]) == 25 and "MANUAL OFF DECK" in r["storage"] for r in read_csv(manifest))
+            assert all(float(r["sm_stock_ul"]) == 25 and "ROBOT PREDOSE" in r["storage"] for r in read_csv(manifest))
 
 
 def test_dilute_catalysts_cannot_overfill_the_liquid_predose(tmp_path):
@@ -88,7 +88,7 @@ def test_invalid_availability_exclusions_fail(fault):
 def test_lc_scenarios_include_short_method_and_fail_longer_serial_plan():
     config = read_json(ROOT/"hte_inputs/campaign.json")
     rows = schedule_scenarios(config)
-    assert [row["serial_total_minutes"] for row in rows] == pytest.approx([744.7,766,837,979,1050])
+    assert [row["serial_total_minutes"] for row in rows] == pytest.approx([804.7,826,897,1039,1110])
     assert [row["fits_serial_estimate"] for row in rows] == [False, False, False, False, False]
     assert not config["validation"]["injection_cycle_validated"]
 
@@ -198,7 +198,7 @@ def test_build_calibration_from_measured_peaks_requires_verified_blank_and_check
         assert sum(row["role"] == "check" for row in rows) == 2
 
 
-def test_first_reaction_only_release_allows_parallel_calibration_but_workup_and_r2_remain_gated(tmp_path):
+def test_first_reaction_only_release_allows_parallel_calibration_but_workup_and_r2_remain_gated(tmp_path,actual_stock_preparation):
     run(tmp_path/"demo",ROOT/"hte_inputs/ligands.csv",ROOT/"hte_inputs/campaign.json")
     config = read_json(tmp_path/"demo/campaign.json")
     config["demo"] = False
@@ -209,6 +209,7 @@ def test_first_reaction_only_release_allows_parallel_calibration_but_workup_and_
     config["timing"]["workup_total_minutes"] = 35  # Fictional release-test timing only.
     inv = campaign_inventory(ROOT/"hte_inputs/ligands.csv",config)
     first, second = [read_csv(tmp_path/f"demo/round{i}_design.csv") for i in (1,2)]
+    actual_stock_preparation(config,inv,first)
     export(config,inv,first,tmp_path/"first_reaction",live=True,stage="dose_and_react")
     assert (tmp_path/"first_reaction/dose_and_react.py").exists()
     assert not (tmp_path/"first_reaction/workup.py").exists()

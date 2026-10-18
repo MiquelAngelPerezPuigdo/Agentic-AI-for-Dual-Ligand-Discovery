@@ -1,11 +1,13 @@
 {
-  "created_utc": "2026-10-18T20:12:24.782158+00:00",
+  "created_utc": "2026-10-18T22:01:46.712351+00:00",
   "campaign": "hackathon2026-paradox48",
+  "schema_version": 5,
   "tests": {
-    "tests": 214,
+    "tests": 230,
     "failures": 0,
     "errors": 0,
-    "skipped": 0
+    "skipped": 0,
+    "report": "output/robot-prep-update/tests-final.xml"
   },
   "versions": {
     "anthropic": "0.125.0",
@@ -18,19 +20,6 @@
     "reportlab": "4.5.1",
     "mistune": "3.3.4"
   },
-  "opentrons_simulations": [
-    "R1 dosing/reaction with supplied-derived 48-vial JSON",
-    "R1 workup, automated one-plate dilution and uncovered LC shaking",
-    "R2 dosing/reaction, 23 new predosed vials",
-    "R2 automated final LC plate; H3 diluent only and excluded",
-    "Generic synthetic 24-well multi-plate regression only; disabled by campaign policy",
-    "Fresh-tip mode, rack replacement and alternative p20 split transfers",
-    "Actual SDK current_temperature branch exercised for both workup rounds; strict SDK hot-module cooling pause",
-    "R2 new-vial uncapping checked before first aspiration",
-    "Schema 4 combined SM/IS in retained toluene, 20 mM ligands and 2 mL working tubes",
-    "Worst-case R2: 22 L17 pairs +reference, 1910 uL source fill; L03 hard cap and mass budget",
-    "Single 90 mg Pd bulk, 10 mg scope reserve, rack-tube sources and submerged catalyst-source recirculation"
-  ],
   "language_model_pair_embeddings": {
     "model": "google-t5/t5-base",
     "pairs": 435,
@@ -38,9 +27,6 @@
     "actual_model_inference": true,
     "current_vectors": "Exact subset of original 465 inferred vectors; L07 excluded"
   },
-  "physical_robot_runs": 0,
-  "real_chemistry_yields_available": false,
-  "physical_bench_validation_complete": false,
   "analytical_plan": {
     "substrate_umol": 25.0,
     "extract_ul": 750,
@@ -51,48 +37,6 @@
     "final_formic_acid_percent": 0.1,
     "final_toluene_percent": 0.6666666666666667,
     "nominal_vial_headspace_ul": 1250
-  },
-  "offline_lc_feedback_rehearsal": {
-    "synthetic_only": true,
-    "paid_api_calls": 0,
-    "physical_execution_allowed": false,
-    "prompt_caching_enabled": true,
-    "live_cache_hits_verified": false,
-    "actual_lm_embeddings": {
-      "pairs": 435,
-      "dimensions": 768
-    },
-    "round1_pairs": 48,
-    "round1_reference_wells": 0,
-    "round1_ligands_covered_in_pairs": 30,
-    "round1_missing_ligands": [],
-    "coverage_floor_overrides": 0,
-    "first_batch_source": "frozen real 48-pair campaign; yields and all provider responses remain synthetic",
-    "initial_mock_scores_used_for_selection": false,
-    "first_round_qc_pass": true,
-    "feedback_samples": 48,
-    "remaining_pairs_scored": 387,
-    "round2_pairs": 22,
-    "round2_reference_wells": 1,
-    "second_round_qc_pass": true,
-    "no_pair_repeats": true,
-    "analytical_practice_pass": true,
-    "analytical_practice_report": "analytical_practice/practice_report.json",
-    "no_substrate_redose": true,
-    "no_internal_standard_redose": true,
-    "incomplete_export_ignored": true,
-    "duplicate_event_ignored": true,
-    "next_dosing_csv": "feedback_loop/iteration-42a81afe7df0e4e8/next_dosing.csv",
-    "cache_summaries": [
-      "initial_scoring/cache_summary.json",
-      "feedback_loop/iteration-42a81afe7df0e4e8/scoring/cache_summary.json"
-    ],
-    "result_interpretation": "Synthetic yields and mocked rankings validate data flow only.",
-    "mocked_requests": 650,
-    "initial_mock_requests": 340,
-    "feedback_mock_requests": 310,
-    "both_prompt_stages_include_17_SI_yields": true,
-    "source_report": "output/pd90-update/rehearsal/rehearsal_report.json"
   },
   "live_initial_scoring": {
     "date": "2026-10-16",
@@ -111,7 +55,6 @@
     "historical_smoke_tests_cost_usd": 0.4023195,
     "all_known_paid_tests_and_campaign_cost_usd": 3.3875290000000002,
     "source_input_digest_verified": true,
-    "current_prompt_payload_sha256": "cd9d65418a348e559ddd0bd9c73a660f1f53bd4a7639dfb68920fdafb25416cc",
     "inputs_sha256": {
       "hte_inputs/ligands.csv": "a24c186b814eaeb8b5950e7a059e21b8df001764e83b19f127a3da179f4a5876",
       "hte_inputs/literature.json": "bdc36fcbaa06c5635064218629d7baeca35738d02cb9e5a0481e159a2e94a7be",
@@ -141,7 +84,9 @@
     "selected_pairs": 48,
     "ligands_covered": 30,
     "coverage_floor_overrides": 0,
-    "round2_paid_selection_has_run": false
+    "round2_paid_selection_has_run": false,
+    "archived_prompt_payload_sha256": "cd9d65418a348e559ddd0bd9c73a660f1f53bd4a7639dfb68920fdafb25416cc",
+    "preparation_context_note": "The archived run described glovebox-prepared stocks. Current schema 5 performs stock preparation under air on OT-2 after glovebox weighing. Reaction conditions and frozen R1 selection retained."
   },
   "scoring_prompt": {
     "version": 7,
@@ -197,83 +142,12 @@
     "round2_pairs": 22,
     "round2_single_reference": "L17"
   },
-  "chemistry_handoff": {
-    "SM_stock_mM": 1000,
-    "SM_solvent": "toluene, retained",
-    "combined_SM_IS": true,
-    "combined_stock_ul": 2000,
-    "SM_mass_mg_at_100pct": 322.32,
-    "mesitylene_mass_mg_at_100pct": 24.038,
-    "SM_margin_factor": 1.1,
-    "reaction_volume_ul": 250,
-    "ligand_stock_mM": 20,
-    "ligand_dose_ul": 75,
-    "Pd_stock_mM": 40,
-    "Pd_dose_ul": 75,
-    "IS": "mesitylene",
-    "IS_in_SM_stock_mM": 100,
-    "combined_dose_ul": 25,
-    "IS_umol_per_reaction": 2.5,
-    "IS_stage": "Same SM stock, once; predosed in R2",
-    "evaporation_required": false,
-    "separate_IS_or_toluene_topup": false,
-    "all_30_ligand_deck_loads_tested": true,
-    "source_loads_include_margin_and_surplus": true,
-    "formal_homogeneity_study_waived_by_user": true,
-    "visible_faults_pause": true,
-    "working_source_labware": "opentrons_24_tuberack_eppendorf_2ml_safelock_snapcap",
-    "working_tube_max_fill_ul": 1950,
-    "SM_source": "slot 4 D2",
-    "RockPhos_available_mg": 10,
-    "RockPhos_R2_cap": 4,
-    "RockPhos_prepare_ul": 800,
-    "RockPhos_prepare_mg_pure_equivalent": 7.499296,
-    "RockPhos_hard_cap_and_mass_check_tested": true,
-    "small_analytical_master_minimum_weigh_mg": 1,
-    "independent_fit_and_check_masters": true,
-    "analytical_master_preparation_file": "analytical_stock_preparation.csv",
-    "SM_actual_rounded_margin_factor": 1.1267605633802817,
-    "small_analytical_masters": "2.0 mL 10 mM each; independent fit/check preparations; 200 uL 1 mM working solutions"
-  },
-  "second_round_predose": "23 NEW vials, manually dose 25 uL combined 1 M SM/100 mM mesitylene in toluene from OFF-DECK reserve during R1, cap promptly, no evaporation; load same block after R1 sampling; catalysts only after selection, no SM/IS redosing",
   "local_api_key_file": {
     "filename": "anthropic.key",
     "git_ignored": true,
     "included_in_handoff": false,
     "environment_takes_precedence": true,
     "loaded_by_scoring_and_feedback": true
-  },
-  "staff_cli_rehearsal": {
-    "LC_sequences_with_reset_numbers_tested": true,
-    "first_round_samples": 48,
-    "untested_pairs": 387,
-    "SI_yields_present": 17,
-    "next_pairs": 22,
-    "single_reference": 1,
-    "final_samples": 23,
-    "paid_calls": 0,
-    "partial_duplicate_and_overlapping_exports_rejected": true,
-    "effective_settings_and_calibration_snapshotted": true,
-    "original_exports_maps_and_dosing_archived": true,
-    "R2_protocol_and_deck_paths_printed_when_released": true
-  },
-  "scope_note": "Bench compatibility, analytical method and twelve-hour throughput are not established by software tests.",
-  "review_date": "2026-10-18",
-  "repository_cleanup": {
-    "date": "2026-10-17",
-    "removed": [
-      "checked-in generated demo and robot exports",
-      "unused GP optimizer and vendored code",
-      "unused MOCCA integration/templates",
-      "obsolete optional dependencies and shell wrapper",
-      "duplicate prompt/caching guides"
-    ],
-    "active_tests_removed": 0,
-    "obsolete_adapter_tests_removed": 2,
-    "initial_design_byte_identical_after_cleanup": true,
-    "paid_calls_this_update": 0,
-    "model_or_chemistry_changed": false,
-    "generated_robot_files": "local output/ via export; not versioned"
   },
   "analytical_practice": {
     "synthetic_only": true,
@@ -349,7 +223,7 @@
     "live_pilot_validation_complete": false,
     "pilot_results_used_for_optimizer_feedback": false,
     "optional_real_pilot_injections": 7,
-    "reaction_schedule_changed": false
+    "robot_pilot_preparation_supported": true
   },
   "visual_mock_hplc_trials": {
     "synthetic_only": true,
@@ -410,154 +284,9 @@
     "twelve_hour_plan_validated": false,
     "paid_calls_this_update": 0,
     "single_plate_per_round_required": true,
-    "r1_split_allowed": false
-  },
-  "workup_timing_audit": {
-    "physical_duration_measured": false,
-    "r1_single_lc_plate": true,
-    "full_workup_allowance_minutes": 72,
-    "calculated_subtotal_minutes": 33.530722222222224,
-    "calculated_subtotal_by_round_minutes": [
-      21.162055555555554,
-      12.368666666666666
-    ],
-    "pump_and_programmed_wait_minutes_by_stage": {
-      "workup": 9.813277777777774,
-      "dilution": 3.0952222222222217,
-      "sampling": 12.622222222222225
-    },
-    "shaking_minutes": 8,
-    "individual_screw_cap_actions": 284,
-    "tip_pickup_drop_cycles": 84,
-    "manual_workup_block_and_lc_moves": 8,
-    "simulator_pump_delay_crosschecks": 4,
-    "r2_counts_independent_of_ligand_selection": true,
-    "excluded": [
-      "gantry travel and vertical motion",
-      "tip pickup/drop motion and rack changes",
-      "module ramp/latch time and residual cooling",
-      "all staff pauses, screw caps, plate moves/sealing and LC loading"
-    ],
-    "report_per_export": "workup_timing.json",
-    "seventy_two_minutes_is_a_retained_allowance_not_a_measured_duration": true,
-    "paid_calls_this_update": 0
-  },
-  "operating_budget": {
-    "target_total_minutes": 720,
-    "reaction_minutes": 480,
-    "lc_minutes_outside_reaction_holds": 120.7,
-    "handling_decision_and_contingency_cap_minutes": 119.3,
-    "calibration_minutes_parallel_to_round1_hold": 23.8,
-    "fixed_tasks_fit_window": true,
-    "status": "Target allocation; complete physical timing has not been validated",
-    "interpretation": "Remaining time is a cap for ALL dosing, heating/cooling, workups, manual handling, decisions, final analysis and contingency. It is not an estimate of those tasks or evidence that they fit."
-  },
-  "timing_allowance_audit": {
-    "reaction_minutes": 480,
-    "lc_minutes": 120.7,
-    "overhead_minutes": 144.0,
-    "injections": 85,
-    "minimum_reaction_plus_lc_minutes": 600.7,
-    "calibration_minutes_hidden_in_reaction": 23.8,
-    "serial_total_minutes": 744.7,
-    "deadline_minutes": 720,
-    "staged_lc_overlap_minutes": 0.0,
-    "planned_total_minutes": 744.7,
-    "remaining_minutes": -24.700000000000045,
-    "fits_serial_estimate": false,
-    "fits_planned_estimate": false,
-    "lc_plates_by_round": [
-      1,
-      1
-    ],
-    "manual_lc_plate_moves": 4,
-    "minimum_workup_shaking_minutes": 8,
-    "scenario_status": "Unmeasured handling-allowance scenario; not a validated completion-time forecast",
-    "assumptions": "Full injection cycle. All R1 measurements required before decision. One LC plate per round gives no within-round preparation/injection overlap. The target budget does not replace measured handling allowances. Workup includes both extract and LC shaking, moves and manual caps."
-  },
-  "timing_presentation": {
-    "deadline_target_minutes": 720,
-    "target_is_not_a_measured_forecast": true,
-    "generic_handling_allowances_unchanged": true,
-    "live_deadline_gate_unchanged": true,
-    "chemistry_unchanged": true,
-    "r1_single_lc_plate": true,
-    "paid_calls_this_update": 0
-  },
-  "full_campaign_review": {
-    "date": "2026-10-18",
-    "report": "docs/rehearsal-results.md#campaign-review---18-october",
-    "new_regression_cases": 13,
-    "all_tests_passed": true,
-    "four_stage_simulation_commands": [
-      {
-        "round": 1,
-        "stage": "dose_and_react",
-        "passed": true,
-        "commands": 1759,
-        "source": "output/pd90-update/r1/dose_and_react.py",
-        "log": "output/pd90-update/r1-dose_and_react-simulation.json"
-      },
-      {
-        "round": 1,
-        "stage": "workup",
-        "passed": true,
-        "commands": 1735,
-        "source": "output/pd90-update/r1/workup.py",
-        "log": "output/pd90-update/r1-workup-simulation.json"
-      },
-      {
-        "round": 2,
-        "stage": "dose_and_react",
-        "passed": true,
-        "commands": 722,
-        "source": "output/pd90-update/rehearsal/round2/dose_and_react.py",
-        "log": "output/pd90-update/r2-dose_and_react-simulation.json"
-      },
-      {
-        "round": 2,
-        "stage": "workup",
-        "passed": true,
-        "commands": 858,
-        "source": "output/pd90-update/rehearsal/round2/workup.py",
-        "log": "output/pd90-update/r2-workup-simulation.json"
-      }
-    ],
-    "frozen_initial_design_byte_identical": true,
-    "corrected_real_hardware_api_property": "HeaterShakerContext.current_temperature",
-    "cool_module_guard_before_quench_and_lc": true,
-    "vial_cooling_separately_confirmed_by_operator": true,
-    "manual_cap_and_R2_changeover_prompts_checked": true,
-    "source_geometry_faults_rejected": true,
-    "final_staff_command_validates_dosing_complete_R2_and_input_hashes": true,
-    "cli_analysis_failure_exit_on_failed_qc": true,
-    "changed_vendor_inputs_rejected_before_completion_marker": true,
-    "paid_calls": 0,
-    "physical_robot_runs": 0,
-    "live_release_flags_changed": false,
-    "pending_local_facts": [
-      "Block/LC plate fit, caps, offsets and shaking",
-      "Actual solvent delivery and vial heating/cooling",
-      "Authentic-standard 1.7-min method, quantitative channel/RTs/LOQs",
-      "Full LC-cycle and all handling times within operating budget"
-    ],
-    "new_regression_cases_this_update": 5
-  },
-  "toluene_and_material_budget_update": {
-    "date": "2026-10-18",
-    "schema_version": 3,
-    "paid_calls": 0,
-    "initial_design_byte_identical": true,
-    "combined_SM_IS_no_duplicate_doses": true,
-    "R2_RockPhos_cap": 4,
-    "available_RockPhos_mg": 10,
-    "maximum_L17_R2_working_load_ul": 1910,
-    "two_ml_tube_capacity_verified_in_simulator": true,
-    "old_protocols_and_local_schema_2_must_be_replaced": true,
-    "small_quantity_exception_authorized": true,
-    "LLM_chemical_target_payload_unchanged": true,
-    "practical_rounding": "User clarified approximately 10%, with practical larger volumes: 2.0 mL combined stock, 0.1 mL ligand-stock increments, whole-mL common and analytical masters; preserve unused masters",
-    "first_round_rehearsal_assignments": "Frozen real initial 48; mock initial scoring exercises the provider contract without changing material demand"
+    "r1_split_allowed": false,
+    "calibration_plate_additional": 1,
+    "total_LC_plates": 3
   },
   "knowledge_transfer": {
     "date": "2026-10-18",
@@ -615,70 +344,243 @@
     },
     "public_git_contains_experimental_data": false,
     "all_data_automatic_capture": false,
-    "test_report": "output/transfer-update/tests.xml"
+    "test_report": "output/transfer-update/tests.xml",
+    "robot_preparation_records_retained": [
+      "actual charge CSV",
+      "preparation manifest/ledgers",
+      "raw-source/carrier maps",
+      "refill plan/protocol",
+      "all generated Python"
+    ]
   },
-  "pd90_and_source_mixing_update": {
-    "date": "2026-10-18",
-    "schema_version": 4,
-    "new_regression_checks": 11,
-    "test_report": "output/pd90-update/tests.xml",
-    "paid_calls": 0,
-    "physical_robot_runs": 0,
-    "initial_design_byte_identical": true,
-    "live_release_flags_changed": false,
-    "pd_budget": {
-      "weigh_mg": 90,
-      "scope_reserved_mg": 10,
-      "assay_fraction": 1.0,
-      "stock_mM": 40,
-      "make_to_final_ul": 5939.809926082366,
-      "current_round_deck_ul": 3820,
-      "round2_reserved_deck_ul": 1830,
-      "full_campaign_deck_ul": 5650,
-      "bulk_transfer_reserve_ul": 100,
-      "unallocated_bulk_ul": 289.80992608236556,
-      "source_loads": [
-        {
-          "slot": 4,
-          "well": "A3",
-          "load_ul": 1910,
-          "consumption_ul": 1801.0
-        },
-        {
-          "slot": 4,
-          "well": "B3",
-          "load_ul": 1910,
-          "consumption_ul": 1801.0
-        }
-      ],
-      "instruction": "Weigh Pd ONCE before R1. Correct final volume for assay, never increase the 90 mg mass. R2 aliquots come from this same bulk."
+  "physical_robot_runs": 0,
+  "real_chemistry_yields_available": false,
+  "physical_bench_validation_complete": false,
+  "paid_API_calls_this_update": 0,
+  "opentrons_simulations": [
+    {
+      "stage": "stock-preparation/prepare_stocks.py",
+      "passed": true,
+      "commands": 3598,
+      "source": "output/robot-prep-update/final-rehearsal-v3/stock-preparation/prepare_stocks.py",
+      "log": "output/robot-prep-update/stock-preparation-prepare_stocks-simulation.json"
     },
-    "R2_deck_ul": 1830,
-    "R1_deck_ul_by_tube": [
-      1910,
-      1910
+    {
+      "stage": "round1/dose_and_react.py",
+      "passed": true,
+      "commands": 6232,
+      "source": "output/robot-prep-update/final-rehearsal-v3/round1/dose_and_react.py",
+      "log": "output/robot-prep-update/round1-dose_and_react-simulation.json"
+    },
+    {
+      "stage": "round1/workup.py",
+      "passed": true,
+      "commands": 1735,
+      "source": "output/robot-prep-update/final-rehearsal-v3/round1/workup.py",
+      "log": "output/robot-prep-update/round1-workup-simulation.json"
+    },
+    {
+      "stage": "round2/refill_stocks.py",
+      "passed": true,
+      "commands": 1619,
+      "source": "output/robot-prep-update/final-rehearsal-v3/round2/refill_stocks.py",
+      "log": "output/robot-prep-update/round2-refill_stocks-simulation.json"
+    },
+    {
+      "stage": "round2/dose_and_react.py",
+      "passed": true,
+      "commands": 2219,
+      "source": "output/robot-prep-update/final-rehearsal-v3/round2/dose_and_react.py",
+      "log": "output/robot-prep-update/round2-dose_and_react-simulation.json"
+    },
+    {
+      "stage": "round2/workup.py",
+      "passed": true,
+      "commands": 858,
+      "source": "output/robot-prep-update/final-rehearsal-v3/round2/workup.py",
+      "log": "output/robot-prep-update/round2-workup-simulation.json"
+    }
+  ],
+  "offline_lc_feedback_rehearsal": {
+    "synthetic_only": true,
+    "paid_api_calls": 0,
+    "physical_execution_allowed": false,
+    "robot_stock_preparation": true,
+    "robot_calibration_preparation": true,
+    "robot_workup_fluid_preparation": true,
+    "robot_R2_refill": true,
+    "stock_concentration_basis": "nominal_solvent_addition",
+    "prompt_caching_enabled": true,
+    "live_cache_hits_verified": false,
+    "actual_lm_embeddings": {
+      "pairs": 435,
+      "dimensions": 768
+    },
+    "round1_pairs": 48,
+    "round1_reference_wells": 0,
+    "round1_ligands_covered_in_pairs": 30,
+    "round1_missing_ligands": [],
+    "coverage_floor_overrides": 0,
+    "first_batch_source": "frozen real 48-pair campaign; yields and all provider responses remain synthetic",
+    "initial_mock_scores_used_for_selection": false,
+    "first_round_qc_pass": true,
+    "feedback_samples": 48,
+    "remaining_pairs_scored": 387,
+    "round2_pairs": 22,
+    "round2_reference_wells": 1,
+    "second_round_qc_pass": true,
+    "no_pair_repeats": true,
+    "analytical_practice_pass": true,
+    "analytical_practice_report": "analytical_practice/practice_report.json",
+    "no_substrate_redose": true,
+    "no_internal_standard_redose": true,
+    "incomplete_export_ignored": true,
+    "duplicate_event_ignored": true,
+    "next_dosing_csv": "feedback_loop/iteration-37e1f6b0ca43f87c/next_dosing.csv",
+    "cache_summaries": [
+      "initial_scoring/cache_summary.json",
+      "feedback_loop/iteration-37e1f6b0ca43f87c/scoring/cache_summary.json"
     ],
-    "R1_source_locations": [
-      "4:A3",
-      "4:B3"
+    "result_interpretation": "Synthetic yields and mocked rankings validate data flow only.",
+    "mocked_requests": 650,
+    "initial_mock_requests": 340,
+    "feedback_mock_requests": 310,
+    "both_prompt_stages_include_17_SI_yields": true,
+    "source_report": "output/robot-prep-update/final-rehearsal-v3/rehearsal_report.json"
+  },
+  "robot_stock_preparation": {
+    "enabled": true,
+    "actual_weighing_by_human": true,
+    "all_precise_liquid_transfers_by_robot": true,
+    "coarse_raw_liquid_loading": true,
+    "concentration_basis": "Accepted nominal solvent addition; no final-volume or contraction measurement",
+    "actual_weighed_charges_required_for_live": true,
+    "real_weighed_charges_supplied": false,
+    "preparation_counts_inside_campaign": true,
+    "pipettes_initial": [
+      "p300 single GEN2 left",
+      "p1000 single right; actual generation configured"
     ],
-    "R2_fresh_source_location": "4:A3",
-    "two_rounds_stock_mass_sum_mg": 90,
+    "one_manual_change": "Right p1000 to p300 eight-channel GEN2 after preparation",
+    "bulk_container_geometry": "opentrons_10_tuberack_falcon_4x50ml_6x15ml_conical",
+    "bulk_container_compatibility_confirmed": false,
+    "raw_reservoir": "Supplied horizontal A1-H1 8 x30 mL; single-channel only",
+    "working_container_max_ul": 1950,
+    "SM_working_load_ul": 1880,
+    "SM_bulk_nominal_ul": 2000,
+    "neat_IS_source": "1 C2",
+    "initial_acid_source": "4 D3",
+    "RockPhos_direct_tube": "1 C1; retained both rounds",
+    "robot_calibration_in_hold_one": true,
+    "robot_workup_fluids_in_each_hold": true,
+    "robot_R2_refill": true,
+    "refill_basis": "Original working residuals minus completed R1 commanded consumption; no unrecorded losses",
+    "frozen_R1_sha256": "7c2ad21967f468857938989fcbe5901d2409a86dcae8d785f7247032ef301104",
+    "preview_liquid_ledger_balance_verified": true,
+    "invalid_mass_assay_coverage_and_manifest_changes_rejected": true,
+    "stock_preparation_atmosphere": "air on OT-2 after glovebox weighing"
+  },
+  "pd_budget": {
+    "weigh_mg": 90,
+    "scope_reserved_mg": 10,
+    "assay_fraction": 1.0,
+    "stock_mM": 40,
+    "make_to_final_ul": 5939.809926082366,
+    "current_round_deck_ul": 3820,
+    "round2_reserved_deck_ul": 1830,
+    "full_campaign_deck_ul": 5650,
+    "bulk_transfer_reserve_ul": 100,
+    "unallocated_bulk_ul": 289.80992608236556,
+    "source_loads": [
+      {
+        "slot": 4,
+        "well": "A3",
+        "load_ul": 1910,
+        "consumption_ul": 1801.0
+      },
+      {
+        "slot": 4,
+        "well": "B3",
+        "load_ul": 1910,
+        "consumption_ul": 1801.0
+      }
+    ],
+    "instruction": "Weigh Pd ONCE before R1. Use assay-corrected nominal solvent addition, never increase the 90 mg mass. The robot fills/refills both rounds from this same bulk.",
     "R2_new_solid_mass_mg": 0,
-    "assay_98_percent_covered": true,
-    "assay_95_percent_blocked": true,
-    "source_mix_cycles": 2,
-    "source_mix_max_ul": 100,
-    "source_mix_every_transfers": 8,
-    "source_mix_net_added_programmed_minutes": {
-      "round1": 2.2679999999999993,
-      "round2": 1.1409999999999996
-    },
-    "timing_scope": "Additional programmed pumping/waits only; motion and manual stock preparation excluded. Include within measured dosing allowances.",
-    "source_mix_net_stock_consumption_ul": 0,
-    "actual_SDK_same_source_mix_and_time_reconciled": true,
-    "mixing_location": "Capped bulk glass off deck; gentle capped working-tube inversion; no plastic rack on heater-shaker.",
-    "suspension_homogeneity_verified": false,
-    "PP_working_tubes": "Brief unheated dispensing only; capped glass for bulk storage."
-  }
+    "R2_original_tube": "4 A3 retained and robot-topped-up",
+    "actual_assay_98pct_covered": true,
+    "actual_assay_95pct_blocked": true
+  },
+  "second_round_predose": "Robot doses 23 NEW R2 vials with 25 uL combined SM/IS BEFORE R1. Staff cap/store, replace with 48 empty R1 vials. No hand aliquoting, evaporation or later SM/IS redose.",
+  "robot_calibration": {
+    "standard_count": 14,
+    "nominal_final_ul": 1000,
+    "analyte_levels_uM": [
+      0,
+      10,
+      50,
+      150,
+      350,
+      800
+    ],
+    "independent_check_uM": 666.6666666666666,
+    "constant_IS_uM": 66.66666666666667,
+    "IS_working_mM": 2,
+    "IS_dose_ul": 33.333333333333336,
+    "FIT_analyte_working_mM": [
+      0.5,
+      5
+    ],
+    "smallest_nonzero_standard_addition_ul": 20,
+    "independent_fit_and_check_weighings": true,
+    "shaking": "Robot pipette mixing; reaction stays on heater-shaker",
+    "optional_known_mixture_pilot": "Seven robotic CHECK-master mixtures on A3-G3 if enabled before preparation; off by default",
+    "calibration_plate_moves": 1,
+    "total_LC_plates": 3,
+    "nominal_matrix_acetonitrile_percent": 50.2
+  },
+  "operating_budget": {
+    "target_total_minutes": 720,
+    "reaction_minutes": 480,
+    "lc_minutes_outside_reaction_holds": 120.7,
+    "handling_decision_and_contingency_cap_minutes": 119.3,
+    "calibration_minutes_parallel_to_round1_hold": 23.8,
+    "fixed_tasks_fit_window": true,
+    "status": "Target allocation; complete physical timing has not been validated",
+    "deadline_enforced": false,
+    "non_reaction_allocation_minutes": 240,
+    "interpretation": "Eight hours of reaction holds leave an approximately four-hour non-reaction allocation, including LC. This is a planning target; physical duration is recorded and the target is advisory unless enforce_deadline is enabled."
+  },
+  "timing_allowance_audit": {
+    "reaction_minutes": 480,
+    "lc_minutes": 120.7,
+    "overhead_minutes": 204.0,
+    "injections": 85,
+    "minimum_reaction_plus_lc_minutes": 600.7,
+    "calibration_minutes_hidden_in_reaction": 23.8,
+    "serial_total_minutes": 804.7,
+    "deadline_minutes": 720,
+    "staged_lc_overlap_minutes": 0.0,
+    "planned_total_minutes": 804.7,
+    "remaining_minutes": -84.70000000000005,
+    "fits_serial_estimate": false,
+    "fits_planned_estimate": false,
+    "lc_plates_by_round": [
+      1,
+      1
+    ],
+    "manual_lc_plate_moves": 4,
+    "minimum_workup_shaking_minutes": 8,
+    "scenario_status": "Unmeasured handling-allowance scenario; not a validated completion-time forecast",
+    "assumptions": "Full injection cycle. All R1 measurements required before decision. One LC plate per round gives no within-round preparation/injection overlap. The target budget does not replace measured handling allowances. Workup includes both extract and LC shaking, moves and manual caps."
+  },
+  "timing_note": "12 h advisory target; eight hours reaction holds leave approximately four hours for remaining tasks incl LC. Stock preparation counts inside campaign. Generic 60 min preparation allowance is unmeasured; no completion-time guarantee.",
+  "pending_local_facts": [
+    "Solvent-compatible bulk/working containers and exact matching source geometry",
+    "Actual p1000 generation and App pipette change/calibration",
+    "Block/LC-plate fit, caps, offsets, shaking and liquid delivery",
+    "Vial heating/cooling and actual whole-campaign timing",
+    "Authentic-standard 1.7-min separation, quantitative UV channel, RTs/LOQs and calibration"
+  ],
+  "scope_note": "Software and simulations validate code/data flow only; all physical release flags remain false in canonical settings. Earlier revision-specific records remain in Git history."
 }

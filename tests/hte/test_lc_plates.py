@@ -152,7 +152,7 @@ def test_plate_geometry_is_unchanged_and_split_overlap_is_round_specific():
     c["robot"]["lc_batch_size"] = 24
     c["timing"].update(staged_lc_overlap_minutes=35, staged_lc_overlap_minutes_by_round={"1":35, "2":0})
     assert schedule(c)["manual_lc_plate_moves"] == 6
-    assert schedule(c)["planned_total_minutes"] == pytest.approx(709.7)
+    assert schedule(c)["planned_total_minutes"] == pytest.approx(769.7)
     c["timing"]["staged_lc_overlap_minutes_by_round"] = {"1":25, "2":10}
     with pytest.raises(ValueError, match="preceding injection windows"): schedule(c)
 
@@ -171,6 +171,7 @@ def test_timing_subtotal_matches_actual_simulator_pumps_and_delays(campaign, tmp
     from opentrons.simulate import simulate
     config = read_json(campaign/"campaign.json")
     config["pipetting"]["reuse_tips"] = reuse
+    if not reuse: config["stock_preparation"]["substrate_margin_factor"] = 1.2
     inv = campaign_inventory(ROOT/"hte_inputs/ligands.csv", config)
     out = tmp_path/"protocols"
     export(config, inv, read_csv(campaign/f"round{round_number}_design.csv"), out)

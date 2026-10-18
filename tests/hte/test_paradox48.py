@@ -71,12 +71,14 @@ def test_deck_loads_include_every_ligand_source_and_all_stage_withdrawals(demo48
     ligand_rows=[r for r in deck if r["reagent"].startswith("L") and r["reagent"][1:].isdigit()]
     assert len(ligand_rows)==30
     for row in deck:
-        stages={"substrate","internal_standard","assembly"} if row["protocol"]=="dose_and_react" else {"workup","dilution"}
+        stages={"substrate","round2_predose","internal_standard","assembly"} if row["protocol"]=="dose_and_react" else {"workup","dilution"}
         consumed=sum(op["aspirated_ul_per_channel"]*op["channels"] for op in operations
                      if op["stage"] in stages and op["reagent"]==row["reagent"]
                      and op["source_slot"]==int(row["source_slot"]) and op["source_well"]==row["source_well"])
         dead=c["stock_preparation"]["tube_dead_ul" if int(row["source_slot"]) in (1,4) else "reservoir_dead_ul"]
-        assert float(row["load_ul"])==math.ceil((consumed+dead)/10)*10
+        assert float(row["load_ul"])>=math.ceil((consumed+dead)/10)*10
+        if row["reagent"] not in c["automation"]["direct_stock_ids"]:
+            assert float(row["load_ul"])==math.ceil((consumed+dead)/10)*10
 
 
 @pytest.mark.parametrize("fault",[None,"partial","duplicate_batch","overlapping_sample"])
@@ -114,7 +116,7 @@ def test_separate_lc_sequences_with_reset_injection_numbers_join_safely(demo48,t
 
 def test_unconfirmed_or_impossible_staged_lc_timing_cannot_release():
     c=synthetic_config(ROOT/"hte_inputs/campaign.json")
-    assert schedule(c)["planned_total_minutes"]==pytest.approx(744.7)
+    assert schedule(c)["planned_total_minutes"]==pytest.approx(804.7)
     c["timing"]["staged_lc_overlap_minutes_by_round"]["1"]=100
     c["timing"]["staged_lc_overlap_minutes"]=100
     with pytest.raises(ValueError,match="preceding injection windows"):schedule(c)

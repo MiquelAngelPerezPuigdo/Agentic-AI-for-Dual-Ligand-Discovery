@@ -1,64 +1,47 @@
 # Local pipeline
 
-The **initial 48 pairs are ready** in `campaigns/hackathon2026/round1_design.csv`. Python quantifies yields; Claude selects R2. Staff use the [bench sheet](HTE-staff-checklist.pdf).
+Frozen **48 pairs**: `campaigns/hackathon2026/round1_design.csv`. Python quantifies UV data; cached Claude scoring selects R2. Stock preparation uses no API calls. Physical actions: [bench sheet](HTE-staff-checklist.pdf).
 
-## Set up before the clock
+## Install and configure
 
-Use Python 3.12: `uv sync --python 3.12 --extra sources`; prefix commands with `uv run`. Or install `python -m pip install -e '.[sources]'` in a venv.
+Python 3.12: **`uv sync --python 3.12 --extra sources`**; prefix commands below with `uv run`. Or use a venv with `.[sources]`. Copy canonical config to **`local_data/campaign.json`**, calibration template to `local_data/calibration-plan.csv`, key example to **`anthropic.key`**. Put the raw Claude key in that file; preserve existing keys. Never send it to the robot/Git.
+
+Use schema **5**; replace old protocols/settings while preserving measured LC facts. Configure method/channel, full cycle, RTs/LOQs and physical release evidence, including containers/p1000 generation. Concentrations use nominal solvent addition. `timing.enforce_deadline=false`: 12 h advisory; record real times.
+
+## Robot preparation, then R1
+
+Generate a guarded preview; copy its charges template to `local_data/charges.csv` and fill actual masses/assays. Follow carrier/raw-load CSVs. After local checks:
 
 ```bash
-mkdir -p local_data
-cp -n hte_inputs/campaign.json local_data/campaign.json
-cp -n hte_inputs/calibration_template.csv local_data/calibration-plan.csv
-cp -n anthropic.key.example anthropic.key
-chmod 600 anthropic.key
+python -m hte.cli --config local_data/campaign.json prepare-stocks \
+  --output output/prep-preview
+python -m hte.cli --config local_data/campaign.json prepare-stocks \
+  --charges local_data/charges.csv --output local_data/stock-prep --live
 ```
 
-Use **schema 4**: 90 mg Pd, tube sources and remixing. Replace older settings/protocols; preserve measured LC facts.
-
-Put the raw Claude key in **`anthropic.key`**; preserve any existing key. Never send it to the robot, Git or email.
-
-In `local_data/campaign.json`, set method/channel, full LC cycle, measured RTs/LOQs and release evidence. Confirm LC plate compatibility, uncovered shake speed and handling within 119.3 min. Enter measured stage totals under `timing` (both rounds combined). [HTEL setup facts](hte-questions.md).
+Run **`local_data/stock-prep/prepare_stocks.py`** locally: p300 single left /p1000 single right. Preserve its manifest at the default configured path. Follow swaps; afterward change right to p300 multi and tips 8/9 to 300 µL through the App installation/calibration workflow.
 
 ```bash
-python -m hte.cli --config local_data/campaign.json check
 python -m hte.cli --config local_data/campaign.json export \
   --design campaigns/hackathon2026/round1_design.csv \
   --output output/r1-dose --live --stage dose_and_react
 ```
 
-App-simulate and start locally with matching CSVs. Omit `--live` for guarded previews. R1 dosing may precede calibration once other checks pass.
+This robot-predoses 23 R2 vials; cap/store, replace with 48 EMPTY R1 vials. It doses/heats R1, makes standards/workup fluids during the hold. Send calibration plate to LC using generated map. [Import/calibrate](htel-lc-import.md); set `lc_calibration_validated=true` after success. Export R1 workup with the SAME command/design, changing to **`--output output/r1-workup --stage workup`**. Keep prepared reservoir 2; use a fresh final LC plate.
 
-## During hold one
+## R2 and finish
 
-Run/import **14 calibration injections** using the [LC instructions](htel-lc-import.md). Staff predose 23 fresh vials with 25 µL combined SM/IS in toluene and cap promptly. After calibration passes, set `lc_calibration_validated=true`; export workup:
-
-```bash
-python -m hte.cli --config local_data/campaign.json export \
-  --design campaigns/hackathon2026/round1_design.csv \
-  --output output/r1-workup --live --stage workup
-```
-
-## After all 48 R1 results
-
-Default: **one final LC plate/export per round, four moves total; no R1 split**. Robot dilutes and shakes. Use `lc_plates.csv` and complete `lc_batchNN_injections.csv` with actual method/sequence identities. Each export needs its own map; match glob order and exclude unrelated files.
+Complete actual injection maps. After ALL 48 results:
 
 ```bash
 python scripts/hte-lc-results.py next \
   --dosing output/r1-dose/dosing.csv \
   --exports local_data/r1-batch*.csv \
-  --injections local_data/r1-map*.csv \
-  --output output/r1-decision
+  --injections local_data/r1-map*.csv --output output/r1-decision
 ```
 
-Calibration defaults to `local_data/calibration.csv` (`--calibration` overrides). After all 48 results pass QC, Claude scores **387 untested pairs** and selects **22 new pairs +L17 reference**. Both prompts include 17 SI yields. R2 uses no embedding selector; L03 is capped at four wells.
+Calibration defaults to `local_data/calibration.csv`. QC precedes Claude: **387 untested pairs →22 +L17 reference**, L03 max four. Run printed **`refill_stocks.py` FIRST** with original carriers/tubes. Load the 23 robot-predosed vials and NEW EMPTY reservoir 2. Run R2 reaction then matching workup; no SM/IS redose. If unreleased, export `next_design.csv` with R1 `--history`, `--live` and a fresh folder. After all 23 injections, use helper **`final`** with R2 doses/exports/maps; no Claude.
 
-The command prints the R2 Python and deck-load paths when released. The decision folder retains design/dosing CSVs, analysis and scores. If checks remain open, export `next_design.csv` with `--history output/r1-dose/dosing.csv`, a fresh folder and `--live`. Fit the 23 liquid-predosed vials; **uncap; no SM/IS redosing**.
+## Return records
 
-After all 23 R2 injections, run the helper with **`final`**, R2 `dosing.csv`, the matching plate export/map and a new output folder. This calculates final results without Claude. Compare pair yields with the measured L17 reference and retain run times.
-
-## Return the data
-
-Imports retain source files/settings, calibration, yields/QC, Claude requests/responses/rankings/cost/cache, doses and protocols. Keep rejected measurements.
-
-Copy robot JSON to `local_data/robot_logs/`, raw LC/MS to `local_data/instrument_raw/`, and stock assays/times/deviations to `local_data/run-notes.txt`. Stop writers; run **`python scripts/hte-return-package.py`**. Send **`transfer/hte-results.zip` privately**: code, local data, all output and hashes; no keys. External instrument files must be copied; Git alone does not preserve run data.
+Keep actual weights, preparation/source ledgers, LC exports/maps, calibration/QC, Claude records and matching doses/protocols. Copy robot JSON to `local_data/robot_logs/`, raw LC/MS/method files to `local_data/instrument_raw/`, times/deviations to `local_data/run-notes.txt`. Stop writers; **`python scripts/hte-return-package.py`** creates **`transfer/hte-results.zip`** with hashes, credentials excluded. Send privately; Git does not preserve local run data.

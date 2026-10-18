@@ -59,7 +59,8 @@ def test_combined_stock_has_practical_rounded_margin_and_covers_source_losses():
     assert stock["prepare_ul"]==2000
     assert stock["mass_mg"]==pytest.approx(322.32)
     assert stock["internal_standard_mass_mg"]==pytest.approx(24.038)
-    assert stock["on_deck_ul"]+23*25 <= stock["prepare_ul"]
+    assert stock["on_deck_ul"]+100 <= stock["prepare_ul"]
+    assert stock["protocol_consumption_ul"] >= 71*25 and stock["round2_reserve_ul"]==0
     assert (stock["source_slot"],stock["source_well"])==(4,"D2")
     assert not any(o["stage"]=="internal_standard" or o["reagent"]=="toluene" for o in ops)
     for row in rows:
@@ -91,4 +92,4 @@ def test_small_analytical_masters_have_independent_weighings_and_cover_optional_
         assert sum(r["mass_mg"] for r in masters)<6.5
     c["stock_preparation"]["analytical_minimum_weigh_mg"] = 5
     larger = [r for r in preparation(c) if r["stock_mM"]==10]
-    assert all(r["mass_mg"] >= 5 and r["storage_container"]=="8 mL capped glass vial" for r in larger)
+    assert all(r["mass_mg"] >= 5 and "15 mL bulk" in r["storage_container"] for r in larger)

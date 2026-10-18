@@ -4,13 +4,13 @@ Use calibrated integrated UV peak areas for yield; MS is identity support. The o
 
 **Processing chain:** HTEL integrated-peak CSV → Python calibration and mesitylene normalization → yield/QC → Claude feedback. Our workstation needs no Chromeleon installation or concentration export. HTEL's instrument software performs acquisition/peak integration upstream; the importer retains compatibility with its supplied CSV layout. Standards remain required.
 
-**Yield calculation is deterministic.** Python matches peaks to measured reference windows, fits analyte/IS area ratios against known standard concentrations, applies the recorded workup/dilution volumes and divides product amount by starting SM amount. With the current 750 µL extract, 50-fold LC dilution and 25 µmol SM, `yield (%) = 0.15 × product concentration in the LC well (µM)`. Invalid results fail QC; nondetections can be bounds rather than fabricated zeros. Claude receives accepted measurements and selects conditions; it does not calculate or estimate experimental yields.
+**Yield calculation is deterministic.** Python matches peaks to measured reference windows, fits analyte/IS area ratios against known standard concentrations, applies the recorded workup/dilution volumes and divides product amount by starting SM amount. Reaction stock concentrations and volumes are nominal under the declared solvent-addition approximation. The robot sets the SM:IS molar ratio from weighed SM and the neat IS dose. With nominal 750 µL extract, 50-fold LC dilution and 25 µmol SM, `yield (%) = 0.15 × product concentration in the LC well (µM)`. Invalid results fail QC; nondetections can be bounds rather than fabricated zeros. Claude receives accepted measurements and selects conditions; it does not calculate or estimate experimental yields.
 
 ## Configure once from authentic standards
 
 In `local_data/campaign.json`, set the actual `analytics.method_id`, one quantitative `channel` (`UV_VIS_1` to `UV_VIS_4`), `references` and `quantification_limit_uM`. References require `substrate`, `product`, `internal_standard`, each with measured `retention_time_min` and `window_min`; windows must not overlap. Record actual detector wavelength and injection volume alongside the method. We request 210 nm initially; the example's channels at 253/270/300/370 nm are historical settings. Do not sum wavelengths or substitute TIC for UV area.
 
-The 14-sample plan is `hte_inputs/calibration_template.csv`: each analyte blank +10/50/150/350/800 µM and independent 666.667 µM check, IS66.667 µM throughout. [Preparation recipes](stocks-and-calibration.md). These injections run inside the first four-hour hold; initial dosing release can precede them. Workup release requires completed calibration.
+The 14-sample plan is `hte_inputs/calibration_template.csv`: each analyte blank +10/50/150/350/800 µM and independent 666.667 µM check, IS66.667 µM throughout. [Preparation recipes](stocks-and-calibration.md). The robot prepares/pipette-mixes these in the first hold; staff seal/move the plate directly to LC. Use the generated calibration_injection_map.csv. Initial dosing release can precede calibration. Workup release requires completed calibration.
 
 ## One explicit mapping per acquisition sequence
 
@@ -51,12 +51,12 @@ python -m hte.cli practice-analytics --output output/analytics-practice
 
 No key or paid calls. Outputs:
 
-- `pilot_preparation.csv`: seven manually prepared 1 mL samples using independent 10 mM SM/product check masters, 5 mM analytical mesitylene and matched matrix.
+- `pilot_preparation.csv`: seven robot-prepared 1 mL samples using independent CHECK-master dilutions (0.5/5 mM analyte), 2 mM analytical mesitylene and matched matrix. Enable `automation.prepare_optional_pilot=true` BEFORE generating stock preparation and R1 protocols; the robot fills A3-G3 on the calibration plate. Keep its acquisition/export map separate from the 14 calibration injections.
 - `pilot_plan.csv`: expected concentrations. Mixtures contain SM +product =666.667 µM; mesitylene stays at 66.667 µM. Sequence: 0/10/50/90/100% product, analyte-free IS blank immediately after the high-product sample, then an independently prepared 50/50 repeat.
 - `pilot_injection_map.csv`, `calibration_injection_map.csv`, `absence_review_template.csv`: fill actual method/sequence and reviewer details locally.
 - `practice_report.json`, labelled `synthetic/`: mock vendor exports → 14-injection calibration → pilot replay, plus nine challenges. Synthetic reviews, methods and RTs are never real setup evidence.
 
-Run real pilot samples with the intended method, injection volume, wavelength and HTEL processing/export settings. Prefer a pre-hackathon run, or schedule during hold one if LC access permits. Seven extra injections take nominally 11.9 min at a verified 1.7-min cycle. They are separate from the 14 calibration injections and 71 reaction samples; the reaction schedule/configuration is unchanged.
+Run real pilot samples with the intended method, injection volume, wavelength and HTEL processing/export settings. Prefer a pre-hackathon run, or schedule during hold one if LC access permits. Seven extra injections take nominally 11.9 min at a verified 1.7-min cycle. They are separate from the 14 calibration injections and 71 reaction samples; the reaction counts remain unchanged and the optional seven injections are included in the timing ledger during hold one.
 
 After acquiring actual files, record reviewed zero-analyte absences and run:
 

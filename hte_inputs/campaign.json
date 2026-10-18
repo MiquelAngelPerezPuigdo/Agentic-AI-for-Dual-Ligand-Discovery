@@ -17,7 +17,7 @@
     "reaction_minutes": 240,
     "thermal_equilibration_minutes": 0,
     "rpm": 500,
-    "atmosphere": "air; ligand stocks prepared in glovebox",
+    "atmosphere": "air",
     "preloaded_internal_standard": {
       "identity": "mesitylene",
       "cas": "108-67-8",
@@ -56,7 +56,7 @@
         "reason": "AdJohnPhos delivery delayed; 48 pairs then 22 new pairs + one L17 single reference"
       }
     ],
-    "round2_predose_mode": "manual_offdeck",
+    "round2_predose_mode": "robot_before_round1",
     "round2_ligand_caps": {
       "L03": 4
     }
@@ -143,10 +143,10 @@
     "assay_fractions": {},
     "margin_factor": 1.5,
     "tube_dead_ul": 100,
-    "reservoir_dead_ul": 1500,
+    "reservoir_dead_ul": 2000,
     "tube_max_fill_ul": 1950,
     "reservoir_max_fill_ul": 11900,
-    "substrate_storage_container": "4 mL capped glass vial; aliquot R1 into the configured 2 mL working tube",
+    "substrate_storage_container": "Compatible bulk source in labeled robot preparation carrier; robot fills retained 2 mL working source",
     "reservoir_source_pools": {
       "workup": [
         "A4",
@@ -272,8 +272,10 @@
       "1": 0,
       "2": 0
     },
-    "handling_status": "One LC plate per round, explicitly no R1 split. The 72 min workup allowance remains unmeasured. Per-export workup_timing.json derives pumping/waits/shaking from actual transfer operations and lists excluded motion/manual handling; it is a subtotal, not a complete duration.",
-    "presentation_status": "Use the deadline-derived operating budget as a target allocation, not a validated completion-time forecast. Confirm the full injection cycle and complete handling plan locally. Calibration and R2 combined SM/IS predosing run during hold one; R2 physical changeover can overlap R1 LC after sampling. One LC plate per round; no R1 split."
+    "handling_status": "Planning allowance only. Robot stock preparation is inside the campaign; calibration and workup-fluid preparation run during the reaction holds.",
+    "presentation_status": "Two 4 h reaction holds and an approximately 4 h non-reaction allocation. Twelve hours is a target; runtime is recorded and an overrun does not block export.",
+    "enforce_deadline": false,
+    "stock_preparation_total_minutes": 60
   },
   "validation": {
     "chemistry_confirmed": true,
@@ -290,7 +292,53 @@
     "round2_predose_storage_validated": false,
     "homogeneity_study_waived_by_user": true,
     "staged_lc_timing_confirmed": false,
-    "lc_plate_workflow_validated": false
+    "lc_plate_workflow_validated": false,
+    "robot_stock_preparation_validated": false
   },
-  "schema_version": 4
+  "schema_version": 5,
+  "automation": {
+    "enabled": true,
+    "concentration_basis": "nominal_solvent_addition",
+    "approximation_accepted": true,
+    "bulk_labware": "opentrons_10_tuberack_falcon_4x50ml_6x15ml_conical",
+    "bulk_definition_path": null,
+    "bulk_wells": [
+      "A1",
+      "B1",
+      "C1",
+      "A2",
+      "B2",
+      "C2"
+    ],
+    "bulk_dead_ul": 100,
+    "bulk_max_fill_ul": 12000,
+    "direct_stock_ids": [
+      "L03"
+    ],
+    "raw_definition_path": "hte_inputs/labware/axygen_8_reservoir_30000ul.json",
+    "neat_is_source": {
+      "slot": 1,
+      "well": "C2",
+      "minimum_load_ul": 500
+    },
+    "neat_is_density_g_ml": 0.864,
+    "neat_is_assay_fraction": 1,
+    "initial_acid_source": {
+      "slot": 4,
+      "well": "D3"
+    },
+    "calibration_matrix_wells": [
+      "A1",
+      "A3"
+    ],
+    "mix_cycles": 8,
+    "mix_ul": 250,
+    "calibration_during_round1_hold": true,
+    "workup_fluids_during_hold": true,
+    "bulk_container_status": "Provisional standard-library 15 mL conical source geometry. Confirm solvent compatibility for campaign-length contact or supply the exact compatible glass-container rack JSON before live release.",
+    "preparation_large_pipette": "p1000_single_gen2",
+    "preparation_manifest_path": "local_data/stock-prep/preparation_manifest.json",
+    "prepare_optional_pilot": false,
+    "stock_preparation_atmosphere": "Air on OT-2; weigh ligands in glovebox and retain original reagent bottles there"
+  }
 }

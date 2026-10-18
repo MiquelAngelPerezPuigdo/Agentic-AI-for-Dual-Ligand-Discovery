@@ -109,6 +109,10 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
         write_csv(out/"round1_selection.csv", trace)
         coverage = ligand_coverage(inventory, design)
         write_csv(out/"round1_ligand_coverage.csv", coverage)
+        from .preparation import export_stock_preparation
+        prep=export_stock_preparation(config,inventory,design,out/"stock-preparation")
+        config["automation"]["preparation_manifest_path"]=str(prep/"preparation_manifest.json")
+        write_json(out/"campaign.json",config)
         dosing = export(config, inventory, design, out/"round1")
         calibration, peaks = fixtures(config, dosing)
         write_csv(out/"calibration.csv", calibration)
@@ -151,6 +155,9 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
     from .analytical_practice import run as practice_analytics
     analytical_report=practice_analytics(out/"analytical_practice",config_path)
     report = {"synthetic_only": True, "paid_api_calls": 0, "physical_execution_allowed": False,
+              "robot_stock_preparation":True,"robot_calibration_preparation":True,"robot_workup_fluid_preparation":True,
+              "robot_R2_refill":(out/"round2/refill_stocks.py").exists(),
+              "stock_concentration_basis":"nominal_solvent_addition",
               "prompt_caching_enabled": prompt_cache_settings(scoring_config["llm"])["enabled"],
               "live_cache_hits_verified": False,
               "actual_lm_embeddings": {"pairs": len(features), "dimensions": features.shape[1]},

@@ -209,6 +209,7 @@ def test_live_export_requires_analytics_and_a_plan_within_the_deadline(data, fau
         message = "LOQ"
     elif fault == "over_deadline":
         config["timing"]["dosing_total_minutes"] = 80
+        config["timing"]["enforce_deadline"] = True
         message = "deadline"
     else:
         config["analytics"]["method_id"] = "SYNTHETIC_2MIN"
@@ -238,10 +239,11 @@ def test_live_round2_export_requires_history_and_excludes_round1_pairs(files, da
     assert not (tmp_path/"repeated").exists()
 
 
-def test_live_round2_export_uses_the_complete_verified_history(files, data, tmp_path):
+def test_live_round2_export_uses_the_complete_verified_history(files, data, tmp_path,actual_stock_preparation):
     config, inv, history = data
     config = released_fixture(config)
     second = read_csv(files/"round2_design.csv")
+    actual_stock_preparation(config,inv,read_csv(files/"round1_design.csv"))
     export(config, inv, second, tmp_path/"round2", live=True, history=history)
     manifest = read_json(tmp_path/"round2/export_manifest.json")
     assert manifest["live"] and manifest["history_digest"]

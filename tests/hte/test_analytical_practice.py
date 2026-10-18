@@ -28,7 +28,7 @@ def test_raw_calibration_to_pilot_replay_and_hidden_area_biases(practice):
     for name in ("hidden_interference","unreported_area_loss"):
         assert cases[name]["area_only_qc_pass"] and not cases[name]["pilot_pass"]
     recipes=read_csv(out/"pilot_preparation.csv")
-    assert all(sum(float(r[k]) for k in ("SM_10mM_ul","product_10mM_ul","mesitylene_5mM_ul","matched_matrix_ul"))==pytest.approx(1000) for r in recipes)
+    assert all(sum(float(r[k]) for k in ("SM_ul","P_ul","is_ul","matrix_ul"))==pytest.approx(1000) for r in recipes)
     assert all(not r["method_id"] for r in read_csv(out/"pilot_injection_map.csv"))
     assert len(read_csv(out/"calibration_injection_map.csv"))==14
 

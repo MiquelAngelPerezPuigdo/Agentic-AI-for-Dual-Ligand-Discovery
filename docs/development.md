@@ -11,6 +11,7 @@
 | `hte/analytical_stocks.py` | Small independent analytical masters, with a practical minimum weighing and explicit containers |
 | `hte/analytical_practice.py`, `scripts/mock-hplc-trials.py` | Calibration/pilot replay and visual mock-LC fault challenges |
 | `scripts/simulate-lc-separation.py` | Uncalibrated column/gradient scenarios; separate from campaign quantification |
+| `hte/preparation.py` | Weighed charges → robot solvent addition, stock mixing/source filling; standard/workup preparation during holds; depletion-aware R2 refills |
 | `hte/planning.py`, `protocols.py` | Stoichiometry, reserves, deck loads, timing and standalone local OT-2 Python |
 | `hte/workflow.py` | Complete LC event → measured-feedback scoring → next batch, with replay guards |
 | `hte/transfer.py`, `scripts/hte-return-package.py` | Exact input snapshots and a private, hashed archive for knowledge transfer |
@@ -50,7 +51,7 @@ python -m hte.cli export \
   --output output/round1-preview
 ```
 
-This writes self-contained guarded Python, stock preparation/deck loads, LC mappings and predose instructions. `pd_material_budget.json` reconciles the single 90 mg bulk across both rounds; zero-mass Pd CSV rows are aliquots. `catalyst_mixing_timing.json` reports additional pumping/waits from source remixing; include it within measured dosing times. Live release uses the [local operator workflow](start-here.md); never edit generated Python to bypass its guard.
+This writes self-contained guarded Python, stock preparation/deck loads, LC mappings and predose instructions. `pd_material_budget.json` reconciles the single 90 mg bulk across both rounds; zero-mass Pd CSV rows are aliquots. `catalyst_mixing_timing.json` reports additional pumping/waits from source remixing; include it within measured dosing times. Generate actual-weight stock preparation with `hte prepare-stocks`; its manifest links initial fills to R2 refill calculations. A stock-preparation p1000 single on the right is replaced by the p300 multi once before R1. Live release uses the [local operator workflow](start-here.md); never edit generated Python to bypass its guard.
 
 `preview-prompts --output output/prompt-preview` exports exact requests with no API call. `score` is for a deliberately new paid campaign; normal setup reuses the prepared first batch. Keep corrected imports in fresh output folders and inspect uncertain request records before retrying.
 

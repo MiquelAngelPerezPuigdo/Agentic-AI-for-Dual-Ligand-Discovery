@@ -62,6 +62,10 @@ def run(output, inventory_path, config_path="hte_inputs/campaign.json"):
     design1 = make_design(config, inventory, pairs, ranking, selection, 1)
     write_csv(out/"round1_design.csv", design1)
     write_csv(out/"round1_ligand_coverage.csv", ligand_coverage(inventory, design1))
+    from .preparation import export_stock_preparation
+    prep=export_stock_preparation(config,inventory,design1,out/"stock-preparation")
+    config["automation"]["preparation_manifest_path"]=str(prep/"preparation_manifest.json")
+    write_json(out/"campaign.json",config)
     dose1 = export(config, inventory, design1, out/"round1")
     cal, peaks = fixtures(config, dose1)
     write_csv(out/"calibration.csv", cal)
@@ -74,7 +78,7 @@ def run(output, inventory_path, config_path="hte_inputs/campaign.json"):
     ranking2 = [r for r in ranking if r["pair_id"] not in tested]
     design2 = make_design(config, inventory, remaining, ranking2, [], 2, history=design1)
     write_csv(out/"round2_design.csv", design2)
-    dose2 = export(config, inventory, design2, out/"round2")
+    dose2 = export(config, inventory, design2, out/"round2",history=dose1)
     _, peaks2 = fixtures(config, dose2)
     write_csv(out/"round2_peaks.csv", peaks2)
     complete_export(config, out/"round2_peaks.csv", out/"round2/dosing.csv", out/"round2_peaks.ready.json")

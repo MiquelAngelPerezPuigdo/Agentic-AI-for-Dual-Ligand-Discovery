@@ -15,24 +15,12 @@ def prepare(config, output):
     out = Path(output)
     from .analytical_stocks import preparation
     write_csv(out/"analytical_stock_preparation.csv", preparation(config))
-    liquid = config["liquids"]
-    maximum = (config["chemistry"]["substrate_molarity_M"] * config["chemistry"]["reaction_volume_ul"]
-               * 1e6 / (config["chemistry"]["reaction_volume_ul"]+liquid["workup_ul"])
-               * liquid["aliquot_ul"]/(liquid["aliquot_ul"]+liquid["diluent_ul"]))
-    is_uM = config["analytics"]["internal_standard_final_uM"]
-    plan, recipes, mapping = [], [], []
-    # Blank immediately after the highest-product sample; repeat prepared independently.
-    for i, fraction in enumerate((0, 0.1, 0.5, 0.9, 1, None, 0.5), 1):
-        key = f"PILOT-{i:02d}"
-        role = "carryover_blank" if fraction is None else "independent_repeat" if i == 7 else "mixture"
-        sm = maximum*(1-fraction) if fraction is not None else 0
-        product = maximum*fraction if fraction is not None else 0
-        plan.append({"sample_id":key,"role":role,"substrate_uM":sm,"product_uM":product,
-                     "internal_standard_uM":is_uM})
-        recipes.append({"sample_id":key,"SM_10mM_ul":sm/10,"product_10mM_ul":product/10,
-                        "mesitylene_5mM_ul":is_uM/5,"matched_matrix_ul":1000-(sm+product)/10-is_uM/5,
-                        "final_ul":1000,"preparation":"independent check masters; manual preparation"})
-        mapping.append({"inj_no":i,"sample_id":key,"method_id":config["analytics"].get("method_id") or ""})
+    from .preparation import pilot_recipes
+    plan,recipes,mapping=[],[],[]
+    for i,row in enumerate(pilot_recipes(config),1):
+        plan.append({key:row[key] for key in ("sample_id","role","substrate_uM","product_uM","internal_standard_uM")})
+        recipes.append(dict(row,final_ul=1000,preparation="Robot preparation from independent CHECK masters; enable automation.prepare_optional_pilot BEFORE stock preparation"))
+        mapping.append(dict(inj_no=i,sample_id=row["sample_id"],method_id=config["analytics"].get("method_id") or "",lc_plate_id=row["plate_id"],well=row["well"]))
     write_csv(out/"pilot_plan.csv",plan)
     write_csv(out/"pilot_preparation.csv",recipes)
     write_csv(out/"pilot_injection_map.csv",mapping)

@@ -33,6 +33,12 @@ def main():
     e.add_argument("--live", action="store_true")
     e.add_argument("--stage", choices=("all", "dose_and_react", "workup"), default="all")
     e.add_argument("--history", help="First-round dosing.csv; required for live round-two export")
+    e.add_argument("--preparation",help="Stock preparation_manifest.json from actual weighed charges")
+    prep=commands.add_parser("prepare-stocks",help="Export robot solvent addition, mixing and source filling from weighed chemicals")
+    prep.add_argument("--design",default="campaigns/hackathon2026/round1_design.csv")
+    prep.add_argument("--charges",help="Completed weighed_charges_template.csv; actual weights, not target weights")
+    prep.add_argument("--output",required=True)
+    prep.add_argument("--live",action="store_true")
     a = commands.add_parser("analyze")
     for key in ["dosing", "peaks", "ready", "calibration", "output"]:
         a.add_argument("--"+key, required=True)
@@ -153,10 +159,14 @@ def main():
             print(args.output)
             print(f"Ligand coverage in pair wells: {sum(row['covered'] for row in coverage)}/{len(inv)}; "
                   f"{sum(row['llm_floor_override'] for row in trace)} LLM-floor overrides")
+        elif args.command == "prepare-stocks":
+            from .preparation import export_stock_preparation
+            print(export_stock_preparation(config,inv,read_csv(args.design),args.output,
+                charges=read_csv(args.charges) if args.charges else None,live=args.live))
         elif args.command == "export":
             from .protocols import export
             export(config, inv, read_csv(args.design), args.output, live=args.live,
-                   history=read_csv(args.history) if args.history else None, stage=args.stage)
+                   history=read_csv(args.history) if args.history else None, stage=args.stage,preparation_path=args.preparation)
             print(args.output)
         elif args.command == "normalize":
             from .analytics import normalize_export

@@ -102,7 +102,7 @@ def pd_material_budget(config, operations, reserve_round2=True):
             "full_campaign_deck_ul":campaign_loads, "bulk_transfer_reserve_ul":stock["bulk_transfer_reserve_ul"],
             "unallocated_bulk_ul":volume-campaign_loads,
             "source_loads":[{"slot":key[0], "well":key[1], "load_ul":value, "consumption_ul":usage[key]} for key,value in loads.items()],
-            "instruction":"Weigh Pd ONCE before R1. Correct final volume for assay, never increase the 90 mg mass. R2 aliquots come from this same bulk."}
+            "instruction":"Weigh Pd ONCE before R1. Use assay-corrected nominal solvent addition, never increase the 90 mg mass. The robot fills/refills both rounds from this same bulk."}
 
 
 def reservoir_source_pools(config):
@@ -123,6 +123,8 @@ def reservoir_source_pools(config):
 
 def required_validations(config):
     required = [*VALIDATIONS]
+    if config.get("automation", {}).get("enabled"):
+        required.append("robot_stock_preparation_validated")
     if config["pipetting"].get("reuse_tips"):
         required.append("noncontact_tip_reuse_validated")
     if config["liquids"].get("internal_standard_addition_stage") == "reaction_stock":
@@ -168,8 +170,8 @@ def analytical_summary(config):
 
 
 def validate_config(config, live=False, live_scope="all"):
-    if config.get("schema_version") != 4:
-        raise ValueError("Use campaign schema_version 4: fixed 90 mg Pd stock, low-dead-volume tubes and catalyst source mixing")
+    if config.get("schema_version") != 5:
+        raise ValueError("Use campaign schema_version 5: robotic stock preparation, standards and R2 predoses")
     if live_scope not in ("all", "first_reaction"):
         raise ValueError("Unknown live validation scope")
     reservoir_source_pools(config)
@@ -209,8 +211,8 @@ def validate_config(config, live=False, live_scope="all"):
         raise ValueError("Combined SM/IS concentrations do not match the required IS loading")
     if config["timing"]["evaporation_total_minutes"] != 0:
         raise ValueError("No evaporation time belongs in the retained-toluene workflow")
-    if config["design"].get("round2_predose_mode") != "manual_offdeck":
-        raise ValueError("One reaction block requires manual off-deck round-two substrate predosing")
+    if config["design"].get("round2_predose_mode") != "robot_before_round1":
+        raise ValueError("Use robot_before_round1 predosing in the reused reaction block")
     if not isinstance(config["robot"].get("reaction_multichannel"), bool):
         raise ValueError("Specify reaction_multichannel explicitly from the actual rack geometry")
     single, capacity = single_pipette(config)
@@ -313,7 +315,7 @@ def validate_config(config, live=False, live_scope="all"):
         if any(str(config["analytics"].get(key)).upper().startswith("SYNTHETIC") for key in ("method_id", "channel")):
             raise ValueError("Synthetic LC settings cannot release live protocols")
         timing = schedule(config)
-        if not timing["fits_planned_estimate"]:
+        if config["timing"].get("enforce_deadline", True) and not timing["fits_planned_estimate"]:
             raise ValueError(f"Configured timing allowances exceed the competition deadline: {timing['planned_total_minutes']:g} > {timing['deadline_minutes']:g} min; replace allowances with the timed local plan")
     return config
 
@@ -459,6 +461,11 @@ def transfer_operations(config, inventory, rows):
         for w, volume in remaining.items():
             add(stage, reagent, 2, source, target_slot, [w], volume)
 
+    if int(rows[0]["round"]) == 1 and config["design"].get("round2_predosed"):
+        n = config["chemistry"]["substrate_molarity_M"]*config["chemistry"]["reaction_volume_ul"]
+        common("round2_predose", "substrate_stock", "A1", {
+            w:n/config["liquids"]["substrate_stock_mM"]*1000
+            for w in reaction_wells(config)[:config["design"]["round2_total"]]})
     common("substrate", "substrate_stock", "A1", {r["well"]: r["sm_stock_ul"] for r in rows})
     for op in operations:
         if op["reagent"] == "substrate_stock":
@@ -586,20 +593,20 @@ def stock_plan(config, inventory, operations, reserve_round2=True):
                         "round2_reserve_ul": reserve, "dead_ul": dead, "prepare_ul": prepare,
                         "mass_mg": mass,
                         "source_slot": row["source_slot"], "source_well": row["source_well"],
-                        "on_deck_ul": math.ceil((usage[key] + dead)/10)*10,
+                        "on_deck_ul": prepare if key in config.get("automation",{}).get("direct_stock_ids",[]) and reserve_round2 else math.ceil((usage[key] + dead)/10)*10,
                         "source_capacity_ul": config["stock_preparation"]["tube_max_fill_ul"],
                         "capacity_ok": usage[key] + dead <= config["stock_preparation"]["tube_max_fill_ul"]})
     # SM uses approximately 10% extra, rounded up to practical 0.5 mL preparations.
     # Working-tube dead volume and discarded surplus fit inside that budget.
     sm_per_well = n/liquid["substrate_stock_mM"]*1000
-    sm_nominal = sum(op["volume_ul_per_channel"]*op["channels"] for op in operations if op["stage"] == "substrate")
-    sm_reserve = reserve_wells*sm_per_well
+    sm_nominal = sum(op["volume_ul_per_channel"]*op["channels"] for op in operations if op["stage"] in ("substrate","round2_predose"))
+    sm_reserve = 0 if any(op["stage"] == "round2_predose" for op in operations) else reserve_wells*sm_per_well
     if sm_nominal or sm_reserve:
         sm_prepare = math.ceil((sm_nominal+sm_reserve)*finite(config["stock_preparation"]["substrate_margin_factor"], "SM preparation margin", 1)/500)*500
         sm_dead = config["stock_preparation"]["tube_dead_ul"]
         sm_load = math.ceil((usage["substrate_stock"]+sm_dead)/10)*10
         if sm_load+sm_reserve > sm_prepare+1e-8:
-            raise ValueError("SM 10% budget cannot cover working-tube dead volume, tips and manual R2 predoses")
+            raise ValueError("SM budget cannot cover source losses and robot R2 predoses")
         records.append({"reagent":"substrate_stock", "name":"Combined SM + mesitylene; retained toluene",
             "solvent":"toluene", "stock_mM":liquid["substrate_stock_mM"],
             "protocol_consumption_ul":usage["substrate_stock"], "round2_reserve_ul":sm_reserve,
@@ -660,13 +667,26 @@ def stock_plan(config, inventory, operations, reserve_round2=True):
             record["storage_container"] = "2 mL working tube; aliquot existing Pd bulk only"
         record["internal_standard_mM"] = liquid["internal_standard_stock_mM"] if key == "substrate_stock" else ""
         record["internal_standard_mass_mg"] = corrected_mass("internal_standard",liquid["internal_standard_stock_mM"]*volume*liquid["internal_standard_molecular_weight_g_mol"]/1e6) if key == "substrate_stock" else ""
+        if config.get("automation",{}).get("enabled"):
+            if key in ("workup","LC_diluent"):
+                record.update(storage_container="Slot 2 reservoir; robot prepares from raw solvents during hold",
+                              preparation_action="NO manual premixing; use the raw-solvent loading CSV")
+            elif key in config["automation"]["direct_stock_ids"]:
+                record.update(storage_container="Original 2 mL working tube; retained across both rounds",
+                              preparation_action="Weigh into working tube once; robot adds solvent and mixes; DO NOT replace for R2")
+            else:
+                record.update(storage_container="Compatible bulk source container in labeled preparation carrier",
+                              preparation_action="Robot prepares from weighed charge and fills working tubes; R2 uses existing bulk ONLY")
+            if not reserve_round2:
+                record["mass_mg"]=0
+                record["preparation_action"]="NO new weighing: robot refills from original stock; retain direct stocks"
     return records
 
 
 def tip_budget(operations):
     count = defaultdict(int)
     for op in operations:
-        stage = "dose" if op["stage"] in ("substrate", "assembly", "internal_standard") else "workup"
+        stage = "dose" if op["stage"] in ("substrate", "assembly", "internal_standard", "round2_predose") else "workup"
         if not op.get("retained_tip_from_previous"):
             count[f"{stage}_{op['pipette']}"] += op["channels"]
     return dict(count)
@@ -688,7 +708,7 @@ def catalyst_mixing_timing(config, operations):
             "replaced_tip_conditioning_minutes":replaced/60,
             "net_added_programmed_minutes":(seconds-replaced)/60,
             "stock_consumed_by_mixing_ul":0, "physical_duration_measured":False,
-            "instruction":"Include source mixing within measured dosing times. This subtotal excludes motion and manual stock preparation."}
+            "instruction":"Include source mixing within measured dosing times. This subtotal excludes motion and initial robot stock preparation."}
 
 
 def workup_timing(config, operations):
@@ -752,14 +772,17 @@ def schedule(config):
     parallel = t.get("calibration_injections_during_round1_reaction", 0)
     if type(extra) is not int or type(parallel) is not int or extra < 0:
         raise ValueError("Injection counts must be nonnegative integers")
+    if config.get("automation",{}).get("prepare_optional_pilot"):
+        extra+=7;parallel+=7
     injections = sum(counts) + extra
     cycle = finite(t["injection_cycle_minutes"], "full injection cycle time", 0.00001)
-    if not 0 <= parallel <= t["additional_injections"] or parallel*cycle > config["chemistry"]["reaction_minutes"]:
+    if not 0 <= parallel <= extra or parallel*cycle > config["chemistry"]["reaction_minutes"]:
         raise ValueError("Calibration overlap exceeds available first-reaction window")
     analysis = (injections-parallel) * cycle
     overhead = sum(finite(t[key], key, 0) for key in ["dosing_total_minutes", "evaporation_total_minutes",
                  "heat_ramp_total_minutes", "cooling_total_minutes", "workup_total_minutes",
                  "decision_minutes", "other_minutes"])
+    overhead += finite(t.get("stock_preparation_total_minutes",0), "robot stock preparation allowance", 0)
     if t["heat_ramp_total_minutes"] < 2*config["chemistry"].get("thermal_equilibration_minutes", 0):
         raise ValueError("Heating overhead omits the configured equilibration for both rounds")
     finite(t["deadline_minutes"], "competition deadline", 0.00001)
@@ -787,7 +810,9 @@ def schedule(config):
         "calibration_minutes_parallel_to_round1_hold": parallel*cycle,
         "fixed_tasks_fit_window": reaction+analysis <= t["deadline_minutes"],
         "status": "Target allocation; complete physical timing has not been validated",
-        "interpretation": "Remaining time is a cap for ALL dosing, evaporation, heating/cooling, workups, manual handling, decisions, final analysis and contingency. It is not an estimate of those tasks or evidence that they fit."
+        "deadline_enforced":t.get("enforce_deadline",True),
+        "non_reaction_allocation_minutes":t["deadline_minutes"]-reaction,
+        "interpretation": "Eight hours of reaction holds leave an approximately four-hour non-reaction allocation, including LC. This is a planning target; physical duration is recorded and the target is advisory unless enforce_deadline is enabled."
     }
     return {"reaction_minutes": reaction, "lc_minutes": analysis, "overhead_minutes": overhead,
             "injections": injections, "minimum_reaction_plus_lc_minutes": reaction + analysis,
