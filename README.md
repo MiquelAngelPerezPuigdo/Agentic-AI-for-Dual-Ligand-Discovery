@@ -18,6 +18,10 @@ The [four-page operator reference](docs/HTE-operator-handbook.pdf) covers the ex
 
 **30 available ligands, 435 distinct unordered pairs.** Round one tests **48 pairs covering every ligand**. Round two tests **22 new pairs + one L17 tBuBrettPhos single-ligand reference**. One 48-position Para-Dox block is reused with 71 fresh 2 mL glass vials and manually handled screw caps.
 
+![OT-2 deck map with working stock positions, off-deck bulk stocks and manual reaction-block and LC-plate moves](docs/figures/ot2-deck-setup.svg)
+
+[Download the setup figure as PNG](docs/figures/ot2-deck-setup.png). The deck map shows the pipetting positions; the block and LC plate occupy the heater-shaker sequentially.
+
 Each reaction: **250 µL, 0.1 M substrate, 95 °C /4 h, 6 mol% each ligand, 12 mol% Pd(COD)(DQ)**. Dose **25 µL combined 1 M SM /100 mM mesitylene in toluene**, then 75 µL each of two **20 mM ligand stocks** and 75 µL **40 mM Pd**. Solvent is retained. Prepare **one 90 mg Pd bulk** (40 mM, 5.94 mL at 100% assay); keep **10 mg for scope**. Low-dead-volume tube sources and automatic catalyst remixing are included. RockPhos L03 is limited to **four R2 wells**, with **10 mg available**. [Canonical configuration](hte_inputs/campaign.json), [remaining HTEL setup facts](docs/hte-questions.md).
 
 The **[real initial batch is prepared](campaigns/hackathon2026/round1_design.csv)** using 50/50 Claude rank and T5 embedding diversity. Both scoring stages include ligand identities/SMILES and 17 available single-ligand SI yields. The second selection uses Claude with all 48 measured first-round results. [Frozen scores and selection audit](campaigns/hackathon2026/README.md).

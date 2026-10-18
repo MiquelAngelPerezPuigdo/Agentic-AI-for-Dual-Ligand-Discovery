@@ -65,6 +65,8 @@ Open `output/initialization-review/initialization-review.html` for hoverable pai
 
 The compact [published overview](initialization-review.md) stores only Markdown and SVG. Deliberately refresh those two files with `--publish-docs` after reviewing a newly generated report. Full interactive outputs remain in ignored `output/`.
 
+Rebuild the [OT-2 setup figure](figures/ot2-deck-setup.svg) with `python scripts/draw-deck-setup.py` (requires `.[reports]`). It reads current ligand positions and the frozen R1 Pd stock budget, and writes editable SVG plus a print-resolution PNG in `docs/figures/`. Review labels and manual routes after changing the campaign setup; this schematic does not validate mechanical fit.
+
 ## Return the campaign to Miquel
 
 The staff LC helper snapshots effective configuration, inventory, SI evidence (for selection), installed versions and calibration before processing. Ingestion preserves exact source exports, injection maps and dosing tables under `ingestion/sources/`; normalization does not discard the archived all-channel export. Iterations also retain effective settings, normalized source tables, yields/QC, exact Claude requests and responses, repeated scores/rankings, usage/cost/cache records, selection and dosing CSVs, and any released protocols. Failed attempts remain available; use fresh folders for corrected imports, and review uncertain API attempts before retrying.
