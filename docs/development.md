@@ -50,7 +50,7 @@ python -m hte.cli export \
   --output output/round1-preview
 ```
 
-This writes self-contained guarded Python, stock preparation/deck loads, LC mappings and predose instructions. Live release uses the [local operator workflow](start-here.md); never edit generated Python to bypass its guard.
+This writes self-contained guarded Python, stock preparation/deck loads, LC mappings and predose instructions. `pd_material_budget.json` reconciles the single 90 mg bulk across both rounds; zero-mass Pd CSV rows are aliquots. `catalyst_mixing_timing.json` reports additional pumping/waits from source remixing; include it within measured dosing times. Live release uses the [local operator workflow](start-here.md); never edit generated Python to bypass its guard.
 
 `preview-prompts --output output/prompt-preview` exports exact requests with no API call. `score` is for a deliberately new paid campaign; normal setup reuses the prepared first batch. Keep corrected imports in fresh output folders and inspect uncertain request records before retrying.
 

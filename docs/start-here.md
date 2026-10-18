@@ -1,6 +1,6 @@
 # Local pipeline
 
-The **initial 48 pairs are ready** in `campaigns/hackathon2026/round1_design.csv`. Python calculates calibrated yields; Claude selects R2. Staff use the [bench sheet](HTE-staff-checklist.pdf).
+The **initial 48 pairs are ready** in `campaigns/hackathon2026/round1_design.csv`. Python quantifies yields; Claude selects R2. Staff use the [bench sheet](HTE-staff-checklist.pdf).
 
 ## Set up before the clock
 
@@ -14,7 +14,7 @@ cp -n anthropic.key.example anthropic.key
 chmod 600 anthropic.key
 ```
 
-Use **schema 3**; replace older preparation settings/protocols, preserving measured LC facts.
+Use **schema 4**: 90 mg Pd, tube sources and remixing. Replace older settings/protocols; preserve measured LC facts.
 
 Put the raw Claude key in **`anthropic.key`**; preserve any existing key. Never send it to the robot, Git or email.
 
@@ -59,6 +59,6 @@ After all 23 R2 injections, run the helper with **`final`**, R2 `dosing.csv`, th
 
 ## Return the data
 
-Imports save original exports/maps, calibration and settings. Outputs retain yields/QC, Claude requests/responses/rankings/cost/cache, doses and protocols. Keep rejected measurements too.
+Imports retain source files/settings, calibration, yields/QC, Claude requests/responses/rankings/cost/cache, doses and protocols. Keep rejected measurements.
 
-Copy robot JSON logs into `local_data/robot_logs/`, raw LC/MS into `local_data/instrument_raw/`, and stock assays, times/deviations into `local_data/run-notes.txt`. Stop writers; run **`python scripts/hte-return-package.py`**. Send **`transfer/hte-results.zip` privately**: code, local data, all output and file hashes; credentials excluded. Missing external records are reported. Git alone does not preserve run data.
+Copy robot JSON to `local_data/robot_logs/`, raw LC/MS to `local_data/instrument_raw/`, and stock assays/times/deviations to `local_data/run-notes.txt`. Stop writers; run **`python scripts/hte-return-package.py`**. Send **`transfer/hte-results.zip` privately**: code, local data, all output and hashes; no keys. External instrument files must be copied; Git alone does not preserve run data.

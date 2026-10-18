@@ -134,7 +134,10 @@
     "p300_single_aspirate_ul_s": 50,
     "p300_single_dispense_ul_s": 100,
     "workup_aspirate_ul_s": 150,
-    "workup_dispense_ul_s": 200
+    "workup_dispense_ul_s": 200,
+    "catalyst_mix_cycles": 2,
+    "catalyst_mix_max_ul": 100,
+    "catalyst_mix_every_transfers": 8
   },
   "stock_preparation": {
     "assay_fractions": {},
@@ -162,10 +165,32 @@
     "substrate_source_slot": 4,
     "substrate_source_well": "D2",
     "available_mass_mg": {
-      "L03": 10
+      "L03": 10,
+      "Pd": 90
     },
     "analytical_minimum_weigh_mg": 1,
-    "analytical_margin_factor": 1.1
+    "analytical_margin_factor": 1.1,
+    "fixed_stock_mass_mg": {
+      "Pd": 90
+    },
+    "scope_reserved_mass_mg": {
+      "Pd": 10
+    },
+    "bulk_transfer_reserve_ul": 100,
+    "pd_source_pool": [
+      {
+        "slot": 4,
+        "well": "A3"
+      },
+      {
+        "slot": 4,
+        "well": "B3"
+      },
+      {
+        "slot": 4,
+        "well": "C3"
+      }
+    ]
   },
   "llm": {
     "model": "claude-opus-4-8",
@@ -267,5 +292,5 @@
     "staged_lc_timing_confirmed": false,
     "lc_plate_workflow_validated": false
   },
-  "schema_version": 3
+  "schema_version": 4
 }

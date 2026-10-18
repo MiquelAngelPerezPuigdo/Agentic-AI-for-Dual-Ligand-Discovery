@@ -1,8 +1,8 @@
 {
-  "created_utc": "2026-10-18T18:53:50.533934+00:00",
+  "created_utc": "2026-10-18T20:12:24.782158+00:00",
   "campaign": "hackathon2026-paradox48",
   "tests": {
-    "tests": 203,
+    "tests": 214,
     "failures": 0,
     "errors": 0,
     "skipped": 0
@@ -27,8 +27,9 @@
     "Fresh-tip mode, rack replacement and alternative p20 split transfers",
     "Actual SDK current_temperature branch exercised for both workup rounds; strict SDK hot-module cooling pause",
     "R2 new-vial uncapping checked before first aspiration",
-    "Schema 3 combined SM/IS in retained toluene, 20 mM ligands and 2 mL working tubes",
-    "Worst-case R2: 22 L17 pairs +reference, 1910 uL source fill; L03 hard cap and mass budget"
+    "Schema 4 combined SM/IS in retained toluene, 20 mM ligands and 2 mL working tubes",
+    "Worst-case R2: 22 L17 pairs +reference, 1910 uL source fill; L03 hard cap and mass budget",
+    "Single 90 mg Pd bulk, 10 mg scope reserve, rack-tube sources and submerged catalyst-source recirculation"
   ],
   "language_model_pair_embeddings": {
     "model": "google-t5/t5-base",
@@ -81,17 +82,17 @@
     "no_internal_standard_redose": true,
     "incomplete_export_ignored": true,
     "duplicate_event_ignored": true,
-    "next_dosing_csv": "feedback_loop/iteration-bede8c359d53156b/next_dosing.csv",
+    "next_dosing_csv": "feedback_loop/iteration-42a81afe7df0e4e8/next_dosing.csv",
     "cache_summaries": [
       "initial_scoring/cache_summary.json",
-      "feedback_loop/iteration-bede8c359d53156b/scoring/cache_summary.json"
+      "feedback_loop/iteration-42a81afe7df0e4e8/scoring/cache_summary.json"
     ],
     "result_interpretation": "Synthetic yields and mocked rankings validate data flow only.",
     "mocked_requests": 650,
     "initial_mock_requests": 340,
     "feedback_mock_requests": 310,
     "both_prompt_stages_include_17_SI_yields": true,
-    "source_report": "output/transfer-update/rehearsal/rehearsal_report.json"
+    "source_report": "output/pd90-update/rehearsal/rehearsal_report.json"
   },
   "live_initial_scoring": {
     "date": "2026-10-16",
@@ -493,33 +494,33 @@
         "round": 1,
         "stage": "dose_and_react",
         "passed": true,
-        "commands": 1556,
-        "source": "output/stock-update-final/r1/dose_and_react.py",
-        "log": "output/stock-update-final/r1-dose_and_react-simulation.json"
+        "commands": 1759,
+        "source": "output/pd90-update/r1/dose_and_react.py",
+        "log": "output/pd90-update/r1-dose_and_react-simulation.json"
       },
       {
         "round": 1,
         "stage": "workup",
         "passed": true,
         "commands": 1735,
-        "source": "output/stock-update-final/r1/workup.py",
-        "log": "output/stock-update-final/r1-workup-simulation.json"
+        "source": "output/pd90-update/r1/workup.py",
+        "log": "output/pd90-update/r1-workup-simulation.json"
       },
       {
         "round": 2,
         "stage": "dose_and_react",
         "passed": true,
-        "commands": 608,
-        "source": "output/stock-update-final/rehearsal/round2/dose_and_react.py",
-        "log": "output/stock-update-final/r2-dose_and_react-simulation.json"
+        "commands": 722,
+        "source": "output/pd90-update/rehearsal/round2/dose_and_react.py",
+        "log": "output/pd90-update/r2-dose_and_react-simulation.json"
       },
       {
         "round": 2,
         "stage": "workup",
         "passed": true,
         "commands": 858,
-        "source": "output/stock-update-final/rehearsal/round2/workup.py",
-        "log": "output/stock-update-final/r2-workup-simulation.json"
+        "source": "output/pd90-update/rehearsal/round2/workup.py",
+        "log": "output/pd90-update/r2-workup-simulation.json"
       }
     ],
     "frozen_initial_design_byte_identical": true,
@@ -615,5 +616,69 @@
     "public_git_contains_experimental_data": false,
     "all_data_automatic_capture": false,
     "test_report": "output/transfer-update/tests.xml"
+  },
+  "pd90_and_source_mixing_update": {
+    "date": "2026-10-18",
+    "schema_version": 4,
+    "new_regression_checks": 11,
+    "test_report": "output/pd90-update/tests.xml",
+    "paid_calls": 0,
+    "physical_robot_runs": 0,
+    "initial_design_byte_identical": true,
+    "live_release_flags_changed": false,
+    "pd_budget": {
+      "weigh_mg": 90,
+      "scope_reserved_mg": 10,
+      "assay_fraction": 1.0,
+      "stock_mM": 40,
+      "make_to_final_ul": 5939.809926082366,
+      "current_round_deck_ul": 3820,
+      "round2_reserved_deck_ul": 1830,
+      "full_campaign_deck_ul": 5650,
+      "bulk_transfer_reserve_ul": 100,
+      "unallocated_bulk_ul": 289.80992608236556,
+      "source_loads": [
+        {
+          "slot": 4,
+          "well": "A3",
+          "load_ul": 1910,
+          "consumption_ul": 1801.0
+        },
+        {
+          "slot": 4,
+          "well": "B3",
+          "load_ul": 1910,
+          "consumption_ul": 1801.0
+        }
+      ],
+      "instruction": "Weigh Pd ONCE before R1. Correct final volume for assay, never increase the 90 mg mass. R2 aliquots come from this same bulk."
+    },
+    "R2_deck_ul": 1830,
+    "R1_deck_ul_by_tube": [
+      1910,
+      1910
+    ],
+    "R1_source_locations": [
+      "4:A3",
+      "4:B3"
+    ],
+    "R2_fresh_source_location": "4:A3",
+    "two_rounds_stock_mass_sum_mg": 90,
+    "R2_new_solid_mass_mg": 0,
+    "assay_98_percent_covered": true,
+    "assay_95_percent_blocked": true,
+    "source_mix_cycles": 2,
+    "source_mix_max_ul": 100,
+    "source_mix_every_transfers": 8,
+    "source_mix_net_added_programmed_minutes": {
+      "round1": 2.2679999999999993,
+      "round2": 1.1409999999999996
+    },
+    "timing_scope": "Additional programmed pumping/waits only; motion and manual stock preparation excluded. Include within measured dosing allowances.",
+    "source_mix_net_stock_consumption_ul": 0,
+    "actual_SDK_same_source_mix_and_time_reconciled": true,
+    "mixing_location": "Capped bulk glass off deck; gentle capped working-tube inversion; no plastic rack on heater-shaker.",
+    "suspension_homogeneity_verified": false,
+    "PP_working_tubes": "Brief unheated dispensing only; capped glass for bulk storage."
   }
 }

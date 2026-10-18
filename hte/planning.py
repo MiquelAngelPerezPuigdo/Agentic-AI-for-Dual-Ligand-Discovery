@@ -11,7 +11,7 @@ VALIDATIONS = ["chemistry_confirmed", "plate_adapter_seal_validated", "solvent_p
                "lc_calibration_validated", "local_app_simulation_passed", "round2_predose_storage_validated",
                "injection_cycle_validated", "simultaneous_heating_capacity_validated"]
 
-COMMON_WELLS = {"substrate_stock":"A1", "Pd":"A2", "toluene":"A3", "workup":"A4", "LC_diluent":"A5",
+COMMON_WELLS = {"substrate_stock":"A1", "toluene":"A3", "workup":"A4", "LC_diluent":"A5",
                 "internal_standard":"A8"}
 
 
@@ -20,6 +20,89 @@ def single_pipette(config):
     if model not in ("p20_single_gen2", "p300_single_gen2"):
         raise ValueError("Choose a p20 or p300 single GEN2")
     return ("p20", 20) if model == "p20_single_gen2" else ("p300_single", 300)
+
+
+def pd_source_pool(config):
+    pool = config["stock_preparation"].get("pd_source_pool")
+    if not isinstance(pool, list) or not pool:
+        raise ValueError("Specify the Pd working-tube source pool")
+    sources = []
+    for entry in pool:
+        if (not isinstance(entry, dict) or type(entry.get("slot")) is not int or entry.get("slot") not in (1, 4)
+                or entry.get("well") not in {f"{r}{col}" for r in "ABCD" for col in range(1, 7)}):
+            raise ValueError("Pd source tubes must be valid positions in racks 1/4")
+        sources.append((entry["slot"], entry["well"]))
+    sm = config["stock_preparation"]
+    if len(set(sources)) != len(sources) or (sm["substrate_source_slot"], sm["substrate_source_well"]) in sources:
+        raise ValueError("Pd source tubes must be distinct and separate from combined SM/IS")
+    return sources
+
+
+def _route_pd(config, operations):
+    """Reserve every aspiration conservatively before same-source tip reuse."""
+    sources = pd_source_pool(config)
+    stock, p = config["stock_preparation"], config["pipetting"]
+    limit = stock["tube_max_fill_ul"]-stock["tube_dead_ul"]
+    index, used = 0, 0
+    for op in operations:
+        if op["reagent"] != "Pd":
+            continue
+        if op["channels"] != 1:
+            raise ValueError("Pd working tubes require single-channel dosing")
+        withdrawal = op["volume_ul_per_channel"]+p["surplus_ul"]
+        if withdrawal > limit:
+            raise ValueError("Pd aspiration exceeds usable working-tube volume")
+        if used+withdrawal > limit+1e-8:
+            index += 1
+            used = 0
+        if index >= len(sources):
+            raise ValueError("Pd source pool cannot cover this dosing plan")
+        op["source_slot"], op["source_well"] = sources[index]
+        used += withdrawal
+
+
+def _pd_loads_for_count(config, count):
+    c, p = config["chemistry"], config["pipetting"]
+    volume = c["substrate_molarity_M"]*c["reaction_volume_ul"]*c["pd_mol_percent"]/100/config["liquids"]["pd_stock_mM"]*1000
+    _, capacity = single_pipette(config)
+    strokes = math.ceil(volume/(capacity-p["air_gap_ul"]-p["surplus_ul"]))
+    operations = [{"reagent":"Pd", "channels":1, "volume_ul_per_channel":volume/strokes}
+                  for _ in range(count*strokes)]
+    _route_pd(config, operations)
+    usage, previous = defaultdict(float), None
+    for op in operations:
+        source = (op["source_slot"], op["source_well"])
+        usage[source] += op["volume_ul_per_channel"]+(0 if p["reuse_tips"] and source == previous else p["surplus_ul"])
+        previous = source
+    dead = config["stock_preparation"]["tube_dead_ul"]
+    return {source:math.ceil((volume+dead)/10)*10 for source,volume in usage.items()}
+
+
+def pd_material_budget(config, operations, reserve_round2=True):
+    stock, c = config["stock_preparation"], config["chemistry"]
+    mass = stock["fixed_stock_mass_mg"]["Pd"]
+    assay = finite(stock.get("assay_fractions", {}).get("Pd", 1), "Pd assay fraction", 0.000001, 1)
+    concentration = config["liquids"]["pd_stock_mM"]
+    volume = mass*assay/c["pd_molecular_weight_g_mol"]/concentration*1e6
+    usage = defaultdict(float)
+    for op in operations:
+        if op["reagent"] == "Pd":
+            usage[(op["source_slot"], op["source_well"])] += op["aspirated_ul_per_channel"]
+    loads = {key:math.ceil((value+stock["tube_dead_ul"])/10)*10 for key,value in usage.items()}
+    reserved = _pd_loads_for_count(config, config["design"]["round2_total"]) if reserve_round2 else {}
+    # R2 exports still verify the original full-campaign budget, not a fresh 90 mg preparation.
+    campaign_loads = sum(
+        sum(_pd_loads_for_count(config, config["design"][f"round{r}_total"]).values()) for r in (1, 2))
+    required = max(campaign_loads, sum(loads.values())+sum(reserved.values()))+stock["bulk_transfer_reserve_ul"]
+    if volume+1e-8 < required:
+        raise ValueError(f"Fixed {mass:g} mg Pd stock at assay {assay:g} cannot cover deck fills and reserves ({volume:.1f} < {required:.1f} uL); do not use the scope reserve")
+    return {"weigh_mg":mass, "scope_reserved_mg":stock.get("scope_reserved_mass_mg", {}).get("Pd", 0),
+            "assay_fraction":assay, "stock_mM":concentration, "make_to_final_ul":volume,
+            "current_round_deck_ul":sum(loads.values()), "round2_reserved_deck_ul":sum(reserved.values()),
+            "full_campaign_deck_ul":campaign_loads, "bulk_transfer_reserve_ul":stock["bulk_transfer_reserve_ul"],
+            "unallocated_bulk_ul":volume-campaign_loads,
+            "source_loads":[{"slot":key[0], "well":key[1], "load_ul":value, "consumption_ul":usage[key]} for key,value in loads.items()],
+            "instruction":"Weigh Pd ONCE before R1. Correct final volume for assay, never increase the 90 mg mass. R2 aliquots come from this same bulk."}
 
 
 def reservoir_source_pools(config):
@@ -85,8 +168,8 @@ def analytical_summary(config):
 
 
 def validate_config(config, live=False, live_scope="all"):
-    if config.get("schema_version") != 3:
-        raise ValueError("Use campaign schema_version 3: retained toluene SM/IS stock and explicit reaction/LC well maps")
+    if config.get("schema_version") != 4:
+        raise ValueError("Use campaign schema_version 4: fixed 90 mg Pd stock, low-dead-volume tubes and catalyst source mixing")
     if live_scope not in ("all", "first_reaction"):
         raise ValueError("Unknown live validation scope")
     reservoir_source_pools(config)
@@ -97,6 +180,12 @@ def validate_config(config, live=False, live_scope="all"):
     if config["robot"].get("ligand_source_labware") != "opentrons_24_tuberack_eppendorf_2ml_safelock_snapcap":
         raise ValueError("This source layout requires the configured 2 mL Eppendorf working tubes")
     finite(stock["tube_max_fill_ul"], "2 mL working-tube fill limit", 1, 1950)
+    finite(stock["tube_dead_ul"], "working-tube dead volume", 0)
+    pd_source_pool(config)
+    fixed = finite(stock.get("fixed_stock_mass_mg", {}).get("Pd"), "fixed Pd stock mass", 0.000001)
+    if fixed > finite(stock.get("available_mass_mg", {}).get("Pd"), "Pd campaign mass limit", 0.000001):
+        raise ValueError("Pd stock exceeds the campaign mass limit; do not use the scope reserve")
+    finite(stock.get("bulk_transfer_reserve_ul"), "bulk transfer reserve", 0)
     finite(config["pipetting"]["aspirate_height_mm"], "stock tube aspiration height", 0.1, 39)
     dead = finite(stock["reservoir_dead_ul"], "reservoir dead volume", 0)
     capacity = finite(stock["reservoir_max_fill_ul"], "reservoir fill limit", dead+1)
@@ -151,6 +240,10 @@ def validate_config(config, live=False, live_scope="all"):
     if type(config["pipetting"]["prewet_cycles"]) is not int or not 0 <= config["pipetting"]["prewet_cycles"] <= 5:
         raise ValueError("Choose 0-5 prewet cycles")
     p = config["pipetting"]
+    for name in ("catalyst_mix_cycles", "catalyst_mix_every_transfers"):
+        if type(p.get(name)) is not int or not 1 <= p[name] <= 20:
+            raise ValueError(name+" must be an integer from 1 to 20")
+    finite(p.get("catalyst_mix_max_ul"), "catalyst mixing volume", 1, 297)
     batch=config["robot"].get("lc_batch_size",24)
     if type(batch) is not int or batch<8 or batch>96 or batch%8:
         raise ValueError("LC preparation batches must contain a positive multiple of eight wells")
@@ -327,6 +420,9 @@ def validate_dosing(config, inventory, rows):
 def transfer_operations(config, inventory, rows):
     """Expand all transfers, including surplus discarded with tips; multi volumes are PER CHANNEL."""
     operations = []
+    occupied = {(int(row["source_slot"]), row["source_well"]) for row in inventory.values()}
+    if occupied.intersection(pd_source_pool(config)):
+        raise ValueError("Pd working source overlaps a ligand tube")
     p = config["pipetting"]
     single, capacity = single_pipette(config)
     capacities = {single: capacity - p["air_gap_ul"] - p["surplus_ul"],
@@ -395,6 +491,7 @@ def transfer_operations(config, inventory, rows):
                     del remaining[w]
     for r in remaining.values():
         add("sampling", r["sample_id"], 3, r["well"], 6, [r["lc_well"]], r["aliquot_ul"])
+    _route_pd(config, operations)
     # Allocate complete aspirations to reservoir channels before assigning reused tips.
     # Worst-case fresh surplus makes this conservative when a tip is retained.
     pools = reservoir_source_pools(config)
@@ -427,6 +524,27 @@ def transfer_operations(config, inventory, rows):
         op["retain_tip_for_next"] = same(following)
         if op["retained_tip_from_previous"]:
             op["aspirated_ul_per_channel"] -= p["surplus_ul"]
+    # Source-only recirculation uses no extra stock. Clamp every mix to the liquid
+    # available ABOVE dead volume, including the last transfers and p20 splits.
+    remaining, count = defaultdict(float), defaultdict(int)
+    for op in operations:
+        if op["stage"] == "assembly" and op["reagent"] in {*inventory, "Pd"}:
+            key = (op["reagent"], op["source_slot"], op["source_well"])
+            remaining[key] += op["aspirated_ul_per_channel"]
+    dead = config["stock_preparation"]["tube_dead_ul"]
+    remaining = {key:math.ceil((value+dead)/10)*10 for key,value in remaining.items()}
+    for op in operations:
+        op["source_mix_cycles"], op["source_mix_ul"] = 0, 0
+        key = (op["reagent"], op["source_slot"], op["source_well"])
+        if key not in remaining:
+            continue
+        if not op["retained_tip_from_previous"] or count[key] % p["catalyst_mix_every_transfers"] == 0:
+            op["source_mix_cycles"] = p["catalyst_mix_cycles"]
+            op["source_mix_ul"] = min(p["catalyst_mix_max_ul"], capacities[op["pipette"]], remaining[key]-dead)
+            if op["source_mix_ul"] <= 0:
+                raise ValueError("No usable liquid available for catalyst source mixing")
+        count[key] += 1
+        remaining[key] -= op["aspirated_ul_per_channel"]
     return operations
 
 
@@ -491,8 +609,21 @@ def stock_plan(config, inventory, operations, reserve_round2=True):
             "source_well":config["stock_preparation"]["substrate_source_well"],
             "on_deck_ul":sm_load,"source_capacity_ul":config["stock_preparation"]["tube_max_fill_ul"],
             "capacity_ok":sm_load <= config["stock_preparation"]["tube_max_fill_ul"]})
-    common = [("Pd", "toluene", "pd_stock_mM", "A2", n*c["pd_mol_percent"]/100/liquid["pd_stock_mM"]*1000),
-              ("toluene", "toluene", None, "A3", c["reaction_volume_ul"]),
+    pd_budget = pd_material_budget(config, operations, reserve_round2)
+    for index, source in enumerate(pd_budget["source_loads"]):
+        slot, well, used, load = source["slot"], source["well"], source["consumption_ul"], source["load_ul"]
+        bulk = reserve_round2 and index == 0
+        records.append({"reagent":"Pd", "name":"Pd(COD)(DQ); ONE shared bulk stock", "solvent":"toluene",
+            "stock_mM":liquid["pd_stock_mM"], "protocol_consumption_ul":used,
+            "round2_reserve_ul":pd_budget["round2_reserved_deck_ul"] if bulk else 0,
+            "dead_ul":config["stock_preparation"]["tube_dead_ul"],
+            "prepare_ul":pd_budget["make_to_final_ul"] if bulk else load,
+            "mass_mg":pd_budget["weigh_mg"] if bulk else 0,
+            "source_slot":slot, "source_well":well, "on_deck_ul":load,
+            "source_capacity_ul":config["stock_preparation"]["tube_max_fill_ul"],
+            "capacity_ok":load <= config["stock_preparation"]["tube_max_fill_ul"],
+            "preparation_action":f"Prepare ONE {pd_budget['weigh_mg']:g} mg bulk before R1; aliquot all Pd tubes from it" if bulk else "ALIQUOT from existing Pd bulk; DO NOT weigh more solid"})
+    common = [("toluene", "toluene", None, "A3", c["reaction_volume_ul"]),
               ("workup", liquid["workup_composition"], "internal_standard_workup_mM", "A4", liquid["workup_ul"]),
               ("LC_diluent", liquid["lc_diluent_composition"], None, "A5", liquid["diluent_ul"])]
     for key, solvent, concentration, well, worst in common:
@@ -524,6 +655,9 @@ def stock_plan(config, inventory, operations, reserve_round2=True):
         container = ("4 mL capped glass vial" if volume <= 3000 else "8 mL capped glass vial" if volume <= 6000
                      else "20 mL capped glass vial" if volume <= 16000 else "250 mL compatible solvent bottle")
         record["storage_container"] = config["stock_preparation"]["substrate_storage_container"] if key == "substrate_stock" else container
+        record.setdefault("preparation_action", "Prepare bulk before campaign; refill R2 from reserves")
+        if key == "Pd" and record["mass_mg"] == 0:
+            record["storage_container"] = "2 mL working tube; aliquot existing Pd bulk only"
         record["internal_standard_mM"] = liquid["internal_standard_stock_mM"] if key == "substrate_stock" else ""
         record["internal_standard_mass_mg"] = corrected_mass("internal_standard",liquid["internal_standard_stock_mM"]*volume*liquid["internal_standard_molecular_weight_g_mol"]/1e6) if key == "substrate_stock" else ""
     return records
@@ -536,6 +670,25 @@ def tip_budget(operations):
         if not op.get("retained_tip_from_previous"):
             count[f"{stage}_{op['pipette']}"] += op["channels"]
     return dict(count)
+
+
+def catalyst_mixing_timing(config, operations):
+    p = config["pipetting"]
+    events, seconds, replaced = 0, 0, 0
+    for op in operations:
+        cycles = op.get("source_mix_cycles", 0)
+        if not cycles:
+            continue
+        events += 1
+        inverse_flow = 1/p[op["pipette"]+"_aspirate_ul_s"]+1/p[op["pipette"]+"_dispense_ul_s"]
+        seconds += cycles*(op["source_mix_ul"]*inverse_flow+p["post_aspirate_seconds"]+p["post_dispense_seconds"])
+        if not op["retained_tip_from_previous"]:
+            replaced += min(cycles, p["prewet_cycles"])*op["aspirated_ul_per_channel"]*inverse_flow
+    return {"source_mix_events":events, "mix_pumping_and_wait_minutes":seconds/60,
+            "replaced_tip_conditioning_minutes":replaced/60,
+            "net_added_programmed_minutes":(seconds-replaced)/60,
+            "stock_consumed_by_mixing_ul":0, "physical_duration_measured":False,
+            "instruction":"Include source mixing within measured dosing times. This subtotal excludes motion and manual stock preparation."}
 
 
 def workup_timing(config, operations):

@@ -3,7 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from .io import atomic_text, digest, new_output, object_digest, write_csv, write_json, wells
-from .planning import dosing_rows, stock_plan, tip_budget, transfer_operations, validate_config, validate_dosing, workup_timing
+from .planning import (catalyst_mixing_timing, dosing_rows, pd_material_budget, stock_plan,
+                       tip_budget, transfer_operations, validate_config, validate_dosing, workup_timing)
 
 
 RUNTIME = '''
@@ -64,7 +65,17 @@ def run(protocol: protocol_api.ProtocolContext):
         aspirate_pause = p["sample_pause_seconds"] if sampling else p["post_aspirate_seconds"]
         dispense_pause = p["sample_pause_seconds"] if sampling else p["post_dispense_seconds"]
         protocol.comment(op["reagent"] + ": " + str(op["volume_ul_per_channel"]) + " uL per channel into " + ",".join(op["destination_wells"]))
+        mix_cycles = op.get("source_mix_cycles", 0)
+        if mix_cycles:
+            protocol.comment("MIX OWN CATALYST SOURCE: " + op["reagent"] + ", " + str(mix_cycles) + " cycles of " + str(op["source_mix_ul"]) + " uL, submerged at bottom clearance; no air gap/blowout.")
+            for _ in range(mix_cycles):
+                pipette.aspirate(op["source_mix_ul"], source_location)
+                protocol.delay(seconds=p["post_aspirate_seconds"])
+                pipette.dispense(op["source_mix_ul"], source_location)
+                protocol.delay(seconds=p["post_dispense_seconds"])
         cycles = p["sample_prewet_cycles"] if sampling else p["prewet_cycles"]
+        if mix_cycles and not sampling:
+            cycles = max(0, cycles-mix_cycles)
         if fresh and (sampling or op["source_slot"] != 3):
             # Condition only in this source, before visiting a destination.
             # Sample channels return to their own reaction well; no air gaps or blowouts here.
@@ -137,6 +148,7 @@ def run(protocol: protocol_api.ProtocolContext):
 
     protocol.pause("Verify exact plate definitions, offsets, source volumes in deck_loads.csv, and fresh tips. Slots 7 and 11 must be empty. Keep caps identified and clean. For workup, keep reaction vials CAPPED until the explicit cooled-opening pause. Resume locally.")
     if STAGE == "dose_and_react":
+        protocol.pause("BEFORE DOSING: mix tightly capped GLASS bulk catalyst stocks off deck by hand inversion or a suitable vortex holder. Gently invert capped working tubes; let bubbles clear, return every tube to its exact CSV position, then OPEN the required source caps. Pd is in source-rack tubes, NOT reservoir A2. Use the same ONE 90 mg Pd bulk for both rounds; keep the separate 10 mg scope reserve untouched. Do not put plastic tube racks on the heater-shaker. Robot source-only mixing helps limit settling; record suspensions and pause for aggregates, persistent bubbles, blocked tips or air uptake.")
         if any(op["stage"] == "substrate" for op in OPERATIONS):
             protocol.pause("Confirm the 48 first-round reaction vials are empty and correctly loaded. REMOVE ALL reaction-vial screw caps and open the required sources before pipetting.")
             transfer_stage("substrate")
@@ -302,6 +314,8 @@ def export(config, inventory, design, output, live=False, history=None, stage="a
                              "solvent": r["solvent"]})
     write_csv(output / "deck_loads.csv", deck)
     write_json(output / "operations.json", ops)
+    write_json(output / "pd_material_budget.json", pd_material_budget(config, ops, reserve_round2=int(rows[0]["round"]) == 1))
+    write_json(output / "catalyst_mixing_timing.json", catalyst_mixing_timing(config, ops))
     write_json(output / "tip_budget.json", tip_budget(ops))
     write_json(output / "workup_timing.json", workup_timing(config, ops))
     sequence=[{"sample_id":r["sample_id"],"well":r["lc_well"],"reaction_well":r["well"],

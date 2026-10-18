@@ -17,8 +17,8 @@ Round one: **48 distinct pairs, all 30 available ligands**; L07 is unavailable. 
 
 | Slot | Load |
 |---|---|
-| 1 / 4 | 2 mL Eppendorf working tubes; ligands at CSV addresses, L07 absent; combined SM/IS in **slot 4 D2** |
-| 2 | A2 Pd; quench A4/A6/A9; diluent A5/A7/A10/A11/A12. A1/A3/A8 unused |
+| 1 / 4 | 2 mL Eppendorf working tubes; ligands at CSV addresses, L07 absent; combined SM/IS in **slot 4 D2**; **Pd in slot 4 A3/B3 for R1, fresh A3 for R2** |
+| 2 | Quench A4/A6/A9; diluent A5/A7/A10/A11/A12. A1/A2/A3/A8 unused |
 | 3 / 10 | Reaction block: staff move it by hand at App prompts; pipetting / heater-shaker |
 | 6 | VWR 96-well 2.2 mL deep-well preparation plate, or matching configured replacement; fill here, shake on 10, then directly to HPLC |
 | 5 / 8 / 9 | Single tips / multi tips / multi tips. Keep slots 7 and 11 empty |
@@ -47,7 +47,9 @@ Final sample: 1.00 mL; maximum SM/product **666.7 µM**; mesitylene **66.7 µM**
 
 ## Pipetting and transfer faults
 
-Condition fresh dosing tips twice in their own stock. Use slow aspiration, short settling delays, a small air gap and reverse surplus for the organic stocks. Keep active sources covered between stages and bulk reserves capped. Follow CSV fills and dead volumes; never return working liquid to bulk stock.
+Before dosing, mix tightly capped glass bulk stocks off deck by inversion or a suitable vortex holder. Gently invert capped working tubes; let bubbles clear, restore mapped positions, then open. Plastic racks are not configured heater-shaker loads. Keep bulk stocks in glass; PP working tubes are for brief, unheated dispensing, not prolonged toluene storage.
+
+The robot remixes each catalyst source with **two submerged cycles, up to 100 µL**, before first use and every eight transfers. This also conditions fresh tips; other fresh dosing tips receive two same-source prewets. Mixing consumes no extra stock and uses no air gap or blowout. It can redisperse particles but cannot guarantee a uniform settling suspension. Use slow dosing, small air gaps and reverse surplus. Follow CSV fills; never return working liquid to bulk stock.
 
 Reuse a tip only for consecutive **same-stock, noncontact** dosing above the destination top. Different ligands and all analytical samples use fresh tips. Avoid deep immersion, walls and bottoms. Repeated aspiration does not dissolve an insoluble stock and may introduce bubbles.
 

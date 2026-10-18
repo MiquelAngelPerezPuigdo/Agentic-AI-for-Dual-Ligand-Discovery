@@ -13,19 +13,20 @@
 | Stock | Bulk preparation / use |
 |---|---|
 | SM + mesitylene | **2.0 mL: 1 M SM +100 mM IS in toluene.** 322.32 mg SM +24.04 mg IS at 100% assay; make to FINAL volume, 4 mL capped vial. Dose **25 µL**; retain solvent. |
-| Ligands / Pd | **Ligands 20 mM; Pd 40 mM in toluene.** CSV masses/reserves; prepare ligands in glovebox. Working tubes **2 mL**, max 1.95 mL. |
+| Ligands | **20 mM in toluene.** CSV masses/reserves; prepare in glovebox. Working tubes **2 mL**, max 1.95 mL. |
+| Pd(COD)(DQ) | Weigh **90 mg ONCE**, make to **5.94 mL FINAL volume**, 40 mM in toluene, capped 8 mL glass vial (100% assay). Keep **10 mg solid for scope**. |
 | RockPhos L03 | **800 µL, 20 mM:** 7.50 mg pure equivalent; correct for assay. **10 mg available; maximum 4 R2 wells.** |
 | Quench | **100 mL, 9:1 ACN/water +0.15% formic acid:** 150 µL acid, make to volume. No IS. |
 | LC diluent | **125 mL, 1:1 water/ACN +0.1% formic acid:** 125 µL acid, make to volume. No IS. |
 
-Correct masses for assay. **Load stage-specific CSV volumes, not bulk preparations.** Refill R2 from reserves; ordinary plastic source racks are sufficient.
+Correct masses for assay, **except Pd: keep 90 mg and adjust final volume** (98%: 5.82 mL). Load stage-specific CSV fills; R2 Pd comes from the SAME bulk. Mix capped glass stocks off deck; gently invert capped working tubes, let bubbles clear, return to mapped positions and open. **Do not shake plastic racks on the module.** Robot remixes catalyst sources twice, up to 100 µL, before first use and every eight transfers.
 
 ## Deck
 
 | Slot | Contents |
 |---|---|
-| 1 / 4 | 2 mL working tubes: ligands at CSV addresses; **SM/IS in slot 4 D2, 1.31 mL for R1**. L07 absent |
-| 2 | A2 Pd; quench A4/A6/A9; diluent A5/A7/A10/A11/A12. A1/A3/A8 unused |
+| 1 / 4 | 2 mL working tubes: ligands at CSV addresses; **SM/IS in slot 4 D2, 1.31 mL for R1**. L07 absent. **Pd slot 4: R1 A3/B3, 1.91 mL EACH; R2 fresh A3, 1.83 mL** |
+| 2 | Quench A4/A6/A9; diluent A5/A7/A10/A11/A12. A1/A2/A3/A8 unused |
 | 3 / 10 | Reaction block: staff move it by hand at App prompts; pipetting / heater-shaker |
 | 6 | Final 96-well 2.2 mL LC plate: fill here; move to 10, then directly to HPLC |
 | 5 / 8 / 9 | Single tips / multi tips / multi tips. Keep 7 and 11 empty |
