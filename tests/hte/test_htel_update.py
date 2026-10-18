@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 @pytest.mark.parametrize("single", ["p20_single_gen2", "p300_single_gen2"])
-def test_dcm_is_removed_and_is_is_added_separately_in_both_rounds(tmp_path, single):
+def test_toluene_and_combined_is_are_retained_in_both_rounds(tmp_path, single):
     from hte.planning import dosing_rows, transfer_operations
     from opentrons.simulate import simulate
     run(tmp_path/"demo",ROOT/"hte_inputs/ligands.csv",ROOT/"hte_inputs/campaign.json")
@@ -29,9 +29,9 @@ def test_dcm_is_removed_and_is_is_added_separately_in_both_rounds(tmp_path, sing
         design = read_csv(tmp_path/f"demo/round{round_number}_design.csv")
         rows = dosing_rows(config,inv,design)
         for row in rows:
-            assert row["sm_stock_ul"]+row["substrate_predosed_ul"] == 50
-            assert sum(row[key] for key in ("internal_standard_stock_ul","ligand_a_ul","ligand_b_ul","pd_ul","toluene_ul")) == 250
-            assert row["toluene_ul"] == 75 and row["pd_ul"] == 75
+            assert row["sm_stock_ul"]+row["substrate_predosed_ul"] == 25
+            assert 25+sum(row[key] for key in ("internal_standard_stock_ul","ligand_a_ul","ligand_b_ul","pd_ul","toluene_ul")) == 250
+            assert row["toluene_ul"] == row["internal_standard_stock_ul"] == 0 and row["pd_ul"] == 75
         ops = transfer_operations(config,inv,rows)
         if "p300" in single:
             assert all(op["volume_ul_per_channel"] >= 20 for op in ops)
@@ -44,7 +44,7 @@ def test_dcm_is_removed_and_is_is_added_separately_in_both_rounds(tmp_path, sing
         assert len(heating) == 1 and "95" in heating[0]
         manifest = out/"round2_predose.csv"
         if round_number == 1:
-            assert all(float(r["sm_stock_ul"]) == 50 and "MANUAL OFF DECK" in r["storage"] for r in read_csv(manifest))
+            assert all(float(r["sm_stock_ul"]) == 25 and "MANUAL OFF DECK" in r["storage"] for r in read_csv(manifest))
 
 
 def test_dilute_catalysts_cannot_overfill_the_liquid_predose(tmp_path):
@@ -88,7 +88,7 @@ def test_invalid_availability_exclusions_fail(fault):
 def test_lc_scenarios_include_short_method_and_fail_longer_serial_plan():
     config = read_json(ROOT/"hte_inputs/campaign.json")
     rows = schedule_scenarios(config)
-    assert [row["serial_total_minutes"] for row in rows] == pytest.approx([752.7,774,845,987,1058])
+    assert [row["serial_total_minutes"] for row in rows] == pytest.approx([744.7,766,837,979,1050])
     assert [row["fits_serial_estimate"] for row in rows] == [False, False, False, False, False]
     assert not config["validation"]["injection_cycle_validated"]
 

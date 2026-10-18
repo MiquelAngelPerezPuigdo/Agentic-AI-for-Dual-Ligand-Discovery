@@ -9,8 +9,7 @@ from .io import finite, well_name, wells, reaction_wells
 VALIDATIONS = ["chemistry_confirmed", "plate_adapter_seal_validated", "solvent_pipetting_validated",
                "heating_validated", "lc_plate_workflow_validated",
                "lc_calibration_validated", "local_app_simulation_passed", "round2_predose_storage_validated",
-               "injection_cycle_validated", "simultaneous_heating_capacity_validated",
-               "substrate_evaporation_validated"]
+               "injection_cycle_validated", "simultaneous_heating_capacity_validated"]
 
 COMMON_WELLS = {"substrate_stock":"A1", "Pd":"A2", "toluene":"A3", "workup":"A4", "LC_diluent":"A5",
                 "internal_standard":"A8"}
@@ -58,7 +57,7 @@ def internal_standard_amounts(config, substrate_umol):
     if stage not in ("reaction_stock", "workup"):
         raise ValueError("Internal standard addition stage must be reaction_stock or workup")
     if stage == "reaction_stock" and (stock_mM <= 0 or workup_mM != 0):
-        raise ValueError("Separate reaction IS stock requires positive stock IS and zero workup IS")
+        raise ValueError("Reaction IS stock requires positive stock IS and zero workup IS")
     if stage == "workup" and (stock_mM != 0 or workup_mM <= 0):
         raise ValueError("Workup IS requires zero substrate-stock IS and positive workup IS")
     preloaded = (substrate_umol*finite(config["chemistry"]["preloaded_internal_standard"]["mol_percent_relative_to_substrate"],
@@ -86,12 +85,19 @@ def analytical_summary(config):
 
 
 def validate_config(config, live=False, live_scope="all"):
-    if config.get("schema_version") != 2:
-        raise ValueError("Use campaign schema_version 2: separate mesitylene stock, evaporated DCM and explicit reaction/LC well maps")
+    if config.get("schema_version") != 3:
+        raise ValueError("Use campaign schema_version 3: retained toluene SM/IS stock and explicit reaction/LC well maps")
     if live_scope not in ("all", "first_reaction"):
         raise ValueError("Unknown live validation scope")
     reservoir_source_pools(config)
     stock = config["stock_preparation"]
+    caps = config["design"].get("round2_ligand_caps", {})
+    if not isinstance(caps, dict) or any(type(limit) is not int or limit < 0 for limit in caps.values()):
+        raise ValueError("Round-two ligand caps must be nonnegative integers")
+    if config["robot"].get("ligand_source_labware") != "opentrons_24_tuberack_eppendorf_2ml_safelock_snapcap":
+        raise ValueError("This source layout requires the configured 2 mL Eppendorf working tubes")
+    finite(stock["tube_max_fill_ul"], "2 mL working-tube fill limit", 1, 1950)
+    finite(config["pipetting"]["aspirate_height_mm"], "stock tube aspiration height", 0.1, 39)
     dead = finite(stock["reservoir_dead_ul"], "reservoir dead volume", 0)
     capacity = finite(stock["reservoir_max_fill_ul"], "reservoir fill limit", dead+1)
     if capacity > config["robot"].get("reservoir_working_volume_ul", capacity):
@@ -104,8 +110,16 @@ def validate_config(config, live=False, live_scope="all"):
     finite(c.get("thermal_equilibration_minutes", 0), "thermal equilibration", 0)
     for name, value in (("reaction shaking", c["rpm"]), ("workup shaking", liquid["mix_rpm"])):
         finite(value, name, 200, 3000)
-    if liquid.get("substrate_stock_solvent") != "DCM" or liquid.get("substrate_evaporation_required") is not True:
-        raise ValueError("This campaign requires DCM substrate dosing followed by complete evaporation before assembly")
+    if (liquid.get("substrate_stock_solvent") != "toluene" or liquid.get("substrate_evaporation_required") is not False
+            or liquid.get("substrate_stock_contains_internal_standard") is not True):
+        raise ValueError("This campaign requires retained toluene stock containing SM and mesitylene; no evaporation")
+    if liquid["internal_standard_addition_stage"] != "reaction_stock":
+        raise ValueError("Combined SM/IS stock requires reaction-stage mesitylene")
+    expected_ratio = finite(c["preloaded_internal_standard"]["mol_percent_relative_to_substrate"], "reaction IS mol%", 0.000001)/100
+    if not math.isclose(finite(liquid["internal_standard_stock_mM"], "combined stock IS", 0.000001)/finite(liquid["substrate_stock_mM"], "combined stock SM", 0.000001), expected_ratio):
+        raise ValueError("Combined SM/IS concentrations do not match the required IS loading")
+    if config["timing"]["evaporation_total_minutes"] != 0:
+        raise ValueError("No evaporation time belongs in the retained-toluene workflow")
     if config["design"].get("round2_predose_mode") != "manual_offdeck":
         raise ValueError("One reaction block requires manual off-deck round-two substrate predosing")
     if not isinstance(config["robot"].get("reaction_multichannel"), bool):
@@ -262,9 +276,9 @@ def dosing_rows(config, inventory, design):
         preloaded_is, workup_is, final_is = internal_standard_amounts(config, n_substrate)
         if config["analytics"]["calibration_mode"] == "internal_standard" and final_is <= 0:
             raise ValueError("Combined substrate/IS dosing does not add IS to a reaction blank; define a separate validated blank preparation")
-        # All substrate DCM is removed; mesitylene is added only afterwards in toluene.
-        v_is = preloaded_is/stocks["internal_standard_stock_mM"]*1000 if preloaded_is else 0
-        v_tol = c["reaction_volume_ul"] - v_is - v_a - v_b - v_pd
+        # The same SM/IS aliquot supplies retained reaction solvent in both rounds.
+        v_is = 0
+        v_tol = c["reaction_volume_ul"] - total_sm_volume - v_a - v_b - v_pd
         if v_tol < -1e-8:
             raise ValueError("Stocks are too dilute to fit in the final reaction volume")
         if v_sm > config["robot"]["reaction_working_volume_ul"]:
@@ -273,12 +287,12 @@ def dosing_rows(config, inventory, design):
                "ligand_a_umol": n_a, "ligand_b_umol": n_b, "sm_stock_ul": v_sm,
                "substrate_predosed_umol": n_substrate if predosed else 0,
                "substrate_predosed_ul": total_sm_volume if predosed else 0,
-               "substrate_solvent_retained_ul": 0,
-               "substrate_solvent_evaporated_ul": total_sm_volume,
+               "substrate_solvent_retained_ul": total_sm_volume,
+               "substrate_solvent_evaporated_ul": 0,
                "internal_standard_stock_ul": v_is,
                "internal_standard_total_umol": preloaded_is+workup_is,
-               "internal_standard_added_umol": preloaded_is,
-               "internal_standard_predosed_umol": 0,
+               "internal_standard_added_umol": 0 if predosed else preloaded_is,
+               "internal_standard_predosed_umol": preloaded_is if predosed else 0,
                "internal_standard_workup_umol": workup_is,
                "internal_standard_final_uM": final_is,
                "ligand_a_ul": v_a, "ligand_b_ul": v_b, "pd_ul": v_pd,
@@ -350,7 +364,10 @@ def transfer_operations(config, inventory, rows):
             add(stage, reagent, 2, source, target_slot, [w], volume)
 
     common("substrate", "substrate_stock", "A1", {r["well"]: r["sm_stock_ul"] for r in rows})
-    common("internal_standard", "internal_standard", "A8", {r["well"]: r["internal_standard_stock_ul"] for r in rows})
+    for op in operations:
+        if op["reagent"] == "substrate_stock":
+            op.update(source_slot=config["stock_preparation"]["substrate_source_slot"],
+                      source_well=config["stock_preparation"]["substrate_source_well"])
     for ligand in inventory:
         for r in rows:
             volume = sum(r[f"ligand_{side}_ul"] for side in ("a", "b") if r[f"ligand_{side}"] == ligand)
@@ -432,31 +449,55 @@ def stock_plan(config, inventory, operations, reserve_round2=True):
         assay = finite(config["stock_preparation"].get("assay_fractions", {}).get(key, 1), key+" assay fraction", 0.000001, 1)
         return pure_mass/assay
     for key, row in inventory.items():
+        capped_pairs = min(pair_count, config["design"].get("round2_ligand_caps", {}).get(key, pair_count))
         single_volume = n * max(c["ligand_a_mol_percent"],c["ligand_b_mol_percent"])/100/liquid["ligand_stock_mM"]*1000
         reference_volume = sum(n*(c["ligand_a_mol_percent"]+c["ligand_b_mol_percent"])/100/liquid["ligand_stock_mM"]*1000
                                for control in config["design"]["round2_controls"]
                                if reserve_wells and control["kind"] == "single" and control["ligand_a"] == key)
         usable=single_capacity-config["pipetting"]["air_gap_ul"]-config["pipetting"]["surplus_ul"]
-        reserve = pair_count*(single_volume+math.ceil(single_volume/usable)*config["pipetting"]["surplus_ul"])+reference_volume
+        reserve = capped_pairs*(single_volume+math.ceil(single_volume/usable)*config["pipetting"]["surplus_ul"])+reference_volume
         if reference_volume: reserve += math.ceil(reference_volume/usable)*config["pipetting"]["surplus_ul"]
         dead = config["stock_preparation"]["tube_dead_ul"]
-        prepare = math.ceil(((usage[key] + reserve) * margin + dead) / 10) * 10
+        prepare = math.ceil(((usage[key] + reserve) * margin + dead) / 100) * 100
+        mass = corrected_mass(key, liquid["ligand_stock_mM"] * prepare * float(row["molecular_weight_g_mol"]) / 1e6)
+        available = config["stock_preparation"].get("available_mass_mg", {}).get(key)
+        if available is not None and mass > finite(available, key+" available mass", 0):
+            raise ValueError(f"{key} stock preparation exceeds available mass: {mass:.3f} > {available} mg")
         records.append({"reagent": key, "name": row["name"], "solvent": "toluene",
                         "stock_mM": liquid["ligand_stock_mM"], "protocol_consumption_ul": usage[key],
                         "round2_reserve_ul": reserve, "dead_ul": dead, "prepare_ul": prepare,
-                        "mass_mg": corrected_mass(key, liquid["ligand_stock_mM"] * prepare * float(row["molecular_weight_g_mol"]) / 1e6),
+                        "mass_mg": mass,
                         "source_slot": row["source_slot"], "source_well": row["source_well"],
                         "on_deck_ul": math.ceil((usage[key] + dead)/10)*10,
                         "source_capacity_ul": config["stock_preparation"]["tube_max_fill_ul"],
                         "capacity_ok": usage[key] + dead <= config["stock_preparation"]["tube_max_fill_ul"]})
-    common = [("substrate_stock", liquid["substrate_stock_solvent"], "substrate_stock_mM", "A1", n/liquid["substrate_stock_mM"]*1000),
-              ("internal_standard", liquid["internal_standard_stock_solvent"], "internal_standard_stock_mM", "A8",
-               internal_standard_amounts(config,n)[0]/liquid["internal_standard_stock_mM"]*1000),
-              ("Pd", "toluene", "pd_stock_mM", "A2", n*c["pd_mol_percent"]/100/liquid["pd_stock_mM"]*1000),
+    # SM uses approximately 10% extra, rounded up to practical 0.5 mL preparations.
+    # Working-tube dead volume and discarded surplus fit inside that budget.
+    sm_per_well = n/liquid["substrate_stock_mM"]*1000
+    sm_nominal = sum(op["volume_ul_per_channel"]*op["channels"] for op in operations if op["stage"] == "substrate")
+    sm_reserve = reserve_wells*sm_per_well
+    if sm_nominal or sm_reserve:
+        sm_prepare = math.ceil((sm_nominal+sm_reserve)*finite(config["stock_preparation"]["substrate_margin_factor"], "SM preparation margin", 1)/500)*500
+        sm_dead = config["stock_preparation"]["tube_dead_ul"]
+        sm_load = math.ceil((usage["substrate_stock"]+sm_dead)/10)*10
+        if sm_load+sm_reserve > sm_prepare+1e-8:
+            raise ValueError("SM 10% budget cannot cover working-tube dead volume, tips and manual R2 predoses")
+        records.append({"reagent":"substrate_stock", "name":"Combined SM + mesitylene; retained toluene",
+            "solvent":"toluene", "stock_mM":liquid["substrate_stock_mM"],
+            "protocol_consumption_ul":usage["substrate_stock"], "round2_reserve_ul":sm_reserve,
+            "dead_ul":sm_dead,"prepare_ul":sm_prepare,
+            "mass_mg":corrected_mass("substrate_stock",liquid["substrate_stock_mM"]*sm_prepare*c["substrate_molecular_weight_g_mol"]/1e6),
+            "source_slot":config["stock_preparation"]["substrate_source_slot"],
+            "source_well":config["stock_preparation"]["substrate_source_well"],
+            "on_deck_ul":sm_load,"source_capacity_ul":config["stock_preparation"]["tube_max_fill_ul"],
+            "capacity_ok":sm_load <= config["stock_preparation"]["tube_max_fill_ul"]})
+    common = [("Pd", "toluene", "pd_stock_mM", "A2", n*c["pd_mol_percent"]/100/liquid["pd_stock_mM"]*1000),
               ("toluene", "toluene", None, "A3", c["reaction_volume_ul"]),
               ("workup", liquid["workup_composition"], "internal_standard_workup_mM", "A4", liquid["workup_ul"]),
               ("LC_diluent", liquid["lc_diluent_composition"], None, "A5", liquid["diluent_ul"])]
     for key, solvent, concentration, well, worst in common:
+        if usage[key] == 0 and (not reserve_wells or key == "toluene"):
+            continue
         # Conservatively allow single-channel splitting and surplus for every reserve well.
         count = math.ceil(worst / (single_capacity-config["pipetting"]["air_gap_ul"]-config["pipetting"]["surplus_ul"]))
         reserve = reserve_wells * (worst + count * config["pipetting"]["surplus_ul"])
@@ -468,11 +509,7 @@ def stock_plan(config, inventory, operations, reserve_round2=True):
         for i, source in enumerate(used):
             consumption = source_usage[(key,source)]
             reserved = reserve if i == 0 else 0
-            prepare = math.ceil(((consumption+reserved)*margin+dead)/10)*10
-            if key == "substrate_stock":
-                prepare = max(prepare,finite(config["stock_preparation"].get("substrate_min_prepare_ul",0),"minimum substrate stock preparation",0))
-            if key == "internal_standard":
-                prepare = max(prepare,finite(config["stock_preparation"].get("internal_standard_min_prepare_ul",0),"minimum IS stock preparation",0))
+            prepare = math.ceil(((consumption+reserved)*margin+dead)/1000)*1000
             records.append({"reagent": key, "name": key, "solvent": solvent, "stock_mM": concentration_mM,
                         "protocol_consumption_ul": consumption, "round2_reserve_ul": reserved,
                         "dead_ul": dead, "prepare_ul": prepare,
@@ -482,9 +519,13 @@ def stock_plan(config, inventory, operations, reserve_round2=True):
                         "source_capacity_ul": config["stock_preparation"]["reservoir_max_fill_ul"],
                         "capacity_ok": consumption + dead <= config["stock_preparation"]["reservoir_max_fill_ul"]})
     for record in records:
-        record["storage_container"] = config["stock_preparation"].get("substrate_storage_container", "") if record["reagent"] == "substrate_stock" else "Capped compatible glass stock vial; ordinary plastic source-tube rack"
-        if record["reagent"] == "internal_standard":
-            record["name"] = config["analytics"]["internal_standard"] + " internal standard; add AFTER DCM evaporation"
+        key = record["reagent"]
+        volume = record["prepare_ul"]
+        container = ("4 mL capped glass vial" if volume <= 3000 else "8 mL capped glass vial" if volume <= 6000
+                     else "20 mL capped glass vial" if volume <= 16000 else "250 mL compatible solvent bottle")
+        record["storage_container"] = config["stock_preparation"]["substrate_storage_container"] if key == "substrate_stock" else container
+        record["internal_standard_mM"] = liquid["internal_standard_stock_mM"] if key == "substrate_stock" else ""
+        record["internal_standard_mass_mg"] = corrected_mass("internal_standard",liquid["internal_standard_stock_mM"]*volume*liquid["internal_standard_molecular_weight_g_mol"]/1e6) if key == "substrate_stock" else ""
     return records
 
 

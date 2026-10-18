@@ -6,13 +6,12 @@ Use `stock_preparation.csv` for masses/reserves; load only the stage's `deck_loa
 
 | Stock | Bulk preparation at 100% assay | Per reaction |
 |---|---|---|
-| SM, MW 161.16 | **10.00 mL, 500 mM in DCM:** 805.8 mg; make to volume in a capped 20 mL glass vial | 50 µL; evaporate fully |
-| Each ligand | **40 mM in toluene**; masses and reserves in CSV | 37.5 µL each |
-| Pd(COD)(DQ), MW 378.8 | **40 mM in toluene**; current plan 9.53 mL, 144.399 mg | 75 µL |
-| Mesitylene, MW 120.19 | **5.00 mL, 100 mM in toluene:** 60.095 mg | 25 µL, after dry-down |
-| Toluene | Current reserve plan 15.57 mL | 75 µL |
+| SM + IS | **2.0 mL, 1 M SM +100 mM mesitylene in toluene:** 322.32 mg SM +24.04 mg mesitylene; make to FINAL volume in a capped 4 mL glass vial | **25 µL**, retained; supplies both SM and IS |
+| Each ligand | **20 mM in toluene**; masses/reserves and 4 or 8 mL bulk-vial sizes in CSV | **75 µL each**; reference 150 µL L17 |
+| Pd(COD)(DQ) | **40 mM in toluene**; current plan 10 mL, 151.52 mg | 75 µL |
+| RockPhos, L03 | **800 µL, 20 mM:** 7.50 mg at 100% assay; 7.73 mg at 97%. 4 mL bulk vial; **10 mg available, at most 4 R2 wells** | 75 µL; two frozen R1 wells |
 
-Capped glass bulk reserves; ordinary plastic working racks, maximum 1.4 mL/tube; common liquids in the 12-channel reservoir. CSVs include 50% working margin, dead volume and conservative R2 reserves. Refill stage sources; never return working liquid to bulk.
+Use capped glass bulk vials and **2 mL Eppendorf working tubes, max 1.95 mL**, in plastic racks. Combined stock: **slot 4 D2, load 1.31 mL for R1**; keep **575 µL off deck for R2**. The 2 mL preparation rounds the requested ~10% allowance; includes dead volume/surplus. Ligands retain 50% margin. Refill from reserves; never return working liquid to bulk.
 
 ## Workup solvents - no internal standard
 
@@ -25,13 +24,15 @@ Capped glass bulk reserves; ordinary plastic working racks, maximum 1.4 mL/tube;
 
 **Matrix, 100 mL:** 0.6667 mL toluene +50.1492 mL ACN +0.1000 mL formic acid; water to volume. Approximate diluted-extract matrix; ignores volume contraction. Prepare all analytical stocks in it.
 
-**Separate 10 mM analyte masters, 10.00 mL:** SM 16.116 mg; product 9.709 mg. No IS. For 1 mM working stocks, dilute 100 µL master to 1.00 mL. Make check masters by **independent weighing**.
+Use **`analytical_stock_preparation.csv`**. Prepare **two independently weighed 2 mL, 10 mM masters per analyte**: **SM 3.22 mg each; product 1.94 mg each**, corrected for assay. Use 4 mL glass vials, no IS. One master fits calibration; the other supplies the check/optional pilots. Save unused stock; increase minimum weighing if required by the balance.
 
-**Analytical mesitylene, 5 mM, 20.00 mL:** 12.019 mg in matched matrix. Do not use the reaction mesitylene/toluene stock.
+**1 mM working stocks:** 20 µL FIT master +180 µL matrix; 0.5 mL tube. Use the [LC instructions](htel-lc-import.md). Prepare standards manually; use authentic SM/product masters separately from the combined reaction stock.
+
+**Analytical mesitylene, 5 mM, 20.00 mL:** 12.019 mg in matched matrix, separate from the combined reaction stock.
 
 ## Calibration during hold one - 14 injections
 
-Prepare seven **1.00 mL standards per analyte**, in a separate compatible calibration plate or confirmed vials. Every standard, including blank/check, receives **13.333 µL of 5 mM mesitylene** (66.667 µM final IS). Add the quantities below; mix, seal and use `calibration_template.csv` IDs.
+Prepare seven **1 mL standards per analyte** in a compatible plate/vials. Each receives **13.333 µL of 5 mM mesitylene**. Add analyte/matrix below; mix, seal and use `calibration_template.csv` IDs.
 
 | Analyte, µM | Role | Stock, mM | Analyte, µL | Matrix, µL |
 |---:|---|---:|---:|---:|
@@ -43,6 +44,4 @@ Prepare seven **1.00 mL standards per analyte**, in a separate compatible calibr
 | 800 | Fit | 10 | 80 | 906.667 |
 | 666.667 | Independent check | 10, independent | 66.667 | 920.000 |
 
-Fit blank +five levels; exclude the check. Require **R² >=0.995**, **check error <=15%**, separation and measured LOQs on the actual method. The lowest standard is not automatically the LOQ. Record method, wavelength and injection volume.
-
-Maximum sample: 666.667 µM analyte; 64.7 µg/mL product or 107.4 µg/mL SM. Calibration must establish the detector range. [LC import and pilot replay](htel-lc-import.md) covers reviewed blank absences and optional mixed-standard practice. Retain failed checks/rejected measurements.
+Fit blank +five levels; exclude the check. Require **R² >=0.995**, **check error <=15%**, measured separation/LOQs. Record method, wavelength and injection volume; lowest standard is not automatically the LOQ.

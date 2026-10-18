@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 from .embeddings import load_embeddings
 from .demo import fixtures, synthetic_config
-from .design import consensus_select, ligand_coverage, make_design, round1_required_ligands
+from .design import ligand_coverage
 from .inventory import candidates, campaign_inventory
 from .io import new_output, read_csv, read_json, write_csv, write_json
 from .protocols import export
@@ -98,12 +98,13 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
 
     with patch.object(anthropic, "Anthropic", OfflineClient), patch.dict(
             os.environ, {"ANTHROPIC_API_KEY": "offline_rehearsal_placeholder"}):
-        ranking = score_candidates(scoring_config, inventory, pairs, evidence, [], out/"initial_scoring")
-        count = config["design"]["round1_total"]-len(config["design"]["round1_controls"])
-        selected, trace = consensus_select(pairs, ranking, features, count,
-            config["design"]["consensus_weight_llm"], config["design"]["minimum_llm_percentile"],
-            required_ligands=round1_required_ligands(config, inventory))
-        design = make_design(config, inventory, pairs, ranking, selected, 1)
+        score_candidates(scoring_config, inventory, pairs, evidence, [], out/"initial_scoring")
+        # The hackathon's first batch is already frozen and budgeted. Exercise the
+        # initial provider contract above, then rehearse feedback on that actual
+        # design rather than inventing a different material demand from mock scores.
+        frozen = Path(__file__).resolve().parents[1]/"campaigns/hackathon2026/round1_design.csv"
+        design = read_csv(frozen)
+        trace = read_csv(str(frozen)+".selection.csv")
         write_csv(out/"round1_design.csv", design)
         write_csv(out/"round1_selection.csv", trace)
         coverage = ligand_coverage(inventory, design)
@@ -136,9 +137,9 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
     tested = {row["pair_id"] for row in design if row["kind"] == "pair"}
     no_repeats = not tested.intersection(row["pair_id"] for row in next_dosing)
     no_redose = all(float(row["sm_stock_ul"]) == 0 for row in next_dosing)
-    correct_is = all(float(row["internal_standard_predosed_umol"]) == 0 and
+    correct_is = all(float(row["internal_standard_predosed_umol"]) == float(row["internal_standard_total_umol"]) and
                      float(row["internal_standard_workup_umol"]) == 0 and
-                     float(row["internal_standard_added_umol"]) == float(row["internal_standard_total_umol"])
+                     float(row["internal_standard_added_umol"]) == 0
                      for row in next_dosing)
     if len(next_dosing) != config["design"]["round2_total"] or not no_repeats or not no_redose or not correct_is:
         raise ValueError("Rehearsal next batch violated campaign dose constraints")
@@ -156,7 +157,9 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
               "mocked_requests": calls, "round1_pairs": len(tested), "round1_reference_wells": 0,
               "round1_ligands_covered_in_pairs": sum(row["covered"] for row in coverage),
               "round1_missing_ligands": [row["ligand_id"] for row in coverage if not row["covered"]],
-              "coverage_floor_overrides": sum(row["llm_floor_override"] for row in trace),
+              "coverage_floor_overrides": sum(row["llm_floor_override"] in (True,"True") for row in trace),
+              "first_batch_source":"frozen real 48-pair campaign; yields and all provider responses remain synthetic",
+              "initial_mock_scores_used_for_selection":False,
               "first_round_qc_pass": read_json(iteration/"analysis/qc_report.json")["batch_qc_pass"],
               "feedback_samples": len(results), "remaining_pairs_scored": len(pairs)-len(tested),
               "round2_pairs":sum(row["kind"]=="pair" for row in next_dosing), "round2_reference_wells":1,

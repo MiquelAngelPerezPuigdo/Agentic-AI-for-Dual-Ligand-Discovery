@@ -1,8 +1,8 @@
 {
-  "created_utc": "2026-10-17T10:51:05.062464+00:00",
+  "created_utc": "2026-10-18T17:55:10.210839+00:00",
   "campaign": "hackathon2026-paradox48",
   "tests": {
-    "tests": 190,
+    "tests": 195,
     "failures": 0,
     "errors": 0,
     "skipped": 0
@@ -26,7 +26,9 @@
     "Generic synthetic 24-well multi-plate regression only; disabled by campaign policy",
     "Fresh-tip mode, rack replacement and alternative p20 split transfers",
     "Actual SDK current_temperature branch exercised for both workup rounds; strict SDK hot-module cooling pause",
-    "R2 new-vial uncapping checked before first aspiration"
+    "R2 new-vial uncapping checked before first aspiration",
+    "Schema 3 combined SM/IS in retained toluene, 20 mM ligands and 2 mL working tubes",
+    "Worst-case R2: 22 L17 pairs +reference, 1910 uL source fill; L03 hard cap and mass budget"
   ],
   "language_model_pair_embeddings": {
     "model": "google-t5/t5-base",
@@ -64,6 +66,8 @@
     "round1_ligands_covered_in_pairs": 30,
     "round1_missing_ligands": [],
     "coverage_floor_overrides": 0,
+    "first_batch_source": "frozen real 48-pair campaign; yields and all provider responses remain synthetic",
+    "initial_mock_scores_used_for_selection": false,
     "first_round_qc_pass": true,
     "feedback_samples": 48,
     "remaining_pairs_scored": 387,
@@ -77,17 +81,17 @@
     "no_internal_standard_redose": true,
     "incomplete_export_ignored": true,
     "duplicate_event_ignored": true,
-    "next_dosing_csv": "feedback_loop/iteration-cedff85a73d1f70e/next_dosing.csv",
+    "next_dosing_csv": "feedback_loop/iteration-bede8c359d53156b/next_dosing.csv",
     "cache_summaries": [
       "initial_scoring/cache_summary.json",
-      "feedback_loop/iteration-cedff85a73d1f70e/scoring/cache_summary.json"
+      "feedback_loop/iteration-bede8c359d53156b/scoring/cache_summary.json"
     ],
     "result_interpretation": "Synthetic yields and mocked rankings validate data flow only.",
     "mocked_requests": 650,
     "initial_mock_requests": 340,
     "feedback_mock_requests": 310,
     "both_prompt_stages_include_17_SI_yields": true,
-    "source_report": "output/final-audit/rehearsal/rehearsal_report.json"
+    "source_report": "output/stock-update-final/rehearsal/rehearsal_report.json"
   },
   "live_initial_scoring": {
     "date": "2026-10-16",
@@ -187,27 +191,50 @@
   "initialization_only_gollum": {
     "pair_yields_required": false,
     "initial_consensus": "50% Claude rank + 50% T5 embedding-diversity rank with all-ligand coverage",
-    "round2_selector": "Claude only after all 48 measured yields pass QC",
+    "round2_selector": "Claude ranking after all 48 measured yields pass QC; Python selects highest-ranked feasible pairs, L03 at most four R2 wells",
     "round2_uses_gollum": false,
     "round2_pairs": 22,
     "round2_single_reference": "L17"
   },
   "chemistry_handoff": {
-    "SM_stock_mM": 500,
-    "SM_solvent": "DCM, evaporated fully",
+    "SM_stock_mM": 1000,
+    "SM_solvent": "toluene, retained",
+    "combined_SM_IS": true,
+    "combined_stock_ul": 2000,
+    "SM_mass_mg_at_100pct": 322.32,
+    "mesitylene_mass_mg_at_100pct": 24.038,
+    "SM_margin_factor": 1.1,
     "reaction_volume_ul": 250,
-    "ligand_stock_mM": 40,
+    "ligand_stock_mM": 20,
+    "ligand_dose_ul": 75,
     "Pd_stock_mM": 40,
+    "Pd_dose_ul": 75,
     "IS": "mesitylene",
-    "IS_stock_mM": 100,
-    "IS_stock_ul": 25,
-    "IS_stage": "separate, after DCM dry-down",
+    "IS_in_SM_stock_mM": 100,
+    "combined_dose_ul": 25,
+    "IS_umol_per_reaction": 2.5,
+    "IS_stage": "Same SM stock, once; predosed in R2",
+    "evaporation_required": false,
+    "separate_IS_or_toluene_topup": false,
     "all_30_ligand_deck_loads_tested": true,
     "source_loads_include_margin_and_surplus": true,
     "formal_homogeneity_study_waived_by_user": true,
-    "visible_faults_pause": true
+    "visible_faults_pause": true,
+    "working_source_labware": "opentrons_24_tuberack_eppendorf_2ml_safelock_snapcap",
+    "working_tube_max_fill_ul": 1950,
+    "SM_source": "slot 4 D2",
+    "RockPhos_available_mg": 10,
+    "RockPhos_R2_cap": 4,
+    "RockPhos_prepare_ul": 800,
+    "RockPhos_prepare_mg_pure_equivalent": 7.499296,
+    "RockPhos_hard_cap_and_mass_check_tested": true,
+    "small_analytical_master_minimum_weigh_mg": 1,
+    "independent_fit_and_check_masters": true,
+    "analytical_master_preparation_file": "analytical_stock_preparation.csv",
+    "SM_actual_rounded_margin_factor": 1.1267605633802817,
+    "small_analytical_masters": "2.0 mL 10 mM each; independent fit/check preparations; 200 uL 1 mM working solutions"
   },
-  "second_round_predose": "23 NEW vials, manual off deck in ordinary rack during R1; 50 uL SM/DCM each, evaporate/cap dry SM; same block reused after R1 sampling; add IS/catalysts only after decision",
+  "second_round_predose": "23 NEW vials, manually dose 25 uL combined 1 M SM/100 mM mesitylene in toluene from OFF-DECK reserve during R1, cap promptly, no evaporation; load same block after R1 sampling; catalysts only after selection, no SM/IS redosing",
   "local_api_key_file": {
     "filename": "anthropic.key",
     "git_ignored": true,
@@ -228,7 +255,7 @@
   },
   "setup_reference": "hte_inputs/campaign.json",
   "scope_note": "Bench compatibility, analytical method and twelve-hour throughput are not established by software tests.",
-  "review_date": "2026-10-17",
+  "review_date": "2026-10-18",
   "repository_cleanup": {
     "date": "2026-10-17",
     "removed": [
@@ -425,15 +452,15 @@
   "timing_allowance_audit": {
     "reaction_minutes": 480,
     "lc_minutes": 120.7,
-    "overhead_minutes": 152.0,
+    "overhead_minutes": 144.0,
     "injections": 85,
     "minimum_reaction_plus_lc_minutes": 600.7,
     "calibration_minutes_hidden_in_reaction": 23.8,
-    "serial_total_minutes": 752.7,
+    "serial_total_minutes": 744.7,
     "deadline_minutes": 720,
     "staged_lc_overlap_minutes": 0.0,
-    "planned_total_minutes": 752.7,
-    "remaining_minutes": -32.700000000000045,
+    "planned_total_minutes": 744.7,
+    "remaining_minutes": -24.700000000000045,
     "fits_serial_estimate": false,
     "fits_planned_estimate": false,
     "lc_plates_by_round": [
@@ -455,8 +482,8 @@
     "paid_calls_this_update": 0
   },
   "full_campaign_review": {
-    "date": "2026-10-17",
-    "report": "docs/rehearsal-results.md#campaign-review---17-october",
+    "date": "2026-10-18",
+    "report": "docs/rehearsal-results.md#campaign-review---18-october",
     "new_regression_cases": 13,
     "all_tests_passed": true,
     "four_stage_simulation_commands": [
@@ -464,37 +491,33 @@
         "round": 1,
         "stage": "dose_and_react",
         "passed": true,
-        "commands": 2242,
-        "manual_pauses": 5,
-        "source": "output/final-audit/frozen-r1/dose_and_react.py",
-        "log": "output/final-audit/r1-dose_and_react-simulation.json"
+        "commands": 1556,
+        "source": "output/stock-update-final/r1/dose_and_react.py",
+        "log": "output/stock-update-final/r1-dose_and_react-simulation.json"
       },
       {
         "round": 1,
         "stage": "workup",
         "passed": true,
         "commands": 1735,
-        "manual_pauses": 8,
-        "source": "output/final-audit/frozen-r1/workup.py",
-        "log": "output/final-audit/r1-workup-simulation.json"
+        "source": "output/stock-update-final/r1/workup.py",
+        "log": "output/stock-update-final/r1-workup-simulation.json"
       },
       {
         "round": 2,
         "stage": "dose_and_react",
         "passed": true,
-        "commands": 942,
-        "manual_pauses": 4,
-        "source": "output/final-audit/rehearsal/round2/dose_and_react.py",
-        "log": "output/final-audit/r2-dose_and_react-simulation.json"
+        "commands": 608,
+        "source": "output/stock-update-final/rehearsal/round2/dose_and_react.py",
+        "log": "output/stock-update-final/r2-dose_and_react-simulation.json"
       },
       {
         "round": 2,
         "stage": "workup",
         "passed": true,
         "commands": 858,
-        "manual_pauses": 8,
-        "source": "output/final-audit/rehearsal/round2/workup.py",
-        "log": "output/final-audit/r2-workup-simulation.json"
+        "source": "output/stock-update-final/rehearsal/round2/workup.py",
+        "log": "output/stock-update-final/r2-workup-simulation.json"
       }
     ],
     "frozen_initial_design_byte_identical": true,
@@ -514,6 +537,23 @@
       "Actual solvent delivery and vial heating/cooling",
       "Authentic-standard 1.7-min method, quantitative channel/RTs/LOQs",
       "Full LC-cycle and all handling times within operating budget"
-    ]
+    ],
+    "new_regression_cases_this_update": 5
+  },
+  "toluene_and_material_budget_update": {
+    "date": "2026-10-18",
+    "schema_version": 3,
+    "paid_calls": 0,
+    "initial_design_byte_identical": true,
+    "combined_SM_IS_no_duplicate_doses": true,
+    "R2_RockPhos_cap": 4,
+    "available_RockPhos_mg": 10,
+    "maximum_L17_R2_working_load_ul": 1910,
+    "two_ml_tube_capacity_verified_in_simulator": true,
+    "old_protocols_and_local_schema_2_must_be_replaced": true,
+    "small_quantity_exception_authorized": true,
+    "LLM_chemical_target_payload_unchanged": true,
+    "practical_rounding": "User clarified approximately 10%, with practical larger volumes: 2.0 mL combined stock, 0.1 mL ligand-stock increments, whole-mL common and analytical masters; preserve unused masters",
+    "first_round_rehearsal_assignments": "Frozen real initial 48; mock initial scoring exercises the provider contract without changing material demand"
   }
 }

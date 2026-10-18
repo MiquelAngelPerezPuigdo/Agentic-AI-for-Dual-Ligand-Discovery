@@ -12,9 +12,9 @@
 
 | Stock | Bulk preparation / use |
 |---|---|
-| SM in DCM | **500 mM, 10 mL:** 805.8 mg SM at 100% assay; capped 20 mL glass vial. Dose 50 µL; evaporate fully. |
-| Ligands / Pd | **40 mM in toluene.** Use CSV masses/reserves. Open and prepare ligands in glovebox. Keep reserves capped. |
-| Mesitylene | **100 mM in toluene, 5 mL:** 60.095 mg. Dose 25 µL AFTER DCM removal. |
+| SM + mesitylene | **2.0 mL: 1 M SM +100 mM IS in toluene.** 322.32 mg SM +24.04 mg IS at 100% assay; make to FINAL volume, 4 mL capped vial. Dose **25 µL**; retain solvent. |
+| Ligands / Pd | **Ligands 20 mM; Pd 40 mM in toluene.** CSV masses/reserves; prepare ligands in glovebox. Working tubes **2 mL**, max 1.95 mL. |
+| RockPhos L03 | **800 µL, 20 mM:** 7.50 mg pure equivalent; correct for assay. **10 mg available; maximum 4 R2 wells.** |
 | Quench | **100 mL, 9:1 ACN/water +0.15% formic acid:** 150 µL acid, make to volume. No IS. |
 | LC diluent | **125 mL, 1:1 water/ACN +0.1% formic acid:** 125 µL acid, make to volume. No IS. |
 
@@ -24,8 +24,8 @@ Correct masses for assay. **Load stage-specific CSV volumes, not bulk preparatio
 
 | Slot | Contents |
 |---|---|
-| 1 / 4 | Ligand source racks; exact CSV addresses; L07 absent |
-| 2 | A1 SM/DCM; A2 Pd; A3 toluene; A8 mesitylene. Quench A4/A6/A9; diluent A5/A7/A10/A11/A12 |
+| 1 / 4 | 2 mL working tubes: ligands at CSV addresses; **SM/IS in slot 4 D2, 1.31 mL for R1**. L07 absent |
+| 2 | A2 Pd; quench A4/A6/A9; diluent A5/A7/A10/A11/A12. A1/A3/A8 unused |
 | 3 / 10 | Reaction block: staff move it by hand at App prompts; pipetting / heater-shaker |
 | 6 | Final 96-well 2.2 mL LC plate: fill here; move to 10, then directly to HPLC |
 | 5 / 8 / 9 | Single tips / multi tips / multi tips. Keep 7 and 11 empty |
@@ -44,15 +44,15 @@ Follow App pauses. Hand-tighten reaction-vial caps before heating/shaking; the L
 
 | Step | Action |
 |---|---|
-| 1 / SM | Dose **50 µL SM/DCM** into 48 vials. At pause, move off deck; evaporate fully by HTEL's ventilated procedure. Cool; return to slot 3. |
-| 2 / Reaction | Add **25 µL mesitylene +37.5 µL ligand A +37.5 µL ligand B +75 µL Pd +75 µL toluene =250 µL**. Hand-cap; move/latch as prompted. **95 °C, 500 rpm, 4 h.** |
-| 3 / During hold | Run calibration. Hand-dose **23 labelled NEW vials with 50 µL SM/DCM each** in an off-deck rack. Evaporate fully; cap dry SM. No mesitylene/catalyst yet. |
+| 1 / SM + IS | Dose **25 µL combined stock** into 48 open vials. Keep the toluene. No separate IS addition. |
+| 2 / Reaction | Add **75 µL ligand A +75 µL ligand B +75 µL Pd =250 µL total**. Hand-cap; move/latch as prompted. **95 °C, 500 rpm, 4 h.** |
+| 3 / During hold | Run calibration. Hand-dose **23 labelled NEW vials with 25 µL combined SM/IS stock each** from off-deck reserve. **Cap promptly; retain toluene.** No catalyst yet. |
 | 4 / Cool | Move the sealed block off the heater. Cool vials before opening; App also waits for module <=30 °C. Load workup sources. |
 | 5 / Quench | Add **500 µL quench** per vial. Hand-recap ALL. Shake **1500 rpm, 2 min**, heater off; return to slot 3. |
 | 6 / Sample | Let bubbles settle after shaking; uncap the indicated reaction vials. Robot adds **20 µL extract to 980 µL diluent** with fresh sample tips. |
 | 7 / LC handoff | Recap reaction vials. Move the completed LC plate **6 → cooled shaker 10** at App prompt. Robot shakes **UNCOVERED, heater OFF, 1000 rpm, 2 min** (locally confirmed splash-free speed). Move **10 → HPLC**, apply compatible seal. Inject directly from this plate; **no manual dilution/mixing or vial transfers**. |
-| 8 / R2 setup/select | During R1 LC, archive sampled R1 vials; fit the 23 dry predosed vials into the SAME block and check orientation. After all 48 results pass QC, software selects 22 new pairs +L17 reference. Add catalysts after selection. |
-| 9 / R2 | Refill R2 deck loads; **uncap all 23 NEW vials before dosing. No SM redose.** Add stocks; reference uses **75 µL L17**, no B. Cap; repeat 4 h reaction/workup. One new LC plate; **H3 is diluent only: do not inject.** |
+| 8 / R2 setup/select | During R1 LC, archive sampled R1 vials; fit 23 capped predosed vials into the SAME block. After all 48 results pass QC, select 22 pairs +L17 reference; **RockPhos at most 4 wells**. |
+| 9 / R2 | Refill R2 deck loads; **uncap all 23 NEW vials. No SM/IS redose.** Add catalysts; reference uses **150 µL L17**, no B. Cap; repeat 4 h reaction/workup. One new LC plate; **H3 is diluent only: do not inject.** |
 
 Stop the clock after **23 final injections and quantitative analysis**. Save exports, maps, QC, protocols, times and robot JSON logs.
 

@@ -13,6 +13,8 @@ from .io import (digest, finite, new_output, object_digest, read_csv, read_json,
 def prepare(config, output):
     """Seven optional pilot injections, separate from the campaign/calibration."""
     out = Path(output)
+    from .analytical_stocks import preparation
+    write_csv(out/"analytical_stock_preparation.csv", preparation(config))
     liquid = config["liquids"]
     maximum = (config["chemistry"]["substrate_molarity_M"] * config["chemistry"]["reaction_volume_ul"]
                * 1e6 / (config["chemistry"]["reaction_volume_ul"]+liquid["workup_ul"])

@@ -17,18 +17,18 @@ Round one: **48 distinct pairs, all 30 available ligands**; L07 is unavailable. 
 
 | Slot | Load |
 |---|---|
-| 1 / 4 | Ligand source racks; exact CSV addresses, L07 absent |
-| 2 | A1 SM/DCM; A2 Pd; A3 toluene; A8 mesitylene. Quench A4/A6/A9; diluent A5/A7/A10/A11/A12 |
+| 1 / 4 | 2 mL Eppendorf working tubes; ligands at CSV addresses, L07 absent; combined SM/IS in **slot 4 D2** |
+| 2 | A2 Pd; quench A4/A6/A9; diluent A5/A7/A10/A11/A12. A1/A3/A8 unused |
 | 3 / 10 | Reaction block: staff move it by hand at App prompts; pipetting / heater-shaker |
 | 6 | VWR 96-well 2.2 mL deep-well preparation plate, or matching configured replacement; fill here, shake on 10, then directly to HPLC |
 | 5 / 8 / 9 | Single tips / multi tips / multi tips. Keep slots 7 and 11 empty |
 
 ## Dose and react
 
-1. Robot doses **50 µL 500 mM SM/DCM** per vial. At the pause, move the block off deck and evaporate completely by HTEL's ventilated procedure. Cool; return to slot 3.
-2. Add **25 µL mesitylene +37.5 µL ligand A +37.5 µL ligand B +75 µL Pd +75 µL toluene =250 µL**. Stocks: mesitylene 100 mM; ligands/Pd 40 mM. Reference: use 75 µL L17 instead of the two ligand portions.
-3. Hand-tighten all caps. Move/latch at the local pauses; run **95 °C, 500 rpm, 4 h**. Every block move, cap change and tip-rack replacement is manual.
-4. During hold one, run the **14 calibration injections**. Hand-dose **23 labelled fresh vials with SM/DCM only** in an ordinary off-deck rack; evaporate fully and cap the dry SM. Add mesitylene/catalysts only after round two is selected. Reuse the same reaction block.
+1. Robot doses **25 µL combined 1 M SM +100 mM mesitylene in toluene** per open vial. The 25 µL remains in the reaction. Load **1.31 mL** in the **2 mL source tube, slot 4 D2**, and preserve the off-deck R2 reserve.
+2. Add **75 µL ligand A +75 µL ligand B +75 µL Pd =250 µL total including the SM/IS stock**. Ligands are **20 mM**, Pd **40 mM**. Reference: **150 µL L17** instead of the two ligand portions. No separate IS or solvent top-up.
+3. Hand-tighten all caps. Move/latch at local pauses; run **95 °C, 500 rpm, 4 h**. Every block move, cap change and tip-rack replacement is manual.
+4. During hold one, run **14 calibration injections**. Hand-dose **23 labelled fresh vials with 25 µL combined SM/IS stock each** from the off-deck reserve; **cap promptly and retain the toluene**. Add catalysts only after R2 selection. Reuse the same block.
 
 **12-hour operating target:** 480 min reaction holds +120.7 min LC; **119.3 min for all remaining handling, workups, decisions, final analysis and contingency**. Calibration and R2 SM predosing overlap hold one. After R1 sampling, prepare the R2 block while LC runs; catalyst dosing waits for all 48 results and selection. One LC plate per round, four moves total; no R1 split. Confirm the full cycle and handling times locally before release.
 
@@ -57,6 +57,6 @@ For an uncertain LC dilution, remix the original extract and prepare a fresh doc
 
 ## Changeover and finish
 
-During R1 LC, after all R1 sampling is complete, archive those vials and fit the 23 dry predosed vials into the same block; verify orientation. After all **48 R1 results** pass QC, the pipeline selects **22 new pairs +L17 reference**. The R2 pause confirms this changeover; do not replace already-loaded new vials again. Refill R2 deck loads and **remove all 23 caps before dosing**. **No SM redosing; mesitylene is added once after dry-down.** Repeat reaction/workup.
+During R1 LC, after all R1 sampling is complete, archive those vials and fit the 23 capped liquid-predosed vials into the same block; verify orientation. After all **48 R1 results** pass QC, the pipeline selects **22 new pairs +L17 reference**. The R2 pause confirms this changeover; do not replace already-loaded new vials again. Refill R2 deck loads and **remove all 23 caps before dosing**. **No SM or IS redosing. RockPhos L03 is limited to four R2 wells.** Repeat reaction/workup.
 
 Stop the clock after all 23 final injections and quantitative analysis. Archive source exports, maps, assay/stock records, method/channel, calibration, QC, times, scoring/cache records, final CSVs, matching protocols and robot JSON logs. Keep experimental data private pending team agreement.

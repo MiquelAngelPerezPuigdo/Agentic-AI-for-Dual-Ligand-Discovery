@@ -189,7 +189,14 @@ def validate_design(config, inventory, rows, history=()):
             raise ValueError("A single reference requires one ligand and an empty pair ID")
     if round_number == "1":
         validate_round1_coverage(config, inventory, rows)
-    elif history:
+    else:
+        counts = Counter(key for row in rows for key in (row.get("ligand_a"), row.get("ligand_b")) if key)
+        for key, limit in config["design"].get("round2_ligand_caps", {}).items():
+            if key not in inventory or type(limit) is not int or limit < 0:
+                raise ValueError("Invalid round-two ligand cap")
+            if counts[key] > limit:
+                raise ValueError(f"Round-two ligand cap exceeded: {key} {counts[key]} > {limit}")
+    if round_number == "2" and history:
         validate_design(config, inventory, history)
         if str(history[0]["round"]) != "1":
             raise ValueError("Round-two history must be the complete first round")
@@ -211,6 +218,8 @@ def make_design(config, inventory, candidates, ranking, exploration, round_numbe
     excluded = {r["pair_id"] for r in history if r.get("pair_id") and r.get("kind", "pair") == "pair"}
     count = n - len(controls)
     selected = []
+    caps = design.get("round2_ligand_caps", {}) if round_number == 2 else {}
+    use = Counter(key for row in controls for key in (row.get("ligand_a"), row.get("ligand_b")) if key)
     if round_number == 1:
         if len(exploration) != count:
             raise ValueError("Round-one consensus must select exactly the allocated number of pair wells")
@@ -222,9 +231,13 @@ def make_design(config, inventory, candidates, ranking, exploration, round_numbe
         if len(selected) >= count:
             break
         if key not in excluded and key not in {r[0] for r in selected}:
+            ligands = (candidate_map[key]["ligand_a"], candidate_map[key]["ligand_b"])
+            if any(use[ligand] >= caps[ligand] for ligand in ligands if ligand in caps):
+                continue
             selected.append((key, "llm"))
+            use.update(ligands)
     if len(selected) != count:
-        raise ValueError("Not enough untested pairs; repeats must be explicit controls")
+        raise ValueError("Not enough untested pairs within the ligand caps; repeats must be explicit controls")
     entries = []
     for key, method in selected:
         entries.append({**candidate_map[key], "kind": "pair", "selection_method": method})

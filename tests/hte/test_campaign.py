@@ -51,22 +51,22 @@ def test_two_rounds_and_reference_stoichiometry(demo, cfg, inventory):
     for design in (first,second):
         for r in dosing_rows(cfg,inventory,design):
             assert r["substrate_umol"]==25 and r["pd_umol"]==3
-            assert r["internal_standard_total_umol"]==r["internal_standard_added_umol"]==2.5
-            assert r["internal_standard_predosed_umol"]==r["internal_standard_workup_umol"]==0
-            assert r["substrate_solvent_retained_ul"]==0 and r["substrate_solvent_evaporated_ul"]==50
+            assert r["internal_standard_total_umol"]==2.5 and r["internal_standard_added_umol"]+r["internal_standard_predosed_umol"]==2.5
+            assert r["internal_standard_workup_umol"]==0
+            assert r["substrate_solvent_retained_ul"]==25 and r["substrate_solvent_evaporated_ul"]==0
             assert r["internal_standard_final_uM"]==pytest.approx(200/3)
             assert r["ligand_a_umol"]+r["ligand_b_umol"]==3
-            assert sum(r[k] for k in ("internal_standard_stock_ul","ligand_a_ul","ligand_b_ul","pd_ul","toluene_ul"))==250
+            assert 25+sum(r[k] for k in ("internal_standard_stock_ul","ligand_a_ul","ligand_b_ul","pd_ul","toluene_ul"))==250
             assert r["workup_ul"]==500 and r["aliquot_ul"]==20 and r["diluent_ul"]==980
     second_rows=dosing_rows(cfg,inventory,second)
     ref=next(r for r in second_rows if r["kind"]=="single")
-    assert ref["ligand_a"]=="L17" and ref["ligand_a_ul"]==75 and ref["ligand_b_ul"]==0
+    assert ref["ligand_a"]=="L17" and ref["ligand_a_ul"]==150 and ref["ligand_b_ul"]==0
     assert all(r["sm_stock_ul"]==0 and r["substrate_predosed_umol"]==25 for r in second_rows)
     manifest=read_csv(demo/"round1/round2_predose.csv")
     assert [r["well"] for r in manifest]==[r["well"] for r in second]
-    assert all(float(r["internal_standard_predosed_umol"])==0 and float(r["sm_stock_ul"])==50 for r in manifest)
+    assert all(float(r["internal_standard_predosed_umol"])==2.5 and float(r["sm_stock_ul"])==25 for r in manifest)
     deck_stock=next(r for r in read_csv(demo/"round1/deck_loads.csv") if r["reagent"]=="substrate_stock")
-    assert float(deck_stock["load_ul"])==3910
+    assert float(deck_stock["load_ul"])==1310
 
 
 @pytest.mark.parametrize("reuse", [True, False])
@@ -91,11 +91,11 @@ def test_tip_capacity_source_ledger_and_predose(demo, cfg, inventory, reuse):
     assert workup["stock_mM"] == 0
     assert workup["mass_mg"] == 0
     mixed = next(r for r in plan if r["reagent"] == "substrate_stock")
-    assert mixed["prepare_ul"] == 10000
-    assert mixed["mass_mg"] == pytest.approx(805.8)
-    standard=next(r for r in plan if r["reagent"]=="internal_standard")
-    assert standard["stock_mM"]==100 and standard["mass_mg"]==pytest.approx(60.095)
-    assert mixed["source_slot"] == 2 and mixed["source_well"] == "A1"
+    assert mixed["prepare_ul"] == 2000
+    assert mixed["mass_mg"] == pytest.approx(322.32)
+    assert mixed["internal_standard_mM"]==100 and mixed["internal_standard_mass_mg"]==pytest.approx(24.038)
+    assert not any(r["reagent"]=="internal_standard" for r in plan)
+    assert mixed["source_slot"] == 4 and mixed["source_well"] == "D2"
     assert "glass" in mixed["storage_container"]
 
 
@@ -112,8 +112,8 @@ def test_timing_calibrations_overlap_and_deadline_warning(cfg):
     timing = schedule(cfg)
     assert timing["lc_minutes"] == pytest.approx(120.7)
     assert timing["reaction_minutes"] == 480
-    assert timing["serial_total_minutes"] == pytest.approx(752.7)
-    assert timing["planned_total_minutes"] == pytest.approx(752.7)
+    assert timing["serial_total_minutes"] == pytest.approx(744.7)
+    assert timing["planned_total_minutes"] == pytest.approx(744.7)
     assert not timing["fits_serial_estimate"] and not timing["fits_planned_estimate"]
     assert timing["manual_lc_plate_moves"] == 4 and timing["lc_plates_by_round"] == [1, 1]
     budget = timing["operating_budget"]
@@ -125,7 +125,7 @@ def test_timing_calibrations_overlap_and_deadline_warning(cfg):
     # A target fitting the deadline must never turn the unmeasured allowance scenario into a pass.
     assert not timing["fits_planned_estimate"]
     cfg["timing"]["calibration_injections_during_round1_reaction"] = 0
-    assert schedule(cfg)["serial_total_minutes"] == pytest.approx(776.5)
+    assert schedule(cfg)["serial_total_minutes"] == pytest.approx(768.5)
 
 
 @pytest.mark.parametrize("cycle,remaining,fixed_fit", [(3, 27, True), (6, -186, False)])
@@ -176,9 +176,8 @@ def test_separate_stock_assays_apply_to_each_solute(demo, cfg, inventory):
     rows = dosing_rows(cfg, inventory, read_csv(demo/"round1_design.csv"))
     mixed = next(r for r in stock_plan(cfg, inventory, transfer_operations(cfg, inventory, rows))
                  if r["reagent"] == "substrate_stock")
-    assert mixed["mass_mg"] == pytest.approx(805.8/0.95)
-    standard=next(r for r in stock_plan(cfg,inventory,transfer_operations(cfg,inventory,rows)) if r["reagent"]=="internal_standard")
-    assert standard["mass_mg"]==pytest.approx(60.095/0.98)
+    assert mixed["mass_mg"] == pytest.approx(322.32/0.95)
+    assert mixed["internal_standard_mass_mg"]==pytest.approx(24.038/0.98)
 
 
 def test_combined_stock_rejects_duplicate_is_in_workup(cfg):

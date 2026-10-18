@@ -8,6 +8,7 @@
 | `hte/embeddings.py` | Frozen T5 embedding generation/loading; model downloads are optional |
 | `hte/scoring.py`, `design.py` | Small cached Claude requests, strict scores, repeated aggregation and pair selection |
 | `hte/analytics.py`, `ingestion.py` | HTEL peak-table normalization, calibration/QC and complete-batch joins |
+| `hte/analytical_stocks.py` | Small independent analytical masters, with a practical minimum weighing and explicit containers |
 | `hte/analytical_practice.py`, `scripts/mock-hplc-trials.py` | Calibration/pilot replay and visual mock-LC fault challenges |
 | `scripts/simulate-lc-separation.py` | Uncalibrated column/gradient scenarios; separate from campaign quantification |
 | `hte/planning.py`, `protocols.py` | Stoichiometry, reserves, deck loads, timing and standalone local OT-2 Python |

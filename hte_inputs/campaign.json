@@ -56,11 +56,14 @@
         "reason": "AdJohnPhos delivery delayed; 48 pairs then 22 new pairs + one L17 single reference"
       }
     ],
-    "round2_predose_mode": "manual_offdeck"
+    "round2_predose_mode": "manual_offdeck",
+    "round2_ligand_caps": {
+      "L03": 4
+    }
   },
   "liquids": {
-    "substrate_stock_mM": 500,
-    "ligand_stock_mM": 40,
+    "substrate_stock_mM": 1000,
+    "ligand_stock_mM": 20,
     "pd_stock_mM": 40,
     "workup_ul": 500,
     "aliquot_ul": 20,
@@ -68,12 +71,12 @@
     "workup_composition": "9:1 acetonitrile/water, 0.15% v/v formic acid; NO mesitylene. Addition to 250 uL reaction gives nominal 0.1% acid in 750 uL extract.",
     "mix_rpm": 1500,
     "lc_diluent_composition": "1:1 water/acetonitrile, 0.1% v/v formic acid; NO mesitylene",
-    "substrate_stock_solvent": "DCM",
+    "substrate_stock_solvent": "toluene",
     "internal_standard_stock_mM": 100,
     "internal_standard_addition_stage": "reaction_stock",
     "internal_standard_workup_mM": 0,
     "internal_standard_molecular_weight_g_mol": 120.19,
-    "substrate_evaporation_required": true,
+    "substrate_evaporation_required": false,
     "internal_standard_stock_solvent": "toluene",
     "workup_formic_acid_percent": 0.15,
     "lc_diluent_formic_acid_percent": 0.1,
@@ -81,7 +84,8 @@
     "lc_diluent_acetonitrile_fraction": 0.5,
     "lc_mix_rpm": 1000,
     "lc_mix_minutes": 2,
-    "lc_max_module_temperature_C": 30
+    "lc_max_module_temperature_C": 30,
+    "substrate_stock_contains_internal_standard": true
   },
   "robot": {
     "p300": "p300_multi_gen2",
@@ -104,7 +108,8 @@
     "lc_batch_size": 48,
     "capped_clearance_height_mm": 45,
     "lc_plate_workflow_status": "One final autosampler plate per round, filled in slot 6, manually moved to cooled heater-shaker slot 10, shaken uncovered with heater off, then moved directly to HPLC and sealed. 1000 rpm for 2 min is provisional; confirm mounting, no splashing, plate/seal/carrier and needle-depth compatibility locally.",
-    "lc_single_plate_per_round": true
+    "lc_single_plate_per_round": true,
+    "ligand_source_labware": "opentrons_24_tuberack_eppendorf_2ml_safelock_snapcap"
   },
   "pipetting": {
     "aspirate_height_mm": 1.5,
@@ -136,10 +141,9 @@
     "margin_factor": 1.5,
     "tube_dead_ul": 100,
     "reservoir_dead_ul": 1500,
-    "tube_max_fill_ul": 1400,
+    "tube_max_fill_ul": 1950,
     "reservoir_max_fill_ul": 11900,
-    "substrate_min_prepare_ul": 10000,
-    "substrate_storage_container": "20 mL glass vial with DCM-compatible PTFE-faced closure; capped off-deck reserve",
+    "substrate_storage_container": "4 mL capped glass vial; aliquot R1 into the configured 2 mL working tube",
     "reservoir_source_pools": {
       "workup": [
         "A4",
@@ -154,7 +158,14 @@
         "A12"
       ]
     },
-    "internal_standard_min_prepare_ul": 5000
+    "substrate_margin_factor": 1.1,
+    "substrate_source_slot": 4,
+    "substrate_source_well": "D2",
+    "available_mass_mg": {
+      "L03": 10
+    },
+    "analytical_minimum_weigh_mg": 1,
+    "analytical_margin_factor": 1.1
   },
   "llm": {
     "model": "claude-opus-4-8",
@@ -224,7 +235,7 @@
     "additional_injections": 14,
     "calibration_injections_during_round1_reaction": 14,
     "dosing_total_minutes": 38,
-    "evaporation_total_minutes": 8,
+    "evaporation_total_minutes": 0,
     "heat_ramp_total_minutes": 12,
     "cooling_total_minutes": 12,
     "workup_total_minutes": 72,
@@ -237,7 +248,7 @@
       "2": 0
     },
     "handling_status": "One LC plate per round, explicitly no R1 split. The 72 min workup allowance remains unmeasured. Per-export workup_timing.json derives pumping/waits/shaking from actual transfer operations and lists excluded motion/manual handling; it is a subtotal, not a complete duration.",
-    "presentation_status": "Use the deadline-derived operating budget as a target allocation, not a validated completion-time forecast. Confirm the full injection cycle and complete handling plan locally. Calibration and R2 SM predosing run during hold one; R2 physical changeover can overlap R1 LC after sampling. One LC plate per round; no R1 split."
+    "presentation_status": "Use the deadline-derived operating budget as a target allocation, not a validated completion-time forecast. Confirm the full injection cycle and complete handling plan locally. Calibration and R2 combined SM/IS predosing run during hold one; R2 physical changeover can overlap R1 LC after sampling. One LC plate per round; no R1 split."
   },
   "validation": {
     "chemistry_confirmed": true,
@@ -252,10 +263,9 @@
     "simultaneous_heating_capacity_validated": false,
     "heating_validated": false,
     "round2_predose_storage_validated": false,
-    "substrate_evaporation_validated": false,
     "homogeneity_study_waived_by_user": true,
     "staged_lc_timing_confirmed": false,
     "lc_plate_workflow_validated": false
   },
-  "schema_version": 2
+  "schema_version": 3
 }

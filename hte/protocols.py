@@ -23,7 +23,7 @@ def run(protocol: protocol_api.ProtocolContext):
              if "reaction" in DEFINITIONS else protocol.load_labware(CONFIG["robot"]["reaction_labware"], 3, "Reaction plate"))
     lc = (protocol.load_labware_from_definition(DEFINITIONS["lc"], 6, "R"+str(ROUND)+"-LC01")
           if "lc" in DEFINITIONS else protocol.load_labware(CONFIG["robot"]["lc_labware"], 6, "R"+str(ROUND)+"-LC01"))
-    racks = {slot: protocol.load_labware("opentrons_24_tuberack_eppendorf_1.5ml_safelock_snapcap", slot)
+    racks = {slot: protocol.load_labware(CONFIG["robot"]["ligand_source_labware"], slot)
              for slot in [1, 4]}
     reservoir = (protocol.load_labware_from_definition(DEFINITIONS["reservoir"], 2, "Common liquid sources")
                  if "reservoir" in DEFINITIONS else protocol.load_labware(CONFIG["robot"]["reservoir_labware"], 2))
@@ -140,11 +140,9 @@ def run(protocol: protocol_api.ProtocolContext):
         if any(op["stage"] == "substrate" for op in OPERATIONS):
             protocol.pause("Confirm the 48 first-round reaction vials are empty and correctly loaded. REMOVE ALL reaction-vial screw caps and open the required sources before pipetting.")
             transfer_stage("substrate")
-            protocol.move_labware(plate, protocol_api.OFF_DECK, use_gripper=False)
-            protocol.pause("Evaporate ALL substrate DCM using HTEL's approved ventilated method, before adding any mesitylene, catalyst or toluene. Verify dry-down and substrate retention, record actual time, cool the block, and prepare to return it to slot 3 with ALL reaction-vial caps/seals REMOVED and required sources open. Do not evaporate DCM into an unventilated robot enclosure.")
-            protocol.move_labware(plate, 3, use_gripper=False)
+            protocol.comment("Combined stock supplies SM AND mesitylene in 25 uL retained toluene. No evaporation and no separate IS dose.")
         else:
-            protocol.pause("Round two: CONFIRM the 48 first-round vials were archived after sampling and the 23 NEW, labeled substrate-predosed vials are fitted into the SAME block following round2_predose.csv. If this changeover was already completed during R1 LC, do not repeat it. Confirm ALL DCM was removed, 25 umol SM remains per vial, and NO mesitylene or catalyst was predosed. REMOVE ALL 23 reaction-vial screw caps and open required sources BEFORE resuming pipetting. Check orientation and any required empty dummy vials. No substrate redosing.")
+            protocol.pause("Round two: CONFIRM the 48 first-round vials were archived after sampling and the 23 NEW, labeled predosed vials are fitted into the SAME block following round2_predose.csv. If this changeover was already completed during R1 LC, do not repeat it. Each NEW vial must contain 25 uL combined stock: 25 umol SM AND 2.5 umol mesitylene in retained toluene; NO catalyst yet. REMOVE ALL 23 reaction-vial screw caps and open required sources BEFORE resuming pipetting. Check orientation and any required dummy vials. No SM or IS redosing.")
         transfer_stage("internal_standard")
         transfer_stage("assembly")
         protocol.pause("TIGHTEN every occupied vial screw cap BY HAND before heating/shaking. Use HTEL's compatible septum screw caps and mounting procedure for 95 C. Check no vial remains open. Cap remaining source stocks. No stir bars. Resume for the module's heat/shake cycle.")
@@ -155,7 +153,7 @@ def run(protocol: protocol_api.ProtocolContext):
             if CONFIG["chemistry"].get("thermal_equilibration_minutes", 0):
                 protocol.delay(minutes=CONFIG["chemistry"]["thermal_equilibration_minutes"])
             if ROUND == 1:
-                protocol.comment("DURING this 4 h hold: prepare/inject the 14 calibration samples. Separately hand-dose the 23 second-round glass vials with substrate stock in an ordinary OFF-DECK rack following round2_predose.csv; evaporate DCM under the approved method, cap/label and preserve dry SM. Do not add mesitylene/catalyst yet, move the active block or touch the running robot. Only ONE reaction block is used.")
+                protocol.comment("DURING this 4 h hold: prepare/inject the 14 calibration samples. Separately hand-dose the 23 NEW second-round vials with 25 uL combined SM/mesitylene stock from the OFF-DECK reserve following round2_predose.csv; cap promptly to retain toluene and label. No evaporation. Do not add catalyst yet, move the active block or touch the running robot. Only ONE reaction block is used.")
             protocol.delay(minutes=CONFIG["chemistry"]["reaction_minutes"])
         finally:
             hs.deactivate_shaker()
@@ -260,6 +258,11 @@ def export(config, inventory, design, output, live=False, history=None, stage="a
     if not config["robot"].get("heater_adapter"):
         raise ValueError("Supply the exact heater adapter before exporting a simulation")
     rows = dosing_rows(config, inventory, design)
+    source = (config["stock_preparation"]["substrate_source_slot"], config["stock_preparation"]["substrate_source_well"])
+    if source in {(int(r["source_slot"]), r["source_well"]) for r in inventory.values()}:
+        raise ValueError("Combined SM/IS source overlaps a ligand tube")
+    if source[0] not in (1, 4) or source[1] not in {f"{r}{col}" for r in "ABCD" for col in range(1, 7)}:
+        raise ValueError("Combined SM/IS source is absent from the source racks")
     validate_definition_geometry(config, definitions, rows)
     if int(rows[0]["round"]) == 2:
         if live and not history:
@@ -280,6 +283,8 @@ def export(config, inventory, design, output, live=False, history=None, stage="a
     output = new_output(output)
     write_csv(output / "dosing.csv", rows)
     write_csv(output / "stock_preparation.csv", stocks)
+    from .analytical_stocks import preparation
+    write_csv(output / "analytical_stock_preparation.csv", preparation(config))
     # Different source loads for dose vs workup. Common reservoir stock bottles stay off deck.
     deck = []
     for deck_stage, members in [("dose_and_react", {"substrate", "internal_standard", "assembly"}), ("workup", {"workup", "dilution"})]:
@@ -328,8 +333,9 @@ def export(config, inventory, design, output, live=False, history=None, stage="a
         write_csv(output/"round2_predose.csv", [{"round": 2, "sample_id": f"R2-{i:03d}", "well": well,
                   "lc_well": wells()[i-1], "substrate_umol": n0,
                   "sm_stock_ul": n0/config["liquids"]["substrate_stock_mM"]*1000,
-                  "internal_standard_predosed_umol": 0, "substrate_solvent_retained_ul": 0,
-                  "storage": "MANUAL OFF DECK during R1; dose SM only in DCM, evaporate completely under HTEL method, cap/label dry SM. Add mesitylene/catalysts only after loading the SAME block for R2."}
+                  "internal_standard_predosed_umol": n0*config["chemistry"]["preloaded_internal_standard"]["mol_percent_relative_to_substrate"]/100,
+                  "substrate_solvent_retained_ul": n0/config["liquids"]["substrate_stock_mM"]*1000,
+                  "storage": "MANUAL OFF DECK during R1; dose combined SM/mesitylene in toluene, CAP promptly and label. No evaporation. Add catalysts only after loading the SAME block for R2; no SM/IS redosing."}
                   for i, well in enumerate(reaction_wells(config)[:config["design"]["round2_total"]], 1)])
     stages = ("dose_and_react", "workup") if stage == "all" else (stage,)
     for protocol_stage in stages:

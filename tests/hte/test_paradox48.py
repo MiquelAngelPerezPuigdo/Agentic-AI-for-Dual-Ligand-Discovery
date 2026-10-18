@@ -114,7 +114,7 @@ def test_separate_lc_sequences_with_reset_injection_numbers_join_safely(demo48,t
 
 def test_unconfirmed_or_impossible_staged_lc_timing_cannot_release():
     c=synthetic_config(ROOT/"hte_inputs/campaign.json")
-    assert schedule(c)["planned_total_minutes"]==pytest.approx(752.7)
+    assert schedule(c)["planned_total_minutes"]==pytest.approx(744.7)
     c["timing"]["staged_lc_overlap_minutes_by_round"]["1"]=100
     c["timing"]["staged_lc_overlap_minutes"]=100
     with pytest.raises(ValueError,match="preceding injection windows"):schedule(c)
