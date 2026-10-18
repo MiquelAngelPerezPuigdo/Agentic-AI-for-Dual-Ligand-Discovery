@@ -21,6 +21,32 @@ from hte.workflow import iterate, watch
 ROOT = Path(__file__).resolve().parents[2]
 
 
+def test_public_material_excludes_correspondence_and_meeting_records():
+    import re
+    from pypdf import PdfReader
+    from hte.transfer import SOURCE_PATHS
+    assert not (ROOT/"docs/organizer-updates.md").exists()
+    assert not (ROOT/"hte_inputs/htel_source_review.json").exists()
+    private_markers = re.compile(
+        r"(?im)^#+\s+(?:Organizer evidence|Team deadlines from supplied slides)"
+        r"|slide\s+\d+\s+confirms"
+        r"|^[ \t]*(?:Dear|Hi Dr\.)\s+\w+[,!]"
+        r"|[A-Za-z0-9._%+\-]+@chem\.uzh\.ch")
+    for name in SOURCE_PATHS:
+        base = ROOT/name
+        paths = base.rglob("*") if base.is_dir() else [base]
+        for path in paths:
+            if not path.is_file():
+                continue
+            if path.suffix == ".pdf":
+                text = "\n".join(page.extract_text() for page in PdfReader(path).pages)
+            elif path.suffix in {".py", ".md", ".json", ".txt", ".yml", ".yaml"}:
+                text = path.read_text()
+            else:
+                continue
+            assert not private_markers.search(text), "Private communication marker in "+str(path.relative_to(ROOT))
+
+
 @pytest.mark.parametrize("fault,message", [
     ("uncentered_reservoir", "centerMultichannel"),
     ("short_reservoir", "span all eight"),

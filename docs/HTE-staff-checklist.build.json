@@ -1,14 +1,14 @@
 {
   "edition_date": "2026-10-18",
   "edition_timezone": "Europe/Zurich",
-  "source_sha256": "5e4ab64b367978804a90e5594c63bc02c4846f4adbf41906c70444aa65990bdf",
+  "source_sha256": "6d31a2fba101e793607db4994ad254a1450316013b28f3e12d53e631b11e7cec",
   "sources": {
     "docs/hte-staff-checklist.md": "21e1e3454d9f7a434dc312fc7ac773e2f3438bc5f3e245294b2f878ca1a39ebf",
     "docs/stocks-and-calibration.md": "80033a8602dff66a61e15c0b6cd20dc26e0bff38fedd02d4773880644c0c320e",
-    "hte_inputs/campaign.json": "39f1d17fdfd344215eef9cfa5b8ef1cb06f106133f5eb5d41103c24cfcbf8d25",
+    "hte_inputs/campaign.json": "059c2282d87a50bf6f90248ddf21400402884aededef546130c43f77a6f57358",
     "hte_inputs/calibration_template.csv": "b4e1960d710aaba9983583eb934b0a068864bce8cf7280ce5e985b06d821c644",
     "hte_inputs/ligands.csv": "a24c186b814eaeb8b5950e7a059e21b8df001764e83b19f127a3da179f4a5876",
-    "software_validation.json": "575e168938ca873ba4ea60c57c0580536b1d3269c8346e92c10de358991aeb1d",
+    "software_validation.json": "19fbae72cf8c1c0ed4a08713817f97e51c3bdaffa4e977058eb152a974c3e69c",
     "scripts/build-hte-pdf.py": "309d9371f2e3f4b251726ded97e8b4a3ebf5d82d5b0ff9d6bee94803fe900bac",
     "hte/planning.py": "7a86250c0970f58543772c54f7d6838ba33c8437ee1bfdff594567e7a85369b8",
     "hte/io.py": "786202cab5646cd4d9d21dd73bfda7d9249704761544a11cc0406964edbf6d2a",
@@ -29,7 +29,7 @@
     "campaigns/hackathon2026/round1_design.csv": "7c2ad21967f468857938989fcbe5901d2409a86dcae8d785f7247032ef301104",
     "campaigns/hackathon2026/scoring/campaign_provenance.json": "a97c2eec55f40228c5002f197a074dee898f26eacf24fdf2f61424707cca13fb"
   },
-  "pdf_sha256": "7a66b85c1546faacc00af1cb9955705ffaad8b461e830266feb25cf40b877997",
+  "pdf_sha256": "b1fd6cebd1f754cff87dd175ad5420f393dc874a97b43fde333abbc521a370bf",
   "pages": 2,
   "editable_master": "docs/hte-staff-checklist.md; rebuild with scripts/build-hte-pdf.py --staff",
   "private_email_included": false,

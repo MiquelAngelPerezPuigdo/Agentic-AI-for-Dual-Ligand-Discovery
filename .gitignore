@@ -22,6 +22,9 @@ output/
 demo/
 local_data/
 transfer/
+private/
+private-notes/
+meeting-notes/
 *.log
 pytest.xml
 .coverage

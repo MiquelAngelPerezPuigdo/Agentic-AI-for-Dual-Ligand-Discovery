@@ -1,8 +1,8 @@
 {
-  "created_utc": "2026-10-18T18:34:45.083907+00:00",
+  "created_utc": "2026-10-18T18:53:50.533934+00:00",
   "campaign": "hackathon2026-paradox48",
   "tests": {
-    "tests": 202,
+    "tests": 203,
     "failures": 0,
     "errors": 0,
     "skipped": 0
@@ -256,7 +256,6 @@
     "original_exports_maps_and_dosing_archived": true,
     "R2_protocol_and_deck_paths_printed_when_released": true
   },
-  "setup_reference": "hte_inputs/campaign.json",
   "scope_note": "Bench compatibility, analytical method and twelve-hour throughput are not established by software tests.",
   "review_date": "2026-10-18",
   "repository_cleanup": {

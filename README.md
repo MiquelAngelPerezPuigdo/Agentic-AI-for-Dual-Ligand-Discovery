@@ -44,6 +44,8 @@ For a visual test, install `.[reports]` and run `python scripts/mock-hplc-trials
 
 **Return the data:** after staff save instrument logs/raw files and notes into `local_data/`, run `python scripts/hte-return-package.py`. Send `transfer/hte-results.zip` privately: code, local data, run outputs and file hashes, with credentials excluded. [What is saved and what staff must supply](docs/development.md#return-the-campaign-to-miquel). A Git push alone does not include experimental data.
 
+Keep correspondence, meeting notes, registration details and team schedules outside this public repository. The shared documentation describes the project and its operating requirements.
+
 ## Evidence and scope
 
 **The campaign targets completion within the 12-hour competition window.** Two reaction holds use 480 min; 71 LC injections at the requested 1.7-min full cycle use 120.7 min. The remaining **119.3 min** is the budget for all dosing, heating/cooling, workups, manual handling, optimization, final analysis and contingency. Calibration and R2 SM predosing run during hold one; R2 physical changeover can overlap R1 LC after sampling.
