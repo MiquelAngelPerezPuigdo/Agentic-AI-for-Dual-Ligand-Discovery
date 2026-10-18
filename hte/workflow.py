@@ -40,6 +40,7 @@ def _iterate_locked(config, inventory, evidence, dosing, tables, inputs, out):
                 raise ValueError("Completed iteration output changed or disappeared: "+name)
         return out
     write_json(out/"inputs.json", inputs)
+    write_json(out/"settings.json", {"config": config, "inventory": inventory, "evidence": evidence})
     write_json(out/"source_tables.json", tables)
     results, report = analyze(config, dosing, tables["peaks"], tables["calibration"], out/"analysis")
     if not report["batch_qc_pass"]:

@@ -54,7 +54,7 @@ Follow App pauses. Hand-tighten reaction-vial caps before heating/shaking; the L
 | 8 / R2 setup/select | During R1 LC, archive sampled R1 vials; fit 23 capped predosed vials into the SAME block. After all 48 results pass QC, select 22 pairs +L17 reference; **RockPhos at most 4 wells**. |
 | 9 / R2 | Refill R2 deck loads; **uncap all 23 NEW vials. No SM/IS redose.** Add catalysts; reference uses **150 µL L17**, no B. Cap; repeat 4 h reaction/workup. One new LC plate; **H3 is diluent only: do not inject.** |
 
-Stop the clock after **23 final injections and quantitative analysis**. Save exports, maps, QC, protocols, times and robot JSON logs.
+Stop the clock after **23 final injections and quantitative analysis**. Give the pipeline operator robot JSON logs, raw LC/MS files, stock records, actual times and deviations for the private return ZIP.
 
 ## If a transfer looks wrong
 

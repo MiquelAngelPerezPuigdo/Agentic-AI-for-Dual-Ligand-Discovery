@@ -21,6 +21,7 @@ secrets*.json
 output/
 demo/
 local_data/
+transfer/
 *.log
 pytest.xml
 .coverage

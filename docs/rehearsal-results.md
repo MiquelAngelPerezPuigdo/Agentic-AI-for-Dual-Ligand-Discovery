@@ -16,10 +16,14 @@ Current machine-readable record: [software_validation.json](../software_validati
 | Calibration and yield | Fixed 66.7 µM mesitylene, five analyte levels, blank and independent check. Python uses measured UV response; method, RTs, separation and LOQs still require authentic-standard data on the requested 1.7-min method. |
 | Export and analytical faults | Explicit injection maps, complete coverage and stable hashes; source changes, overlaps and incomplete exports stop processing. Final staff analysis now validates doses and saves stable input hashes. Failed analytical QC returns a failing command status. |
 | R2 decision and dosing | All 48 valid R1 results before Claude-only ranking of 387 untested pairs. Select 22 plus L17 reference. Confirm the 23 fresh capped liquid-predosed vials are loaded and **uncapped**; no repeated changeover or SM/IS redose; L03 at most four R2 wells. |
-| Final analysis and archive | All 23 samples required by the final command; quantitative QC and input hashes retained. Save robot logs, maps, original exports and times. No remote robot control. |
+| Final analysis and archive | All 23 samples required. Original exports/maps/dosing, effective settings and calibration are snapshotted. One private return-ZIP command preserves code, data and decision records with file hashes; staff supply instrument logs/raw files and notes. No remote robot control. |
 | Timing and handoff | 12-hour target; 119.3 min cap for all handling/decision/contingency after holds and LC. No R1 split. Physical cycle/handling measurements remain outstanding; live release retains the deadline check. Two-page staff sheet and four-page reference follow the corrected pauses. |
 
 The audit found a hardware-path API defect hidden by ordinary simulation; tests now exercise that branch using the installed Opentrons API, including a hot-module pause. [Opentrons heater-shaker API](https://docs.opentrons.com/python-api/reference/heater-shaker/) confirms `current_temperature`; deactivating the heater provides passive cooling. Module temperature alone does not establish vial temperature. No paid API calls or physical experiments were made during this review. The 18 October update adds combined-stock/source-loss, hard RockPhos cap/available-mass, worst-case 2 mL source and small independent analytical-master regressions. The real initial pair CSV remains byte-identical.
+
+## Private return archive
+
+The return-package checks preserve exact input bytes and every archived file hash, retain raw-file directories, work without Git, exclude credential files/symlinks, reject a Claude key pasted into an ordinary file, reject overlapping input/archive paths, refuse overwrites and stop for changing files. The staff `next` and `final` rehearsals verify original exports/maps/doses plus effective settings/calibration snapshots. A full 650-request mocked loop was also packaged and read back; no paid API call or physical experiment occurred. External instrument records must be supplied by staff; the manifest reports presence, not experimental completeness. [Return instructions](development.md#return-the-campaign-to-miquel).
 
 ## Real initial Claude campaign
 
@@ -35,7 +39,7 @@ The practice uses the frozen48 pairs covering30 ligands, accepts all 48 syntheti
 
 ## Acceptance scope
 
-The active suite passes **195 tests**, including 12 analytical-practice checks and five visual mock-LC checks. Two obsolete GP/MOCCA adapter tests were removed during the earlier cleanup; all campaign checks remain. Four tests specific to the removed vendor-concentration comparison were retired with that optional feature; yield/import/QC tests remain. The initial design regenerates byte for byte from saved scores/vectors; robot/stock outputs are generated locally.
+The active suite passes **202 tests**, including 12 analytical-practice checks and five visual mock-LC checks. Two obsolete GP/MOCCA adapter tests were removed during the earlier cleanup; all campaign checks remain. Four tests specific to the removed vendor-concentration comparison were retired with that optional feature; yield/import/QC tests remain. The initial design regenerates byte for byte from saved scores/vectors; robot/stock outputs are generated locally.
 
 Tests cover stoichiometry/reserves/deck loads, supplied geometry and cap envelope, reaction-to-LC maps, acid/dilution arithmetic, ligand coverage, strict scoring, caching/budget stops and interrupted requests. HTEL peak-export batches with reset injection numbers require explicit maps and full coverage; partial/overlapping/duplicate exports are rejected. Calibration and quantitative QC are enforced.
 

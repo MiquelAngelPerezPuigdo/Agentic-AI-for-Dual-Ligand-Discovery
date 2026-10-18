@@ -1,8 +1,8 @@
 {
-  "created_utc": "2026-10-18T17:55:10.210839+00:00",
+  "created_utc": "2026-10-18T18:34:45.083907+00:00",
   "campaign": "hackathon2026-paradox48",
   "tests": {
-    "tests": 195,
+    "tests": 202,
     "failures": 0,
     "errors": 0,
     "skipped": 0
@@ -91,7 +91,7 @@
     "initial_mock_requests": 340,
     "feedback_mock_requests": 310,
     "both_prompt_stages_include_17_SI_yields": true,
-    "source_report": "output/stock-update-final/rehearsal/rehearsal_report.json"
+    "source_report": "output/transfer-update/rehearsal/rehearsal_report.json"
   },
   "live_initial_scoring": {
     "date": "2026-10-16",
@@ -251,7 +251,10 @@
     "single_reference": 1,
     "final_samples": 23,
     "paid_calls": 0,
-    "partial_duplicate_and_overlapping_exports_rejected": true
+    "partial_duplicate_and_overlapping_exports_rejected": true,
+    "effective_settings_and_calibration_snapshotted": true,
+    "original_exports_maps_and_dosing_archived": true,
+    "R2_protocol_and_deck_paths_printed_when_released": true
   },
   "setup_reference": "hte_inputs/campaign.json",
   "scope_note": "Bench compatibility, analytical method and twelve-hour throughput are not established by software tests.",
@@ -447,7 +450,7 @@
     "calibration_minutes_parallel_to_round1_hold": 23.8,
     "fixed_tasks_fit_window": true,
     "status": "Target allocation; complete physical timing has not been validated",
-    "interpretation": "Remaining time is a cap for ALL dosing, evaporation, heating/cooling, workups, manual handling, decisions, final analysis and contingency. It is not an estimate of those tasks or evidence that they fit."
+    "interpretation": "Remaining time is a cap for ALL dosing, heating/cooling, workups, manual handling, decisions, final analysis and contingency. It is not an estimate of those tasks or evidence that they fit."
   },
   "timing_allowance_audit": {
     "reaction_minutes": 480,
@@ -555,5 +558,63 @@
     "LLM_chemical_target_payload_unchanged": true,
     "practical_rounding": "User clarified approximately 10%, with practical larger volumes: 2.0 mL combined stock, 0.1 mL ligand-stock increments, whole-mL common and analytical masters; preserve unused masters",
     "first_round_rehearsal_assignments": "Frozen real initial 48; mock initial scoring exercises the provider contract without changing material demand"
+  },
+  "knowledge_transfer": {
+    "date": "2026-10-18",
+    "new_regression_checks": 7,
+    "paid_calls": 0,
+    "helper_snapshots": [
+      "effective_config",
+      "inventory",
+      "selection_evidence",
+      "calibration",
+      "software_versions"
+    ],
+    "original_inputs_archived": [
+      "all_channel_LC_exports",
+      "injection_maps",
+      "dosing"
+    ],
+    "decision_records_retained": [
+      "source_tables",
+      "quantified_yields",
+      "calibration_models",
+      "QC",
+      "Claude_requests_and_prompts",
+      "raw_responses",
+      "repeated_scores_and_rankings",
+      "cost_and_cache_records",
+      "selection",
+      "doses",
+      "released_protocols"
+    ],
+    "return_command": "python scripts/hte-return-package.py",
+    "default_private_archive": "transfer/hte-results.zip",
+    "includes_source_local_data_and_all_output": true,
+    "sha256_manifest": true,
+    "works_without_git": true,
+    "never_overwrites_archive": true,
+    "credential_files_excluded_and_pasted_Claude_token_blocks": true,
+    "changing_files_rejected": true,
+    "manual_external_records": [
+      "OT2_JSON_logs",
+      "raw_LC_MS_and_method_sequence_files",
+      "stock_assays_actual_times_deviations_and_rejected_injections"
+    ],
+    "external_presence_not_completeness_reported": true,
+    "archive_round_trip": {
+      "synthetic_only": true,
+      "paid_calls": 0,
+      "files_verified": 3498,
+      "archive_bytes": 8507427,
+      "sha256": "2244145b27ff590d1cb7479b21a796240e86b6485372dbde31f3b72108e811ba",
+      "all_hashes_match": true,
+      "raw_directory_preserved": true,
+      "mocked_requests": 650,
+      "external_records_are_synthetic_fixtures": true
+    },
+    "public_git_contains_experimental_data": false,
+    "all_data_automatic_capture": false,
+    "test_report": "output/transfer-update/tests.xml"
   }
 }

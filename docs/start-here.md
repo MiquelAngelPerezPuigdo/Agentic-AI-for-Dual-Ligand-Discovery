@@ -1,10 +1,10 @@
 # Local pipeline
 
-The **initial 48 pairs are ready** in `campaigns/hackathon2026/round1_design.csv`. Local Python converts integrated UV areas to calibrated yields; Claude selects the next conditions. Staff use the [bench sheet](HTE-staff-checklist.pdf).
+The **initial 48 pairs are ready** in `campaigns/hackathon2026/round1_design.csv`. Python calculates calibrated yields; Claude selects R2. Staff use the [bench sheet](HTE-staff-checklist.pdf).
 
 ## Set up before the clock
 
-Use Python 3.12: `uv sync --python 3.12 --extra sources`, then prefix commands with `uv run`. Alternatively activate a venv and install `python -m pip install -e '.[sources]'`.
+Use Python 3.12: `uv sync --python 3.12 --extra sources`; prefix commands with `uv run`. Or install `python -m pip install -e '.[sources]'` in a venv.
 
 ```bash
 mkdir -p local_data
@@ -18,7 +18,7 @@ Use **schema 3**; replace older preparation settings/protocols, preserving measu
 
 Put the raw Claude key in **`anthropic.key`**; preserve any existing key. Never send it to the robot, Git or email.
 
-In `local_data/campaign.json`, set actual method/channel, full LC cycle, measured reference RTs/LOQs and applicable release evidence. Confirm final-plate shaker/autosampler compatibility and uncovered shake speed; confirm the measured handling plan within the 119.3-min remaining budget before release. Enter measured stage totals under `timing` (both rounds combined); `check` separates the target from those allowances. [HTEL setup facts](hte-questions.md).
+In `local_data/campaign.json`, set method/channel, full LC cycle, measured RTs/LOQs and release evidence. Confirm LC plate compatibility, uncovered shake speed and handling within 119.3 min. Enter measured stage totals under `timing` (both rounds combined). [HTEL setup facts](hte-questions.md).
 
 ```bash
 python -m hte.cli --config local_data/campaign.json check
@@ -53,12 +53,12 @@ python scripts/hte-lc-results.py next \
 
 Calibration defaults to `local_data/calibration.csv` (`--calibration` overrides). After all 48 results pass QC, Claude scores **387 untested pairs** and selects **22 new pairs +L17 reference**. Both prompts include 17 SI yields. R2 uses no embedding selector; L03 is capped at four wells.
 
-The printed decision folder holds `next_design.csv`, `next_dosing.csv`, analysis, scores and `protocols/`. Use released Python and R2 deck loads. If checks remain open, export `next_design.csv` with `--history output/r1-dose/dosing.csv`, a fresh folder and `--live`. Fit the 23 capped liquid-predosed vials; **no SM/IS redosing**. RockPhos L03 may occupy at most four R2 wells.
+The command prints the R2 Python and deck-load paths when released. The decision folder retains design/dosing CSVs, analysis and scores. If checks remain open, export `next_design.csv` with `--history output/r1-dose/dosing.csv`, a fresh folder and `--live`. Fit the 23 liquid-predosed vials; **uncap; no SM/IS redosing**.
 
 After all 23 R2 injections, run the helper with **`final`**, R2 `dosing.csv`, the matching plate export/map and a new output folder. This calculates final results without Claude. Compare pair yields with the measured L17 reference and retain run times.
 
-## Practice and recovery
+## Return the data
 
-Practice: `python -m hte.cli practice-analytics --output output/pilot`; [real pilot replay](htel-lc-import.md). `rehearse-loop` also mocks feedback; no paid calls. Use fresh import folders and review interrupted scoring before retrying.
+Imports save original exports/maps, calibration and settings. Outputs retain yields/QC, Claude requests/responses/rankings/cost/cache, doses and protocols. Keep rejected measurements too.
 
-**195 tests passed; protocols simulated.** [Validation](rehearsal-results.md), [ML strategy](ml-strategy.md), [PDF updates](updating-the-handbook.md).
+Copy robot JSON logs into `local_data/robot_logs/`, raw LC/MS into `local_data/instrument_raw/`, and stock assays, times/deviations into `local_data/run-notes.txt`. Stop writers; run **`python scripts/hte-return-package.py`**. Send **`transfer/hte-results.zip` privately**: code, local data, all output and file hashes; credentials excluded. Missing external records are reported. Git alone does not preserve run data.

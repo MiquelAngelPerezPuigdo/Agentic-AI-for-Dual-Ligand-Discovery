@@ -153,6 +153,12 @@ def test_staff_lc_command_selects_next_22_then_analyzes_final_without_paid_calls
             "--dosing",str(demo48/f"round{round_number}/dosing.csv"),"--calibration",str(demo48/"calibration.csv"),
             "--exports",*exports,"--injections",*maps,"--output",str(out)])
         runpy.run_path(str(ROOT/"scripts/hte-lc-results.py"),run_name="__main__")
+        assert read_json(out/"inputs/settings.json")["config"]==c
+        assert (out/"inputs/calibration.csv").read_bytes()==(demo48/"calibration.csv").read_bytes()
+        archived=read_json(out/"ingestion/ingestion.json")["archived_inputs"]
+        assert len(archived)==2*len(exports)+1
+        for item in archived:
+            assert (out/"ingestion"/item["archived"]).read_bytes()==Path(item["source"]).read_bytes()
         if mode=="next":
             next_file=next(out.glob("decision/iteration-*/next_dosing.csv"));new=read_csv(next_file)
             assert len(new)==23 and sum(r["kind"]=="pair" for r in new)==22

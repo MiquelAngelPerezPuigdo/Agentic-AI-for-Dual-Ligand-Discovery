@@ -14,8 +14,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from hte.analytics import analyze, read_completed_inputs
 from hte.ingestion import ingest_exports
 from hte.inventory import campaign_inventory
-from hte.io import object_digest, read_csv, read_json, write_json
+from hte.io import new_output, object_digest, read_csv, read_json, write_json
 from hte.planning import validate_dosing
+from hte.transfer import snapshot_settings
 from hte.workflow import iterate
 
 
@@ -40,16 +41,22 @@ def main():
         if (len(doses) != config["design"][f"round{expected_round}_total"]
                 or {str(row["round"]) for row in doses} != {str(expected_round)}):
             raise ValueError(f"{args.mode} requires the complete round-{expected_round} dosing table")
-        output = Path(args.output)
+        evidence = read_json(args.evidence) if args.mode == "next" else None
+        output = new_output(args.output)
+        calibration = snapshot_settings(Path(__file__).resolve().parents[1], output / "inputs",
+                                        config, inventory, evidence, args.calibration)
         peaks, ready = ingest_exports(config, args.exports, args.injections, args.dosing, output / "ingestion")
         if args.mode == "next":
-            iteration = iterate(config, inventory, read_json(args.evidence), args.dosing,
-                                peaks, ready, args.calibration, output / "decision")
+            iteration = iterate(config, inventory, evidence, args.dosing,
+                                peaks, ready, calibration, output / "decision")
             print("NEXT DOSING:", iteration / "next_dosing.csv")
             print(read_json(iteration / "complete.json")["hardware_status"])
+            if (iteration / "protocols/dose_and_react.py").exists():
+                print("R2 PROTOCOL:", iteration / "protocols/dose_and_react.py")
+                print("R2 DECK LOADS:", iteration / "protocols/deck_loads.csv")
             print("Expected: 22 new pairs + one L17 reference. Review deck loads and import/start the released Python locally.")
         else:
-            tables, hashes = read_completed_inputs(config, args.dosing, peaks, ready, args.calibration)
+            tables, hashes = read_completed_inputs(config, args.dosing, peaks, ready, calibration)
             validate_dosing(config, inventory, tables["dosing"])
             _, report = analyze(config, tables["dosing"], tables["peaks"],
                                 tables["calibration"], output / "analysis")
@@ -58,6 +65,7 @@ def main():
             print("FINAL RESULTS:", output / "analysis/results.csv")
             if not report["batch_qc_pass"]:
                 raise ValueError("Final analytical QC failed; inspect qc_report.json")
+            print("RETURN PACKAGE: python scripts/hte-return-package.py (after copying instrument logs/raw files and notes into local_data)")
     except (ValueError, KeyError, FileNotFoundError, ImportError) as error:
         parser.exit(2, f"HTE stopped: {error}\n")
 

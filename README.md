@@ -42,9 +42,11 @@ For a visual test, install `.[reports]` and run `python scripts/mock-hplc-trials
 
 **API key:** create **`anthropic.key` in the repository root** from [the placeholder](anthropic.key.example), replacing its line with the raw key. Keep an existing key file. The pipeline reads it automatically; an environment `ANTHROPIC_API_KEY` takes precedence. Keys stay local and are excluded from Git and handoff packages.
 
+**Return the data:** after staff save instrument logs/raw files and notes into `local_data/`, run `python scripts/hte-return-package.py`. Send `transfer/hte-results.zip` privately: code, local data, run outputs and file hashes, with credentials excluded. [What is saved and what staff must supply](docs/development.md#return-the-campaign-to-miquel). A Git push alone does not include experimental data.
+
 ## Evidence and scope
 
-**The campaign targets completion within the 12-hour competition window.** Two reaction holds use 480 min; 71 LC injections at the requested 1.7-min full cycle use 120.7 min. The remaining **119.3 min** is the budget for all dosing, evaporation, heating/cooling, workups, manual handling, optimization, final analysis and contingency. Calibration and R2 SM predosing run during hold one; R2 physical changeover can overlap R1 LC after sampling.
+**The campaign targets completion within the 12-hour competition window.** Two reaction holds use 480 min; 71 LC injections at the requested 1.7-min full cycle use 120.7 min. The remaining **119.3 min** is the budget for all dosing, heating/cooling, workups, manual handling, optimization, final analysis and contingency. Calibration and R2 SM predosing run during hold one; R2 physical changeover can overlap R1 LC after sampling.
 
 Use **one final LC plate per round**, with uncovered OT-2 shaking and direct plate injection: four LC-plate moves total; no R1 split. This is a target allocation, subject to timed handling and LC-cycle confirmation. [Software evidence and timing audit](docs/rehearsal-results.md), [machine-readable record](software_validation.json). Local App import/start and physical setup checks remain required.
 

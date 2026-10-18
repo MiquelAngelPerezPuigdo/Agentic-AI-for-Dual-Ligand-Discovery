@@ -3,6 +3,7 @@ from pathlib import Path
 
 from .analytics import complete_export, normalize_export
 from .io import digest, new_output, read_csv, write_csv, write_json
+from .transfer import copy_verified
 
 
 def ingest_exports(config, exports, mappings, dosing_path, output):
@@ -29,9 +30,19 @@ def ingest_exports(config, exports, mappings, dosing_path, output):
     ready = output / "peaks.ready.json"
     if any(digest(path) != checksum for path, checksum in source_hashes.items()):
         raise ValueError("LC source, mapping or dosing changed during ingestion; publish stable completed files")
+    # Preserve the original all-channel tables, not only normalized selected peaks.
+    archived = []
+    for index, (source, mapping) in enumerate(zip(exports, mappings), 1):
+        for role, path in (("export", source), ("injections", mapping)):
+            saved = output / "sources" / f"part-{index:02d}-{role}{Path(path).suffix}"
+            record = copy_verified(path, saved, source_hashes[str(path)])
+            archived.append({**record, "archived": saved.relative_to(output).as_posix()})
+    saved = output / "sources/dosing.csv"
+    archived.append({**copy_verified(dosing_path, saved, source_hashes[str(dosing_path)]),
+                     "archived": saved.relative_to(output).as_posix()})
     write_csv(combined, peaks)
     # Partial batches cannot release the optimizer, regardless of filenames/order.
-    complete_export(config, combined, dosing_path, ready)
-    write_json(output / "ingestion.json", {"sources": provenance,
-               "dosing_sha256": digest(dosing_path), "peaks_sha256": digest(combined)})
+    complete_export(config, combined, saved, ready)
+    write_json(output / "ingestion.json", {"sources": provenance, "archived_inputs": archived,
+               "dosing_sha256": source_hashes[str(dosing_path)], "peaks_sha256": digest(combined)})
     return combined, ready
