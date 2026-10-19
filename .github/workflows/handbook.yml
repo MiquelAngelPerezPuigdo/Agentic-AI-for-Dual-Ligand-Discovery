@@ -15,6 +15,7 @@ on:
       - 'scripts/build-hte-pdf.py'
       - 'scripts/hte-lc-results.py'
       - 'pyproject.toml'
+      - 'uv.lock'
       - '.github/workflows/handbook.yml'
   workflow_dispatch:
 

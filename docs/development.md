@@ -32,7 +32,7 @@ python -m pytest -q
 python -m hte.cli rehearse-loop --output output/practice
 ```
 
-Equivalent uv setup: `uv sync --locked --python 3.12 --extra sources --extra test --extra docs`, then prefix commands with `uv run`. Routine operation/tests use the included embedding matrix and require no PyTorch/model download. Install `.[embeddings]` only to deliberately rebuild vectors. Tested dependency versions are recorded in `software_validation.json`.
+Equivalent uv setup: `uv sync --locked --python 3.12 --extra sources --extra test --extra docs`, then prefix commands with `uv run`. Routine operation/tests use the included embedding matrix and require no PyTorch/model download. Install `.[embeddings]` only to deliberately rebuild vectors. Tested dependency versions are recorded in `software_validation.json`; CI installs the committed `uv.lock` too.
 
 ## Reproduce the real first batch without spending
 
@@ -43,7 +43,7 @@ python -m hte.cli design \
   --output output/reproduced-initial.csv
 ```
 
-The design CSV should match the adopted **24-consensus +24-Sobol** `campaigns/hackathon2026/round1_design.csv` byte for byte. It reproduces David's notebook defaults from cached embeddings and paid scores; no GPU or Claude key is needed. Companion files record source labels, coverage, PCA/Sobol settings and selection provenance. The previous all-consensus batch is retired in Git history. **Regenerate stock plans, preparation files, robot protocols and LC maps for the adopted design; do not reuse exports from the previous batch.** To inspect/simulate matching files:
+The design CSV should match the adopted **24-consensus +24-Sobol** `campaigns/hackathon2026/round1_design.csv` byte for byte. It reproduces David's notebook defaults from cached embeddings and paid scores; no GPU or Claude key is needed. Companion files record source labels, coverage, PCA/Sobol settings and selection provenance. Embeddings are checked against their encoded reaction conditions; changes require rebuilding vectors and reviewing the Claude ranking. Time, atmosphere and precursor identity are outside this embedding template and still require ranking review. The previous all-consensus batch is retired in Git history. **Regenerate stock plans, preparation files, robot protocols and LC maps for the adopted design; do not reuse exports from the previous batch.** To inspect/simulate matching files:
 
 ```bash
 python -m hte.cli export \
@@ -84,7 +84,7 @@ Keep any additional files under `local_data/` too. Once all writers have stopped
 python scripts/hte-return-package.py
 ```
 
-Send **`transfer/hte-results.zip` privately**. The default includes the source snapshot, all `local_data/` and all `output/`, including practice runs. It works without Git and requires no paid call. To omit practice or large obsolete outputs, supply the real, nonoverlapping run folders with `--runs folder1 folder2 ...`; never omit a campaign's dosing, workup, decision or final-analysis folder. Choose `--output transfer/hte-results-v2.zip` for a later archive; an existing archive is never overwritten.
+Send **`transfer/hte-results.zip` privately**. The default includes the source snapshot (including the contributor notebook and dependency lock), all `local_data/` and all `output/`, including practice runs. It works without Git and requires no paid call. To omit practice or large obsolete outputs, supply the real, nonoverlapping run folders with `--runs folder1 folder2 ...`; never omit a campaign's dosing, workup, decision or final-analysis folder. Choose `--output transfer/hte-results-v2.zip` for a later archive; an existing archive is never overwritten.
 
 `TRANSFER_MANIFEST.json` lists file sizes/SHA-256 hashes, source revision when available, installed versions, exclusions and whether external-log/raw/notes files were supplied. Presence is not a completeness or scientific-validity check: review the original instrument files and final QC. Named key/environment/credential files and symlinks are excluded; a Claude token pasted into an ordinary file blocks packaging without printing it. Do not store unrelated secrets in run/data directories. Packaging refuses files that change while read; stop writers and retry with a fresh filename.
 

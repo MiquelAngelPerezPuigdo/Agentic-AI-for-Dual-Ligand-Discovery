@@ -65,6 +65,20 @@ def test_final_plate_simulations_preserve_doses_and_move_only_complete_plates(ca
     with (out/"workup.py").open() as f:
         commands, _ = simulate(f)
     texts = [c["payload"].get("text", "") for c in commands]
+    first_reservoir_aspiration = next(
+        i for i, command in enumerate(commands)
+        if command["payload"].get("text", "").startswith("Aspirating")
+        and command["payload"]["location"].labware.first_parent() == "2")
+    uncover = [i for i, text in enumerate(texts)
+               if "UNCOVER the prepared liquid reservoir in slot 2" in text]
+    assert uncover and min(uncover) < first_reservoir_aspiration
+    if len(plates) == 1:
+        # The first withdrawal is LC diluent: opening reaction vials comes later.
+        assert "Leave the cooled reaction vials CAPPED" in texts[min(uncover)]
+        opening = next(i for i, text in enumerate(texts) if "Separately CONFIRM" in text)
+        assert first_reservoir_aspiration < opening
+    else:
+        assert "keep it uncovered through LC preparation" in texts[min(uncover)]
     lc_moves = [t for t in texts if t.startswith(f"Moving R{round_number}-LC")]
     assert len(lc_moves) == 2*len(plates)
     for plate in plates:

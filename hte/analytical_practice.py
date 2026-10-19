@@ -58,6 +58,8 @@ def verify(config, exports, mappings, calibration_path, plan_path, output,
     paths=[plan_path,calibration_path,*exports,*mappings]
     if reviewed_absences_path:paths.append(reviewed_absences_path)
     hashes={str(p):digest(p) for p in paths}
+    if len({hashes[str(p)] for p in exports}) != len(exports):
+        raise ValueError("Pilot exports contain identical file content; supply each measured sequence only once")
     out = new_output(output)
     peaks, seen = [], set()
     for i,(source,mapping) in enumerate(zip(exports,mappings),1):

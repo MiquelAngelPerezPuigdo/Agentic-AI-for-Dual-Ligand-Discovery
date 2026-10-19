@@ -136,7 +136,7 @@ def main():
             outputs = [Path(str(args.output)+suffix) for suffix in ("", ".selection.csv", ".ligand_coverage.csv", ".metadata.json")]
             if any(path.exists() for path in outputs):
                 raise ValueError("Design output already exists; use a new path to preserve its audit files")
-            features = load_embeddings(args.embeddings, inv, pairs)
+            features = load_embeddings(args.embeddings, inv, pairs, config=config)
             ranking = read_csv(args.ranking)
             selection, trace, metadata = initial_select(config, inv, pairs, ranking, features)
             design = make_design(config, inv, pairs, ranking, selection, 1)
@@ -198,7 +198,7 @@ def main():
             watch(config, inv, read_json(args.evidence), args.inbox, args.dosing, args.calibration, args.output, args.once)
         elif args.command == "embeddings":
             from .embeddings import build_embeddings
-            build_embeddings(inv, pairs, args.model, args.output, args.download)
+            build_embeddings(inv, pairs, args.model, args.output, args.download, config=config)
     except (ValueError, KeyError, FileNotFoundError, ImportError) as error:
         parser.exit(2, f"HTE stopped: {error}\n")
 

@@ -11,8 +11,10 @@ def ingest_exports(config, exports, mappings, dosing_path, output):
         raise ValueError("Supply one injection mapping for each LC export")
     if len({str(Path(p).resolve()) for p in exports}) != len(exports):
         raise ValueError("An LC export was supplied more than once")
-    output = new_output(output)
     source_hashes = {str(path): digest(path) for path in [*exports, *mappings, dosing_path]}
+    if len({source_hashes[str(path)] for path in exports}) != len(exports):
+        raise ValueError("LC exports contain identical file content; do not count a copied export as another sequence")
+    output = new_output(output)
     peaks, seen, provenance = [], set(), []
     for index, (source, mapping) in enumerate(zip(exports, mappings), 1):
         normalized = output / f"part-{index:02d}.csv"

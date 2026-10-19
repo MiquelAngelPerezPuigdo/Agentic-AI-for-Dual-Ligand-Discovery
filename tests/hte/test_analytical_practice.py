@@ -88,3 +88,14 @@ def test_pilot_cli_reports_failure_and_never_constructs_a_paid_client(practice,t
     with pytest.raises(SystemExit) as stopped:main()
     assert stopped.value.code==2
     assert not read_json(tmp_path/"failed/pilot_report.json")["pilot_pass"]
+
+
+def test_pilot_rejects_identical_exports_even_with_distinct_paths(practice,tmp_path):
+    out,_=practice;s=out/"synthetic"
+    copied=tmp_path/"copied-vendor.csv"
+    copied.write_bytes((s/"clean/vendor.csv").read_bytes())
+    with pytest.raises(ValueError,match="identical file content"):
+        verify(read_json(s/"campaign.json"),[s/"clean/vendor.csv",copied],
+               [s/"clean/map.csv",s/"clean/map.csv"],s/"calibration.csv",
+               out/"pilot_plan.csv",tmp_path/"result",s/"pilot-absences.csv")
+    assert not (tmp_path/"result").exists()

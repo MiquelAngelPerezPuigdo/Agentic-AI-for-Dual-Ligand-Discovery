@@ -98,6 +98,43 @@ def test_horizontal_raw_reservoir_never_uses_eight_channels(setup):
     with pytest.raises(ValueError,match="NEVER"):plan.mix(["raw","H1"],8)
 
 
+@pytest.mark.parametrize("volume", [-50, float("nan"), float("inf")])
+def test_invalid_preparation_additions_cannot_be_silently_omitted(setup, volume):
+    _, config, *_ = setup
+    plan = Plan(config)
+    plan.initial_liquid(["raw", "A1"], 1000)
+    with pytest.raises(ValueError):
+        plan.transfer(["raw", "A1"], ["working1", "A1"], volume, "invalid addition")
+    with pytest.raises(ValueError):
+        plan.raw("water", ["working1", "A1"], volume, {"water": [["raw", "A1"]]})
+    assert plan.steps == [] and plan.amounts == {("raw", "A1"): 1000}
+
+
+@pytest.mark.parametrize("field,value", [
+    ("quench_acetonitrile_fraction", .99),
+    ("lc_diluent_acetonitrile_fraction", 1),
+    ("quench_acetonitrile_fraction", -.1),
+    ("lc_diluent_acetonitrile_fraction", float("nan")),
+    ("workup_formic_acid_percent", -1),
+    ("lc_diluent_formic_acid_percent", 6),
+])
+def test_invalid_solvent_recipes_fail_before_generating_liquid_operations(setup, field, value):
+    _, config, *_ = setup
+    config = copy.deepcopy(config)
+    config["liquids"][field] = value
+    with pytest.raises(ValueError):
+        validate_config(config)
+
+
+@pytest.mark.parametrize("field,value", [("ligand_stock_mM", 25), ("pd_stock_mM", 50)])
+def test_concentrated_catalysts_cannot_create_an_unloaded_toluene_dosing_source(setup, field, value):
+    _, config, inventory, first, *_ = setup
+    config = copy.deepcopy(config)
+    config["liquids"][field] = value
+    with pytest.raises(ValueError, match="does not load a separate reaction toluene source"):
+        build_stock_preparation(config, inventory, first)
+
+
 def test_r2_topups_use_original_stocks_and_keep_rockphos_in_place(setup):
     directory,c,inv,first,second,history=setup
     prep=read_json(directory/"preparation/preparation_manifest.json")
@@ -147,6 +184,23 @@ def test_actual_sdk_executes_automated_preparation_and_holds(setup,stage):
     with (directory/(stage+".py")).open() as stream:commands,_=simulate(stream)
     text=[c["payload"].get("text","") for c in commands]
     assert len(commands)>100
+    if stage == "preparation/prepare_stocks":
+        manifest = read_json(directory/"preparation/preparation_manifest.json")
+        first_aspiration = next(i for i, message in enumerate(text) if message.startswith("Aspirating"))
+        loading = next(message for message in text[:first_aspiration] if "ALL PREWEIGHED DIRECT STOCKS" in message)
+        direct = [row for row in manifest["stocks"] if row["kind"] == "direct"]
+        assert {row["stock_id"] for row in direct} == {"L03", "Pd_1", "Pd_2", "Pd_3", "Pd_4"}
+        for row in direct:
+            assert f"{row['stock_id']} at slot {row['source_slot']} {row['source_well']}" in loading
+        assert "individually weighed solids" in loading and "Caps OPEN" in loading
+        ready = next(message for message in text if "Stocks ready." in message)
+        assert f"{directory_config['design']['round1_total']} NEW EMPTY R1 vials" in ready
+        assert "R2 vials" not in ready
+    if stage == "r2/refill_stocks":
+        first_aspiration = next(i for i, message in enumerate(text) if message.startswith("Aspirating"))
+        assert any("UNCAP the ligand working tubes" in message for message in text[:first_aspiration])
+        loads = [message for message in text if "Load EXISTING prepared stock carrier" in message]
+        assert loads and all("UNCAP its source tubes" in message for message in loads)
     if stage.endswith("dose_and_react"):
         number = int(stage[1])
         expected = 48 if number == 1 else 23
@@ -180,6 +234,10 @@ def test_actual_sdk_executes_automated_preparation_and_holds(setup,stage):
         assert not any("Moving Glass vial reaction block" in t for t in text[start:finish])
         if stage.startswith("r1"):
             assert any("ROBOT PREPARATION: CAL-SM" in t for t in text[start:finish])
+            first_analytical_transfer = next(i for i, message in enumerate(text)
+                                            if message.startswith("ROBOT PREPARATION: calibration IS"))
+            assert any("UNCAP the analytical source tubes" in message
+                       for message in text[start:first_analytical_transfer])
         assert not any("round2_predose.csv" in t or "store them labeled" in t for t in text)
 
 

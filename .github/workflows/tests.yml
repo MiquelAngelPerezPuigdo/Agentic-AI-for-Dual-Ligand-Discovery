@@ -21,16 +21,16 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: pyproject.toml
+          cache-dependency-path: uv.lock
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install -e '.[sources,test,reports]'
+          python -m pip install 'uv==0.13.1'
+          uv sync --locked --python 3.12 --extra sources --extra test --extra reports
       - name: Run acceptance checks
-        run: python -m pytest -q
+        run: uv run --locked python -m pytest -q
       - name: Build offline initialization review
-        run: python scripts/initialization-report.py --output output/initialization-review
+        run: uv run --locked python scripts/initialization-report.py --output output/initialization-review
       - name: Replay visual mock LC challenges
-        run: python scripts/mock-hplc-trials.py --output output/mock-hplc
+        run: uv run --locked python scripts/mock-hplc-trials.py --output output/mock-hplc
       - name: Build assumed LC separation scenarios and check numerical solver
-        run: python scripts/simulate-lc-separation.py --draws 64 --output output/lc-separation
+        run: uv run --locked python scripts/simulate-lc-separation.py --draws 64 --output output/lc-separation

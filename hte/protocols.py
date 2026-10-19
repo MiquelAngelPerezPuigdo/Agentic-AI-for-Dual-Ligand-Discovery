@@ -183,9 +183,9 @@ def run(protocol: protocol_api.ProtocolContext):
         wait_for_cool_module()
         batches=sorted({op["lc_batch"] for op in OPERATIONS if op["stage"]=="sampling"})
         if len(batches)==1:
-            protocol.pause("Leave the cooled reaction vials CAPPED in slot 3. Load the EMPTY labeled LC plate in slot 6. The robot will add LC diluent first, so sampling can follow extract shaking promptly.")
+            protocol.pause("Leave the cooled reaction vials CAPPED in slot 3. UNCOVER the prepared liquid reservoir in slot 2 before resuming pipetting. Load the EMPTY labeled LC plate in slot 6. The robot will add LC diluent first, so sampling can follow extract shaking promptly.")
             transfer_stage("dilution",batches[0])
-        protocol.pause("Separately CONFIRM the sealed reaction vials have cooled to HTEL's approved opening temperature in slot 3, then UNSCREW/REMOVE all occupied reaction-vial caps under HTEL SOP and open workup sources. Mesitylene is already in each reaction: workup and LC diluent contain NO added internal standard. Confirm the approved extraction composition before proceeding.")
+        protocol.pause("Separately CONFIRM the sealed reaction vials have cooled to HTEL's approved opening temperature in slot 3, then UNSCREW/REMOVE all occupied reaction-vial caps under HTEL SOP. UNCOVER the prepared liquid reservoir in slot 2 if still covered; keep it uncovered through LC preparation. Mesitylene is already in each reaction: workup and LC diluent contain NO added internal standard. Confirm the approved extraction composition before proceeding.")
         transfer_stage("workup")
         protocol.pause("SCREW every vial cap back on BY HAND before vigorous shaking. Check tightness and mounting. Do not shake open vials at high rpm.")
         onto_heater()

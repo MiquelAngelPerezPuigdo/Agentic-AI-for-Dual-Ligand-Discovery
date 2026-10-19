@@ -106,7 +106,7 @@ def prepare(args):
     ranking = sorted(ranking, key=lambda row: order.index(row["pair_id"]))
     if any(int(row["scoring_calls"]) != config["llm"]["repeats"] for row in ranking):
         raise ValueError("Saved ranking repeat counts differ from the campaign")
-    features = load_embeddings(args.embeddings, inventory, library).astype(float)
+    features = load_embeddings(args.embeddings, inventory, library, config=config).astype(float)
     centered = features - features.mean(axis=0)
     u, singular, vt = np.linalg.svd(centered, full_matrices=False)
     coordinates = u[:, :2] * singular[:2]

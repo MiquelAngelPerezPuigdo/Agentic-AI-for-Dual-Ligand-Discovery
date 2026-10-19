@@ -88,5 +88,6 @@ def run(output, inventory_path, config_path="hte_inputs/campaign.json"):
         "round2_pairs": sum(d["kind"] == "pair" for d in design2), "round2_reference_wells": len(config["design"]["round2_controls"]),
         "round1_qc_pass": report["batch_qc_pass"], "round2_qc_pass": report2["batch_qc_pass"],
         "no_pair_repeats": not tested.intersection(d["pair_id"] for d in design2),
-        "round2_substrate_redosed": any(d["sm_stock_ul"] != 0 for d in dose2), "schedule": schedule(config)})
+        "round2_substrate_dosed_at_start": all(d["sm_stock_ul"] > 0 and d["substrate_predosed_umol"] == 0 for d in dose2),
+        "schedule": schedule(config)})
     return out/"demo_report.json"

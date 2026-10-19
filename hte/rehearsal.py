@@ -24,7 +24,8 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
 
     out = new_output(output)
     config = synthetic_config(config_path)
-    config["design"]["require_lm_embeddings"] = True
+    config["design"].update(require_lm_embeddings=True,
+                             exploration_backend=read_json(config_path)["design"]["exploration_backend"])
     # The actual workflow rejects demo configs. Only the isolated, mocked SDK context
     # receives a non-demo copy; all physical validation remains false.
     scoring_config = copy.deepcopy(config)
@@ -32,7 +33,7 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
     scoring_config["validation"] = {key: False for key in config["validation"]}
     inventory = campaign_inventory(inventory_path, config, confirmed=True)
     pairs = candidates(inventory)
-    features = load_embeddings(embeddings_path, inventory, pairs)
+    features = load_embeddings(embeddings_path, inventory, pairs, config=config)
     evidence = read_json(evidence_path)
     calls = []
     write_json(out/"SYNTHETIC_ONLY.json", {"synthetic_only": True, "paid_api_calls": 0,

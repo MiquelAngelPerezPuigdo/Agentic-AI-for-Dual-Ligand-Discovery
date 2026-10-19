@@ -48,11 +48,21 @@ def normalize_chromeleon(config, raw, injections_path):
         raise ValueError("Chromeleon requires an explicit method_id and UV_VIS_1..4 quantitative channel")
     if not injections_path:
         raise ValueError("Chromeleon requires --injections: inj_no,sample_id,method_id mapping; names can repeat")
+    def text(value):
+        # Excel stores numeric identifiers as numbers and empty padding as None.
+        return "" if value is None else str(value).strip()
+
+    def injection_number(value):
+        number = finite(value, "injection number", 1)
+        if number != int(number):
+            raise ValueError("Injection numbers must be positive integers")
+        return str(int(number))
+
     mapping = {}
     sample_ids = set()
     for row in read_csv(injections_path):
-        key = row.get("inj_no", "")
-        if not key.isdigit() or int(key) < 1 or key in mapping or not row.get("sample_id"):
+        key = injection_number(row.get("inj_no", ""))
+        if key in mapping or not row.get("sample_id"):
             raise ValueError("Injection mapping requires unique positive inj_no and nonempty sample_id")
         if row.get("method_id") != settings["method_id"] or row["sample_id"] in sample_ids:
             raise ValueError("Injection mapping requires matching method_id and unique accepted sample IDs")
@@ -67,21 +77,22 @@ def normalize_chromeleon(config, raw, injections_path):
     for line, row in enumerate(raw, 2):
         # The supplied file pads a peak-major table with empty peak records.
         # One such placeholder even lacks inj_no. It is never a measured zero.
-        fields = [str(row[k]).strip() for k in ("peak_no", "retention_time(min)", column)]
+        fields = [text(row[k]) for k in ("peak_no", "retention_time(min)", column)]
         if all(value.lower() in na for value in fields):
             placeholders += 1
             continue
         if any(value.lower() in na for value in fields):
             raise ValueError(f"Chromeleon row {line}: detected peak has missing RT/number/selected-channel area")
-        key = row["inj_no"].strip()
+        key = injection_number(row["inj_no"])
         if key not in mapping:
             raise ValueError(f"Chromeleon row {line}: unmapped injection number {key!r}")
-        identity = (row["injection_name"], row["type"], row["vial_position"], row["inj_volume(uL)"])
+        identity = tuple(text(row[field]) for field in
+                         ("injection_name", "type", "vial_position", "inj_volume(uL)"))
         if key in identities and identities[key] != identity:
             raise ValueError("Conflicting Chromeleon identity within an injection")
         identities[key] = identity
         for vendor in ("injection_name", "vial_position", "type"):
-            if mapping[key].get(vendor) and mapping[key][vendor] != row[vendor]:
+            if mapping[key].get(vendor) and text(mapping[key][vendor]) != text(row[vendor]):
                 raise ValueError(f"Injection mapping {vendor} differs from Chromeleon injection {key}")
         peak = finite(fields[0], "peak number", 1)
         number = finite(row["number_of_det_peaks"], "reported detected peak count", 0)
@@ -95,7 +106,7 @@ def normalize_chromeleon(config, raw, injections_path):
             "retention_time_min": finite(fields[1], "retention time", 0),
             "area": finite(fields[2], "selected-channel peak area", 0),
             "channel": channel, "method_id": settings["method_id"], "qc_flag": "ok",
-            "inj_no": key, "injection_name": row["injection_name"], "vial_position": row["vial_position"],
+            "inj_no": key, "injection_name": text(row["injection_name"]), "vial_position": text(row["vial_position"]),
             "peak_no": int(peak), "area_units": "AU*min"})
     missing = set(mapping)-set(identities)
     if missing:
@@ -115,16 +126,25 @@ def normalize_chromeleon(config, raw, injections_path):
 def normalize_export(config, input_path, output, injections_path=None):
     """Normalize vendor headers using the explicit HTE mapping, without guessing a detector."""
     path = Path(input_path)
+    paths = [path] + ([Path(injections_path)] if injections_path else [])
+    source_hashes = {source: digest(source) for source in paths}
+
+    def stable_sources():
+        if any(digest(source) != checksum for source, checksum in source_hashes.items()):
+            raise ValueError("LC export or injection mapping changed during normalization; publish stable completed files")
+
     if path.suffix.lower() == ".xlsx":
         from openpyxl import load_workbook
         workbook = load_workbook(path, read_only=True, data_only=True)
-        sheet = workbook[config["analytics"]["export_sheet"]]
-        iterator = sheet.iter_rows(values_only=True)
-        headers = next(iterator, None)
-        if not headers or any(h is None for h in headers) or len(headers) != len(set(headers)):
-            raise ValueError("Missing or duplicate spreadsheet export headers")
-        raw = [dict(zip(headers, row)) for row in iterator if any(x is not None for x in row)]
-        workbook.close()
+        try:
+            sheet = workbook[config["analytics"]["export_sheet"]]
+            iterator = sheet.iter_rows(values_only=True)
+            headers = next(iterator, None)
+            if not headers or any(h is None for h in headers) or len(headers) != len(set(headers)):
+                raise ValueError("Missing or duplicate spreadsheet export headers")
+            raw = [dict(zip(headers, row)) for row in iterator if any(x is not None for x in row)]
+        finally:
+            workbook.close()
     elif path.suffix.lower() == ".csv":
         raw = read_csv(path)
     else:
@@ -134,9 +154,10 @@ def normalize_export(config, input_path, output, injections_path=None):
                          *(f"area_uvvis{i}(AU*min)" for i in range(1, 5))}
     if raw and chromeleon_headers.issubset(raw[0]):
         normalized, report = normalize_chromeleon(config, raw, injections_path)
+        stable_sources()
         write_csv(output, normalized)
-        write_json(str(output)+".normalization.json", {**report, "source_sha256": digest(input_path),
-                   "mapping_sha256": digest(injections_path), "output_sha256": digest(output)})
+        write_json(str(output)+".normalization.json", {**report, "source_sha256": source_hashes[path],
+                   "mapping_sha256": source_hashes[Path(injections_path)], "output_sha256": digest(output)})
         return
     mapping = config["analytics"]["column_mapping"]
     if not mapping:
@@ -154,6 +175,7 @@ def normalize_export(config, input_path, output, injections_path=None):
         normalized.append(row)
     if not normalized:
         raise ValueError("Integrated export contains no peak rows")
+    stable_sources()
     write_csv(output, normalized)
 
 
@@ -176,6 +198,10 @@ def calibration_from_peaks(config, peaks_path, plan_path, output, reviewed_absen
     """Join measured authentic-standard peaks to the explicit concentration plan."""
     validate_analytics_settings(config)
     settings = config["analytics"]
+    paths = {"peaks": peaks_path, "plan": plan_path}
+    if reviewed_absences_path:
+        paths["reviewed_absences"] = reviewed_absences_path
+    hashes = {name: digest(path) for name, path in paths.items()}
     plan = read_csv(plan_path)
     absences = reviewed_absences(reviewed_absences_path, settings["method_id"])
     allowed_absences = {(row["sample_id"], row["analyte"]) for row in plan
@@ -215,10 +241,12 @@ def calibration_from_peaks(config, peaks_path, plan_path, output, reviewed_absen
             measurement["internal_standard_area"] = area(row["sample_id"], "internal_standard")
         rows.append(measurement)
     fit_calibration(config, rows)  # Independent checks and the fitted range must pass before publication.
+    if any(digest(path) != hashes[name] for name, path in paths.items()):
+        raise ValueError("Calibration input changed during analysis; publish stable completed files")
     write_csv(output, rows)
-    write_json(str(output)+".inputs.json", {"peaks_sha256":digest(peaks_path), "plan_sha256":digest(plan_path),
+    write_json(str(output)+".inputs.json", {"peaks_sha256":hashes["peaks"], "plan_sha256":hashes["plan"],
                "config_digest":object_digest(config), "output_sha256":digest(output),
-               "reviewed_absences_sha256":digest(reviewed_absences_path) if reviewed_absences_path else None,
+               "reviewed_absences_sha256":hashes.get("reviewed_absences"),
                "reviewed_absences":list(absences.values())})
 
 
@@ -358,6 +386,7 @@ def read_completed_inputs(config, dosing_path, peaks_path, ready_path, calibrati
 
 def complete_export(config, peaks_path, dosing_path, output):
     """Operator invokes this only after confirming every expected injection finished."""
+    hashes = {"peaks": digest(peaks_path), "dosing": digest(dosing_path)}
     dosing = read_csv(dosing_path)
     expected = [r["sample_id"] for r in dosing]
     peaks = read_csv(peaks_path)
@@ -365,9 +394,11 @@ def complete_export(config, peaks_path, dosing_path, output):
                and r["method_id"] == config["analytics"]["method_id"]}
     if len(expected) != len(set(expected)) or present != set(expected):
         raise ValueError("Complete export requires every expected sample on the configured method/channel")
+    if digest(peaks_path) != hashes["peaks"] or digest(dosing_path) != hashes["dosing"]:
+        raise ValueError("LC peak or dosing input changed during completion; publish stable completed files")
     write_json(output, {"status": "complete", "sample_ids": expected,
                         "method_id": config["analytics"]["method_id"],
-                        "peaks_sha256": digest(peaks_path), "dosing_sha256": digest(dosing_path)})
+                        "peaks_sha256": hashes["peaks"], "dosing_sha256": hashes["dosing"]})
 
 
 def analyze(config, dosing, peaks, calibration, output):

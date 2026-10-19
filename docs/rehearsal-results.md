@@ -1,6 +1,14 @@
 # Validation and rehearsal evidence
 
-Current record: [software_validation.json](../software_validation.json). No physical robot experiment, real calibration or 95 °C pair measurement has been performed. **291 tests pass** and all six SDK stages execute. All physical release flags remain false. **The independent audit found unresolved stock-source clearance/immersion risk; the default plan is not ready for hardware.**
+Current record: [software_validation.json](../software_validation.json). No physical robot experiment, real calibration or 95 °C pair measurement has been performed. **328 tests pass** and all six SDK stages execute. All physical release flags remain false. **The independent audit found unresolved stock-source clearance/immersion risk; the default plan is not ready for hardware.**
+
+## Full handoff review - 19 October 2026
+
+Production source, tests and operator instructions were reviewed across the robot, analytics and selection paths. The audit fixed contradictory R1/Pd loading instructions, missing stock/reservoir uncapping pauses, invalid liquid-volume settings, numeric Excel injection IDs, copied LC exports being counted twice, and publication of hashes for files changed during processing. Embedding reuse now checks the encoded reaction conditions. The private return includes the contributor notebook and dependency lock.
+
+The **328-test suite passed in both the development environment and a fresh Python 3.12 installation from `uv.lock`**. The final reservoir-opening correction also passed actual SDK command-order checks. All six regenerated protocols simulate; thirty adversarial R2 selections preserve stock reserves and capacity. A fresh install reproduces the official first batch byte for byte and completes the offline loop without a key. A private archive round trip verified **3,585 file hashes**, including mock raw-data directories. The 2,175 saved scores reproduce all 435 ranking rows; all 18 source-SI yields were re-extracted and matched, with 17 active priors. No paid calls, new embedding inference, changed paid records or physical runs occurred.
+
+These checks improve the handoff, but do not resolve the source-geometry and local LC facts below. The software explicitly blocks live release until those facts are supplied.
 
 ## Independent audit findings
 

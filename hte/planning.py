@@ -278,6 +278,12 @@ def validate_config(config, live=False, live_scope="all"):
             raise ValueError("Round counts exceed the configured reaction rack capacity")
     for name in ("substrate_stock_mM", "ligand_stock_mM", "pd_stock_mM", "workup_ul", "aliquot_ul", "diluent_ul"):
         finite(liquid[name], name, 0.00001)
+    for fraction_key, acid_key in (("quench_acetonitrile_fraction", "workup_formic_acid_percent"),
+                                   ("lc_diluent_acetonitrile_fraction", "lc_diluent_formic_acid_percent")):
+        acn = finite(liquid[fraction_key], fraction_key, 0, 1)
+        acid = finite(liquid[acid_key], acid_key, 0, 10)
+        if acn + acid / 10 > 1 + 1e-12:
+            raise ValueError(f"{fraction_key} and 10% aqueous formic-acid stock require negative water; reduce the solvent fractions")
     for name in ("aspirate_height_mm", "dispense_above_top_mm", "surplus_ul", "air_gap_ul"):
         finite(config["pipetting"][name], name, 0.1)
     if config["pipetting"]["aspirate_height_mm"] <= 1:
@@ -423,6 +429,8 @@ def dosing_rows(config, inventory, design):
         v_tol = c["reaction_volume_ul"] - total_sm_volume - v_a - v_b - v_pd
         if v_tol < -1e-8:
             raise ValueError("Stocks are too dilute to fit in the final reaction volume")
+        if v_tol > 1e-8 and config.get("automation", {}).get("enabled"):
+            raise ValueError("Automated stock preparation does not load a separate reaction toluene source; use the validated no-top-up stock concentrations or revise the preparation workflow before dosing")
         if v_sm > config["robot"]["reaction_working_volume_ul"]:
             raise ValueError("Substrate-stock dosing volume exceeds reaction working volume")
         row = {**d, "well": well, "substrate_umol": n_substrate, "pd_umol": n_pd,

@@ -15,12 +15,12 @@ from pathlib import Path
 
 from .io import digest, write_json
 
-SOURCE_PATHS = ("hte", "hte_inputs", "campaigns", "docs", "scripts", "tests", ".github",
+SOURCE_PATHS = ("hte", "hte_inputs", "campaigns", "docs", "scripts", "tests", "notebook", ".github",
                 "README.md", "LICENSE", "pyproject.toml", "uv.lock", ".gitignore", ".gitattributes",
                 "software_validation.json", "anthropic.key.example")
 TOKEN = re.compile(rb"sk-ant-[A-Za-z0-9_-]{20,}")
 FAKE_TOKEN = b"sk-ant-SYNTHETIC_KEY_FILE_FIXTURE"
-PACKAGES = ("catalyst-hte", "anthropic", "numpy", "rdkit", "opentrons", "openpyxl", "pypdf")
+PACKAGES = ("catalyst-hte", "anthropic", "numpy", "scipy", "scikit-learn", "rdkit", "opentrons", "openpyxl", "pypdf")
 
 
 def software_record(root):

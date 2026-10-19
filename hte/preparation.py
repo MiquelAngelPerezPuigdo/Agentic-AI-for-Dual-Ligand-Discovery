@@ -32,8 +32,8 @@ class Plan:
         self.initial[key]=self.amounts[key]=finite(volume,"preparation source volume",0);self.dead[key]=dead
 
     def transfer(self, source, target, volume, label, channels=1):
+        volume=finite(volume,"preparation transfer",0)
         if volume < 1e-8:return
-        volume=finite(volume,"preparation transfer",0.000001)
         src,dst=tuple(source),tuple(target)
         p=self.config["pipetting"]
         use_large=self.large and channels==1 and volume>297
@@ -66,7 +66,7 @@ class Plan:
                                spread_mm=25 if key[0]=="raw" else 0,pipette="large" if use_large else "multi" if channels==8 else "single"))
 
     def raw(self, fluid, target, volume, pools):
-        remaining=volume
+        remaining=finite(volume,"raw solvent addition",0)
         for source in pools[fluid]:
             key=tuple(source);available=self.amounts[key]-self.dead[key]-self.config["pipetting"]["surplus_ul"]
             part=min(remaining,available)
@@ -209,7 +209,7 @@ def matrix(plan,target,volume,pools,acid_source):
     plan.raw("toluene",target,volume*toluene,pools)
     plan.raw("ACN",target,volume*acn,pools)
     plan.transfer(acid_source,target,volume*acid/.1,"10% aqueous FA stock")
-    plan.raw("water",target,volume*(1-toluene-acn-acid/.1),pools)
+    plan.raw("water",target,volume*max(0,1-toluene-acn-acid/.1),pools)
     plan.mix(target,channels=1 if target[0]=="raw" else 8)
 
 
@@ -278,7 +278,7 @@ def stock_records(config,inventory,design,charges=None):
 def bulk_load(plan,records,config,prepared=False):
     for carrier in dict.fromkeys(r["carrier_id"] for r in records):
         rows=[r for r in records if r["carrier_id"]==carrier]
-        plan.steps.append(dict(type="pause",message=("Load EXISTING prepared stock carrier " if prepared else "Load preweighed, uncapped chemical carrier ")+carrier+" in slot "+str(rows[0]["carrier_slot"])+". Check chemical IDs against the loading CSV. No manual liquid measurement."))
+        plan.steps.append(dict(type="pause",message=("Load EXISTING prepared stock carrier " if prepared else "Load preweighed, uncapped chemical carrier ")+carrier+" in slot "+str(rows[0]["carrier_slot"])+". Check chemical IDs against the loading CSV. UNCAP its source tubes before resuming pipetting. No manual liquid measurement."))
         plan.steps.append(dict(type="load",key=carrier,slot=rows[0]["carrier_slot"],labware=config["automation"]["bulk_labware"],definition_path=config["automation"].get("bulk_definition_path"),label=carrier))
 
 
@@ -568,9 +568,11 @@ def run(protocol: protocol_api.ProtocolContext):
     large=protocol.load_instrument(CONFIG["automation"]["preparation_large_pipette"],"right",tip_racks=large_tips)
     labware={"working1":protocol.load_labware(CONFIG["robot"]["ligand_source_labware"],1),"working4":protocol.load_labware(CONFIG["robot"]["ligand_source_labware"],4),
         "raw":protocol.load_labware_from_definition(PREP_DEFINITIONS[CONFIG["automation"]["raw_definition_path"]],2)}
-    protocol.pause("Load preweighed direct RockPhos in its working tube; all other working tubes EMPTY. Load neat mesitylene in slot 1 C2 and raw solvents per raw_reagents_to_load.csv. No hand aliquoting. Caps OPEN; slots 7 and 11 empty. Bulk carriers will be requested by ID.")
+    direct_stocks = ", ".join(row["stock_id"] + " at slot " + str(row["source_slot"]) + " " + row["source_well"] for row in PLAN["stocks"] if row["kind"] == "direct")
+    neat = CONFIG["automation"]["neat_is_source"]
+    protocol.pause("Load ALL PREWEIGHED DIRECT STOCKS from bulk_carriers.csv: " + direct_stocks + ". These tubes must already contain their individually weighed solids. All other working tubes start EMPTY except neat mesitylene at slot " + str(neat["slot"]) + " " + neat["well"] + ". Load raw solvents per raw_reagents_to_load.csv. No hand aliquoting. Caps OPEN; slots 7 and 11 empty. Bulk carriers will be requested by ID.")
     execute_liquid_plan(protocol,PLAN,labware,single,large=large)
-    protocol.pause("Stocks ready. Replace the RIGHT p1000 single with p300 eight-channel GEN2, and 1000 uL tip racks 8/9 with 300 uL racks, through the local App installation/calibration workflow. Leave the left p300 single installed. Cap and retain all labeled carriers and analytical rack. Leave working racks 1/4 in their exact positions. Remove raw reservoir 2; install a NEW EMPTY 12-channel workup reservoir in slot 2. Load the reaction block with 23 NEW R2 vials and the empty calibration LC plate in slot 6 for the R1 protocol. No precise manual liquid transfers.")
+    protocol.pause("Stocks ready. Replace the RIGHT p1000 single with p300 eight-channel GEN2, and 1000 uL tip racks 8/9 with 300 uL racks, through the local App installation/calibration workflow. Leave the left single installed. Cap and retain all labeled carriers and analytical rack. Leave working racks 1/4 in their exact positions. Remove raw reservoir 2; install a NEW EMPTY 12-channel workup reservoir in slot 2. Load the reaction block in slot 3 with " + str(CONFIG["design"]["round1_total"]) + " NEW EMPTY R1 vials and the empty calibration LC plate in slot 6 for the R1 protocol. No precise manual liquid transfers.")
 '''
     atomic_text(out/"prepare_stocks.py",source)
     write_json(out/"files.sha256.json",{p.name:digest(p) for p in out.iterdir() if p.is_file()})
@@ -627,7 +629,7 @@ def build_hold_preparation(config,operations,round_number,prep=None):
     plan.raw("water",["raw","H1"],4500,pools);plan.raw("FA",["raw","H1"],500,pools)
     plan.mix(["raw","H1"])
     if round_number==1:
-        plan.steps += [dict(type="pause",message="Cap/store working rack 4 and replace it with the robot-prepared ANALYTICAL source rack. Working rack 1 stays in slot 1. Load the EMPTY calibration plate in slot 6; it will be pipette-mixed because the heater-shaker is occupied."),
+        plan.steps += [dict(type="pause",message="Cap/store working rack 4 and replace it with the robot-prepared ANALYTICAL source rack. UNCAP the analytical source tubes before resuming pipetting. Working rack 1 stays in slot 1. Load the EMPTY calibration plate in slot 6; it will be pipette-mixed because the heater-shaker is occupied."),
                       dict(type="off",key="working4"),dict(type="load",key="analytical",slot=4,labware=config["robot"]["ligand_source_labware"],label="Analytical source rack")]
         source_volumes={"SM_FIT":1378,"P_FIT":1378,"SM_CHECK":1800,"P_CHECK":1800,"SM_LOW":400,"P_LOW":400,"SM_HIGH":800,"P_HIGH":800,"IS_WORK":1000}
         if prep:
@@ -669,7 +671,7 @@ def build_hold_preparation(config,operations,round_number,prep=None):
         acid=config["liquids"]["workup_formic_acid_percent" if reagent=="workup" else "lc_diluent_formic_acid_percent"]/100
         plan.raw("ACN",target,volume*acn,pools)
         plan.transfer(["raw","H1"],target,volume*acid/.1,"10% FA stock")
-        plan.raw("water",target,volume*(1-acn-acid/.1),pools);plan.mix(target,channels=8)
+        plan.raw("water",target,volume*max(0,1-acn-acid/.1),pools);plan.mix(target,channels=8)
     plan.steps += [dict(type="pause",message="Workup liquids are now robot-prepared in slot 2. Cover them until workup. Remove the RAW reservoir from slot 3 at the next move prompt, so the reaction block can return there. Leave the prepared reservoir 2 in place. No hand refilling."),dict(type="off",key="raw")]
     result=plan.report();result.update(raw_loads=raw_loads,calibration_recipes=calibration_recipes(config) if round_number==1 else [],pilot_recipes=pilot_recipes(config) if round_number==1 and config["automation"].get("prepare_optional_pilot") else [])
     result["hold_timing_policy"] = {"reaction_seconds": config["chemistry"]["reaction_minutes"] * 60,
@@ -729,7 +731,7 @@ def run(protocol: protocol_api.ProtocolContext):
     single=protocol.load_instrument(CONFIG["robot"]["single"],"left",tip_racks=[tips])
     multi=protocol.load_instrument("p300_multi_gen2","right",tip_racks=multi_tips)
     labware={"working1":protocol.load_labware(CONFIG["robot"]["ligand_source_labware"],1),"working4":protocol.load_labware(CONFIG["robot"]["ligand_source_labware"],4)}
-    protocol.pause("Retain the ORIGINAL working tubes at slots 1/4, with the recorded residual volumes after R1. Do not replace/discard RockPhos. Temporarily remove the reaction block and LC plate from slots 3/6 for stock-carrier loading. Do not reweigh chemicals or add stock by hand. Review any R1 spill/transfer failure before using the calculated top-ups.")
+    protocol.pause("Retain the ORIGINAL working tubes at slots 1/4, with the recorded residual volumes after R1. UNCAP the ligand working tubes before resuming automatic top-ups. Keep the retained SM/IS and Pd tubes capped; they need no refill. Do not replace/discard RockPhos. Temporarily remove the reaction block and LC plate from slots 3/6 for stock-carrier loading. Do not reweigh chemicals or add stock by hand. Review any R1 spill/transfer failure before using the calculated top-ups.")
     execute_liquid_plan(protocol,PLAN,labware,single,multi)
 '''
     return source
