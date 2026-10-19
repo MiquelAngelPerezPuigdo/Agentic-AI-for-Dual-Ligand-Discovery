@@ -284,7 +284,7 @@ def test_sdk_prefills_lc_diluent_before_extract_shaking_then_samples(setup, roun
     text = [command["payload"].get("text", "") for command in commands]
     dilution = [i for i, message in enumerate(text) if message.startswith("LC_diluent:")]
     quench = [i for i, message in enumerate(text) if message.startswith("workup:")]
-    extract_shake_done = next(i for i, message in enumerate(text) if "After vigorous shaking" in message)
+    extract_shake_done = next(i for i, message in enumerate(text) if "After open-vial shaking" in message)
     samples = [i for i, message in enumerate(text) if message.startswith(f"R{round_number}-") and "uL per channel" in message]
     assert dilution and quench and samples
     assert max(dilution) < min(quench) < max(quench) < extract_shake_done < min(samples)

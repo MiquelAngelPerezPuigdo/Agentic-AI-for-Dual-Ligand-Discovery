@@ -27,7 +27,7 @@
       "addition_stage": "reaction_stock"
     },
     "additives": [],
-    "scale_status": "250 uL reaction + 500 uL acidified quench = 750 uL in a nominal 2 mL vial; OT-2 heater-shaker, no stir bars; supplied rack geometry. Separate recovery/homogeneity study waived by user; inspect visibly before sampling.",
+    "scale_status": "250 uL reaction + 500 uL acidified quench = 750 uL in a nominal 2 mL vial; OT-2 heater-shaker, no stir bars; supplied rack geometry. Workup: leave cooled vials OPEN for 750 rpm, 2 min, heater OFF; recap only after sampling for archive. Separate recovery/homogeneity study waived by user; inspect visibly before sampling.",
     "max_hold_overrun_seconds": 60
   },
   "design": {
@@ -73,7 +73,7 @@
     "aliquot_ul": 20,
     "diluent_ul": 980,
     "workup_composition": "9:1 acetonitrile/water, 0.15% v/v formic acid; NO mesitylene. Addition to 250 uL reaction gives nominal 0.1% acid in 750 uL extract.",
-    "mix_rpm": 1500,
+    "mix_rpm": 750,
     "lc_diluent_composition": "1:1 water/acetonitrile, 0.1% v/v formic acid; NO mesitylene",
     "substrate_stock_solvent": "toluene",
     "internal_standard_stock_mM": 100,
@@ -86,7 +86,7 @@
     "lc_diluent_formic_acid_percent": 0.1,
     "quench_acetonitrile_fraction": 0.9,
     "lc_diluent_acetonitrile_fraction": 0.5,
-    "lc_mix_rpm": 1000,
+    "lc_mix_rpm": 750,
     "lc_mix_minutes": 2,
     "lc_max_module_temperature_C": 30,
     "substrate_stock_contains_internal_standard": true
@@ -111,7 +111,7 @@
     "pad_lc_diluent_columns": true,
     "lc_batch_size": 48,
     "capped_clearance_height_mm": 45,
-    "lc_plate_workflow_status": "One final autosampler plate per round, filled in slot 6, manually moved to cooled heater-shaker slot 10, shaken uncovered with heater off, then moved directly to HPLC and sealed. 1000 rpm for 2 min is provisional; confirm mounting, no splashing, plate/seal/carrier and needle-depth compatibility locally.",
+    "lc_plate_workflow_status": "One final autosampler plate per round, filled in slot 6, manually moved to cooled heater-shaker slot 10, shaken uncovered with heater off, then moved directly to HPLC and sealed. 750 rpm for 2 min is provisional; confirm mounting, no splashing, plate/seal/carrier and needle-depth compatibility locally.",
     "lc_single_plate_per_round": true,
     "ligand_source_labware": "opentrons_24_tuberack_eppendorf_2ml_safelock_snapcap"
   },

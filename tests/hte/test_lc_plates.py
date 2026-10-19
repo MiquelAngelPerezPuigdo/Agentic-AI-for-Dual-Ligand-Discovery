@@ -79,6 +79,24 @@ def test_final_plate_simulations_preserve_doses_and_move_only_complete_plates(ca
         assert first_reservoir_aspiration < opening
     else:
         assert "keep it uncovered through LC preparation" in texts[min(uncover)]
+    # The block is opened once, mixed open, sampled open, then each completed
+    # sampling batch is capped once for archive. No intermediate recap/reopen.
+    opening = [i for i, t in enumerate(texts) if "UNSCREW/REMOVE" in t]
+    quench = [i for i, t in enumerate(texts) if t.startswith("workup:")]
+    open_shake = next(i for i, t in enumerate(texts) if "Leave every quenched reaction vial OPEN" in t)
+    shakes = [i for i, t in enumerate(texts) if t.startswith("Setting Heater-Shaker to Shake")]
+    assert len(opening) == 1 and opening[0] < min(quench) <= max(quench) < open_shake < shakes[0]
+    assert len(shakes) == 1 + len(plates)
+    assert all("Shake at 750 RPM" in texts[i] for i in shakes)
+    assert all(texts[i+1].startswith("Delaying for 2 minutes") for i in shakes)
+    assert any("Deactivating Heater" in t for t in texts[:shakes[0]])
+    assert not any("Setting Target Temperature of Heater-Shaker" in t for t in texts)
+    assert "heater OFF" in texts[open_shake] and "Do not recap" in texts[open_shake]
+    assert not any("RECAP ONLY" in t for t in texts[:shakes[0]])
+    sampling_prompts = [t for t in texts if "Sampling batch " in t]
+    assert len(sampling_prompts) == len(plates)
+    assert all("remain OPEN since quenching" in t and "no additional cap removal is needed" in t
+               for t in sampling_prompts)
     lc_moves = [t for t in texts if t.startswith(f"Moving R{round_number}-LC")]
     assert len(lc_moves) == 2*len(plates)
     for plate in plates:
@@ -86,8 +104,10 @@ def test_final_plate_simulations_preserve_doses_and_move_only_complete_plates(ca
         move = texts.index(f"Moving {label} to opentrons_universal_flat_adapter")
         end = texts.index(f"Moving {label} to off-deck")
         assert "UNCOVERED" in texts[move-2]
+        assert "RECAP ONLY the sampled reaction vials once for archive" in texts[move-2]
+        assert "keep any not-yet-sampled reaction vials OPEN" in texts[move-2]
         assert "Deactivating Heater" in texts[move-3]
-        assert any("Shake at 1000 RPM" in t for t in texts[move:end])
+        assert any("Shake at 750 RPM" in t for t in texts[move:end])
         assert any("Delaying for 2 minutes" in t for t in texts[move:end])
         assert not any(t.startswith(("Aspirating", "Dispensing")) for t in texts[move:end])
         # All assigned nominal sample dispenses precede this plate's module move.
@@ -119,7 +139,7 @@ def test_lc_module_cooling_guard_waits_before_loading():
     exec(compile(ast.Module(body=functions, type_ignores=[]), "cooling-guard", "exec"), ns)
     ns["shake_and_release_lc"](1)
     assert any(isinstance(e, str) and e.startswith("Wait until") for e in events)
-    assert ("shake", 1000, 25) in events
+    assert ("shake", 750, 25) in events
     assert all(e[1] <= 30 for e in events if isinstance(e, tuple) and e[0] == "move")
 
 
@@ -150,7 +170,7 @@ def test_round2_changeover_confirms_new_vials_are_uncapped_before_dosing(campaig
     assert "REMOVE ALL 23" in texts[changeover] and "23 NEW EMPTY" in texts[changeover]
 
 
-@pytest.mark.parametrize("key,value", [("lc_mix_rpm", 0), ("lc_mix_minutes", 0), ("lc_max_module_temperature_C", 60)])
+@pytest.mark.parametrize("key,value", [("mix_rpm", 0), ("mix_rpm", 1500), ("mix_rpm", 751), ("lc_mix_rpm", 0), ("lc_mix_rpm", 1000), ("lc_mix_rpm", 751), ("lc_mix_minutes", 0), ("lc_max_module_temperature_C", 60)])
 def test_invalid_plate_shaking_settings_rejected(key, value):
     c = synthetic_config(ROOT/"hte_inputs/campaign.json")
     c["liquids"][key] = value
@@ -202,6 +222,6 @@ def test_timing_subtotal_matches_actual_simulator_pumps_and_delays(campaign, tmp
         elif text.startswith("Delaying for"):
             seconds += payload["minutes"]*60+payload["seconds"]
     assert seconds/60 == pytest.approx(report["calculated_subtotal_minutes"])
-    assert report["individual_screw_cap_actions"] == 4*(48 if round_number == 1 else 23)
+    assert report["individual_screw_cap_actions"] == 2*(48 if round_number == 1 else 23)
     assert report["manual_workup_block_and_lc_moves"] == 4
     assert not report["physical_run_measured"] and report["excluded"]

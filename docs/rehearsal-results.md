@@ -1,6 +1,12 @@
 # Validation and rehearsal evidence
 
-Current record: [software_validation.json](../software_validation.json). No physical robot experiment, real calibration or 95 °C pair measurement has been performed. **328 tests pass** and all six SDK stages execute. All physical release flags remain false. **The independent audit found unresolved stock-source clearance/immersion risk; the default plan is not ready for hardware.**
+Current record: [software_validation.json](../software_validation.json). No physical robot experiment, real calibration or 95 °C pair measurement has been performed. **333 tests pass** and all six SDK stages execute. All physical release flags remain false. **The independent audit found unresolved stock-source clearance/immersion risk; the default plan is not ready for hardware.**
+
+## Uncapped shaking update - 19 October 2026
+
+Both open stages now use **750 rpm for two minutes, heater off**: cooled reaction-vial workup and final LC-plate mixing. Reaction vials stay open from quench addition through sampling and are recapped once for archive. This removes 142 individual cap actions across the two rounds; sealed reactions remain at 500 rpm. Old local configurations requesting either open stage above 750 rpm are rejected. Regenerate standalone protocols to receive the change.
+
+The updated 333-test suite, complete offline feedback loop and all six regenerated SDK protocols pass (16,470 simulated commands). Actual command traces verify both speeds, heater-off workup, one opening before quench and no intermediate recap/reopen. These checks establish code behavior, not splash containment or extraction recovery. Staff PDFs and the deck diagram were rebuilt and visually checked. The paper/SI review is recorded in the [LC documentation](htel-lc-import.md#what-the-original-paper-reports); it does not validate our open shaking or mesitylene LC method.
 
 ## Full handoff review - 19 October 2026
 
@@ -35,7 +41,7 @@ The frozen selection, 435-pair/five-repeat arithmetic, all-ligand coverage, cach
 | SM dosing | Robot loads 1.89 mL combined SM/IS into 4 D2 from nominal 2 mL bulk; retain capped between rounds. Start R1 with 48 empty vials and R2 with 23 new empty vials in the same block. Each round receives 25 µL SM/IS per vial, then catalysts. No SM refill. |
 | Parallel preparation | Reaction stays sealed on heater-shaker 10. Standards/workup fluids are prepared during holds; elapsed time includes pauses. Deadline checks and HOLD_TIMING records do not replace the operator timer during blocking pauses. Simulation does not measure physical time. |
 | Calibration | Independently weighed FIT/CHECK masters; robot 0.5/5 mM FIT dilutions and 2 mM IS. Fourteen 1 mL wells: blank +10/50/150/350/800 µM per analyte, independent 666.7 µM check, constant 66.7 µM IS. All nonzero standard aliquots ≥20 µL. Pipette-mixed; direct transfer to LC during R1. |
-| Workup/LC | Robot pre-fills LC wells with 980 µL diluent while cooled reaction vials stay capped, then adds 500 µL quench; recap, heater OFF 1500 rpm/2 min, promptly sample 20 µL into prefilled LC wells. Fresh sample tips, same-sample prewetting and bottom clearance. One final LC plate per round, uncovered 1000 rpm/2 min, seal afterward. H3 padding never injected. Three LC plates total including calibration. |
+| Workup/LC | Robot pre-fills LC wells with 980 µL diluent while cooled reaction vials stay capped, then adds 500 µL quench; vials remain OPEN, heater OFF 750 rpm/2 min, promptly sample 20 µL into prefilled LC wells. Fresh sample tips, same-sample prewetting and bottom clearance. One final LC plate per round, uncovered 750 rpm/2 min, seal afterward. H3 padding never injected. Three LC plates total including calibration. |
 | R2 | All 48 valid R1 results → Claude-only ranking of 387 untested pairs →22 new pairs +L17 reference. Robot ligand refill uses original reserves and calculated residuals, with matching R1 history; no new weighing. RockPhos and all four Pd tubes are retained without refilling. Reference: 150 µL L17. |
 | Data integrity | Explicit injection maps, exact coverage, stable hashes and accepted quantitative QC before scoring. Partial/duplicate/overlapping exports, ambiguous/missing peaks and invalid calibration stop feedback. Original files, effective settings, records and protocols are preserved. |
 | Timing | Stock preparation counts inside the campaign. Twelve hours is advisory: eight hours holds leave about four hours for remaining tasks including LC. Generic allowances are unmeasured; no completion-time guarantee. |

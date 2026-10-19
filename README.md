@@ -20,7 +20,7 @@ The [four-page operator reference](docs/HTE-operator-handbook.pdf) covers the ex
 
 ## Campaign at a glance
 
-**30 available ligands, 435 distinct unordered pairs.** Round one tests **48 pairs covering every ligand**. Round two tests **22 new pairs + one L17 tBuBrettPhos single-ligand reference**. Load the same 48-position Para-Dox block with **48 empty vials for R1, then 23 new empty vials for R2**. Each round starts with robotic SM/IS dosing, followed by catalysts; staff handle screw caps. Retain the combined SM/IS working tube **4 D2**, capped between rounds: **1.89 mL** loaded from the same nominal 2 mL stock covers both rounds without a refill.
+**30 available ligands, 435 distinct unordered pairs.** Round one tests **48 pairs covering every ligand**. Round two tests **22 new pairs + one L17 tBuBrettPhos single-ligand reference**. Load the same 48-position Para-Dox block with **48 empty vials for R1, then 23 new empty vials for R2**. Each round starts with robotic SM/IS dosing, followed by catalysts; staff handle screw caps. After cooling and quench addition, reaction vials stay **open at 750 rpm/2 min** until sampling; recap once for storage. Final LC plates also shake uncovered at **750 rpm/2 min**. Retain the combined SM/IS working tube **4 D2**, capped between rounds: **1.89 mL** loaded from the same nominal 2 mL stock covers both rounds without a refill.
 
 ![OT-2 deck map with robot stock preparation, source positions and manual block/plate routes](docs/figures/ot2-deck-setup.svg)
 

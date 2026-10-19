@@ -132,7 +132,7 @@ def run(protocol: protocol_api.ProtocolContext):
         # The reaction block stays in slot 3. No pipetting occurs on the module.
         # off_heater() already stopped shaking before opening the latch.
         wait_for_cool_module()
-        protocol.pause("LC plate R"+str(ROUND)+"-LC"+str(batch).zfill(2)+" is complete. RECAP the sampled reaction vials. Leave the LC plate UNCOVERED for shaking. At the next manual move, take only this LC plate from slot 6 to the cooled flat adapter in slot 10; preserve A1 orientation. No manual sample pipetting or HPLC-vial transfers.")
+        protocol.pause("LC plate R"+str(ROUND)+"-LC"+str(batch).zfill(2)+" is complete. RECAP ONLY the sampled reaction vials once for archive; keep any not-yet-sampled reaction vials OPEN. Leave the LC plate UNCOVERED for shaking. At the next manual move, take only this LC plate from slot 6 to the cooled flat adapter in slot 10; preserve A1 orientation. No manual sample pipetting or HPLC-vial transfers.")
         hs.open_labware_latch()
         protocol.move_labware(lc, adapter, use_gripper=False)
         hs.close_labware_latch()
@@ -187,7 +187,7 @@ def run(protocol: protocol_api.ProtocolContext):
             transfer_stage("dilution",batches[0])
         protocol.pause("Separately CONFIRM the sealed reaction vials have cooled to HTEL's approved opening temperature in slot 3, then UNSCREW/REMOVE all occupied reaction-vial caps under HTEL SOP. UNCOVER the prepared liquid reservoir in slot 2 if still covered; keep it uncovered through LC preparation. Mesitylene is already in each reaction: workup and LC diluent contain NO added internal standard. Confirm the approved extraction composition before proceeding.")
         transfer_stage("workup")
-        protocol.pause("SCREW every vial cap back on BY HAND before vigorous shaking. Check tightness and mounting. Do not shake open vials at high rpm.")
+        protocol.pause("Leave every quenched reaction vial OPEN. At the next manual move, transfer the block to the cooled heater-shaker; confirm secure mounting and no loose caps. The robot will shake the open vials at " + str(CONFIG["liquids"]["mix_rpm"]) + " rpm for 2 minutes, heater OFF. Do not recap before shaking or sampling.")
         onto_heater()
         try:
             hs.set_and_wait_for_shake_speed(CONFIG["liquids"]["mix_rpm"])
@@ -196,8 +196,8 @@ def run(protocol: protocol_api.ProtocolContext):
             hs.deactivate_shaker()
             hs.deactivate_heater()
         off_heater()
-        protocol.pause("After vigorous shaking, keep ALL reaction vials screw-capped until their sampling batch. Let bubbles clear briefly. No stir bars are present.")
-        protocol.pause("Sample promptly after vigorous mixing and bubble settling. If distinct layers, solids in the aspiration path or bubbles are obvious, pause for review; do not choose a layer or assume repeated aspiration dissolves solids. Keep the tip above the bottom and below the liquid surface.")
+        protocol.pause("After open-vial shaking, keep all not-yet-sampled reaction vials OPEN in slot 3. Let bubbles clear briefly, then sample promptly. No stir bars are present. Recap each sampled vial only after its sampling batch for archive.")
+        protocol.pause("Sample promptly after mixing and bubble settling. If distinct layers, solids in the aspiration path or bubbles are obvious, pause for review; do not choose a layer or assume repeated aspiration dissolves solids. Keep the tip above the bottom and below the liquid surface.")
         for batch in batches:
             if batch != batches[0]:
                 protocol.pause("Load a NEW empty LC autosampler plate in slot 6 for R"+str(ROUND)+"-LC"+str(batch).zfill(2)+". Keep the preceding plate at HPLC; do not reuse it. Use the exact wells in lc_sequence.csv, which retain their campaign column numbers.")
@@ -205,7 +205,7 @@ def run(protocol: protocol_api.ProtocolContext):
                 labware[6] = lc
             active=[op["source_well"] for op in OPERATIONS if op["stage"]=="sampling" and op["lc_batch"]==batch]
             active=list(dict.fromkeys(active))
-            protocol.pause("Label the LC plate R"+str(ROUND)+"-LC"+str(batch).zfill(2)+". Sampling batch "+str(batch)+": let visible bubbles settle after the automated extract shake, then UNSCREW/REMOVE the caps ONLY from "+", ".join(active)+". Keep all other reaction vials capped. Confirm caps lie below the 45 mm labware clearance envelope. Resume only with these aspiration targets open.")
+            protocol.pause("Label the LC plate R"+str(ROUND)+"-LC"+str(batch).zfill(2)+". Sampling batch "+str(batch)+": let visible bubbles settle after the automated extract shake. Confirm these aspiration targets remain OPEN since quenching: "+", ".join(active)+". Keep previously sampled archive vials capped and all not-yet-sampled vials open; no additional cap removal is needed. Confirm any retained caps lie below the 45 mm labware clearance envelope.")
             if len(batches)>1:
                 transfer_stage("dilution",batch)
             transfer_stage("sampling",batch)

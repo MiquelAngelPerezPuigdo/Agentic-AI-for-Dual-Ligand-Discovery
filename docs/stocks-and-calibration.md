@@ -21,7 +21,7 @@ Each hold: robot makes 10% aqueous FA, then fluids in reservoir 2. Coarse-load r
 
 | Fluid | Composition | Use |
 |---|---|---|
-| Quench | **9:1 ACN/water, 0.15% v/v FA**, no IS | 500 µL; capped 1500 rpm /2 min |
+| Quench | **9:1 ACN/water, 0.15% v/v FA**, no IS | 500 µL; open vials, heater off, 750 rpm /2 min |
 | LC diluent | **1:1 water/ACN, 0.1% v/v FA**, no IS | 980 µL +20 µL extract |
 
 ## Robot-made authentic standards

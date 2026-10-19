@@ -175,13 +175,13 @@ def draw(output):
         text(x,1.62,label,16,weight="bold",color=PURPLE)
     arrow(1.63,1.62,2.91,1.62,PURPLE);arrow(4.28,1.62,5.68,1.62,PURPLE)
     text(.65,1.16,"Reaction: hand-capped, 95 °C / 500 rpm / 4 h",10.6)
-    text(.65,.82,"Quench: hand-capped, heater OFF / 1500 rpm / 2 min",10.6)
+    text(.65,.82,f"Quench: OPEN vials, heater OFF / {c['liquids']['mix_rpm']:g} rpm / 2 min",10.6)
     text(.65,.49,"Cool before opening. Repeat the 3 → 10 → 3 route for quench mixing.",9.1,color=MUTED)
     for x,label in ((8.83,"Slot 6"),(11.30,"Slot 10"),(14.18,"HPLC")):
         text(x,1.62,label,16,weight="bold",color=BLUE)
     arrow(9.84,1.62,11.05,1.62,BLUE);arrow(12.51,1.62,13.93,1.62,BLUE)
     text(8.83,1.16,"Prefill 980 µL before quench; add 20 µL extract after shaking",10.6)
-    text(8.83,.82,"Shake uncovered: heater OFF / 1000 rpm / 2 min; then seal for LC",10.1)
+    text(8.83,.82,f"Shake uncovered: heater OFF / {c['liquids']['lc_mix_rpm']:g} rpm / 2 min; then seal for LC",10.1)
     text(8.83,.49,"Reaction block stays in slot 3 while the LC plate occupies the shaker.",9.1,color=MUTED)
     text(.65,.16,"PREVIEW: other 15 mL bulk sources fail the conservative nozzle-entry check; physical clearance remains unverified. Validate containers, mounting, offsets, delivery and shaking.",8.5,color=MUTED)
 

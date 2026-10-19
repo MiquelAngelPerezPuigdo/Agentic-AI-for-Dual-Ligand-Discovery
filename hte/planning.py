@@ -251,8 +251,8 @@ def validate_config(config, live=False, live_scope="all"):
         finite(c[name], name, 0.00001)
     finite(c["temperature_C"], "temperature", 37, 95)
     finite(c.get("thermal_equilibration_minutes", 0), "thermal equilibration", 0)
-    for name, value in (("reaction shaking", c["rpm"]), ("workup shaking", liquid["mix_rpm"])):
-        finite(value, name, 200, 3000)
+    finite(c["rpm"], "sealed reaction shaking", 200, 3000)
+    finite(liquid["mix_rpm"], "uncapped reaction workup shaking (750 rpm maximum)", 200, 750)
     if (liquid.get("substrate_stock_solvent") != "toluene" or liquid.get("substrate_evaporation_required") is not False
             or liquid.get("substrate_stock_contains_internal_standard") is not True):
         raise ValueError("This campaign requires retained toluene stock containing SM and mesitylene; no evaporation")
@@ -308,7 +308,7 @@ def validate_config(config, live=False, live_scope="all"):
         raise ValueError("LC preparation batches must contain a positive multiple of eight wells")
     if config["robot"].get("lc_single_plate_per_round") and batch < max(config["design"][f"round{r}_total"] for r in (1, 2)):
         raise ValueError("This campaign requires one LC plate per round; splitting R1 is disabled")
-    finite(liquid["lc_mix_rpm"], "uncovered LC plate shaking", 200, 3000)
+    finite(liquid["lc_mix_rpm"], "uncovered LC plate shaking (750 rpm maximum)", 200, 750)
     finite(liquid["lc_mix_minutes"], "LC plate mixing time", 0.01)
     finite(liquid["lc_max_module_temperature_C"], "maximum LC module temperature", 20, 40)
     if type(p["sample_prewet_cycles"]) is not int or not 0 <= p["sample_prewet_cycles"] <= 5:
@@ -822,7 +822,7 @@ def workup_timing(config, operations):
             "pump_and_programmed_wait_minutes": liquid_minutes, "shaking_minutes": shaking,
             "calculated_subtotal_minutes": liquid_minutes+shaking,
             "tip_pickup_events": sum(row["tip_pickups"] for row in stages.values()),
-            "individual_screw_cap_actions": 4*sample_count,
+            "individual_screw_cap_actions": 2*sample_count,
             "manual_workup_block_and_lc_moves": 2+2*lc_plates if samples else 0,
             "physical_run_measured": False,
             "excluded": ["gantry travel and vertical motion", "tip pickup/drop motion and rack changes",

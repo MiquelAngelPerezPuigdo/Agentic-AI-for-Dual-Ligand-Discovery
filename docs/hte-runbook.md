@@ -39,9 +39,9 @@ Hand-cap all R1 vials; move/latch at App prompts. Run **95 °C /500 rpm /4 h**. 
 ## Workup and final LC plates
 
 1. Move sealed block to 3; **cool vials before opening**. App separately checks module <=30 °C. **Uncover reservoir 2; keep vials capped while robot pre-fills the fresh LC plate in 6 with 980 µL diluent/well.** Then uncap; robot adds **500 µL 9:1 ACN/water +0.15% FA**. Nominal extract: 750 µL, 0.1% acid, 1.25 mL headspace. Neither fluid contains IS.
-2. **Hand-recap ALL vials**; shake **1500 rpm /2 min**, heater off. Return block to 3. Let bubbles settle; open the indicated vials for sampling.
+2. **Leave reaction vials OPEN**; shake **750 rpm /2 min**, heater off, at the locally confirmed splash-free setting. Return block to 3, let bubbles settle briefly and sample while open. No recap/reopen cycle before sampling.
 3. Sample promptly after shaking; LC diluent is already in place. Robot uses a fresh tip, two slow same-well prewets, **21 µL aspiration at 1.5 mm**, 1 µL retained reverse surplus and 2 µL air gap. Dispense nominal **20 µL into prefilled LC wells**, noncontact; discard tip. No manual dilution/vial transfer.
-4. Recap reaction vials. Move final LC plate **6→cooled shaker 10**, A1 orientation unchanged. Robot shakes **UNCOVERED, heater OFF, 1000 rpm /2 min** at the locally confirmed splash-free speed. Reaction block remains in 3.
+4. Recap reaction vials. Move final LC plate **6→cooled shaker 10**, A1 orientation unchanged. Robot shakes **UNCOVERED, heater OFF, 750 rpm /2 min** at the locally confirmed splash-free speed. Reaction block remains in 3.
 5. Move LC plate **10→HPLC**, apply compatible pierceable seal and inject directly. R1: **R1-LC01 A1-H6**, 48 samples. R2: **R2-LC01 A1-H2 plus A3-G3**, 23 samples. **H3 is diluent only; never inject.** Follow generated sequence/maps; reaction and LC coordinates differ.
 
 Final sample: 1 mL; nominal maximum analyte **666.7 µM**, mesitylene **66.7 µM**, FA **0.1%**, toluene **0.667%**. Use the calibrated injection volume. Seal after final shaking to limit evaporation. There are four final-sample plate moves plus the calibration-plate handoff.

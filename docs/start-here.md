@@ -6,7 +6,7 @@ Official **48 pairs (24 consensus +24 Sobol)**: `campaigns/hackathon2026/round1_
 
 Python 3.12: **`uv sync --locked --python 3.12 --extra sources --extra robot`**; prefix commands with `uv run`. Or install `.[sources,robot]` in a venv. Copy config to **`local_data/campaign.json`**, calibration template to `local_data/calibration-plan.csv`, key example to **`anthropic.key`**. Put the raw Claude key there; preserve existing keys. Never send it to the robot/Git.
 
-Use schema **5**; replace old protocols while preserving measured LC facts. Configure method/channel, full cycle and RTs/LOQs. Choose nondetection policy: default `reject` stops a missing-analyte result; `censor` reports bounds after RT/LOQ validation. **Default bulk-source reach fails:** supply actual suitable short-container/rack geometry before live release. Concentrations use nominal solvent addition. Twelve hours is advisory; record real times.
+Use schema **5**; replace old protocols while preserving measured LC facts. Set both `liquids.mix_rpm` and `liquids.lc_mix_rpm` to **750**; regenerate preparation/protocol files. Workup vials now stay open between quench and sampling; recap only for storage. Older 1500/1000-rpm local settings are rejected. Configure method/channel, full cycle and RTs/LOQs. Choose nondetection policy: default `reject` stops a missing-analyte result; `censor` reports bounds after RT/LOQ validation. **Default bulk-source reach fails:** supply actual suitable short-container/rack geometry before live release. Concentrations use nominal solvent addition. Twelve hours is advisory; record real times.
 
 ## Robot preparation, then R1
 

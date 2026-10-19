@@ -7192,7 +7192,7 @@ L 1149.12 692.64
     <text style="font-size: 10.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #242c31" x="46.8" y="783.23393" transform="rotate(-0 46.8 783.23393)">Reaction: hand-capped, 95 °C / 500 rpm / 4 h</text>
    </g>
    <g id="text_139">
-    <text style="font-size: 10.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #242c31" x="46.8" y="807.71393" transform="rotate(-0 46.8 807.71393)">Quench: hand-capped, heater OFF / 1500 rpm / 2 min</text>
+    <text style="font-size: 10.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #242c31" x="46.8" y="807.71393" transform="rotate(-0 46.8 807.71393)">Quench: OPEN vials, heater OFF / 750 rpm / 2 min</text>
    </g>
    <g id="text_140">
     <text style="font-size: 9.1px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #5c666b" x="46.8" y="831.084223" transform="rotate(-0 46.8 831.084223)">Cool before opening. Repeat the 3 → 10 → 3 route for quench mixing.</text>
@@ -7210,7 +7210,7 @@ L 1149.12 692.64
     <text style="font-size: 10.6px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #242c31" x="635.76" y="783.23393" transform="rotate(-0 635.76 783.23393)">Prefill 980 µL before quench; add 20 µL extract after shaking</text>
    </g>
    <g id="text_145">
-    <text style="font-size: 10.1px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #242c31" x="635.76" y="807.584027" transform="rotate(-0 635.76 807.584027)">Shake uncovered: heater OFF / 1000 rpm / 2 min; then seal for LC</text>
+    <text style="font-size: 10.1px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #242c31" x="635.76" y="807.584027" transform="rotate(-0 635.76 807.584027)">Shake uncovered: heater OFF / 750 rpm / 2 min; then seal for LC</text>
    </g>
    <g id="text_146">
     <text style="font-size: 9.1px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #5c666b" x="635.76" y="831.084223" transform="rotate(-0 635.76 831.084223)">Reaction block stays in slot 3 while the LC plate occupies the shaker.</text>
