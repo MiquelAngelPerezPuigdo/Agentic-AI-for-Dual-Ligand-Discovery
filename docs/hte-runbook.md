@@ -6,7 +6,7 @@ Use the [two-page bench sheet](HTE-staff-checklist.pdf). Every precise liquid tr
 
 **Pyridine-2-sulfonyl fluoride → 2-fluoropyridine.** Nominal per vial: 25 µmol SM, 1.5 µmol each ligand, 3 µmol Pd(COD)(DQ), 2.5 µmol mesitylene; 250 µL toluene, 95 °C, 500 rpm, 4 h under air. No base/external fluoride. Solvent addition defines nominal concentrations; solute displacement/contraction are accepted approximations.
 
-R1: **48 pairs covering all 30 ligands**; L07 excluded. R2: **22 pairs +L17 tBuBrettPhos at 12 mol% total ligand**; L03 at most four wells. No repeats. Higher yield than the reference identifies a preliminary candidate; R1 comparisons also confound batch effects. Reproducibility and cooperativity require later matched controls.
+R1: **48 pairs covering all 30 ligands**, from the official 24-consensus +24-Sobol design; L07 excluded. Regenerate stocks/protocols/maps from the current design; earlier R1 exports are superseded. R2: **22 pairs +L17 tBuBrettPhos at 12 mol% total ligand**; L03 at most four wells. No repeats. Higher yield than the reference identifies a preliminary candidate; R1 comparisons also confound batch effects. Reproducibility and cooperativity require later matched controls.
 
 ## Robot stock preparation
 

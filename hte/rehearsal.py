@@ -24,8 +24,7 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
 
     out = new_output(output)
     config = synthetic_config(config_path)
-    config["design"].update(require_lm_embeddings=True,
-                            exploration_backend="lm_diversity_initialization")
+    config["design"]["require_lm_embeddings"] = True
     # The actual workflow rejects demo configs. Only the isolated, mocked SDK context
     # receives a non-demo copy; all physical validation remains false.
     scoring_config = copy.deepcopy(config)
@@ -166,7 +165,11 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
               "round1_ligands_covered_in_pairs": sum(row["covered"] for row in coverage),
               "round1_missing_ligands": [row["ligand_id"] for row in coverage if not row["covered"]],
               "coverage_floor_overrides": sum(row["llm_floor_override"] in (True,"True") for row in trace),
-              "first_batch_source":"frozen real 48-pair campaign; yields and all provider responses remain synthetic",
+              "first_batch_source":"frozen David consensus/Sobol 48-pair campaign; yields and all provider responses remain synthetic",
+              "initialization_method":config["design"]["initialization_method"],
+              "selection_source_counts":{source:sum(row["selection_source"]==source for row in trace)
+                                         for source in ("repo_consensus","sobol")},
+              "sampling_below_llm_floor_count":sum(row["sampling_below_llm_floor"] in (True,"True") for row in trace),
               "initial_mock_scores_used_for_selection":False,
               "first_round_qc_pass": read_json(iteration/"analysis/qc_report.json")["batch_qc_pass"],
               "feedback_samples": len(results), "remaining_pairs_scored": len(pairs)-len(tested),

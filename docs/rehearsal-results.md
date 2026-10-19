@@ -1,6 +1,6 @@
 # Validation and rehearsal evidence
 
-Current record: [software_validation.json](../software_validation.json). No physical robot experiment, real calibration or 95 °C pair measurement has been performed. **267 tests pass** and all six SDK stages execute. All physical release flags remain false. **The independent audit found unresolved stock-source clearance/immersion risk; the default plan is not ready for hardware.**
+Current record: [software_validation.json](../software_validation.json). No physical robot experiment, real calibration or 95 °C pair measurement has been performed. **291 tests pass** and all six SDK stages execute. All physical release flags remain false. **The independent audit found unresolved stock-source clearance/immersion risk; the default plan is not ready for hardware.**
 
 ## Independent audit findings
 
@@ -18,7 +18,7 @@ The frozen selection, 435-pair/five-repeat arithmetic, all-ligand coverage, cach
 
 | Part | Software-checked behavior |
 |---|---|
-| Initial design | Frozen real 48 pairs regenerate byte for byte; all 30 active ligands covered. L07 excluded. Paid scores/vectors unchanged. |
+| Initial design | David’s 24 retained consensus +24 Sobol pairs reproduce his notebook exactly; all 30 active ligands covered. L07 excluded. Paid scores/vectors unchanged. |
 | Stock preparation | Actual weighed-charge/assay CSV → robot solvent addition, mixing and working-tube filling. Nominal solvent-addition concentrations are explicit; no volumetric-mark reading. Missing/duplicate charges, inadequate stock, excessive Pd/RockPhos and changed manifests are rejected. |
 | Bulk handling | Ligand/SM/analytical carriers use temporary slots 3/6; RockPhos and four Pd stocks are prepared directly in their working tubes. Remaining default deep sources fail the conservative reach check; previews preserve this blocker. Supplied horizontal A1-H1 raw reservoir is single-channel only. |
 | Pipettes | Preparation: p300 single left, p1000 single right. One App-guided right-pipette change to p300 multi; tips 8/9 also change. Reaction vials remain single-channel at 13 mm pitch; LC dilution uses eight channels at 9 mm pitch. |
@@ -36,7 +36,7 @@ The frozen selection, 435-pair/five-repeat arithmetic, all-ligand coverage, cach
 
 All **six current stages** execute in the installed **Opentrons 8.8.2 simulator**: initial stock preparation, R1 dosing/reaction, R1 workup, R2 refill, R2 dosing/reaction, R2 workup. Additional regressions exercise actual SDK temperature/cooling behavior, new-vial uncapping, source/plate geometry, tip replacement, fresh-tip/p20 alternatives, source recirculation and both-round volume accounting. Calculated workup pumping/waits plus shaking total about **33.5 min**, excluding motion, caps, cooling and other staff handling; this is not elapsed campaign time.
 
-The full offline loop uses the frozen first batch, **650 mocked Claude requests** and synthetic yields. Both prompt stages contain the **17 available single-ligand SI yields**, five scores per pair, at most eight partners per anchor. It accepts 48 synthetic LC results, produces 22 new pairs +reference, and passes the final 23-sample analysis. It rejects incomplete/repeated events and verifies no repeated pairs and one SM/IS dose per reaction. **Zero paid API calls.** The mock next batch is practice, not a recommendation.
+The full offline loop uses the adopted consensus/Sobol first batch, **660 mocked Claude requests** and synthetic yields. Both prompt stages contain the **17 available single-ligand SI yields**, five scores per pair, at most eight partners per anchor. It accepts 48 synthetic LC results, produces 22 new pairs +reference, and passes the final 23-sample analysis. It rejects incomplete/repeated events and verifies no repeated pairs and one SM/IS dose per reaction. **Zero paid API calls.** The mock next batch is practice, not a recommendation.
 
 Analytical practice replays 14 calibration injections and seven known-mixture samples through the real CSV importer/calibration/QC functions. Nine challenge scenarios behave as expected. Fourteen visual mock LC trials accept six valid cases, reject six detectable faults and expose two hidden area biases using known-mixture truth. Hidden coelution/area loss can pass ordinary unknown-sample QC; area-only CSVs cannot prove peak purity. Shapes, RTs and detector responses are synthetic, not a validated 1.7-minute separation. [Practice/replay commands](htel-lc-import.md).
 
@@ -44,7 +44,7 @@ An optional real seven-mixture pilot can also be robot-prepared: enable `automat
 
 ## Real initial Claude run
 
-Saved [campaign evidence](../campaigns/hackathon2026/) contains **435 pairs ×five repeats**, 340 accepted small requests, strict IDs/scores and thinking disabled. Accepted estimated usage: **$2.7599745**; 311 requests reported cache hits and 1,578,979 cache-read tokens. The consensus covers all 30 ligands with zero lower-quartile floor overrides. Source hashes, responses, repeated scores, mean/SD ranking and selection are retained. The archived prompt described glovebox-prepared stocks; schema 5 prepares stocks under air on the robot after glovebox weighing. Reaction atmosphere remains air; the frozen selection is retained. Prior rejected formats/smoke tests remain separately accounted for; all known estimated usage is $3.387529. No real R2 scoring has occurred.
+Saved [campaign evidence](../campaigns/hackathon2026/) contains **435 pairs ×five repeats**, 340 accepted small requests, strict IDs/scores and thinking disabled. Accepted estimated usage: **$2.7599745**; 311 requests reported cache hits and 1,578,979 cache-read tokens. David’s adopted 24-consensus +24-Sobol selection covers all 30 ligands. Three Sobol pairs intentionally fall below the baseline Claude cutoff; none is a coverage override. Source hashes, responses, repeated scores and mean/SD ranking are retained unchanged; the old selection remains in Git history. The archived prompt described glovebox-prepared stocks; schema 5 prepares stocks under air on the robot after glovebox weighing. Reaction atmosphere remains air. The new 48-pair selection reproduces David’s notebook from cached scores/vectors, without new paid calls or model inference. It retains 26 previous pairs and replaces 22; stock plans, protocols and LC maps were regenerated. Prior rejected formats/smoke tests remain separately accounted for; all known estimated usage is $3.387529. No real R2 scoring has occurred.
 
 ## Physical release and return
 

@@ -1,13 +1,13 @@
 {
-  "created_utc": "2026-10-19T19:42:52.202193+00:00",
+  "created_utc": "2026-10-19T20:27:26.963141+00:00",
   "campaign": "hackathon2026-paradox48",
   "schema_version": 5,
   "tests": {
-    "tests": 267,
+    "tests": 291,
     "failures": 0,
     "errors": 0,
     "skipped": 0,
-    "report": "output/round-start-dosing/tests.xml"
+    "report": "output/sobol-adoption/tests.xml"
   },
   "versions": {
     "anthropic": "0.125.0",
@@ -18,7 +18,9 @@
     "pypdf": "6.19.0",
     "pytest": "9.1.1",
     "reportlab": "4.5.1",
-    "mistune": "3.3.4"
+    "mistune": "3.3.4",
+    "scipy": "1.17.1",
+    "scikit-learn": "1.9.1"
   },
   "language_model_pair_embeddings": {
     "model": "google-t5/t5-base",
@@ -86,7 +88,8 @@
     "coverage_floor_overrides": 0,
     "round2_paid_selection_has_run": false,
     "archived_prompt_payload_sha256": "cd9d65418a348e559ddd0bd9c73a660f1f53bd4a7639dfb68920fdafb25416cc",
-    "preparation_context_note": "The archived run described glovebox-prepared stocks. Current schema 5 performs stock preparation under air on OT-2 after glovebox weighing. Reaction conditions and frozen R1 selection retained."
+    "preparation_context_note": "The archived run described glovebox-prepared stocks. Schema 5 prepares stocks under air on OT-2 after glovebox weighing. Reaction conditions and paid scores retained; current R1 selection is David\u2019s consensus/Sobol design.",
+    "selection_context": "These are historical scoring records, reused unchanged for the adopted initialization."
   },
   "scoring_prompt": {
     "version": 7,
@@ -107,7 +110,7 @@
     "max_output_tokens": 512,
     "output": "ID-keyed scores JSON; only partner IDs",
     "strict_contract_and_budget_stop_tested": true,
-    "version_7_change": "Score instruction now names partner_ligand_ids, matching the existing query/schema; chemistry, evidence, scores and frozen R1 selection unchanged. Frozen paid requests remain v6."
+    "version_7_change": "Score instruction names partner_ligand_ids, matching the query/schema. Chemistry/evidence and scoring policy unchanged; frozen paid requests remain v6. The adopted initializer independently changes R1 selection from those saved scores."
   },
   "prompt_caching": {
     "enabled_by_default": true,
@@ -133,14 +136,6 @@
     "real_first_batch_generated": true,
     "covered": 30,
     "missing_ligands": []
-  },
-  "initialization_only_gollum": {
-    "pair_yields_required": false,
-    "initial_consensus": "50% Claude rank + 50% T5 embedding-diversity rank with all-ligand coverage",
-    "round2_selector": "Claude ranking after all 48 measured yields pass QC; Python selects highest-ranked feasible pairs, L03 at most four R2 wells",
-    "round2_uses_gollum": false,
-    "round2_pairs": 22,
-    "round2_single_reference": "L17"
   },
   "local_api_key_file": {
     "filename": "anthropic.key",
@@ -362,27 +357,27 @@
   "opentrons_simulations": [
     {
       "stage": "stock_preparation",
-      "protocol": "output/round-start-dosing/rehearsal/stock-preparation/prepare_stocks.py",
-      "protocol_sha256": "94b732ba55952befb579fec1fe6ac499aabb27dfd8786b80d95370b95de1e649",
+      "protocol": "output/sobol-adoption/rehearsal/stock-preparation/prepare_stocks.py",
+      "protocol_sha256": "a2d16f968a380266d0a0b5903116bc18dede0bbb4c689e6266f271ff888fd497",
       "passed": true,
-      "log": "output/round-start-dosing/simulations/stock_preparation.log",
-      "commands_json": "output/round-start-dosing/simulations/stock_preparation.commands.json",
+      "log": "output/sobol-adoption/simulations/stock_preparation.log",
+      "commands_json": "output/sobol-adoption/simulations/stock_preparation.commands.json",
       "hardware_executed": false,
       "physical_geometry_certified": false,
-      "command_count": 4060,
-      "simulation_wall_seconds": 1.1311213749577291
+      "command_count": 4066,
+      "simulation_wall_seconds": 1.2084866249933839
     },
     {
       "stage": "round1_dosing",
-      "protocol": "output/round-start-dosing/rehearsal/round1/dose_and_react.py",
-      "protocol_sha256": "5d87130c07e57ef8bb606e42674f4d6bb0fa301d78b2b3c025d6d0f127d28e63",
+      "protocol": "output/sobol-adoption/rehearsal/round1/dose_and_react.py",
+      "protocol_sha256": "bffb00e3c1c915b221d47b634bd684ebd75373b50d6fa7c3e024896f29a62276",
       "passed": true,
-      "log": "output/round-start-dosing/simulations/round1_dosing.log",
-      "commands_json": "output/round-start-dosing/simulations/round1_dosing.commands.json",
+      "log": "output/sobol-adoption/simulations/round1_dosing.log",
+      "commands_json": "output/sobol-adoption/simulations/round1_dosing.commands.json",
       "hardware_executed": false,
       "physical_geometry_certified": false,
       "command_count": 6087,
-      "simulation_wall_seconds": 1.863171166041866,
+      "simulation_wall_seconds": 2.0570582920336165,
       "round_start_dosing_verification": {
         "substrate_dosing_events": 48,
         "expected_events": 48,
@@ -400,15 +395,15 @@
     },
     {
       "stage": "round1_workup",
-      "protocol": "output/round-start-dosing/rehearsal/round1/workup.py",
-      "protocol_sha256": "3775185975cf71000162cbd5c5fec7e1a6596190d5f210ef2e12082c8af2cf8e",
+      "protocol": "output/sobol-adoption/rehearsal/round1/workup.py",
+      "protocol_sha256": "816ec573b4e7d965191de369e046a987b57c1aa87dacaa83196fcbce823afae2",
       "passed": true,
-      "log": "output/round-start-dosing/simulations/round1_workup.log",
-      "commands_json": "output/round-start-dosing/simulations/round1_workup.commands.json",
+      "log": "output/sobol-adoption/simulations/round1_workup.log",
+      "commands_json": "output/sobol-adoption/simulations/round1_workup.commands.json",
       "hardware_executed": false,
       "physical_geometry_certified": false,
       "command_count": 1736,
-      "simulation_wall_seconds": 0.6288863329682499,
+      "simulation_wall_seconds": 0.6768597909831442,
       "workup_sequence_verification": {
         "lc_diluent_events": 24,
         "quench_events": 96,
@@ -420,20 +415,21 @@
         "first_sampling_command": 908,
         "all_diluent_before_quench": true,
         "all_diluent_before_extract_shake": true,
-        "all_sampling_after_extract_shake": true
+        "all_sampling_after_extract_shake": true,
+        "extract_shake_finished_command": 904
       }
     },
     {
       "stage": "round2_refill",
-      "protocol": "output/round-start-dosing/rehearsal/round2/refill_stocks.py",
-      "protocol_sha256": "ffb62ffffd90d08b26513379f25f002938e4ab82b87a303a0f3c494c5afa8403",
+      "protocol": "output/sobol-adoption/rehearsal/round2/refill_stocks.py",
+      "protocol_sha256": "37ba0b0a6c3425eae8c5337923c1595706659079d66b1747b3e6ae61050eaca2",
       "passed": true,
-      "log": "output/round-start-dosing/simulations/round2_refill.log",
-      "commands_json": "output/round-start-dosing/simulations/round2_refill.commands.json",
+      "log": "output/sobol-adoption/simulations/round2_refill.log",
+      "commands_json": "output/sobol-adoption/simulations/round2_refill.commands.json",
       "hardware_executed": false,
       "physical_geometry_certified": false,
-      "command_count": 1505,
-      "simulation_wall_seconds": 0.41261695796856657,
+      "command_count": 1331,
+      "simulation_wall_seconds": 0.3827289579785429,
       "retained_substrate_verification": {
         "sm_refill_transfers": 0,
         "sdk_dispenses_into_sm_working_source": 0,
@@ -442,15 +438,15 @@
     },
     {
       "stage": "round2_dosing",
-      "protocol": "output/round-start-dosing/rehearsal/round2/dose_and_react.py",
-      "protocol_sha256": "f089ef110ff4d9b2b562a495d8ab16c6d10074175cb8523d4ec927039d2fd9eb",
+      "protocol": "output/sobol-adoption/rehearsal/round2/dose_and_react.py",
+      "protocol_sha256": "5812898f54cefb140fb5e3712ddc0a198a83e8f1475c862c86801b6def8d3ccc",
       "passed": true,
-      "log": "output/round-start-dosing/simulations/round2_dosing.log",
-      "commands_json": "output/round-start-dosing/simulations/round2_dosing.commands.json",
+      "log": "output/sobol-adoption/simulations/round2_dosing.log",
+      "commands_json": "output/sobol-adoption/simulations/round2_dosing.commands.json",
       "hardware_executed": false,
       "physical_geometry_certified": false,
-      "command_count": 2402,
-      "simulation_wall_seconds": 0.7841202089912258,
+      "command_count": 2391,
+      "simulation_wall_seconds": 0.8308547920314595,
       "round_start_dosing_verification": {
         "substrate_dosing_events": 23,
         "expected_events": 23,
@@ -469,15 +465,15 @@
     },
     {
       "stage": "round2_workup",
-      "protocol": "output/round-start-dosing/rehearsal/round2/workup.py",
-      "protocol_sha256": "85f48b39dc6604d12367ae4a564ab6ace625f361a21ffceafb4777cece3037ac",
+      "protocol": "output/sobol-adoption/rehearsal/round2/workup.py",
+      "protocol_sha256": "7761ab88c5d707ac15c9ebd403850f1a8fecd050f3a02057e557e6d9c9885f94",
       "passed": true,
-      "log": "output/round-start-dosing/simulations/round2_workup.log",
-      "commands_json": "output/round-start-dosing/simulations/round2_workup.commands.json",
+      "log": "output/sobol-adoption/simulations/round2_workup.log",
+      "commands_json": "output/sobol-adoption/simulations/round2_workup.commands.json",
       "hardware_executed": false,
       "physical_geometry_certified": false,
       "command_count": 859,
-      "simulation_wall_seconds": 0.28199349995702505,
+      "simulation_wall_seconds": 0.40285270899767056,
       "workup_sequence_verification": {
         "lc_diluent_events": 12,
         "quench_events": 46,
@@ -489,7 +485,8 @@
         "first_sampling_command": 456,
         "all_diluent_before_quench": true,
         "all_diluent_before_extract_shake": true,
-        "all_sampling_after_extract_shake": true
+        "all_sampling_after_extract_shake": true,
+        "extract_shake_finished_command": 452
       }
     }
   ],
@@ -513,7 +510,13 @@
     "round1_ligands_covered_in_pairs": 30,
     "round1_missing_ligands": [],
     "coverage_floor_overrides": 0,
-    "first_batch_source": "frozen real 48-pair campaign; yields and all provider responses remain synthetic",
+    "first_batch_source": "frozen David consensus/Sobol 48-pair campaign; yields and all provider responses remain synthetic",
+    "initialization_method": "consensus_sobol",
+    "selection_source_counts": {
+      "repo_consensus": 24,
+      "sobol": 24
+    },
+    "sampling_below_llm_floor_count": 3,
     "initial_mock_scores_used_for_selection": false,
     "first_round_qc_pass": true,
     "feedback_samples": 48,
@@ -528,16 +531,16 @@
     "combined_is_dosed_once_per_round": true,
     "incomplete_export_ignored": true,
     "duplicate_event_ignored": true,
-    "next_dosing_csv": "feedback_loop/iteration-afa26edc570f77d9/next_dosing.csv",
+    "next_dosing_csv": "feedback_loop/iteration-1aa2b4d6b51a92f1/next_dosing.csv",
     "cache_summaries": [
       "initial_scoring/cache_summary.json",
-      "feedback_loop/iteration-afa26edc570f77d9/scoring/cache_summary.json"
+      "feedback_loop/iteration-1aa2b4d6b51a92f1/scoring/cache_summary.json"
     ],
     "result_interpretation": "Synthetic yields and mocked rankings validate data flow only.",
-    "source_report": "output/round-start-dosing/rehearsal/rehearsal_report.json",
-    "mocked_request_count": 650,
+    "source_report": "output/sobol-adoption/rehearsal/rehearsal_report.json",
+    "mocked_request_count": 660,
     "mocked_initial_request_count": 340,
-    "mocked_feedback_request_count": 310,
+    "mocked_feedback_request_count": 320,
     "both_prompt_stages_include_17_SI_yields": true
   },
   "robot_stock_preparation": {
@@ -567,14 +570,14 @@
     "robot_workup_fluids_in_each_hold": true,
     "robot_R2_refill": true,
     "refill_basis": "Original working residuals minus completed R1 commanded consumption; no unrecorded losses",
-    "frozen_R1_sha256": "7c2ad21967f468857938989fcbe5901d2409a86dcae8d785f7247032ef301104",
+    "frozen_R1_sha256": "3c68d4fe7429cd5b880cdbec25debd4fd6d6e794e95022c88c317c07c5d5dd27",
     "preview_liquid_ledger_balance_verified": true,
     "invalid_mass_assay_coverage_and_manifest_changes_rejected": true,
     "stock_preparation_atmosphere": "air on OT-2 after glovebox weighing",
     "bulk_source_reach_check": "Blocked: source aspiration would place the nozzle below the tube rim; actual clearance/immersion unverified",
     "source_reach_physical_collision_proven": false,
     "analytical_minimum_weigh_mg": 5,
-    "initial_programmed_pumping_wait_minutes": 100.1548700925926,
+    "initial_programmed_pumping_wait_minutes": 100.08576658198366,
     "Pd_direct_tubes": "4 A3/B3/C3/A4; all four retained; no Falcon/bulk transfer/refill"
   },
   "pd_budget": {
@@ -824,7 +827,7 @@
     "scenario_status": "Unmeasured handling-allowance scenario; not a validated completion-time forecast",
     "assumptions": "Full injection cycle. All R1 measurements required before decision. One LC plate per round gives no within-round preparation/injection overlap. The target budget does not replace measured handling allowances. Workup includes both extract and LC shaking, moves and manual caps."
   },
-  "timing_note": "12h advisory, not demonstrated by current programmed serial components: partial lower bound 734.39min excludes reaction dosing, R2 refill, motion, tips, heating/cooling and staff pauses. Initial preparation 100.15min pumping/waits alone; 120min full-preparation scenario unmeasured.",
+  "timing_note": "12h advisory, not demonstrated by current programmed serial components: partial lower bound 734.32min excludes reaction dosing, R2 refill, motion, tips, heating/cooling and staff pauses. Initial preparation 100.09min pumping/waits alone; 120min full-preparation scenario unmeasured.",
   "pending_local_facts": [
     "Actual short solvent-compatible stock sources/rack JSON; current no-nozzle-entry reach check fails",
     "Actual p1000 generation and App pipette change/calibration",
@@ -843,11 +846,15 @@
       "hte/preparation.py": "5c7b908d7b421d6c27306542d37587b7b2a1dcaf075671ca3e7c412daf53a3d5",
       "hte/protocols.py": "85ca187737717c342001528c534f242895296fc4afbd1e784d46ebe2d93ef92d",
       "hte/planning.py": "f0168709715dfde2e4274fb4b684164fe2df51d2ae6bdb7f99169970d379e0ee",
-      "hte_inputs/campaign.json": "985abee0d90cd97bc165eac06a0237a9809dd916d6d58ad03f7920f6a54a073b",
+      "hte_inputs/campaign.json": "0102ff8841fd75b7cd52f98e26beb1ad5af91f659a9cccc05ecb0ee85055c815",
       "hte_inputs/ligands.csv": "a24c186b814eaeb8b5950e7a059e21b8df001764e83b19f127a3da179f4a5876",
       "hte_inputs/literature.json": "bdc36fcbaa06c5635064218629d7baeca35738d02cb9e5a0481e159a2e94a7be",
-      "campaigns/hackathon2026/round1_design.csv": "7c2ad21967f468857938989fcbe5901d2409a86dcae8d785f7247032ef301104",
-      "hte/rehearsal.py": "7e63816e7ca3f30b452121864055697bda03e4b28d9ec4fd131f21007eb8b5d2"
+      "campaigns/hackathon2026/round1_design.csv": "3c68d4fe7429cd5b880cdbec25debd4fd6d6e794e95022c88c317c07c5d5dd27",
+      "hte/rehearsal.py": "62c0e5960896ff60ece7d846006f4177392fb1297777dda01daa263c75ec2d24",
+      "hte/initialization.py": "8d57a98634691df11523efb5439c16f76d5f4fc9499ca06ed74939a68b6a6308",
+      "hte/cli.py": "c4ae610b9de57c8730339168f135acce936bf659e9648f3da55125ab439fb7af",
+      "pyproject.toml": "a1d37379ea7048076da38c013634aaaeec595aa48bba3b270297e8279026976d",
+      "uv.lock": "9275407e57f3f2b8bf3d4b7b426dbe5755b2d3caf91c9bf3b873477968748b3c"
     },
     "fixes": [
       "Per-level calibration recovery and effective quantitative lower bound",
@@ -858,11 +865,11 @@
     ],
     "plans": {
       "stock_preparation": {
-        "plan": "output/round-start-dosing/rehearsal/stock-preparation/preparation_manifest.json",
+        "plan": "output/sobol-adoption/rehearsal/stock-preparation/preparation_manifest.json",
         "pumping_wait_lower_bound": {
-          "seconds": 6009.292205555556,
-          "minutes": 100.1548700925926,
-          "transfer_strokes": 253,
+          "seconds": 6005.145994919019,
+          "minutes": 100.08576658198366,
+          "transfer_strokes": 254,
           "mix_events": 48,
           "manual_pause_count": 14,
           "physical_duration_measured": false,
@@ -879,11 +886,11 @@
           "physical_clearance_validated": false,
           "limitation": "Conservative tip/nozzle reach only; validate actual container fit, offsets, liquid depth and solvent compatibility locally."
         },
-        "reach_issue_count": 50,
+        "reach_issue_count": 49,
         "physical_run_completed": false
       },
       "round1_hold": {
-        "plan": "output/round-start-dosing/rehearsal/round1/hold_preparation_plan.json",
+        "plan": "output/sobol-adoption/rehearsal/round1/hold_preparation_plan.json",
         "pumping_wait_lower_bound": {
           "seconds": 4161.801042393613,
           "minutes": 69.36335070656021,
@@ -914,7 +921,7 @@
         }
       },
       "round2_hold": {
-        "plan": "output/round-start-dosing/rehearsal/round2/hold_preparation_plan.json",
+        "plan": "output/sobol-adoption/rehearsal/round2/hold_preparation_plan.json",
         "pumping_wait_lower_bound": {
           "seconds": 1526.886743589744,
           "minutes": 25.448112393162397,
@@ -945,12 +952,12 @@
         }
       },
       "round2_refill": {
-        "plan": "output/round-start-dosing/rehearsal/round2/refill_plan.json",
+        "plan": "output/sobol-adoption/rehearsal/round2/refill_plan.json",
         "pumping_wait_lower_bound": {
-          "seconds": 1419.5966666666664,
-          "minutes": 23.659944444444438,
-          "transfer_strokes": 23,
-          "mix_events": 36,
+          "seconds": 1358.9933333333333,
+          "minutes": 22.64988888888889,
+          "transfer_strokes": 19,
+          "mix_events": 32,
           "manual_pause_count": 11,
           "physical_duration_measured": false,
           "excluded": [
@@ -962,11 +969,11 @@
         },
         "reach": {
           "status": "blocked",
-          "checked_source_tip_combinations": 36,
+          "checked_source_tip_combinations": 32,
           "physical_clearance_validated": false,
           "limitation": "Conservative tip/nozzle reach only; validate actual container fit, offsets, liquid depth and solvent compatibility locally."
         },
-        "reach_issue_count": 18,
+        "reach_issue_count": 16,
         "physical_run_completed": false
       }
     },
@@ -974,10 +981,10 @@
       "components_minutes": {
         "reaction_holds": 480,
         "LC_outside_holds": 120.7,
-        "initial_preparation": 100.1548700925926,
+        "initial_preparation": 100.08576658198366,
         "workup_pumping_waits_shaking": 33.530722222222224
       },
-      "total_minutes": 734.3855923148149,
+      "total_minutes": 734.316488804206,
       "excludes": [
         "reaction dosing",
         "R2 stock refill",
@@ -989,7 +996,7 @@
       "interpretation": "Even before these omitted tasks, programmed serial components exceed 12 h under the requested 1.7 min full LC cycle and no R1 sample split. This is not a physical runtime measurement."
     },
     "report": "docs/rehearsal-results.md",
-    "current_source_parent_commit": "cb157f9e135faf405a283bed4995451afdcdec9f"
+    "current_source_parent_commit": "c931e47f088761bc161fb667eb1e4d0de2588b4d"
   },
   "pd_container_update": {
     "four_direct_sources": true,
@@ -1029,5 +1036,46 @@
     "new_regression_tests": 4,
     "physical_robot_runs": 0,
     "paid_API_calls": 0
+  },
+  "dependency_lock": "uv.lock; Python 3.12, uv sync --locked; includes initializer dependencies",
+  "initialization_only_alice": {
+    "pair_yields_required": false,
+    "round2_selector": "Claude ranking after all 48 measured yields pass QC; Python selects highest-ranked feasible pairs, L03 at most four R2 wells",
+    "round2_uses_gollum": false,
+    "round2_pairs": 22,
+    "round2_single_reference": "L17",
+    "initialization": "24 retained consensus +24 Sobol, David default notebook reproduced exactly",
+    "baseline_consensus": "50% Claude rank +50% raw-T5 diversity rank with all-ligand coverage",
+    "sampling_space": "StandardScaler \u2192 full-SVD PCA16 \u2192 MinMaxScaler; scrambled SciPy Sobol seed1",
+    "round2_uses_sobol": false,
+    "all_ligands_covered_by_retained_24": true
+  },
+  "initialization_adoption": {
+    "created_utc": "2026-10-19T20:24:44.664428+00:00",
+    "method": "David Ming Segura default 24 retained consensus + 24 Sobol",
+    "source_commit": "c2682f3db09eb496b92d11fb6725e9870157e301",
+    "replaces_selection_at_commit": "c931e47f088761bc161fb667eb1e4d0de2588b4d",
+    "previous_design_sha256": "7c2ad21967f468857938989fcbe5901d2409a86dcae8d785f7247032ef301104",
+    "design_sha256": "3c68d4fe7429cd5b880cdbec25debd4fd6d6e794e95022c88c317c07c5d5dd27",
+    "selection_order_matches_notebook": true,
+    "retained_from_previous_48": 26,
+    "new_pairs": 22,
+    "all_active_ligands_covered": 30,
+    "baseline_claude_floor_does_not_apply_to_sobol": true,
+    "sobol_pairs_below_baseline_claude_floor": 3,
+    "paid_api_calls_for_adoption": 0,
+    "embedding_model_inference_calls_for_adoption": 0,
+    "historical_scoring_unchanged": true,
+    "prior_selection_recoverable_from_git": true,
+    "methodological_reference": "https://arxiv.org/abs/2609.11790",
+    "scope": "ALICE-inspired initialization; our 24/24 hybrid with Claude-only R2 has not been experimentally validated.",
+    "selection_metadata": "campaigns/hackathon2026/round1_design.csv.metadata.json",
+    "new_regression_tests": 24,
+    "pair_types_by_structural_phosphorus_count": {
+      "one_P_one_P": 19,
+      "one_P_two_P": 23,
+      "two_P_two_P": 6,
+      "note": "P-atom count is not experimental denticity."
+    }
   }
 }

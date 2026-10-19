@@ -46,7 +46,11 @@
     "consensus_weight_llm": 0.5,
     "require_all_ligands_in_round1_pairs": true,
     "minimum_llm_percentile": 0.25,
-    "exploration_backend": "lm_diversity_initialization",
+    "exploration_backend": "lm_consensus_sobol_initialization",
+    "initialization_method": "consensus_sobol",
+    "initialization_keep_from_consensus": 24,
+    "initialization_pca_dimensions": 16,
+    "initialization_seed": 1,
     "require_lm_embeddings": true,
     "seed": 20261009,
     "excluded_ligands": [

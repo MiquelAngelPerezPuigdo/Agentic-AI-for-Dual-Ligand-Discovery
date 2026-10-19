@@ -6,7 +6,7 @@
 |---|---|
 | `hte/inventory.py`, `io.py` | Immutable ligand IDs, availability, checked CSV/JSON and hashes |
 | `hte/embeddings.py` | Frozen T5 embedding generation/loading; model downloads are optional |
-| `hte/scoring.py`, `design.py` | Small cached Claude requests, strict scores, repeated aggregation and pair selection |
+| `hte/scoring.py`, `design.py`, `initialization.py` | Small cached Claude requests, strict scores, repeated aggregation, 24-consensus +24-Sobol initialization and Claude-only feedback selection |
 | `hte/analytics.py`, `ingestion.py` | HTEL peak-table normalization, calibration/QC and complete-batch joins |
 | `hte/analytical_stocks.py` | Small independent analytical masters, with a practical minimum weighing and explicit containers |
 | `hte/analytical_practice.py`, `scripts/mock-hplc-trials.py` | Calibration/pilot replay and visual mock-LC fault challenges |
@@ -32,7 +32,7 @@ python -m pytest -q
 python -m hte.cli rehearse-loop --output output/practice
 ```
 
-Equivalent uv setup: `uv sync --python 3.12 --extra sources --extra test --extra docs`, then prefix commands with `uv run`. Routine operation/tests use the included embedding matrix and require no PyTorch/model download. Install `.[embeddings]` only to deliberately rebuild vectors. Tested dependency versions are recorded in `software_validation.json`.
+Equivalent uv setup: `uv sync --locked --python 3.12 --extra sources --extra test --extra docs`, then prefix commands with `uv run`. Routine operation/tests use the included embedding matrix and require no PyTorch/model download. Install `.[embeddings]` only to deliberately rebuild vectors. Tested dependency versions are recorded in `software_validation.json`.
 
 ## Reproduce the real first batch without spending
 
@@ -43,7 +43,7 @@ python -m hte.cli design \
   --output output/reproduced-initial.csv
 ```
 
-The design CSV should match `campaigns/hackathon2026/round1_design.csv` byte for byte. Companion files show coverage and selection steps. To inspect/simulate matching robot files and preparation tables:
+The design CSV should match the adopted **24-consensus +24-Sobol** `campaigns/hackathon2026/round1_design.csv` byte for byte. It reproduces David's notebook defaults from cached embeddings and paid scores; no GPU or Claude key is needed. Companion files record source labels, coverage, PCA/Sobol settings and selection provenance. The previous all-consensus batch is retired in Git history. **Regenerate stock plans, preparation files, robot protocols and LC maps for the adopted design; do not reuse exports from the previous batch.** To inspect/simulate matching files:
 
 ```bash
 python -m hte.cli export \
@@ -96,4 +96,4 @@ Practice remains `python -m hte.cli rehearse-loop --output output/practice` (moc
 
 Explore assumed column/gradient scenarios with `python scripts/simulate-lc-separation.py --output output/lc-separation` after installing `.[reports]`. The standalone report includes explicit retention/peak/response assumptions, three gradients, overlap stresses and numerical checks. It does not fit a retention predictor or alter the analytical method. [Scope and assumptions](htel-lc-import.md#assumed-column-and-gradient-scenarios).
 
-Keep practical instructions in the staff/runbook sources and expert algorithm details in [ml-strategy.md](ml-strategy.md). Change configuration plus corresponding prose together, run the relevant checks, rebuild/visually inspect [the PDFs](updating-the-handbook.md), and refresh `software_validation.json`. Preserve frozen paid scores and source provenance; a new selection should be a new campaign record. Tests generate their own fixtures in temporary directories. GitHub CI runs the active acceptance suite and PDF builds independently. No network access or Claude key is required by tests.
+Keep practical instructions in the staff/runbook sources and expert algorithm details in [ml-strategy.md](ml-strategy.md). Change configuration plus corresponding prose together, run the relevant checks, rebuild/visually inspect [the PDFs](updating-the-handbook.md), and refresh `software_validation.json`. Preserve frozen paid scores and source provenance; record each adopted selection change with its parent design, method provenance and refreshed hashes. Tests generate their own fixtures in temporary directories. GitHub CI runs the active acceptance suite and PDF builds independently. No network access or Claude key is required by tests.

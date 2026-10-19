@@ -1,11 +1,12 @@
 {
   "algorithm": "sha256",
   "files": {
-    "README.md": "e5100f9b658e2b8cfe1487daaf79c5726b261f4cd75ea2bce8c91ad64c171a79",
-    "round1_design.csv": "7c2ad21967f468857938989fcbe5901d2409a86dcae8d785f7247032ef301104",
-    "round1_design.csv.ligand_coverage.csv": "9dce5108f00a571f8f156ab6a9dcf803e5168a05b29a04210099a492d05661e0",
-    "round1_design.csv.metadata.json": "f87726b0f475c18049a0ca8bc21afc854d8276a254cadb66b950bfd14a7fded5",
-    "round1_design.csv.selection.csv": "d21af00a1bd5e2445de902d921e57f6f5894d5d90c81bcccd2747dc0f36c728f",
+    "README.md": "012952a153848a0694121951405071abf2911b729ca6f8c1490a8d86fbfffbbd",
+    "initialization_provenance.json": "f3c71fa4cffef8f08589a5f56fd778c7b4903041c81e0aa1180de59bbf950cda",
+    "round1_design.csv": "3c68d4fe7429cd5b880cdbec25debd4fd6d6e794e95022c88c317c07c5d5dd27",
+    "round1_design.csv.ligand_coverage.csv": "4bfa3ae822b98b767664940b4860b739bc2178e7eb04727801e128ca17be5833",
+    "round1_design.csv.metadata.json": "24d4ab8dc896185668026b86dd83153ecaa8bb58ae839c1515e616ebbab39a63",
+    "round1_design.csv.selection.csv": "d920fa9e739d7f09b5efc5062a0f4c2ac648a00a02ad4e92bafb8217ddebdf3f",
     "scoring/budget_ledger.json": "c06781088eef70e3dabc78ce6569413f5799994b095b7d97472a78ec03fcd2c8",
     "scoring/cache_summary.json": "2728a7cfd6686e941eeb6c56702a06ea72d273246d36a5ef25ec3211d81b5f5e",
     "scoring/campaign_provenance.json": "a97c2eec55f40228c5002f197a074dee898f26eacf24fdf2f61424707cca13fb",

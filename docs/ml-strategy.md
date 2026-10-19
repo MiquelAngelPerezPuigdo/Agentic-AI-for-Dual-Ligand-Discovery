@@ -1,14 +1,19 @@
 # ML/LLM strategy for expert review
 
-This is a two-round, fixed-condition search over **435 unordered pairs of 30 available ligands**. A frozen text encoder supplies a diversity signal for initialization; repeated Claude scoring supplies a performance-prior signal. After experimental feedback, Claude alone ranks the remaining pairs. The implementation keeps model weights fixed throughout.
+This is a two-round, fixed-condition search over **435 unordered pairs of 30 available ligands**. The adopted initialization is **David Ming Segura's 24-consensus +24-Sobol design**, combining repeated Claude scores with frozen T5 representations. The retained 24 already cover every ligand; the other 24 can challenge Claude's prior. After experimental feedback, Claude alone ranks the remaining pairs. Model weights stay fixed throughout.
 
 ```mermaid
 flowchart TD
     Library["30 ligands: IDs, names, SMILES"] --> Encoder["Frozen T5: symmetric pair embeddings"]
-    Library --> Scoring["Claude + single-ligand SI yields: repeated pair scores"]
-    Encoder --> Consensus["50/50 rank consensus + all-ligand coverage"]
-    Scoring --> Consensus
-    Consensus --> First["48 pair experiments → calibrated LC yields"]
+    Library --> Scoring["Claude + single-ligand SI yields: repeated scores"]
+    Encoder --> Baseline["48-pair Claude/diversity consensus"]
+    Scoring --> Baseline
+    Encoder --> PCA["Standardize → PCA 16 → scale to 0–1"]
+    Baseline --> Retained["Retain 24 by PCA diversity + all-ligand coverage"]
+    PCA --> Retained
+    PCA --> Sobol["24 further pairs: Sobol targets + unique matching"]
+    Retained --> First["48 pair experiments → calibrated LC yields"]
+    Sobol --> First
     First --> Feedback["Claude + measured feedback: rank 387 untested pairs"]
     Feedback --> Second["22 new pairs + one single-ligand reference"]
 ```
@@ -27,9 +32,11 @@ $$z_{ab}=\frac{1}{2}\left[\operatorname{MeanPool}(E(t_{a,b}))+\operatorname{Mean
 
 This produces an order-invariant **768-dimensional** representation. The included matrix has **435 ×768** entries; it is an exact active-ligand subset of the original model-inferred matrix. [Model revision and pooling metadata](../hte_inputs/pair_embeddings_t5-base.npz.metadata.json), [implementation](../hte/embeddings.py).
 
-Distances use **squared Euclidean distance on the raw pooled vectors**, with no PCA, standardization or cosine normalization. The encoder supplies a learned text representation without hand-built ligand descriptors or quantum calculations. Its distance geometry is a design heuristic; chemical coverage or predictive accuracy has not been validated for this reaction.
+The baseline consensus uses squared Euclidean distance on the raw pooled vectors. David's retained subset and Sobol sampler use a second geometry: **standardize all 768 dimensions → PCA with 16 components → scale each component to [0,1]**. The components retain about **89.4% of standardized embedding variance**. Neither geometry is a validated measure of catalytic complementarity; the encoder avoids hand-built descriptors or quantum calculations.
 
-The connection to **GoLLuM** is language-model representation plus diversity-based initialization, which can operate before pair yields exist. GoLLuM exposes several [initializers, including max-min](https://github.com/schwallergroup/gollum/blob/c418d7ed3c17e5995f503f6df7c26e9f7c58d09f/src/gollum/initialization/initializers.py). Our rank consensus and coverage rules below are project-specific. The active campaign uses no fitted surrogate, Gaussian process or acquisition function. Its post-feedback selector is entirely Claude scoring.
+David adapted the initialization from **ALICE**, whose [preprint](https://arxiv.org/abs/2609.11790) reports computational benchmarks and prospective HTE campaigns. Its [initializer](https://github.com/schwallergroup/alice/blob/cda460d627e074d3cd57c47df13df08cea9346c6/src/alice/initialization/initializers.py) implements standardization, optional PCA, scaling and unique matching of Sobol targets; its [palladium-Suzuki configuration](https://github.com/schwallergroup/alice/blob/cda460d627e074d3cd57c47df13df08cea9346c6/configs/pd_suzuki/pd_suzuki_llm.yaml) specifies T5-base, mean pooling and 16 PCA components. David is an ALICE coauthor and contributed the [campaign notebook](../notebook/batch_suggestions.ipynb).
+
+This gives the initialization a traceable methodological precedent. The **24/24 hybrid, all-ligand coverage rule and Claude-only R2 are project-specific**; ALICE's reported results do not establish their superiority for this reaction. ALICE subsequently trains its language representation jointly with Gaussian-process surrogates; our workflow fits neither. The earlier GoLLuM connection is the same use of language-model representations without manual descriptors, not execution of its trained optimizer.
 
 ## 2. Small, repeated pair-scoring requests
 
@@ -45,25 +52,20 @@ Each key is a requested partner; the anchor is in the query. These numbers score
 
 Each pair receives **five scores**. Cohort membership stays fixed across repeats, while partner order is shuffled deterministically. Store the arithmetic mean and sample standard deviation. The mean ranks performance promise; the SD describes repeat-to-repeat scoring variability and does not enter selection. It is neither experimental uncertainty nor a calibrated posterior uncertainty. Shared priors, fixed cohorts and the same model can correlate repeated scores. The initial run used **Claude Opus 4.8, 340 requests, 2,175 validated pair scores**.
 
-## 3. Initial 48: performance/diversity consensus with coverage
+## 3. Initial 48: 24 retained consensus +24 Sobol
 
-The [selector](../hte/design.py) ranks pair mean scores into fixed percentiles U(p), using average ranks for ties. Default eligibility is U(p) >=0.25, removing the bottom quartile from ordinary selection.
+The [production selector](../hte/initialization.py) reproduces David's default notebook proposal from cached vectors and scores, with **16 PCA components, scrambled Sobol seed 1 and 24 retained pairs**. No API call, model download or GPU is needed to reproduce the released batch.
 
-At the first step, diversity is squared distance from the library centroid. After selecting set S, diversity becomes the distance to the nearest selected pair:
+1. **Construct the 48-pair baseline.** Rank Claude mean scores into percentiles U(p). Normally exclude the bottom quartile. Greedily combine U(p) and a diversity percentile D(p,S) with equal weight: C(p,S)=0.5 U(p)+0.5 D(p,S). Diversity is squared distance from the library centroid initially, then distance to the nearest selected pair, in the raw 768-dimensional vectors. Enforce all-ligand coverage first; record any required score-floor override.
+2. **Retain 24 from that baseline.** Use diversity in the scaled 16-dimensional PCA space, with coverage taking priority. The first distance is from the baseline subset centroid; subsequent distances are to the nearest retained pair. Claude scores break diversity-rank ties. The adopted retained subset already covers all 30 ligands.
+3. **Add 24 Sobol-selected pairs.** Generate scrambled Sobol targets in the 16-dimensional unit box using SciPy, seed 1; take the first 24 of 32 generated targets. Repeatedly choose the globally closest unused target–candidate pair and remove both. All unselected candidates are eligible, including those below the baseline Claude cutoff. The 24 retained pairs cannot be selected again.
+4. **Validate and assign wells.** Require 48 unique pairs, no unavailable ligands and coverage of all 30. A seeded shuffle assigns sample IDs and physical wells; stock, dose and LC files use those assignments.
 
-$$d(p,S)=\min_{q\in S}\|z_p-z_q\|_2^2.$$
+The **24/24 split counts experiments**, whereas the baseline's internal **50/50 weights ranks**. These are separate settings. Exploration can therefore select pairs Claude considers unpromising, giving experimentally unexpected ligand cooperativity an opportunity to update R2.
 
-Convert distances to percentiles D(p,S) over the currently eligible rank pool and maximize:
+The adopted batch retains **26 of the previous 48 pairs** and replaces 22: 24 retained deliberately, plus two baseline pairs recovered by Sobol. It includes **three pairs below the baseline's usual Claude cutoff**. These are intentional exploratory choices, not coverage overrides. All **30/30 ligands** occur, with frequencies **1–8**; RockPhos occurs twice in R1 and remains limited to four R2 wells. [Selection trace](../campaigns/hackathon2026/round1_design.csv.selection.csv), [coverage counts](../campaigns/hackathon2026/round1_design.csv.ligand_coverage.csv).
 
-$$C(p,S)=0.5\,U(p)+0.5\,D(p,S).$$
-
-The **50/50 setting weights two ranks in each decision**; it does not allocate half the wells to each method. Diversity is recomputed after every choice, so this is a greedy batch-design heuristic rather than two independent top lists.
-
-First enforce coverage of every available ligand in pair wells. Among candidates that can complete coverage within the remaining well budget, prefer those above the LLM floor, then those covering the most unseen ligands, then maximize the same consensus score. If necessary, coverage may override the floor; every override is recorded. Fill the remaining wells by ordinary consensus. Deterministic ID tie-breaks make selection reproducible. A seeded shuffle then assigns selected conditions to physical wells.
-
-The **frozen real selection** completed coverage in 16 steps and added 32 further pairs, for **48 unique pairs, 30/30 ligand coverage and zero floor overrides**. [Step-by-step trace](../campaigns/hackathon2026/round1_design.csv.selection.csv), [coverage counts](../campaigns/hackathon2026/round1_design.csv.ligand_coverage.csv). Coverage guarantees ligand inclusion, not balanced frequencies, exhaustive pair exploration or a globally optimal design.
-
-The [initialization review](initialization-review.md) maps the frozen selection, reports individual ligand frequencies and compares score/diversity weights using the saved scores. Its PCA projection is for display only; all selection and distance statistics use the full vectors. Previews do not replace the frozen batch.
+The [initialization review](initialization-review.md) maps the official selection and reports ligand frequencies. Two-dimensional plots are projections; selection uses the full 16-dimensional scaled space for retention/Sobol and the raw vectors for the baseline. Exact continuous Sobol balance guarantees do not survive taking 24 targets and matching them to finite candidates. Coverage ensures inclusion, not balanced use or demonstrated chemical diversity. No experimental result yet establishes that this hybrid outperforms the previous consensus, random sampling or MaxMin.
 
 ## 4. Experimental feedback → final 22
 
@@ -85,10 +87,10 @@ The current per-campaign cap is **\$20**, using incremental conservative cold-ca
 
 ## Reproduction and interpretation
 
-The frozen initial scoring used prompt format 6. Current format 7 corrects the score instruction to refer to `partner_ligand_ids`, matching the query/schema already used; chemistry, evidence and scoring policy are unchanged. [Current prompt preview](claude-scoring-prompt.txt); the original accepted request remains in the frozen scoring record. This wording correction does not rerun scoring or replace the initial selection.
+The frozen initial scoring used prompt format 6. Current format 7 corrects the score instruction to refer to `partner_ligand_ids`, matching the query/schema already used; chemistry, evidence and scoring policy are unchanged. [Current prompt preview](claude-scoring-prompt.txt); the original accepted request remains in the frozen scoring record. This wording correction does not rerun scoring. David's adopted initialization changes the selection while preserving those paid scores and their provenance.
 
 [The campaign folder](../campaigns/hackathon2026/README.md) retains repeated scores, mean/SD ranking, source hashes, model/settings, example request and selection trace. [Development commands](development.md) reproduce the initial design without an API call. Practice loops generate synthetic yields and mocked Claude responses only; they verify data flow and never establish chemical performance. The real second selection waits for experimental results.
 
 A productive pair above the one L17 reference supports improvement relative to that reference under these conditions. The absence of repeats and both corresponding single-ligand controls limits claims about reproducibility and synergy. Results on this one substrate do not establish wider scope. Pretraining may contain related literature, so the recorded prompt does not establish literature-blind prediction. Relevant future evaluations include rank/yield association on measured wells, prospective hit rate, repeated best conditions and matched single-ligand comparisons; the present campaign has no empirical predictive-performance estimate. Retrospective correlations on the deliberately selected first round would be conditional on that selected set.
 
-The repeated-scoring design follows the user's [thesis benchmark](https://github.com/MiquelAngelPerezPuigdo/Agentic-AI-for-Catalyst-Design). The frozen encoder, rank consensus, all-ligand constraint and prompt-only feedback policy are explicit, inspectable choices rather than fitted hyperparameters selected against these experimental yields.
+The repeated-scoring design follows the user's [thesis benchmark](https://github.com/MiquelAngelPerezPuigdo/Agentic-AI-for-Catalyst-Design). The frozen encoder, baseline consensus, PCA/Sobol initialization, all-ligand constraint and prompt-only feedback policy are explicit choices made before measuring these experimental yields.

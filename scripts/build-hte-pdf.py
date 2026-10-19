@@ -215,7 +215,8 @@ def input_record(staff=False):
         "software_validation.json", "scripts/build-hte-pdf.py", "hte/planning.py", "hte/io.py",
     ]
     paths += ["hte/protocols.py", "hte/scoring.py", "hte/analytics.py", "hte/analytical_practice.py", "hte/cli.py",
-              "hte/ingestion.py", "hte/workflow.py", "hte/design.py", "hte/analytical_stocks.py", "scripts/hte-lc-results.py",
+              "hte/ingestion.py", "hte/workflow.py", "hte/design.py", "hte/initialization.py",
+              "pyproject.toml", "uv.lock", "hte/analytical_stocks.py", "scripts/hte-lc-results.py",
               "hte/transfer.py", "hte/preparation.py", "scripts/hte-return-package.py",
               "hte_inputs/labware/axygen_8_reservoir_30000ul.json",
               "hte_inputs/labware/paradox_48_wellplate_2000ul_hs.json",

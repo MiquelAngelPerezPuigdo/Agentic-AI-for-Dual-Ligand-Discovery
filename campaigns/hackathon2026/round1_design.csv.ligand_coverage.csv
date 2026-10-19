@@ -1,31 +1,31 @@
 ligand_id,name,pair_well_count,covered
-L01,MorDal Phos,2,True
-L02,racBINAP,4,True
+L01,MorDal Phos,3,True
+L02,racBINAP,3,True
 L03,RockPhos,2,True
-L04,Alphos,5,True
+L04,Alphos,3,True
 L05,AdBrettPhos,6,True
-L06,Me4t-BuXPhos,6,True
+L06,Me4t-BuXPhos,2,True
 L08,t-BuDave Phos,2,True
-L09,Xantphos,3,True
-L10,OTIPS DalPhos,3,True
-L11,Me3OMe-t-BuXPhos,3,True
-L12,VBRIDP,1,True
-L13,Trimesityl phosphine,2,True
-L14,CataCXium ABn,1,True
-L15,dppb,2,True
+L09,Xantphos,2,True
+L10,OTIPS DalPhos,1,True
+L11,Me3OMe-t-BuXPhos,1,True
+L12,VBRIDP,2,True
+L13,Trimesityl phosphine,1,True
+L14,CataCXium ABn,3,True
+L15,dppb,5,True
 L16,dcypf,5,True
-L17,t-BuBrettPhos,7,True
+L17,t-BuBrettPhos,5,True
 L18,dtbpf,7,True
-L19,dppp,2,True
-L20,dppf,3,True
-L21,Xphos,2,True
-L22,RuPhos,3,True
-L23,SPhos,1,True
-L24,BrettPhos,3,True
-L25,MeDalPhos,7,True
-L26,Taniaphos SL-T001-2,2,True
-L27,tris(3-chlorophenyl)phosphine,1,True
-L28,BippyPhos,6,True
-L29,meCgPPh,2,True
-L30,N-XantPhos,1,True
+L19,dppp,4,True
+L20,dppf,4,True
+L21,Xphos,1,True
+L22,RuPhos,2,True
+L23,SPhos,2,True
+L24,BrettPhos,2,True
+L25,MeDalPhos,4,True
+L26,Taniaphos SL-T001-2,3,True
+L27,tris(3-chlorophenyl)phosphine,6,True
+L28,BippyPhos,8,True
+L29,meCgPPh,3,True
+L30,N-XantPhos,2,True
 L31,Trixie Phos,2,True

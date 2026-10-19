@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from .io import object_digest, read_csv, read_json, write_csv, write_json
+from .io import digest, object_digest, read_csv, read_json, write_csv, write_json
 from .inventory import candidates, campaign_inventory, import_workbook
 
 
@@ -128,37 +128,40 @@ def main():
             print(f"Prompt cache: {cache['status']}; {cache['cache_hit_requests']}/{cache['requests']} "
                   f"requests reported hits, {cache['cache_read_input_tokens']} cached read tokens")
         elif args.command == "design":
-            from .design import consensus_select, ligand_coverage, make_design, pair_features, round1_required_ligands
+            from .design import ligand_coverage, make_design, round1_required_ligands
             from .embeddings import load_embeddings
-            if config["design"].get("require_lm_embeddings") and not args.embeddings:
+            from .initialization import initial_select
+            if not args.embeddings:
                 raise ValueError("This campaign requires LM embeddings; pass --embeddings")
-            features = load_embeddings(args.embeddings, inv, pairs) if args.embeddings else pair_features(inv, pairs)
-            ranking = read_csv(args.ranking)
-            controls = config["design"]["round1_controls"]
-            if controls is None:
-                raise ValueError("Decide first-round reference-well allocation before design")
             outputs = [Path(str(args.output)+suffix) for suffix in ("", ".selection.csv", ".ligand_coverage.csv", ".metadata.json")]
             if any(path.exists() for path in outputs):
                 raise ValueError("Design output already exists; use a new path to preserve its audit files")
-            backend = "lm_diversity_initialization" if args.embeddings else "fingerprint_diversity_initialization"
-            config["design"]["exploration_backend"] = backend
-            count = config["design"]["round1_total"]-len(controls)
-            selection, trace = consensus_select(pairs, ranking, features, count,
-                           config["design"]["consensus_weight_llm"], config["design"]["minimum_llm_percentile"],
-                           required_ligands=round1_required_ligands(config, inv))
+            features = load_embeddings(args.embeddings, inv, pairs)
+            ranking = read_csv(args.ranking)
+            selection, trace, metadata = initial_select(config, inv, pairs, ranking, features)
             design = make_design(config, inv, pairs, ranking, selection, 1)
+            selection_sources = {row["pair_id"]: row["selection_source"] for row in trace}
+            for row in design:
+                if row.get("pair_id") in selection_sources and row["selection_method"] != "specified_control":
+                    row["selection_method"] = "initial_"+selection_sources[row["pair_id"]]
             write_csv(args.output, design)
             write_csv(str(args.output)+".selection.csv", trace)
             coverage = ligand_coverage(inv, design)
             write_csv(str(args.output)+".ligand_coverage.csv", coverage)
-            write_json(str(args.output)+".metadata.json", {"config_digest": object_digest(config), "backend": backend, "pairs": count,
+            write_json(str(args.output)+".metadata.json", {**metadata, "config_digest": object_digest(config),
+                       "source_files": {"config": {"path": str(args.config), "sha256": digest(args.config)},
+                                        "inventory": {"path": str(args.inventory), "sha256": digest(args.inventory)},
+                                        "ranking": {"path": str(args.ranking), "sha256": digest(args.ranking)},
+                                        "embeddings": {"path": str(args.embeddings), "sha256": digest(args.embeddings)}},
                        "required_ligand_coverage": bool(round1_required_ligands(config, inv)),
                        "ligands_covered_in_pairs": sum(row["covered"] for row in coverage),
                        "missing_ligands": [row["ligand_id"] for row in coverage if not row["covered"]],
                        "coverage_floor_overrides": sum(row["llm_floor_override"] for row in trace)})
             print(args.output)
             print(f"Ligand coverage in pair wells: {sum(row['covered'] for row in coverage)}/{len(inv)}; "
-                  f"{sum(row['llm_floor_override'] for row in trace)} LLM-floor overrides")
+                  f"{metadata['selection_source_counts']['repo_consensus']} retained consensus + "
+                  f"{metadata['selection_source_counts']['sobol']} Sobol; "
+                  f"{metadata['sampling_below_llm_floor_count']} Sobol pairs below the baseline Claude floor")
         elif args.command == "prepare-stocks":
             from .preparation import export_stock_preparation
             print(export_stock_preparation(config,inv,read_csv(args.design),args.output,

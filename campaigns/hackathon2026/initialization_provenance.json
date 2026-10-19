@@ -1,0 +1,20 @@
+{
+  "created_utc": "2026-10-19T20:24:44.664428+00:00",
+  "method": "David Ming Segura default 24 retained consensus + 24 Sobol",
+  "source_commit": "c2682f3db09eb496b92d11fb6725e9870157e301",
+  "replaces_selection_at_commit": "c931e47f088761bc161fb667eb1e4d0de2588b4d",
+  "previous_design_sha256": "7c2ad21967f468857938989fcbe5901d2409a86dcae8d785f7247032ef301104",
+  "design_sha256": "3c68d4fe7429cd5b880cdbec25debd4fd6d6e794e95022c88c317c07c5d5dd27",
+  "selection_order_matches_notebook": true,
+  "retained_from_previous_48": 26,
+  "new_pairs": 22,
+  "all_active_ligands_covered": 30,
+  "baseline_claude_floor_does_not_apply_to_sobol": true,
+  "sobol_pairs_below_baseline_claude_floor": 3,
+  "paid_api_calls_for_adoption": 0,
+  "embedding_model_inference_calls_for_adoption": 0,
+  "historical_scoring_unchanged": true,
+  "prior_selection_recoverable_from_git": true,
+  "methodological_reference": "https://arxiv.org/abs/2609.11790",
+  "scope": "ALICE-inspired initialization; our 24/24 hybrid with Claude-only R2 has not been experimentally validated."
+}

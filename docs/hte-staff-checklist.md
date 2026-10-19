@@ -40,7 +40,7 @@ Concentrations use nominal solvent addition. **No hand refills or R2 stock remak
 
 **Operator / start:** ____________________ **LC method / channel:** ____________________
 
-Follow App pauses and matching loading CSVs. Staff handle weighing, coarse liquid loading, caps, rack/plate moves and local starts. Robot preparation counts inside the campaign.
+Use regenerated files for the current R1 design; discard earlier dosing exports. Follow App pauses and matching loading CSVs. Staff handle weighing, coarse loading, caps, moves and local starts. Preparation counts inside the campaign.
 
 | Step | Action |
 |---|---|

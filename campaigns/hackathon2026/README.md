@@ -1,14 +1,17 @@
-# Frozen initial campaign
+# Official initial campaign
 
-This folder contains the **real 48-pair selection** and its reproducibility record. All 30 available ligands are represented; no pair-yield measurements were used.
+This folder contains the adopted **48-pair, 24-consensus +24-Sobol selection** and its reproducibility record. All 30 available ligands are represented; no pair-yield measurements were used.
+
+David Ming Segura contributed the [notebook implementation](../../notebook/batch_suggestions.ipynb) in commit `c2682f3`. The production selector preserves its defaults: raw-T5/Claude baseline; standardization →16-component PCA →[0,1] scaling; retain 24 baseline pairs by diversity with all-ligand coverage; add 24 unique Sobol matches, seed 1. The adopted batch retains 26 pairs from the previous design and replaces 22. The previous all-consensus design is preserved at parent commit `c931e47`; **use the files in this checkout for the hackathon**.
 
 - `round1_design.csv`: canonical sample IDs, ligand pairs and reaction/LC well assignments.
-- Companion `.selection.csv`, `.ligand_coverage.csv`, `.metadata.json`: greedy selection trace, inclusion counts and configuration digest.
-- `scoring/`: five accepted scores per pair, aggregate ranking, example request, model/settings, response provenance and usage/budget records.
-- `files.sha256.json`: integrity hashes for these frozen records.
+- Companion `.selection.csv`, `.ligand_coverage.csv`, `.metadata.json`: selection sources/trace, inclusion counts, settings and provenance.
+- `scoring/`: unchanged five accepted scores per pair, aggregate ranking, example request, model/settings, response provenance and usage/budget records.
+- `initialization_provenance.json`: contributor commit, superseded-design hash and exact notebook replay check.
+- `files.sha256.json`: integrity hashes for the current campaign records.
 
-[Reproduce the design and generate robot/stock files](../../docs/development.md#reproduce-the-real-first-batch-without-spending) without paying Claude again. Generated files belong in local `output/`; measured local configuration belongs in `local_data/`. The authoritative default chemistry is [hte_inputs/campaign.json](../../hte_inputs/campaign.json).
+[Reproduce the design and generate robot/stock files](../../docs/development.md#reproduce-the-real-first-batch-without-spending) without paying Claude again or downloading a model. **Regenerate stock preparation, dose, protocol and LC files; previous exports refer to different pairs.** Generated files belong in local `output/`; measured local configuration belongs in `local_data/`. The authoritative default chemistry is [hte_inputs/campaign.json](../../hte_inputs/campaign.json).
 
-The real second-round 22-pair selection will be made after all 48 experimental first-round results pass analytical QC. Synthetic practice results are generated on demand and are never stored here as experimental evidence.
+The second-round **22 new pairs +L17 reference** will be selected by Claude only after all 48 experimental first-round results pass analytical QC. RockPhos remains capped at four R2 wells. Synthetic practice outputs are never experimental evidence.
 
-Preparation was revised on 18 October: combined SM/IS in retained toluene, 20 mM ligand stocks and a four-well R2 RockPhos cap. The final reaction conditions and frozen R1 pair selection remain unchanged. Historical scoring records stay frozen; generate all doses/protocols from the current canonical configuration.
+Chemistry and per-vial volumes are unchanged: 250 µL reactions, combined SM/IS in retained toluene, 20 mM ligand stocks and four retained Pd sources. Historical paid scoring records stay frozen; the new initialization changes which pairs are tested. [Method, ALICE precedent and limits](../../docs/ml-strategy.md).

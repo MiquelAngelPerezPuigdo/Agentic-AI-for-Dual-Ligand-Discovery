@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+from copy import deepcopy
 from html import escape
 import json
 from pathlib import Path
@@ -18,6 +19,7 @@ from hte.design import (consensus_select, rank_percentiles, ranked_ids,
                         round1_required_ligands, validate_design)
 from hte.embeddings import load_embeddings
 from hte.inventory import campaign_inventory, candidates
+from hte.initialization import initial_select
 from hte.io import digest, new_output, read_csv, read_json, write_csv, write_json
 
 
@@ -53,6 +55,9 @@ def statistics(selected, ids, inventory, ranking, distances, trace, known):
     within = distances[np.ix_(selected_indices, selected_indices)].copy()
     np.fill_diagonal(within, np.inf)
     prior_types = Counter(sum(ligand in known for ligand in key.split("__")) for key in selected)
+    donor_types = Counter("+".join(str(n)+"P" for n in sorted(
+        int(inventory[ligand]["phosphorus_atoms"]) for ligand in key.split("__")))
+        for key in selected)
     utilities = rank_percentiles(scores)
     return {
         "pairs": len(selected), "ligands_covered": int((counts > 0).sum()),
@@ -76,7 +81,10 @@ def statistics(selected, ids, inventory, ranking, distances, trace, known):
         "mean_nearest_neighbor_squared_distance_within_selection": float(within.min(axis=1).mean()),
         "coverage_completed_at_step": next((int(r["selection_step"]) for r in trace
                                            if int(r["uncovered_ligands_remaining"]) == 0), None),
-        "coverage_floor_overrides": sum(str(r["llm_floor_override"]).lower() == "true" for r in trace),
+        "coverage_floor_overrides": sum(str(r.get("llm_floor_override", False)).lower() == "true" for r in trace),
+        "sampling_below_llm_floor": sum(str(r.get("sampling_below_llm_floor", False)).lower() == "true" for r in trace),
+        "selection_source_counts": dict(Counter(r.get("selection_source", "consensus") for r in trace)),
+        "phosphorus_donor_pair_types": dict(sorted(donor_types.items())),
         "network_components": components(selected, inventory),
         "prior_categories": {"both_reported": prior_types[2], "one_reported": prior_types[1],
                              "neither_reported": prior_types[0]},
@@ -118,21 +126,28 @@ def prepare(args):
             known.add(row["ligand_id"])
     count = len(design)
     required = round1_required_ligands(config, inventory)
-    actual, trace = consensus_select(library, ranking, features, count,
-        config["design"]["consensus_weight_llm"], config["design"]["minimum_llm_percentile"],
-        required_ligands=required)
+    actual, trace, initialization = initial_select(config, inventory, library, ranking, features)
     if set(actual) != {row["pair_id"] for row in design}:
         raise ValueError("Frozen batch differs from the current selector/configuration")
-    methods = [{"key": "frozen", "name": "Frozen batch: 50% LLM / 50% diversity",
-                "weight": config["design"]["consensus_weight_llm"], "selected": actual, "trace": trace}]
-    for weight in (0.25, 0.75, 1.0):
-        selection, steps = consensus_select(library, ranking, features, count, weight,
-            config["design"]["minimum_llm_percentile"], required_ligands=required)
+    counts = initialization["selection_source_counts"]
+    methods = [{"key": "frozen", "name": f"Official: {counts['repo_consensus']} retained consensus + {counts['sobol']} Sobol",
+                "baseline_llm_weight": config["design"]["consensus_weight_llm"],
+                "selected": actual, "trace": trace}]
+    baseline, baseline_trace = consensus_select(library, ranking, features, count,
+        config["design"]["consensus_weight_llm"], config["design"]["minimum_llm_percentile"],
+        required_ligands=required)
+    methods.append({"key": "former_consensus", "name": "Previous method: full consensus batch",
+                    "baseline_llm_weight": config["design"]["consensus_weight_llm"],
+                    "selected": baseline, "trace": baseline_trace})
+    for weight in (0.25, 0.75):
+        preview_config = deepcopy(config)
+        preview_config["design"]["consensus_weight_llm"] = weight
+        selection, steps, _ = initial_select(preview_config, inventory, library, ranking, features)
         methods.append({"key": f"llm{int(weight*100)}",
-                        "name": f"Preview: {int(weight*100)}% LLM, coverage enforced",
-                        "weight": weight, "selected": selection, "trace": steps})
-    methods.append({"key": "top_scores", "name": "Diagnostic: top 48 scores, no coverage rule",
-                    "weight": None, "selected": order[:count], "trace": []})
+                        "name": f"Hybrid preview: baseline {int(weight*100)}% Claude weight",
+                        "baseline_llm_weight": weight, "selected": selection, "trace": steps})
+    methods.append({"key": "top_scores", "name": f"Diagnostic: top {count} scores, no coverage rule",
+                    "baseline_llm_weight": None, "selected": order[:count], "trace": []})
     for method in methods:
         method["statistics"] = statistics(method["selected"], ids, inventory, ranking,
                                            distances, method["trace"], known)
@@ -141,6 +156,7 @@ def prepare(args):
     data = {"sources_sha256": sources, "no_api_calls": True, "frozen_design_modified": False,
             "candidate_pairs": len(ids), "available_ligands": len(inventory),
             "hard_minimum_uses": 1, "pca_explained_variance_ratio": variance.tolist(),
+            "initialization": initialization,
             "embedding_metric": "squared Euclidean distance in all 768 raw T5 dimensions",
             "mean_library_model_score": float(np.mean([float(r["mean_score"]) for r in ranking])),
             "known_single_ligand_priors": len(known),
@@ -167,9 +183,14 @@ def static_map(output, inventory, ids, coordinates, variance, method, sources):
     fig = plt.figure(figsize=(19, 11.5), layout="constrained")
     grid = fig.add_gridspec(2, 2, width_ratios=(1.25, 1), wspace=0.18, hspace=0.14)
     ax = fig.add_subplot(grid[0, 0])
-    ax.scatter(*coordinates.T, s=13, c="#d5dce2", label="All 435 pairs", rasterized=False)
-    ax.scatter(*coordinates[chosen].T, s=42, c="#166b96", edgecolor="white", linewidth=0.4,
-               label="Selected 48")
+    ax.scatter(*coordinates.T, s=13, c="#d5dce2", label=f"All {len(ids)} pairs", rasterized=False)
+    source_by_pair = {row["pair_id"]: row["selection_source"] for row in method["trace"]}
+    colors = {"repo_consensus": "#166b96", "sobol": "#ce7030"}
+    labels = {"repo_consensus": "Retained consensus", "sobol": "Sobol exploration"}
+    for source, color in colors.items():
+        subset = [index[key] for key in selected if source_by_pair[key] == source]
+        ax.scatter(*coordinates[subset].T, s=42, c=color, edgecolor="white", linewidth=0.4,
+                   label=f"{labels[source]} ({len(subset)})")
     ax.set(xlabel=f"PC1 ({variance[0]:.1%} variance)", ylabel=f"PC2 ({variance[1]:.1%} variance)",
            title="Pair embedding map — projection of the full T5 space")
     ax.legend(frameon=False, loc="best", fontsize=9)
@@ -177,7 +198,8 @@ def static_map(output, inventory, ids, coordinates, variance, method, sources):
     graph = fig.add_subplot(grid[1, 0])
     xy = positions(inventory)
     edges = [[xy[a], xy[b]] for a, b in (key.split("__") for key in selected)]
-    graph.add_collection(LineCollection(edges, colors="#a6b3be", linewidths=0.85, alpha=0.75))
+    graph.add_collection(LineCollection(edges, colors=[colors[source_by_pair[key]] for key in selected],
+                                       linewidths=0.85, alpha=0.6))
     points = np.array(list(xy.values()))
     graph.scatter(*points.T, s=110, color="#166b96", zorder=3)
     for key, point in xy.items():
@@ -188,18 +210,23 @@ def static_map(output, inventory, ids, coordinates, variance, method, sources):
     bars = fig.add_subplot(grid[:, 1])
     names = [f"{key}  {row['name']}" for key, row in inventory.items()]
     counts = list(s["ligand_uses"].values())
-    bars.barh(range(len(names)), counts, color="#166b96", height=0.7)
+    retained_counts = Counter(ligand for key in selected if source_by_pair[key] == "repo_consensus"
+                              for ligand in key.split("__"))
+    retained = [retained_counts[key] for key in inventory]
+    bars.barh(range(len(names)), retained, color=colors["repo_consensus"], height=0.7)
+    bars.barh(range(len(names)), np.array(counts)-retained, left=retained,
+              color=colors["sobol"], height=0.7)
     bars.set_yticks(range(len(names)), names, fontsize=9)
     bars.invert_yaxis()
     bars.set(xlabel="Pair experiments containing the ligand", xlim=(0, max(counts)+1),
-             title="All 30 ligands are covered; frequencies are unequal")
+             title=f"All {len(inventory)} ligands are covered; frequencies are unequal")
     bars.axvline(1, color="#b05c29", linewidth=1, linestyle="--", label="Required minimum = 1")
     for i, value in enumerate(counts):
         bars.text(value+0.12, i, str(value), va="center", fontsize=9)
     bars.spines[["top", "right"]].set_visible(False)
     bars.legend(frameon=False, loc="lower right", fontsize=9)
-    fig.suptitle(f"Frozen initialization: 48 pairs · 30/30 ligands · use counts 1–7 · "
-                 f"11.0% of pair space", fontsize=17)
+    fig.suptitle(f"Hackathon initialization: {len(selected)} pairs · {s['ligands_covered']}/{len(inventory)} ligands · "
+                 f"use counts {s['min_uses']}–{s['max_uses']} · {len(selected)/len(ids):.1%} of pair space", fontsize=17)
     fig.supxlabel(f"PCA displays {variance.sum():.1%} of embedding variance. Network uses a circular layout. "
                   "No experimental pair yields are available.", fontsize=10)
     metadata = {"Title": "Frozen ligand initialization", "Description": "Design SHA256 "+sources["design"],
@@ -244,19 +271,22 @@ def interactive_report(output, inventory, design, ranking, ids, coordinates, var
         group = []
         chosen = [index[key] for key in selected]
         custom = []
+        selection_sources = {r["pair_id"]: r.get("selection_source", "consensus") for r in method["trace"]}
         for key in selected:
             a, b = key.split("__")
             frozen = actual.get(key, {})
             custom.append([key, inventory[a]["name"], inventory[b]["name"],
                            float(ranked[key]["mean_score"]), float(ranked[key]["score_sd"]),
-                           frozen.get("well", "Unassigned"), frozen.get("sample_id", "Preview only")])
+                           frozen.get("well", "Unassigned"), frozen.get("sample_id", "Preview only"),
+                           selection_sources.get(key, "top score")])
         group.append(len(fig.data))
         fig.add_trace(go.Scatter(x=coordinates[chosen, 0], y=coordinates[chosen, 1], mode="markers",
             marker={"size": 9, "color": [r[3] for r in custom], "coloraxis": "coloraxis",
                     "line": {"width": 0.5, "color": "white"}}, name="Selected pairs", customdata=custom,
             hovertemplate=("%{customdata[0]}<br>%{customdata[1]} + %{customdata[2]}"
                 "<br>Mean score %{customdata[3]:.1f}; scoring SD %{customdata[4]:.1f}"
-                "<br>Frozen assignment: %{customdata[6]} / %{customdata[5]}<extra></extra>")),
+                "<br>Selection source: %{customdata[7]}"
+                "<br>Official assignment: %{customdata[6]} / %{customdata[5]}<extra></extra>")),
             row=1, col=1)
         ex, ey = [], []
         for key in selected:
@@ -318,13 +348,15 @@ def interactive_report(output, inventory, design, ranking, ids, coordinates, var
     plot = fig.to_html(full_html=False, include_plotlyjs=True,
                        config={"displaylogo": False, "responsive": True})
     s = methods[0]["statistics"]
+    source_by_pair = {row["pair_id"]: row["selection_source"] for row in methods[0]["trace"]}
     rows = "".join("<tr>"+f"<td>{escape(r['method'])}</td><td>{r['ligands_covered']}/30</td>"
         f"<td>{r['minimum_uses']}–{r['maximum_uses']}</td><td>{r['mean_model_score']:.2f}</td>"
         f"<td>{r['mean_nearest_squared_distance']:.4f}</td><td>{r['usage_gini']:.3f}</td>"
         f"<td>{r['same_pairs_as_frozen']}/48</td></tr>" for r in comparison_rows(methods))
     assignments = "".join("<tr>"+"".join(f"<td>{escape(str(v))}</td>" for v in
         [r["sample_id"], r["well"], r["pair_id"], inventory[r["ligand_a"]]["name"],
-         inventory[r["ligand_b"]]["name"], f"{float(ranked[r['pair_id']]['mean_score']):.1f}"])+"</tr>"
+         inventory[r["ligand_b"]]["name"], f"{float(ranked[r['pair_id']]['mean_score']):.1f}",
+         source_by_pair[r["pair_id"]]])+"</tr>"
         for r in design)
     html = f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>Ligand initialization review</title>
@@ -333,8 +365,10 @@ h1,h2{{font-weight:600}}p{{line-height:1.5;max-width:1100px}}table{{border-colla
 th,td{{padding:9px 10px;border-bottom:1px solid #d8e1e8;text-align:left}}th{{background:#f1f5f8}}
 .table-wrap{{overflow-x:auto}}.note{{color:#425563}}code{{font-size:13px}}summary{{cursor:pointer;font-weight:600;padding:16px 0}}</style>
 </head><body><h1>Ligand initialization review</h1>
-<p><b>Frozen batch:</b> 48 unique pairs cover all 30 available ligands. Uses range from 1 to 7;
-five ligands appear once and three appear seven times. Mean use is 3.2 experiments per ligand.
+<p><b>Official batch:</b> {s['pairs']} unique pairs cover all {len(inventory)} available ligands:
+{s['selection_source_counts']['repo_consensus']} retained consensus choices plus
+{s['selection_source_counts']['sobol']} Sobol exploration choices. Uses range from {s['min_uses']} to {s['max_uses']};
+{len(s['used_once'])} ligands appear once. Mean use is {s['mean_uses']:.1f} experiments per ligand.
 The minimum-once rule is satisfied; frequencies are not balanced.</p>
 <p class="note">Choose a cached-score preview below. Previews do not modify the real batch.
 The top-score-only diagnostic deliberately omits the coverage rule.
@@ -346,12 +380,16 @@ all distance statistics use the full 768 dimensions. Network positions are circu
 <p class="note">The distance column averages, over all 435 library pairs, squared distance to the closest
 selected pair in raw T5 space; smaller values indicate broader representation coverage.
 Gini is 0 for equal ligand use and increases with imbalance. Neither statistic measures chemical performance.
-All weighted previews retain minimum-once coverage and the existing LLM percentile floor.</p>
+The hybrid previews change only the Claude weight in the preliminary consensus batch;
+the final split remains 24 retained consensus + 24 Sobol. The score floor applies to the
+preliminary consensus selector, with possible coverage overrides; Sobol exploration has no score floor.
+This ALICE-inspired initialization uses no fitted Gaussian process. Round two remains Claude-only.</p>
 <details><summary>Frozen 48-well assignments (unchanged by preview selection)</summary>
 <div class="table-wrap"><table><thead><tr><th>Sample</th><th>Reaction well</th><th>Pair</th>
-<th>Ligand A</th><th>Ligand B</th><th>Mean score</th></tr></thead><tbody>{assignments}</tbody></table></div></details>
+<th>Ligand A</th><th>Ligand B</th><th>Mean score</th><th>Selection source</th></tr></thead><tbody>{assignments}</tbody></table></div></details>
 <p class="note">Single-use ligands: {", ".join(s["used_once"])}. Most used: {", ".join(s["most_used"])}.
-Initial coverage was completed at selection step {s["coverage_completed_at_step"]}; floor overrides: {s["coverage_floor_overrides"]}.
+Initial coverage was completed at selection step {s["coverage_completed_at_step"]}; retained coverage floor overrides: {s["coverage_floor_overrides"]}.
+Sobol choices below the preliminary consensus floor: {s["sampling_below_llm_floor"]}.
 No paid calls or experimental results were generated.</p>
 <details><summary>Source integrity</summary><pre>{escape(json.dumps(data["sources_sha256"], indent=2))}</pre></details>
 </body></html>"""
@@ -361,49 +399,73 @@ No paid calls or experimental results were generated.</p>
 def markdown_report(data, inventory, methods):
     s = methods[0]["statistics"]
     variance = sum(data["pca_explained_variance_ratio"])
+    initialization = data["initialization"]
+    sources = s["selection_source_counts"]
+    donor_types = s["phosphorus_donor_pair_types"]
     lines = ["# Initial ligand-selection review", "",
-        "**The minimum-once constraint is enabled and passed: all 30 available ligands occur in "
-        "the 48 first-round pair experiments.** L07 is excluded because it is unavailable.", "",
-        "![Frozen initialization: embedding map, pair network and ligand frequencies](initialization-map.svg)", "",
-        "## Frozen-batch statistics", "",
+        f"**Official R1: {sources['repo_consensus']} retained consensus choices + {sources['sobol']} Sobol exploration choices.** "
+        f"All {len(inventory)} available ligands occur at least once in the {s['pairs']} pair experiments. "
+        "L07 is excluded because it is unavailable.", "",
+        "![Official initialization: embedding map, pair network and ligand frequencies](initialization-map.svg)", "",
+        "## How this batch was selected", "",
+        "David's ALICE-inspired initialization first computes the existing 48-pair consensus batch "
+        "(equal Claude-rank and raw-T5-diversity weights). It retains a diverse 24-pair subset that covers "
+        "all available ligands, then matches 24 Sobol targets to distinct remaining candidates without "
+        "a Claude-score floor. The retained subset is selected in the transformed embedding space; "
+        "it is not simply the 24 highest Claude scores.", "",
+        f"The sampling transform is standardization → {initialization['pca_dimensions']}-component PCA → "
+        f"0–1 scaling, retaining {initialization['pca_variance_retained']:.1%} of standardized embedding variance. "
+        "This is an initialization policy; no pair-yield model or Gaussian process is fitted. "
+        "Measured R1 yields inform Claude-only R2 selection. ALICE provides methodological precedent, "
+        "not evidence that this exact hybrid outperforms alternatives.", "",
+        "## Official-batch statistics", "",
         "| Measure | Value |", "|---|---:|",
-        "| Unique pair experiments | 48 /435 (11.0%) |", "| Ligands covered | 30 /30 |",
-        "| Uses per ligand | 1–7; mean 3.2; median 2.5 |",
+        f"| Unique pair experiments | {s['pairs']} /{data['candidate_pairs']} ({s['pairs']/data['candidate_pairs']:.1%}) |",
+        f"| Ligands covered | {s['ligands_covered']} /{len(inventory)} |",
+        f"| Uses per ligand | {s['min_uses']}–{s['max_uses']}; mean {s['mean_uses']:.1f}; median {s['median_uses']:g} |",
         f"| Mean Claude score, selected /whole library | {s['mean_model_score']:.2f} /{data['mean_library_model_score']:.2f} |",
         f"| Median repeat-scoring SD, selected | {s['median_scoring_sd']:.2f} score units |",
-        f"| Overlap with the unconstrained top 48 scores | {s['top_score_48_overlap']} /48 |",
+        f"| Overlap with the unconstrained top {s['pairs']} scores | {s['top_score_48_overlap']} /{s['pairs']} |",
         f"| All-ligand coverage completed | Selection step {s['coverage_completed_at_step']} |",
-        f"| LLM-floor overrides | {s['coverage_floor_overrides']} |",
+        f"| Retained coverage choices overriding the score floor | {s['coverage_floor_overrides']} |",
+        f"| Sobol choices below the preliminary consensus floor | {s['sampling_below_llm_floor']} |",
         f"| Pairing-network components | {len(s['network_components'])} |",
-        f"| Ligand-usage Gini (0 = equal use) | {s['usage_gini']:.3f} |", "",
-        "Five ligands appear only once: "+", ".join(f"**{key} {inventory[key]['name']}**" for key in s["used_once"])+".",
-        "Three appear seven times: "+", ".join(f"**{key} {inventory[key]['name']}**" for key in s["most_used"])+".", "",
-        f"The PCA map retains **{variance:.1%}** of embedding variance. Points are pairs, not individual ligands; "
-        "the network displays the individual ligand IDs and tested pairings. Two-dimensional visual separation "
-        "is an approximation. Diversity statistics below use all 768 raw T5 dimensions.", "",
-        "## Weight previews from the same paid scores", "",
+        f"| Ligand-usage Gini (0 = equal use) | {s['usage_gini']:.3f} |",
+        f"| One-P + one-P ligand pairs | {donor_types.get('1P+1P', 0)} |",
+        f"| One-P + two-P ligand pairs | {donor_types.get('1P+2P', 0)} |",
+        f"| Two-P + two-P ligand pairs | {donor_types.get('2P+2P', 0)} |", "",
+        "Phosphorus counts describe ligand structures, not proven denticity under reaction conditions; "
+        "other donor atoms may also bind. In particular, a one-P ligand can support P,N coordination.", "",
+        f"Ligands used once ({len(s['used_once'])}): "+", ".join(f"**{key} {inventory[key]['name']}**" for key in s["used_once"])+".",
+        f"Most-used ligands ({s['max_uses']} times): "+", ".join(f"**{key} {inventory[key]['name']}**" for key in s["most_used"])+".", "",
+        f"The displayed two-dimensional PCA retains **{variance:.1%}** of raw embedding variance. "
+        "This display projection differs from the standardized 16-dimensional sampling transform. "
+        "Points are pairs; network nodes are ligand IDs. All distance comparisons below use all "
+        "768 raw T5 dimensions so the methods share one diagnostic metric.", "",
+        "## Cached-score comparisons", "",
         "| Method | Ligands covered | Uses | Mean score | Mean nearest squared distance | Usage Gini | Shared pairs |",
-        "|---|---:|---:|---:|---:|---:|---:|"]
+        "|---|---:|---:|---:|---:|---:|---:|" ]
     for r in comparison_rows(methods):
-        lines.append(f"| {r['method']} | {r['ligands_covered']}/30 | {r['minimum_uses']}–{r['maximum_uses']} | "
+        lines.append(f"| {r['method']} | {r['ligands_covered']}/{len(inventory)} | {r['minimum_uses']}–{r['maximum_uses']} | "
             f"{r['mean_model_score']:.2f} | {r['mean_nearest_squared_distance']:.4f} | "
-            f"{r['usage_gini']:.3f} | {r['same_pairs_as_frozen']}/48 |")
-    lines += ["", "Lower mean nearest squared distance indicates broader embedding coverage: average squared "
-        "distance from every library pair to its nearest selected pair. Mean scores quantify Claude's relative "
-        "ranking, not expected experimental yield. Weighted previews all retain the existing coverage rule "
-        "and LLM floor. The top-score-only diagnostic omits coverage deliberately.", "",
-        "## Interpreting possible refinement", "",
-        "Minimum-once coverage ensures inclusion, not balanced sampling. We can compare score/diversity "
-        "weights with the existing cached scores; enforcing a larger minimum or maximum ligand frequency "
-        "would be a separate selector change. No preview here changes the frozen batch, well assignments "
-        "or stock plan. Experimental performance can only be assessed after measured yields.", "",
+            f"{r['usage_gini']:.3f} | {r['same_pairs_as_frozen']}/{s['pairs']} |")
+    lines += ["", "Hybrid previews change the Claude weight in the preliminary consensus selector only; "
+        "they preserve the 24+24 split and all-ligand coverage. Sobol choices are not restricted by the "
+        "Claude-score floor. The top-score diagnostic omits coverage deliberately. No preview changes "
+        "the official design, well assignments or stock plan.", "",
+        "Lower mean nearest squared distance indicates broader coverage in this particular representation; "
+        "higher Claude scores indicate stronger model preference. Neither establishes experimental "
+        "performance or the information value of a batch. Finite-candidate matching and coverage "
+        "constraints do not preserve exact continuous Sobol balance guarantees.", "",
         "Generate the self-contained interactive report and machine-readable statistics locally:", "",
         "    python -m pip install -e '.[reports]'",
         "    python scripts/initialization-report.py --output output/initialization-review", "",
         "Open output/initialization-review/initialization-review.html. The folder also contains SVG/PNG, "
-        "statistics.json, comparison.csv and ligand_counts.csv. No API key or paid calls are needed.", "",
+        "statistics.json, comparison.csv and ligand_counts.csv. No API key, GPU or paid calls are needed.", "",
         "[ML strategy](ml-strategy.md) · "
-        "[Exact frozen ligand coverage](../campaigns/hackathon2026/round1_design.csv.ligand_coverage.csv)", "",
+        "[Exact official ligand coverage](../campaigns/hackathon2026/round1_design.csv.ligand_coverage.csv) · "
+        "[ALICE paper](https://arxiv.org/abs/2609.11790) · "
+        "[ALICE initializer](https://github.com/schwallergroup/alice/blob/cda460d627e074d3cd57c47df13df08cea9346c6/src/alice/initialization/initializers.py)", "",
         "Design SHA-256: "+data["sources_sha256"]["design"], ""]
     return "\n".join(lines)
 

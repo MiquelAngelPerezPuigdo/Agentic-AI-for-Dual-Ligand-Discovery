@@ -1,10 +1,10 @@
 # Local pipeline
 
-Frozen **48 pairs**: `campaigns/hackathon2026/round1_design.csv`. Python quantifies UV data; cached Claude scoring selects R2. Stock preparation uses no API calls. Physical actions: [bench sheet](HTE-staff-checklist.pdf).
+Official **48 pairs (24 consensus +24 Sobol)**: `campaigns/hackathon2026/round1_design.csv`. Already prepared; no GPU or paid R1 rerun. Python quantifies UV data; cached Claude scoring selects R2. **Regenerate stocks/protocols/maps after updating the repository; earlier R1 exports use different pairs.** Physical actions: [bench sheet](HTE-staff-checklist.pdf).
 
 ## Install and configure
 
-Python 3.12: **`uv sync --python 3.12 --extra sources --extra robot`**; prefix commands with `uv run`. Or install `.[sources,robot]` in a venv. Copy config to **`local_data/campaign.json`**, calibration template to `local_data/calibration-plan.csv`, key example to **`anthropic.key`**. Put the raw Claude key there; preserve existing keys. Never send it to the robot/Git.
+Python 3.12: **`uv sync --locked --python 3.12 --extra sources --extra robot`**; prefix commands with `uv run`. Or install `.[sources,robot]` in a venv. Copy config to **`local_data/campaign.json`**, calibration template to `local_data/calibration-plan.csv`, key example to **`anthropic.key`**. Put the raw Claude key there; preserve existing keys. Never send it to the robot/Git.
 
 Use schema **5**; replace old protocols while preserving measured LC facts. Configure method/channel, full cycle, RTs/LOQs and physical evidence. **Default bulk-source reach fails:** obtain actual suitable short-container/rack geometry before live release. Concentrations use nominal solvent addition. Twelve hours is advisory; record real times.
 

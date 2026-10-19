@@ -28,13 +28,13 @@ The [four-page operator reference](docs/HTE-operator-handbook.pdf) covers the ex
 
 Each reaction, nominal under the solvent-addition approximation: **250 µL, 0.1 M substrate, 95 °C /4 h, 6 mol% each ligand, 12 mol% Pd(COD)(DQ)**. Dose **25 µL combined 1 M SM /100 mM mesitylene in toluene**, then 75 µL each of two **20 mM ligand stocks** and 75 µL **40 mM Pd**. Solvent is retained. Prepare Pd directly in **four retained 2 mL tubes**: **22.8 mg each in 4 A3/B3/C3, 21.6 mg in 4 A4**. The robot adds ~1.50 mL toluene to each of the first three and ~1.43 mL to A4 at 100% assay; exact additions follow actual masses/assays. Total **90 mg**, ~5.94 mL nominal; keep **10 mg solid for scope**. No Pd bulk transfer or R2 refill. It makes the combined SM/IS stock with neat mesitylene. Working-source mixing is included. RockPhos L03 is limited to **four R2 wells**, with **10 mg available**. [Canonical configuration](hte_inputs/campaign.json), [remaining HTEL setup facts](docs/hte-questions.md).
 
-The **[real initial batch is prepared](campaigns/hackathon2026/round1_design.csv)** using 50/50 Claude rank and T5 embedding diversity. Both scoring stages include ligand identities/SMILES and 17 available single-ligand SI yields. The second selection uses Claude with all 48 measured first-round results. [Frozen scores and selection audit](campaigns/hackathon2026/README.md).
+The **[official initial batch](campaigns/hackathon2026/round1_design.csv)** uses **David Ming Segura's 24-consensus +24-Sobol initialization**: retain a diverse, all-ligand-covering subset of the Claude/T5 consensus, then explore 24 further pairs in scaled 16-dimensional PCA space. It reuses the paid Claude scores. Both scoring stages include ligand identities/SMILES and 17 available single-ligand SI yields; R2 remains Claude-only with all 48 measured R1 results. [Selection and provenance](campaigns/hackathon2026/README.md).
 
 **[View the initialization map and statistics](docs/initialization-review.md)**: pair-space coverage, a ligand-pairing network, use counts for every ligand, and alternative weight previews from the same saved scores. All-ligand inclusion is enforced; use frequencies are unequal.
 
 ## Install and practice
 
-Use Python 3.12 on the local workstation. With uv: `uv sync --python 3.12 --extra sources --extra robot`, then `uv run hte check`. With an activated virtual environment:
+Use Python 3.12 on the local workstation. With uv: `uv sync --locked --python 3.12 --extra sources --extra robot`, then `uv run hte check`. With an activated virtual environment:
 
 ```bash
 python -m pip install -e '.[sources,robot]'
@@ -60,4 +60,4 @@ Keep correspondence, meeting notes, registration details and team schedules outs
 
 Use one final LC plate per round, with automated dilution/shaking and direct plate injection; no R1 split. Calibration uses a separate plate, pipette-mixed during hold one. [Software evidence](docs/rehearsal-results.md) and [machine-readable record](software_validation.json) distinguish simulation from physical execution. Local mounting, source-container compatibility, pipetting and actual LC validation remain required.
 
-The method builds on the [thesis benchmark](https://github.com/MiquelAngelPerezPuigdo/Agentic-AI-for-Catalyst-Design) and [GoLLuM's representation/diversity initialization](https://github.com/schwallergroup/gollum). Original project code is [MIT licensed](LICENSE).
+The method combines repeated scoring from the [thesis benchmark](https://github.com/MiquelAngelPerezPuigdo/Agentic-AI-for-Catalyst-Design) with David's adaptation of [ALICE's representation/Sobol initialization](https://arxiv.org/abs/2609.11790). ALICE provides prior computational and experimental evidence for the broader approach; this exact hybrid and Claude-only feedback are being evaluated here. [Method and attribution](docs/ml-strategy.md). Original project code is [MIT licensed](LICENSE).
