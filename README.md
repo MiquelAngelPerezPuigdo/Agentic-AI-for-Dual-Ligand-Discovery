@@ -14,13 +14,13 @@ A local OT-2 / LC workflow to search for productive dual-ligand systems in Pd-ca
 | Developer | **[Architecture, testing and reproduction](docs/development.md)** |
 | Stock / analytical preparation | [Stock and calibration recipes](docs/stocks-and-calibration.md) |
 
-**The OT-2 prepares stocks from weighed chemicals and bulk solvents**, fills its working sources, predoses R2, prepares calibration standards and workup fluids during reaction holds, and refills sources for R2. Staff handle weighing, coarse loading, caps, labeled labware moves, local starts and one pipette change.
+**The OT-2 prepares stocks from weighed chemicals and bulk solvents**, fills its working sources, doses each round into empty vials, prepares calibration standards and workup fluids during reaction holds, and refills ligand sources for R2. Staff handle weighing, coarse loading, caps, labeled labware moves, local starts and one pipette change.
 
 The [four-page operator reference](docs/HTE-operator-handbook.pdf) covers the experiment, calibration and local pipeline. Its [Markdown sources remain editable](docs/updating-the-handbook.md).
 
 ## Campaign at a glance
 
-**30 available ligands, 435 distinct unordered pairs.** Round one tests **48 pairs covering every ligand**. Round two tests **22 new pairs + one L17 tBuBrettPhos single-ligand reference**. One 48-position Para-Dox block is reused with 71 fresh 2 mL glass vials and manually handled screw caps.
+**30 available ligands, 435 distinct unordered pairs.** Round one tests **48 pairs covering every ligand**. Round two tests **22 new pairs + one L17 tBuBrettPhos single-ligand reference**. Load the same 48-position Para-Dox block with **48 empty vials for R1, then 23 new empty vials for R2**. Each round starts with robotic SM/IS dosing, followed by catalysts; staff handle screw caps. Retain the combined SM/IS working tube **4 D2**, capped between rounds: **1.89 mL** loaded from the same nominal 2 mL stock covers both rounds without a refill.
 
 ![OT-2 deck map with robot stock preparation, source positions and manual block/plate routes](docs/figures/ot2-deck-setup.svg)
 

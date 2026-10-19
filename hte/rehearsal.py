@@ -140,12 +140,13 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
     results = read_csv(iteration/"analysis/results.csv")
     tested = {row["pair_id"] for row in design if row["kind"] == "pair"}
     no_repeats = not tested.intersection(row["pair_id"] for row in next_dosing)
-    no_redose = all(float(row["sm_stock_ul"]) == 0 for row in next_dosing)
-    correct_is = all(float(row["internal_standard_predosed_umol"]) == float(row["internal_standard_total_umol"]) and
+    sm_once = all(float(row["sm_stock_ul"]) == 25 and float(row["substrate_predosed_umol"]) == 0
+                  for row in [*dosing, *next_dosing])
+    correct_is = all(float(row["internal_standard_added_umol"]) == float(row["internal_standard_total_umol"]) == 2.5 and
                      float(row["internal_standard_workup_umol"]) == 0 and
-                     float(row["internal_standard_added_umol"]) == 0
-                     for row in next_dosing)
-    if len(next_dosing) != config["design"]["round2_total"] or not no_repeats or not no_redose or not correct_is:
+                     float(row["internal_standard_predosed_umol"]) == 0
+                     for row in [*dosing, *next_dosing])
+    if len(next_dosing) != config["design"]["round2_total"] or not no_repeats or not sm_once or not correct_is:
         raise ValueError("Rehearsal next batch violated campaign dose constraints")
     export(config,inventory,next_dosing,out/"round2",history=dosing)
     from .analytics import analyze
@@ -173,7 +174,7 @@ def run(output, inventory_path, config_path, evidence_path, embeddings_path):
               "second_round_qc_pass":second_report["batch_qc_pass"], "no_pair_repeats": no_repeats,
               "analytical_practice_pass":read_json(analytical_report)["all_expected_outcomes_passed"],
               "analytical_practice_report":str(analytical_report.relative_to(out)),
-              "no_substrate_redose": no_redose, "no_internal_standard_redose": correct_is,
+              "substrate_dosed_once_per_round": sm_once, "combined_is_dosed_once_per_round": correct_is,
               "incomplete_export_ignored": not ignored,
               "duplicate_event_ignored": replay == state and len(calls) == after,
               "next_dosing_csv": str((iteration/"next_dosing.csv").relative_to(out)),

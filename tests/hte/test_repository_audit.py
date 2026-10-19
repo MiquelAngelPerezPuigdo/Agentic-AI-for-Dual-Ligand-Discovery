@@ -248,7 +248,8 @@ def test_live_round2_export_uses_the_complete_verified_history(files, data, tmp_
     manifest = read_json(tmp_path/"round2/export_manifest.json")
     assert manifest["live"] and manifest["history_digest"]
     assert {path.name for path in (tmp_path/"round2").iterdir() if path.name != "export_manifest.json"} == set(manifest["files"])
-    assert all(float(row["sm_stock_ul"]) == 0 for row in read_csv(tmp_path/"round2/dosing.csv"))
+    assert all(float(row["sm_stock_ul"]) == 25 and float(row["substrate_predosed_ul"]) == 0
+               for row in read_csv(tmp_path/"round2/dosing.csv"))
 
 
 @pytest.mark.parametrize("fault,message", [("no_check", "independent calibration check"),

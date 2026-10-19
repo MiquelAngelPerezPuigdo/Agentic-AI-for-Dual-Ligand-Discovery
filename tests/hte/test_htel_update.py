@@ -29,7 +29,8 @@ def test_toluene_and_combined_is_are_retained_in_both_rounds(tmp_path, single):
         design = read_csv(tmp_path/f"demo/round{round_number}_design.csv")
         rows = dosing_rows(config,inv,design)
         for row in rows:
-            assert row["sm_stock_ul"]+row["substrate_predosed_ul"] == 25
+            assert row["sm_stock_ul"] == 25 and row["substrate_predosed_ul"] == 0
+            assert row["internal_standard_added_umol"] == 2.5 and row["internal_standard_predosed_umol"] == 0
             assert 25+sum(row[key] for key in ("internal_standard_stock_ul","ligand_a_ul","ligand_b_ul","pd_ul","toluene_ul")) == 250
             assert row["toluene_ul"] == row["internal_standard_stock_ul"] == 0 and row["pd_ul"] == 75
         ops = transfer_operations(config,inv,rows)
@@ -42,12 +43,10 @@ def test_toluene_and_combined_is_are_retained_in_both_rounds(tmp_path, single):
         heating = [c["payload"].get("text", "") for c in commands
                    if "Setting Target Temperature of Heater-Shaker" in c["payload"].get("text", "")]
         assert len(heating) == 1 and "95" in heating[0]
-        manifest = out/"round2_predose.csv"
-        if round_number == 1:
-            assert all(float(r["sm_stock_ul"]) == 25 and "ROBOT PREDOSE" in r["storage"] for r in read_csv(manifest))
+        assert not (out/"round2_predose.csv").exists()
 
 
-def test_dilute_catalysts_cannot_overfill_the_liquid_predose(tmp_path):
+def test_dilute_catalysts_cannot_overfill_the_reaction(tmp_path):
     from hte.planning import dosing_rows
     run(tmp_path/"demo",ROOT/"hte_inputs/ligands.csv",ROOT/"hte_inputs/campaign.json")
     config = read_json(tmp_path/"demo/campaign.json")

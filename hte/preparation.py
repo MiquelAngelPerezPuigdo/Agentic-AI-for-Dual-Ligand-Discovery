@@ -381,7 +381,7 @@ def build_stock_preparation(config,inventory,design,charges=None):
 def working_loads(config,operations,stocks):
     used=defaultdict(float)
     for op in operations:
-        if op["stage"] in ("substrate","round2_predose","assembly","internal_standard"):
+        if op["stage"] in ("substrate","assembly","internal_standard"):
             used[(op["reagent"],op["source_slot"],op["source_well"])]+=op["aspirated_ul_per_channel"]*op["channels"]
     result=[]
     for stock in stocks:
@@ -701,6 +701,7 @@ def build_refill(config,inventory,design,history,prep):
         fill=max(0,load["load_ul"]-amounts.get(location,0))
         if fill:
             if load["reagent"]=="Pd":raise ValueError("Retained direct Pd source cannot cover R2; no bulk refill exists")
+            if load["reagent"]=="substrate_stock":raise ValueError("Retained SM/IS source cannot cover R2; no stock refill is planned")
             record=records[load["reagent"]]
             if record["kind"]=="direct":raise ValueError("Retained direct stock cannot cover R2")
             needed.append((record,location,fill))
@@ -712,7 +713,7 @@ def build_refill(config,inventory,design,history,prep):
             source=[record["carrier_id"],record["source_well"]]
             plan.mix(source);plan.transfer(source,list(location),fill,"automatic R2 refill "+record["stock_id"]);plan.mix(location)
         bulk_off(plan,carriers)
-    plan.steps.append(dict(type="pause",message="R2 working sources refilled robotically. Restore the SAME reaction block in slot 3 with the 23 capped, ROBOT-predosed vials. Replace reservoir 2 with a NEW EMPTY one for R2 workup-fluid preparation. Load raw sources only when the R2 hold requests them. No hand aliquoting; no SM/IS redose."))
+    plan.steps.append(dict(type="pause",message="R2 ligand sources refilled robotically. Retain original SM/IS tube 4 D2, RockPhos and all four Pd tubes without refill. Restore the SAME reaction block in slot 3 with 23 NEW EMPTY vials. R2 dosing will add 25 uL SM/IS to each before catalysts. Replace reservoir 2 with a NEW EMPTY one for R2 workup-fluid preparation. Load raw sources only when the R2 hold requests them. No hand aliquoting."))
     return plan.report()
 
 

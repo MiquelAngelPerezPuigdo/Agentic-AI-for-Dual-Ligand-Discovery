@@ -27,7 +27,7 @@ python -m hte.cli --config local_data/campaign.json export \
   --output output/r1-dose --live --stage dose_and_react
 ```
 
-This robot-predoses 23 R2 vials; cap/store, replace with 48 EMPTY R1 vials. It doses/heats R1, makes standards/workup fluids during the hold. Send calibration plate to LC using generated map. [Import/calibrate](htel-lc-import.md); set `lc_calibration_validated=true` after success. Export R1 workup with the SAME command/design, changing to **`--output output/r1-workup --stage workup`**. Keep prepared reservoir 2; use a fresh final LC plate.
+Start with **48 NEW EMPTY R1 vials**. Robot adds 25 µL SM/IS per vial, then catalysts, and heats the capped block. Retain **SM/IS tube 4 D2**, capped between rounds; its 1.89 mL initial fill covers both rounds. Robot makes standards/workup fluids during the hold. Send calibration plate to LC using generated map. [Import/calibrate](htel-lc-import.md); set `lc_calibration_validated=true` after success. Export R1 workup with the SAME command/design, changing to **`--output output/r1-workup --stage workup`**. Keep prepared reservoir 2; use a fresh final LC plate.
 
 ## R2 and finish
 
@@ -40,7 +40,7 @@ python scripts/hte-lc-results.py next \
   --injections local_data/r1-map*.csv --output output/r1-decision
 ```
 
-Calibration defaults to `local_data/calibration.csv`. QC precedes Claude: **387 untested pairs →22 +L17 reference**, L03 max four. **After interruption rerun the SAME command/output**; accepted scores are reused. Inspect uncertain API requests; a new folder may repeat charges. Run printed **`refill_stocks.py` FIRST** for ligand top-ups; retain all four Pd tubes without refilling. Then R2 uses predosed vials and NEW EMPTY reservoir 2; no SM/IS redose. If unreleased, export `next_design.csv` with R1 `--history`, `--live` and a new export folder. After 23 final injections, run helper **`final`**; no Claude.
+Calibration defaults to `local_data/calibration.csv`. QC precedes Claude: **387 untested pairs →22 +L17 reference**, L03 max four. **After interruption rerun the SAME command/output**; accepted scores are reused. Inspect uncertain API requests; a new folder may repeat charges. Run printed **`refill_stocks.py` FIRST** for ligand top-ups; retain SM/IS **4 D2** and all four Pd tubes without refilling. Fit **23 NEW EMPTY vials** in the same block and a NEW EMPTY reservoir 2; R2 Python adds **25 µL SM/IS per vial, then catalysts**. If unreleased, export `next_design.csv` with R1 `--history`, `--live` and a new export folder. After 23 final injections, run helper **`final`**; no Claude.
 
 ## Return records
 

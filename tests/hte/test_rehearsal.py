@@ -37,16 +37,17 @@ def test_offline_loop_scores_feedback_without_network_or_repeated_events(tmp_pat
     assert sum(r["candidates"] for r in feedback)==387*5
     assert all(not r["includes_reference"] for r in initial+feedback)
     assert report["first_round_qc_pass"] and report["incomplete_export_ignored"]
-    assert report["duplicate_event_ignored"] and report["no_pair_repeats"] and report["no_substrate_redose"]
-    assert report["no_internal_standard_redose"]
+    assert report["duplicate_event_ignored"] and report["no_pair_repeats"] and report["substrate_dosed_once_per_round"]
+    assert report["combined_is_dosed_once_per_round"]
     assert report["analytical_practice_pass"]
     assert (report_path.parent/report["analytical_practice_report"]).exists()
     next_dosing = report_path.parent/report["next_dosing_csv"]
     rows = read_csv(next_dosing)
     assert sum(row["selection_method"] == "llm" for row in rows)==22
     assert sum(row["kind"] == "single" for row in rows)==1
-    assert len(rows) == 23 and all(float(r["sm_stock_ul"]) == 0 for r in rows)
-    assert all(float(r["internal_standard_predosed_umol"]) == 2.5 and
-               float(r["internal_standard_added_umol"]) == 0 for r in rows)
+    assert len(rows) == 23 and all(float(r["sm_stock_ul"]) == 25 for r in rows)
+    assert all(float(r["internal_standard_predosed_umol"]) == 0 and
+               float(r["substrate_predosed_umol"]) == 0 and
+               float(r["internal_standard_added_umol"]) == 2.5 for r in rows)
     assert not (next_dosing.parent/"protocols").exists()
     assert os.environ["ANTHROPIC_API_KEY"] == "synthetic_existing_key"

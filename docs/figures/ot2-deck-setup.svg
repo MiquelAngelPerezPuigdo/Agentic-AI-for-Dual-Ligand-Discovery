@@ -7150,10 +7150,10 @@ L 1149.12 692.64
     <text style="font-size: 10.3px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #276d9b" x="794.16" y="449.075988" transform="rotate(-0 794.16 449.075988)">SM/IS: 1 M / 100 mM; 2 mL nominal bulk.</text>
    </g>
    <g id="text_125">
-    <text style="font-size: 10.3px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #242c31" x="794.16" y="471.395988" transform="rotate(-0 794.16 471.395988)">Robot loads 1.88 mL in 4 D2 for all 71 vials.</text>
+    <text style="font-size: 10.3px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #242c31" x="794.16" y="471.395988" transform="rotate(-0 794.16 471.395988)">4 D2: 1.89 mL; retain capped, no SM refill.</text>
    </g>
    <g id="text_126">
-    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #242c31" x="794.16" y="493.638047" transform="rotate(-0 794.16 493.638047)">R2 SM predosed automatically BEFORE R1.</text>
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #242c31" x="794.16" y="493.638047" transform="rotate(-0 794.16 493.638047)">Each round: empty vials → SM/IS → catalysts.</text>
    </g>
    <g id="text_127">
     <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #242c31" x="794.16" y="526.557656" transform="rotate(-0 794.16 526.557656)">3  During each four-hour reaction</text>

@@ -107,9 +107,15 @@ def test_r2_topups_use_original_stocks_and_keep_rockphos_in_place(setup):
     assert not any(t["target"]==["working1","C1"] for t in transfers)
     assert not any(t["target"]==["working4","D2"] for t in transfers)
     final={tuple(r["location"]):r["volume_ul"] for r in plan["expected_final_liquids"]}
+    assert final[("working4","D2")]==pytest.approx(689)
+    second_ops=transfer_operations(c,inv,dosing_rows(c,inv,second))
+    sm_used=sum(op["aspirated_ul_per_channel"]*op["channels"] for op in second_ops if op["stage"]=="substrate")
+    assert sm_used==pytest.approx(576)
+    assert final[("working4","D2")]-sm_used==pytest.approx(113)
     for load in read_csv(directory/"r2/deck_loads.csv"):
         if load["protocol"]=="dose_and_react":
             assert final[("working"+load["source_slot"],load["source_well"])]+1e-7>=float(load["load_ul"])
+            if load["reagent"]=="substrate_stock":assert float(load["load_ul"])==680
     bad=copy.deepcopy(history);bad[0]["pair_id"]="different history"
     with pytest.raises(ValueError,match="history differs"):build_refill(c,inv,second,bad,prep)
 
@@ -137,18 +143,44 @@ def test_stock_manifest_changes_and_preview_weights_cannot_release_live(setup):
 @pytest.mark.parametrize("stage",["preparation/prepare_stocks","r1/dose_and_react","r2/refill_stocks","r2/dose_and_react"])
 def test_actual_sdk_executes_automated_preparation_and_holds(setup,stage):
     from opentrons.simulate import simulate
-    directory,*_=setup
+    directory,directory_config,*_=setup
     with (directory/(stage+".py")).open() as stream:commands,_=simulate(stream)
     text=[c["payload"].get("text","") for c in commands]
     assert len(commands)>100
     if stage.endswith("dose_and_react"):
+        number = int(stage[1])
+        expected = 48 if number == 1 else 23
+        substrate = [i for i,t in enumerate(text) if t.startswith("substrate_stock:")]
+        catalyst = [i for i,t in enumerate(text) if t.startswith("Pd:") or
+                    (t.startswith("L") and len(t)>3 and t[1:3].isdigit() and t[3]==":")]
+        assert len(substrate)==expected and max(substrate)<min(catalyst)
+        assert all("25.0 uL per channel" in text[i] or "25 uL per channel" in text[i] for i in substrate)
+        assert not any(t.startswith("internal_standard:") for t in text)
+        # Verify actual SDK dispenses into the reaction block during the SM stage,
+        # rather than relying only on emitted reagent comments.
+        block_dispenses=[command["payload"] for command in commands[min(substrate):min(catalyst)]
+                         if command["payload"].get("text","").startswith("Dispensing") and
+                         "Glass vial reaction block" in command["payload"].get("text","")]
+        assert len(block_dispenses)==expected
+        assert all(command["volume"]==25+directory_config["pipetting"]["air_gap_ul"] for command in block_dispenses)
+        rows=read_csv(directory/f"r{number}/dosing.csv")
+        assert len(rows)==expected
+        for row in rows:
+            assert float(row["sm_stock_ul"])==25 and float(row["substrate_umol"])==25
+            assert float(row["internal_standard_added_umol"])==2.5
+            assert float(row["internal_standard_predosed_umol"])==float(row["substrate_predosed_ul"])==0
+            assert float(row["internal_standard_stock_ul"])==0
+            assert sum(float(row[key]) for key in ("sm_stock_ul","ligand_a_ul","ligand_b_ul","pd_ul","toluene_ul"))==250
+        assert not (directory/f"r{number}/round2_predose.csv").exists()
+        if number==2:
+            assert any("23 NEW EMPTY" in t for t in text[:min(substrate)])
         start=next(i for i,t in enumerate(text) if "Setting Target Temperature" in t)
         finish=next(i for i,t in enumerate(text[start:],start) if t=="Deactivating Heater")
         assert any("ROBOT PREPARATION" in t for t in text[start:finish])
         assert not any("Moving Glass vial reaction block" in t for t in text[start:finish])
         if stage.startswith("r1"):
             assert any("ROBOT PREPARATION: CAL-SM" in t for t in text[start:finish])
-            assert any("store them labeled" in t for t in text[:start])
+        assert not any("round2_predose.csv" in t or "store them labeled" in t for t in text)
 
 
 def test_optional_known_mixtures_are_robotic_and_quantitative(setup):

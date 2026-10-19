@@ -158,8 +158,8 @@ def draw(output):
     text(sx,6.49,"Retain all FOUR tubes; no Pd transfer or refill.",10.3)
     text(sx,6.18,f"{budget['weigh_mg']:g} mg total; keep {budget['scope_reserved_mg']:g} mg solid for scope.",10.0,color=MUTED)
     text(sx,5.80,"SM/IS: 1 M / 100 mM; 2 mL nominal bulk.",10.3,color=BLUE)
-    text(sx,5.49,"Robot loads 1.88 mL in 4 D2 for all 71 vials.",10.3)
-    text(sx,5.18,"R2 SM predosed automatically BEFORE R1.",10.0,weight="bold")
+    text(sx,5.49,"4 D2: 1.89 mL; retain capped, no SM refill.",10.3)
+    text(sx,5.18,"Each round: empty vials → SM/IS → catalysts.",10.0,weight="bold")
 
     text(sx,4.73,"3  During each four-hour reaction",12,weight="bold")
     text(sx,4.39,"Raw solvents in slot 3; reaction stays on 10.",10.3)

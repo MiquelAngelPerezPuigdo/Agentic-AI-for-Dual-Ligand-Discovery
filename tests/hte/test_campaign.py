@@ -51,7 +51,8 @@ def test_two_rounds_and_reference_stoichiometry(demo, cfg, inventory):
     for design in (first,second):
         for r in dosing_rows(cfg,inventory,design):
             assert r["substrate_umol"]==25 and r["pd_umol"]==3
-            assert r["internal_standard_total_umol"]==2.5 and r["internal_standard_added_umol"]+r["internal_standard_predosed_umol"]==2.5
+            assert r["internal_standard_total_umol"]==r["internal_standard_added_umol"]==2.5
+            assert r["internal_standard_predosed_umol"]==r["substrate_predosed_umol"]==r["substrate_predosed_ul"]==0
             assert r["internal_standard_workup_umol"]==0
             assert r["substrate_solvent_retained_ul"]==25 and r["substrate_solvent_evaporated_ul"]==0
             assert r["internal_standard_final_uM"]==pytest.approx(200/3)
@@ -61,16 +62,15 @@ def test_two_rounds_and_reference_stoichiometry(demo, cfg, inventory):
     second_rows=dosing_rows(cfg,inventory,second)
     ref=next(r for r in second_rows if r["kind"]=="single")
     assert ref["ligand_a"]=="L17" and ref["ligand_a_ul"]==150 and ref["ligand_b_ul"]==0
-    assert all(r["sm_stock_ul"]==0 and r["substrate_predosed_umol"]==25 for r in second_rows)
-    manifest=read_csv(demo/"round1/round2_predose.csv")
-    assert [r["well"] for r in manifest]==[r["well"] for r in second]
-    assert all(float(r["internal_standard_predosed_umol"])==2.5 and float(r["sm_stock_ul"])==25 for r in manifest)
+    assert all(r["sm_stock_ul"]==25 and r["substrate_predosed_umol"]==0 for r in second_rows)
+    assert not (demo/"round1/round2_predose.csv").exists()
+    assert not (demo/"round2/round2_predose.csv").exists()
     deck_stock=next(r for r in read_csv(demo/"round1/deck_loads.csv") if r["reagent"]=="substrate_stock")
-    assert float(deck_stock["load_ul"])==1880
+    assert float(deck_stock["load_ul"])==1890
 
 
 @pytest.mark.parametrize("reuse", [True, False])
-def test_tip_capacity_source_ledger_and_predose(demo, cfg, inventory, reuse):
+def test_tip_capacity_source_ledger_and_round_start_substrate(demo, cfg, inventory, reuse):
     cfg["pipetting"]["reuse_tips"] = reuse
     rows = dosing_rows(cfg, inventory, read_csv(demo/"round1_design.csv"))
     ops = transfer_operations(cfg, inventory, rows)
@@ -80,9 +80,10 @@ def test_tip_capacity_source_ledger_and_predose(demo, cfg, inventory, reuse):
         assert op["aspirated_ul_per_channel"]+residual+p["air_gap_ul"] <= (20 if op["pipette"] == "p20" else 300)
         assert op["aspirated_ul_per_channel"]+residual == op["volume_ul_per_channel"]+p["surplus_ul"]
         assert op["source_slot"] != 3 or not op["retain_tip_for_next"]
-    predose = [op for op in ops if op["stage"] == "round2_predose"]
-    assert len(predose)==23 and sum(op["volume_ul_per_channel"] for op in predose)==575
-    assert not predose[-1]["retain_tip_for_next"]  # Drop before the manual vial change.
+    substrate = [op for op in ops if op["stage"] == "substrate"]
+    assert len(substrate)==48 and sum(op["volume_ul_per_channel"] for op in substrate)==1200
+    assert not any(op["stage"]=="round2_predose" for op in ops)
+    assert not substrate[-1]["retain_tip_for_next"]  # Drop before visiting catalyst sources.
     assert sum(op["volume_ul_per_channel"]*op["channels"] for op in ops if op["stage"] == "sampling") == 48*20
     plan = stock_plan(cfg, inventory, ops)
     assert all(r["capacity_ok"] for r in plan)
@@ -92,12 +93,14 @@ def test_tip_capacity_source_ledger_and_predose(demo, cfg, inventory, reuse):
     assert workup["stock_mM"] == 0
     assert workup["mass_mg"] == 0
     mixed = next(r for r in plan if r["reagent"] == "substrate_stock")
-    assert mixed["prepare_ul"] == 2000
-    assert mixed["mass_mg"] == pytest.approx(322.32)
-    assert mixed["internal_standard_mM"]==100 and mixed["internal_standard_mass_mg"]==pytest.approx(24.038)
+    expected_volume = 2000 if reuse else 2500
+    assert mixed["prepare_ul"] == expected_volume
+    assert mixed["mass_mg"] == pytest.approx(expected_volume*161.16/1000)
+    assert mixed["internal_standard_mM"]==100 and mixed["internal_standard_mass_mg"]==pytest.approx(expected_volume*120.19/10000)
     assert not any(r["reagent"]=="internal_standard" for r in plan)
     assert mixed["source_slot"] == 4 and mixed["source_well"] == "D2"
-    assert "Compatible bulk source" in mixed["storage_container"]
+    assert "Original 2 mL SM/IS working tube" in mixed["storage_container"]
+    assert "retained across both rounds" in mixed["storage_container"]
 
 
 def test_consensus_all_wells_combine_ranks(demo, inventory):
@@ -280,7 +283,7 @@ def test_iterate_is_idempotent_and_does_not_repeat_pairs(demo, cfg, inventory, t
     args = (cfg, inventory, {}, demo/"round1/dosing.csv", demo/"round1_peaks.csv", demo/"round1_peaks.ready.json", demo/"calibration.csv", tmp_path)
     out = workflow.iterate(*args)
     assert len(read_csv(out/"next_dosing.csv")) == 23
-    assert all(float(r["sm_stock_ul"]) == 0 for r in read_csv(out/"next_dosing.csv"))
+    assert all(float(r["sm_stock_ul"]) == 25 and float(r["substrate_predosed_ul"]) == 0 for r in read_csv(out/"next_dosing.csv"))
     assert workflow.iterate(*args) == out and calls == [387]
     (out/"next_dosing.csv").write_text("tampered")
     with pytest.raises(ValueError, match="changed"):

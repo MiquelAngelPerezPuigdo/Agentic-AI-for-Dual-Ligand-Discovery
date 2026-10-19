@@ -133,7 +133,7 @@ def test_round2_changeover_confirms_new_vials_are_uncapped_before_dosing(campaig
     changeover = next(i for i, t in enumerate(texts) if "Round two: CONFIRM" in t)
     first_dose = next(i for i, t in enumerate(texts) if t.startswith("Aspirating"))
     assert changeover < first_dose
-    assert "REMOVE ALL 23" in texts[changeover] and "do not repeat it" in texts[changeover]
+    assert "REMOVE ALL 23" in texts[changeover] and "23 NEW EMPTY" in texts[changeover]
 
 
 @pytest.mark.parametrize("key,value", [("lc_mix_rpm", 0), ("lc_mix_minutes", 0), ("lc_max_module_temperature_C", 60)])

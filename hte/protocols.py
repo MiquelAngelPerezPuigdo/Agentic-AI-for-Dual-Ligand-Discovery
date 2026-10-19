@@ -149,15 +149,12 @@ def run(protocol: protocol_api.ProtocolContext):
     protocol.pause("Verify exact plate definitions, offsets, source volumes in deck_loads.csv, and fresh tips. Slots 7 and 11 must be empty. Keep caps identified and clean. For workup, keep reaction vials CAPPED until the explicit cooled-opening pause. Resume locally.")
     if STAGE == "dose_and_react":
         protocol.pause("BEFORE DOSING: use the ROBOT-PREPARED working sources, at their exact CSV addresses. No hand aliquoting. Keep the 10 mg Pd scope reserve untouched. Open required source caps; let bubbles clear. Source racks stay off the heater-shaker. Pause for aggregates, persistent bubbles, blocked tips or air uptake.")
-        if any(op["stage"] == "substrate" for op in OPERATIONS):
-            protocol.pause("FIRST load the SAME reaction block with the 23 NEW, labeled R2 vials, UNCAPPED, following round2_predose.csv. The robot will predose SM/IS now, before the first reaction. No catalyst yet.")
-            transfer_stage("round2_predose")
-            protocol.pause("CAP the 23 robot-predosed R2 vials and store them labeled until R2. Replace them with 48 NEW EMPTY R1 vials in the SAME block. Remove all 48 caps before resuming. No hand pipetting; retain toluene in R2 vials.")
+        if ROUND == 1:
             protocol.pause("Confirm the 48 first-round reaction vials are empty and correctly loaded. REMOVE ALL reaction-vial screw caps and open the required sources before pipetting.")
-            transfer_stage("substrate")
-            protocol.comment("Combined stock supplies SM AND mesitylene in 25 uL retained toluene. No evaporation and no separate IS dose.")
         else:
-            protocol.pause("Round two: CONFIRM the 48 first-round vials were archived after sampling and the 23 NEW, labeled predosed vials are fitted into the SAME block following round2_predose.csv. If this changeover was already completed during R1 LC, do not repeat it. Each NEW vial must contain 25 uL combined stock: 25 umol SM AND 2.5 umol mesitylene in retained toluene; NO catalyst yet. REMOVE ALL 23 reaction-vial screw caps and open required sources BEFORE resuming pipetting. Check orientation and any required dummy vials. No SM or IS redosing.")
+            protocol.pause("Round two: CONFIRM the 48 first-round vials were archived after sampling and 23 NEW EMPTY, labeled R2 vials are fitted into the SAME block according to dosing.csv. REMOVE ALL 23 reaction-vial screw caps and open required sources BEFORE resuming pipetting. Retain the original combined SM/IS source at slot 4 D2; do not refill or dilute it. The robot will add 25 uL combined stock to each empty vial now, BEFORE any catalysts: 25 umol SM AND 2.5 umol mesitylene. Check orientation and any required dummy vials.")
+        transfer_stage("substrate")
+        protocol.comment("Combined stock supplies SM AND mesitylene in 25 uL retained toluene at the start of this round. No evaporation and no separate IS dose.")
         transfer_stage("internal_standard")
         transfer_stage("assembly")
         protocol.pause("TIGHTEN every occupied vial screw cap BY HAND before heating/shaking. Use HTEL's compatible septum screw caps and mounting procedure for 95 C. Check no vial remains open. Cap remaining source stocks. No stir bars. Resume for the module's heat/shake cycle.")
@@ -291,7 +288,7 @@ def export(config, inventory, design, output, live=False, history=None, stage="a
     validate_definition_geometry(config, definitions, rows)
     if int(rows[0]["round"]) == 2:
         if live and not history:
-            raise ValueError("Live round-two export requires the first-round dosing history to exclude repeats and verify predoses")
+            raise ValueError("Live round-two export requires the first-round dosing history to exclude repeats and verify retained source amounts")
         if history:
             from .design import validate_design
             validate_dosing(config, inventory, history)
@@ -329,7 +326,7 @@ def export(config, inventory, design, output, live=False, history=None, stage="a
         write_csv(output / "analytical_stock_preparation.csv", preparation(config))
     # Different source loads for dose vs robot-prepared workup fluids.
     deck = []
-    for deck_stage, members in [("dose_and_react", {"substrate", "round2_predose", "internal_standard", "assembly"}), ("workup", {"workup", "dilution"})]:
+    for deck_stage, members in [("dose_and_react", {"substrate", "internal_standard", "assembly"}), ("workup", {"workup", "dilution"})]:
         from collections import defaultdict
         use = defaultdict(float)
         for op in ops:
@@ -385,16 +382,6 @@ def export(config, inventory, design, output, live=False, history=None, stage="a
     occupied={r["lc_well"] for r in rows}
     padding=sorted({w for op in ops if op["stage"]=="dilution" for w in op["destination_wells"]}-occupied)
     write_csv(output/"lc_padding_wells.csv",[{"lc_plate_id":f"R{rows[0]['round']}-LC{wells().index(w)//config['robot']['lc_batch_size']+1:02d}","well":w,"contents":"Diluent only; NO sample; DO NOT INJECT"} for w in padding],fields=["lc_plate_id","well","contents"])
-    if int(rows[0]["round"]) == 1 and config["design"]["round2_predosed"]:
-        from .io import reaction_wells
-        n0 = config["chemistry"]["substrate_molarity_M"]*config["chemistry"]["reaction_volume_ul"]
-        write_csv(output/"round2_predose.csv", [{"round": 2, "sample_id": f"R2-{i:03d}", "well": well,
-                  "lc_well": wells()[i-1], "substrate_umol": n0,
-                  "sm_stock_ul": n0/config["liquids"]["substrate_stock_mM"]*1000,
-                  "internal_standard_predosed_umol": n0*config["chemistry"]["preloaded_internal_standard"]["mol_percent_relative_to_substrate"]/100,
-                  "substrate_solvent_retained_ul": n0/config["liquids"]["substrate_stock_mM"]*1000,
-                  "storage": "ROBOT PREDOSE before R1 in the SAME block. Staff CAP, label and store these 23 vials, then replace with 48 empty R1 vials. No manual pipetting. Retain toluene; no SM/IS redose."}
-                  for i, well in enumerate(reaction_wells(config)[:config["design"]["round2_total"]], 1)])
     stages = ("dose_and_react", "workup") if stage == "all" else (stage,)
     for protocol_stage in stages:
         prefix = "# Generated, self-contained. Keep this file with its dosing and deck-load CSVs.\n"

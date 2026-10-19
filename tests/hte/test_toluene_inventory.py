@@ -60,7 +60,9 @@ def test_combined_stock_has_practical_rounded_margin_and_covers_source_losses():
     assert stock["mass_mg"]==pytest.approx(322.32)
     assert stock["internal_standard_mass_mg"]==pytest.approx(24.038)
     assert stock["on_deck_ul"]+100 <= stock["prepare_ul"]
-    assert stock["protocol_consumption_ul"] >= 71*25 and stock["round2_reserve_ul"]==0
+    assert stock["protocol_consumption_ul"] == 48*25+1
+    assert stock["round2_reserve_ul"] >= 23*25+1
+    assert stock["on_deck_ul"] == 1890
     assert (stock["source_slot"],stock["source_well"])==(4,"D2")
     assert not any(o["stage"]=="internal_standard" or o["reagent"]=="toluene" for o in ops)
     for row in rows:
@@ -79,7 +81,10 @@ def test_worst_case_twenty_two_l17_pairs_and_reference_fit_two_ml_tube(tmp_path)
     with (out/"dose_and_react.py").open() as stream: commands,_=simulate(stream)
     text=[r["payload"].get("text","") for r in commands]
     assert not any("Evaporate" in t or "DCM" in t for t in text)
-    assert not any(t.startswith("substrate_stock:") or t.startswith("internal_standard:") for t in text)
+    sm=[i for i,t in enumerate(text) if t.startswith("substrate_stock:")]
+    catalyst=[i for i,t in enumerate(text) if t.startswith("Pd:") or any(t.startswith(ligand+":") for ligand in inv)]
+    assert len(sm)==23 and max(sm)<min(catalyst)
+    assert not any(t.startswith("internal_standard:") for t in text)
 
 
 def test_small_analytical_masters_have_independent_weighings_and_cover_optional_pilots():

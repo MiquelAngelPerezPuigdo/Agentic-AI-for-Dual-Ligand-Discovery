@@ -1,13 +1,13 @@
 {
-  "created_utc": "2026-10-19T19:23:03.499901+00:00",
+  "created_utc": "2026-10-19T19:42:52.202193+00:00",
   "campaign": "hackathon2026-paradox48",
   "schema_version": 5,
   "tests": {
-    "tests": 263,
+    "tests": 267,
     "failures": 0,
     "errors": 0,
     "skipped": 0,
-    "report": "output/pd-direct-update/tests.xml"
+    "report": "output/round-start-dosing/tests.xml"
   },
   "versions": {
     "anthropic": "0.125.0",
@@ -362,39 +362,53 @@
   "opentrons_simulations": [
     {
       "stage": "stock_preparation",
-      "protocol": "output/pd-direct-update/rehearsal/stock-preparation/prepare_stocks.py",
-      "protocol_sha256": "d7894ff2590d8f696145d2967c6e848d0e0f1648d84f2c897d1028e3f70c623c",
+      "protocol": "output/round-start-dosing/rehearsal/stock-preparation/prepare_stocks.py",
+      "protocol_sha256": "94b732ba55952befb579fec1fe6ac499aabb27dfd8786b80d95370b95de1e649",
       "passed": true,
-      "command_count": 4060,
-      "simulation_wall_seconds": 1.0808257080498151,
-      "log": "output/pd-direct-update/simulations/stock_preparation.log",
-      "commands_json": "output/pd-direct-update/simulations/stock_preparation.commands.json",
+      "log": "output/round-start-dosing/simulations/stock_preparation.log",
+      "commands_json": "output/round-start-dosing/simulations/stock_preparation.commands.json",
       "hardware_executed": false,
-      "physical_geometry_certified": false
+      "physical_geometry_certified": false,
+      "command_count": 4060,
+      "simulation_wall_seconds": 1.1311213749577291
     },
     {
       "stage": "round1_dosing",
-      "protocol": "output/pd-direct-update/rehearsal/round1/dose_and_react.py",
-      "protocol_sha256": "f064e197c7da29f6d24b3b1342ce1146f80b9c5d2afb0d562c4a8d5e859bb79c",
+      "protocol": "output/round-start-dosing/rehearsal/round1/dose_and_react.py",
+      "protocol_sha256": "5d87130c07e57ef8bb606e42674f4d6bb0fa301d78b2b3c025d6d0f127d28e63",
       "passed": true,
-      "command_count": 6256,
-      "simulation_wall_seconds": 1.8707907090429217,
-      "log": "output/pd-direct-update/simulations/round1_dosing.log",
-      "commands_json": "output/pd-direct-update/simulations/round1_dosing.commands.json",
+      "log": "output/round-start-dosing/simulations/round1_dosing.log",
+      "commands_json": "output/round-start-dosing/simulations/round1_dosing.commands.json",
       "hardware_executed": false,
-      "physical_geometry_certified": false
+      "physical_geometry_certified": false,
+      "command_count": 6087,
+      "simulation_wall_seconds": 1.863171166041866,
+      "round_start_dosing_verification": {
+        "substrate_dosing_events": 48,
+        "expected_events": 48,
+        "last_substrate_command": 337,
+        "first_catalyst_command": 347,
+        "all_substrate_before_catalysts": true,
+        "actual_sdk_block_dispenses": 48,
+        "sdk_dispense_volume_including_air_gap_ul": [
+          27.0
+        ],
+        "separate_is_doses": 0,
+        "early_round2_vial_swap_prompts": 0,
+        "no_predose_csv": true
+      }
     },
     {
       "stage": "round1_workup",
-      "protocol": "output/pd-direct-update/rehearsal/round1/workup.py",
-      "protocol_sha256": "b556956c3fd9a95cb469c4b7b17160e09f31e0b221c5a480b621bff26726e7f2",
+      "protocol": "output/round-start-dosing/rehearsal/round1/workup.py",
+      "protocol_sha256": "3775185975cf71000162cbd5c5fec7e1a6596190d5f210ef2e12082c8af2cf8e",
       "passed": true,
-      "command_count": 1736,
-      "simulation_wall_seconds": 0.6150932080345228,
-      "log": "output/pd-direct-update/simulations/round1_workup.log",
-      "commands_json": "output/pd-direct-update/simulations/round1_workup.commands.json",
+      "log": "output/round-start-dosing/simulations/round1_workup.log",
+      "commands_json": "output/round-start-dosing/simulations/round1_workup.commands.json",
       "hardware_executed": false,
       "physical_geometry_certified": false,
+      "command_count": 1736,
+      "simulation_wall_seconds": 0.6288863329682499,
       "workup_sequence_verification": {
         "lc_diluent_events": 24,
         "quench_events": 96,
@@ -411,39 +425,59 @@
     },
     {
       "stage": "round2_refill",
-      "protocol": "output/pd-direct-update/rehearsal/round2/refill_stocks.py",
-      "protocol_sha256": "00154545ae1da751d652c3ac1bca4c97662afe991dcd2b8845936a79d5a6ea5f",
+      "protocol": "output/round-start-dosing/rehearsal/round2/refill_stocks.py",
+      "protocol_sha256": "ffb62ffffd90d08b26513379f25f002938e4ab82b87a303a0f3c494c5afa8403",
       "passed": true,
-      "command_count": 1505,
-      "simulation_wall_seconds": 0.40507987496675923,
-      "log": "output/pd-direct-update/simulations/round2_refill.log",
-      "commands_json": "output/pd-direct-update/simulations/round2_refill.commands.json",
+      "log": "output/round-start-dosing/simulations/round2_refill.log",
+      "commands_json": "output/round-start-dosing/simulations/round2_refill.commands.json",
       "hardware_executed": false,
-      "physical_geometry_certified": false
+      "physical_geometry_certified": false,
+      "command_count": 1505,
+      "simulation_wall_seconds": 0.41261695796856657,
+      "retained_substrate_verification": {
+        "sm_refill_transfers": 0,
+        "sdk_dispenses_into_sm_working_source": 0,
+        "retained_sm_source_ul": 689.0
+      }
     },
     {
       "stage": "round2_dosing",
-      "protocol": "output/pd-direct-update/rehearsal/round2/dose_and_react.py",
-      "protocol_sha256": "29ab190367799c16ac42e261f52681472f4c00ebae3c8270e7e35bb83ab55e37",
+      "protocol": "output/round-start-dosing/rehearsal/round2/dose_and_react.py",
+      "protocol_sha256": "f089ef110ff4d9b2b562a495d8ab16c6d10074175cb8523d4ec927039d2fd9eb",
       "passed": true,
-      "command_count": 2234,
-      "simulation_wall_seconds": 0.725193833000958,
-      "log": "output/pd-direct-update/simulations/round2_dosing.log",
-      "commands_json": "output/pd-direct-update/simulations/round2_dosing.commands.json",
+      "log": "output/round-start-dosing/simulations/round2_dosing.log",
+      "commands_json": "output/round-start-dosing/simulations/round2_dosing.commands.json",
       "hardware_executed": false,
-      "physical_geometry_certified": false
+      "physical_geometry_certified": false,
+      "command_count": 2402,
+      "simulation_wall_seconds": 0.7841202089912258,
+      "round_start_dosing_verification": {
+        "substrate_dosing_events": 23,
+        "expected_events": 23,
+        "last_substrate_command": 162,
+        "first_catalyst_command": 172,
+        "all_substrate_before_catalysts": true,
+        "actual_sdk_block_dispenses": 23,
+        "sdk_dispense_volume_including_air_gap_ul": [
+          27.0
+        ],
+        "separate_is_doses": 0,
+        "early_round2_vial_swap_prompts": 0,
+        "no_predose_csv": true,
+        "empty_round2_vial_prompt_before_substrate": true
+      }
     },
     {
       "stage": "round2_workup",
-      "protocol": "output/pd-direct-update/rehearsal/round2/workup.py",
-      "protocol_sha256": "fa619a235f5bacc941fc26c16716ec41171f00e4feca2e37ebfb0d29fb4dba87",
+      "protocol": "output/round-start-dosing/rehearsal/round2/workup.py",
+      "protocol_sha256": "85f48b39dc6604d12367ae4a564ab6ace625f361a21ffceafb4777cece3037ac",
       "passed": true,
-      "command_count": 859,
-      "simulation_wall_seconds": 0.27646900003310293,
-      "log": "output/pd-direct-update/simulations/round2_workup.log",
-      "commands_json": "output/pd-direct-update/simulations/round2_workup.commands.json",
+      "log": "output/round-start-dosing/simulations/round2_workup.log",
+      "commands_json": "output/round-start-dosing/simulations/round2_workup.commands.json",
       "hardware_executed": false,
       "physical_geometry_certified": false,
+      "command_count": 859,
+      "simulation_wall_seconds": 0.28199349995702505,
       "workup_sequence_verification": {
         "lc_diluent_events": 12,
         "quench_events": 46,
@@ -490,17 +524,17 @@
     "no_pair_repeats": true,
     "analytical_practice_pass": true,
     "analytical_practice_report": "analytical_practice/practice_report.json",
-    "no_substrate_redose": true,
-    "no_internal_standard_redose": true,
+    "substrate_dosed_once_per_round": true,
+    "combined_is_dosed_once_per_round": true,
     "incomplete_export_ignored": true,
     "duplicate_event_ignored": true,
-    "next_dosing_csv": "feedback_loop/iteration-097a6ab91ef99e43/next_dosing.csv",
+    "next_dosing_csv": "feedback_loop/iteration-afa26edc570f77d9/next_dosing.csv",
     "cache_summaries": [
       "initial_scoring/cache_summary.json",
-      "feedback_loop/iteration-097a6ab91ef99e43/scoring/cache_summary.json"
+      "feedback_loop/iteration-afa26edc570f77d9/scoring/cache_summary.json"
     ],
     "result_interpretation": "Synthetic yields and mocked rankings validate data flow only.",
-    "source_report": "output/pd-direct-update/rehearsal/rehearsal_report.json",
+    "source_report": "output/round-start-dosing/rehearsal/rehearsal_report.json",
     "mocked_request_count": 650,
     "mocked_initial_request_count": 340,
     "mocked_feedback_request_count": 310,
@@ -524,7 +558,7 @@
     "bulk_container_compatibility_confirmed": false,
     "raw_reservoir": "Supplied horizontal A1-H1 8 x30 mL; single-channel only",
     "working_container_max_ul": 1950,
-    "SM_working_load_ul": 1880,
+    "SM_working_load_ul": 1890,
     "SM_bulk_nominal_ul": 2000,
     "neat_IS_source": "1 C2",
     "initial_acid_source": "4 D3",
@@ -540,7 +574,7 @@
     "bulk_source_reach_check": "Blocked: source aspiration would place the nozzle below the tube rim; actual clearance/immersion unverified",
     "source_reach_physical_collision_proven": false,
     "analytical_minimum_weigh_mg": 5,
-    "initial_programmed_pumping_wait_minutes": 100.15237009259262,
+    "initial_programmed_pumping_wait_minutes": 100.1548700925926,
     "Pd_direct_tubes": "4 A3/B3/C3/A4; all four retained; no Falcon/bulk transfer/refill"
   },
   "pd_budget": {
@@ -721,7 +755,6 @@
     "actual_assay_97pct_covered": true,
     "actual_assay_95pct_blocked": true
   },
-  "second_round_predose": "Robot doses 23 NEW R2 vials with 25 uL combined SM/IS BEFORE R1. Staff cap/store, replace with 48 empty R1 vials. No hand aliquoting, evaporation or later SM/IS redose.",
   "robot_calibration": {
     "standard_count": 14,
     "nominal_final_ul": 1000,
@@ -791,7 +824,7 @@
     "scenario_status": "Unmeasured handling-allowance scenario; not a validated completion-time forecast",
     "assumptions": "Full injection cycle. All R1 measurements required before decision. One LC plate per round gives no within-round preparation/injection overlap. The target budget does not replace measured handling allowances. Workup includes both extract and LC shaking, moves and manual caps."
   },
-  "timing_note": "12h advisory, not demonstrated by current programmed serial components: partial lower bound 734.38min excludes reaction dosing, R2 refill, motion, tips, heating/cooling and staff pauses. Initial preparation 100.15min pumping/waits alone; 120min full-preparation scenario unmeasured.",
+  "timing_note": "12h advisory, not demonstrated by current programmed serial components: partial lower bound 734.39min excludes reaction dosing, R2 refill, motion, tips, heating/cooling and staff pauses. Initial preparation 100.15min pumping/waits alone; 120min full-preparation scenario unmeasured.",
   "pending_local_facts": [
     "Actual short solvent-compatible stock sources/rack JSON; current no-nozzle-entry reach check fails",
     "Actual p1000 generation and App pipette change/calibration",
@@ -803,17 +836,18 @@
   "independent_audit": {
     "source_parent_commit": "b2f634705ba02e55592993b59ea644cb89d158e9",
     "release_status": "blocked_pending_stock_source_geometry_and_other_local_validation",
-    "summary": "Prior audit fixes retained. Pd now prepared directly in four small sources; remaining deep bulk sources still fail conservative nozzle-entry policy. LC diluent precedes quench/shaking. No physical validation performed.",
-    "tests_added": 33,
+    "summary": "Prior audit fixes retained. SM/mesitylene is dosed into empty vials at each round start before catalysts. The original 1.89 mL working source covers both rounds without refill. Four direct Pd sources and LC prefill before quench are preserved. Remaining deep bulk sources still fail conservative nozzle-entry policy; no physical validation performed.",
+    "tests_added": 37,
     "paid_API_calls": 0,
     "source_hashes": {
-      "hte/preparation.py": "360095bb60dc471ca02117493a7511df9c75914e63bc4f73281d47486d434ddc",
-      "hte/protocols.py": "882c5501b10d6ab7180c082c182126124ed1a30d31e9995340683e5ba515d042",
-      "hte/planning.py": "b25b1b1f80fda196eb91e376ff3b177215f6003a81fe65502d589a77b2ff4db5",
-      "hte_inputs/campaign.json": "a1f2f13b950bb4e11a856c5a8ca04208ef4dba17615f9d1959d9600e23c66da3",
+      "hte/preparation.py": "5c7b908d7b421d6c27306542d37587b7b2a1dcaf075671ca3e7c412daf53a3d5",
+      "hte/protocols.py": "85ca187737717c342001528c534f242895296fc4afbd1e784d46ebe2d93ef92d",
+      "hte/planning.py": "f0168709715dfde2e4274fb4b684164fe2df51d2ae6bdb7f99169970d379e0ee",
+      "hte_inputs/campaign.json": "985abee0d90cd97bc165eac06a0237a9809dd916d6d58ad03f7920f6a54a073b",
       "hte_inputs/ligands.csv": "a24c186b814eaeb8b5950e7a059e21b8df001764e83b19f127a3da179f4a5876",
       "hte_inputs/literature.json": "bdc36fcbaa06c5635064218629d7baeca35738d02cb9e5a0481e159a2e94a7be",
-      "campaigns/hackathon2026/round1_design.csv": "7c2ad21967f468857938989fcbe5901d2409a86dcae8d785f7247032ef301104"
+      "campaigns/hackathon2026/round1_design.csv": "7c2ad21967f468857938989fcbe5901d2409a86dcae8d785f7247032ef301104",
+      "hte/rehearsal.py": "7e63816e7ca3f30b452121864055697bda03e4b28d9ec4fd131f21007eb8b5d2"
     },
     "fixes": [
       "Per-level calibration recovery and effective quantitative lower bound",
@@ -824,10 +858,10 @@
     ],
     "plans": {
       "stock_preparation": {
-        "plan": "output/pd-direct-update/rehearsal/stock-preparation/preparation_manifest.json",
+        "plan": "output/round-start-dosing/rehearsal/stock-preparation/preparation_manifest.json",
         "pumping_wait_lower_bound": {
-          "seconds": 6009.142205555557,
-          "minutes": 100.15237009259262,
+          "seconds": 6009.292205555556,
+          "minutes": 100.1548700925926,
           "transfer_strokes": 253,
           "mix_events": 48,
           "manual_pause_count": 14,
@@ -849,7 +883,7 @@
         "physical_run_completed": false
       },
       "round1_hold": {
-        "plan": "output/pd-direct-update/rehearsal/round1/hold_preparation_plan.json",
+        "plan": "output/round-start-dosing/rehearsal/round1/hold_preparation_plan.json",
         "pumping_wait_lower_bound": {
           "seconds": 4161.801042393613,
           "minutes": 69.36335070656021,
@@ -880,7 +914,7 @@
         }
       },
       "round2_hold": {
-        "plan": "output/pd-direct-update/rehearsal/round2/hold_preparation_plan.json",
+        "plan": "output/round-start-dosing/rehearsal/round2/hold_preparation_plan.json",
         "pumping_wait_lower_bound": {
           "seconds": 1526.886743589744,
           "minutes": 25.448112393162397,
@@ -911,7 +945,7 @@
         }
       },
       "round2_refill": {
-        "plan": "output/pd-direct-update/rehearsal/round2/refill_plan.json",
+        "plan": "output/round-start-dosing/rehearsal/round2/refill_plan.json",
         "pumping_wait_lower_bound": {
           "seconds": 1419.5966666666664,
           "minutes": 23.659944444444438,
@@ -940,10 +974,10 @@
       "components_minutes": {
         "reaction_holds": 480,
         "LC_outside_holds": 120.7,
-        "initial_preparation": 100.15237009259262,
+        "initial_preparation": 100.1548700925926,
         "workup_pumping_waits_shaking": 33.530722222222224
       },
-      "total_minutes": 734.3830923148149,
+      "total_minutes": 734.3855923148149,
       "excludes": [
         "reaction dosing",
         "R2 stock refill",
@@ -955,7 +989,7 @@
       "interpretation": "Even before these omitted tasks, programmed serial components exceed 12 h under the requested 1.7 min full LC cycle and no R1 sample split. This is not a physical runtime measurement."
     },
     "report": "docs/rehearsal-results.md",
-    "current_source_parent_commit": "e95a5466f04d62c099066e8aeea920c9b22ad29e"
+    "current_source_parent_commit": "cb157f9e135faf405a283bed4995451afdcdec9f"
   },
   "pd_container_update": {
     "four_direct_sources": true,
@@ -975,5 +1009,25 @@
     "physical_robot_runs": 0,
     "paid_API_calls": 0,
     "new_regression_tests": 8
+  },
+  "substrate_dosing": "Both rounds start with empty reaction vials. Robot doses 25 uL combined SM/mesitylene per vial immediately before catalysts; no early R2 staging. Retain and cap the original SM working source between rounds; no SM refill.",
+  "round_start_dosing_update": {
+    "round1_vials": 48,
+    "round2_vials": 23,
+    "combined_SM_IS_ul_per_vial": 25,
+    "working_source": "4 D2",
+    "bulk_preparation_ul": 2000,
+    "initial_working_load_ul": 1890,
+    "round1_consumption_including_tip_surplus_ul": 1201,
+    "remaining_before_round2_ul": 689,
+    "round2_consumption_including_tip_surplus_ul": 576,
+    "remaining_after_campaign_ul": 113,
+    "bulk_remaining_after_initial_transfer_ul": 109,
+    "round2_minimum_rounded_load_ul": 680,
+    "SM_refill_ul": 0,
+    "early_round2_vial_stage": false,
+    "new_regression_tests": 4,
+    "physical_robot_runs": 0,
+    "paid_API_calls": 0
   }
 }

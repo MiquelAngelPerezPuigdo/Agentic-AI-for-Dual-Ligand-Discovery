@@ -1,6 +1,6 @@
 # Bench sheet - setup
 
-**48 pairs, then 22 pairs + L17 reference.** One 48 × 2 mL Para-Dox, 71 fresh reaction vials. Manual caps and labware moves. **All precise liquid handling is robotic**, including stocks, standards, R2 predoses and source refills.
+**48 pairs, then 22 pairs + L17 reference.** One 48 × 2 mL Para-Dox, 71 fresh reaction vials. Manual caps and labware moves. **All precise liquid handling is robotic**, including stocks, standards, each round's dosing and ligand refills.
 
 ## Load chemicals
 
@@ -20,7 +20,7 @@
 | Ligands | Nominal **20 mM**, generous reserves. Weighed charges in mapped carriers. |
 | RockPhos L03 | **~7.50 mg pure equivalent**, assay-corrected; 10 mg available. Robot makes **~800 µL in 1 C1**. Retain SAME tube; **max 4 R2 wells**. |
 | Pd(COD)(DQ) | Direct in **4 A3/B3/C3: 22.8 mg each; A4: 21.6 mg**. Robot adds ~1.50/~1.43 mL toluene, **40 mM**. **90 mg total; 10 mg for scope.** Retain all four; no Pd refill. |
-| SM + mesitylene | **~322.32 mg SM** at 100% assay; robot adds neat IS/toluene: nominal **1 M /100 mM**, ~2 mL. **4 D2: 1.88 mL** for all 71 vials. |
+| SM + mesitylene | **~322.32 mg SM** at 100% assay; robot adds neat IS/toluene: nominal **1 M /100 mM**, ~2 mL. **4 D2: 1.89 mL** for both rounds; retain capped between rounds, **no SM refill**. |
 
 Concentrations use nominal solvent addition. **No hand refills or R2 stock remake.**
 
@@ -45,14 +45,14 @@ Follow App pauses and matching loading CSVs. Staff handle weighing, coarse liqui
 | Step | Action |
 |---|---|
 | 1 / Stocks | Run **`prepare_stocks.py`** from actual weights. Load requested carriers uncapped; cap/store when removed. Retain the preparation manifest. Make the one right-pipette/tip-rack change after preparation. |
-| 2 / R2 predose first | Load **23 NEW R2 vials** in the SAME reaction block. R1 Python doses **25 µL SM/IS each**. Hand-cap/store them, then fit **48 NEW EMPTY R1 vials** and uncap. No manual pipetting. |
+| 2 / R1 setup | Load **48 NEW EMPTY vials** in the reaction block at 3. Uncap the required stock tubes; start R1 Python. |
 | 3 / R1 reaction | Robot doses **25 µL SM/IS +75 µL ligand A +75 µL ligand B +75 µL Pd**. Hand-cap; move/latch. **95 °C, 500 rpm, 4 h. Start the external timer when the App announces the hold starts.** |
 | 4 / During R1 hold | Leave reaction on 10. Load raw solvents in 3 and analytical rack in 4 at prompts. Robot makes **14 standards** and quench/diluent in 2. Seal/move calibration plate **6 → HPLC**; start sequence. Restore rack 4; remove raw reservoir. **Monitor the timer:** pauses do not stop heating. If the deadline arrives while paused, stop heat/shaking via App and record the overrun; do not resume dosing. |
 | 5 / Cool / quench | Sealed block to 3; cool. **Keep capped while robot pre-fills LC wells with 980 µL diluent.** Then uncap; robot adds **500 µL quench**. Recap ALL; shake **1500 rpm, 2 min**, heater off; return to 3. |
 | 6 / LC samples | Let bubbles clear; uncap indicated vials. Robot promptly adds **20 µL extract to prefilled LC wells**, fresh sample tips. Recap reaction vials. |
 | 7 / Final plate | Move **6 → cooled shaker 10**. Robot shakes **UNCOVERED, heater OFF, 1000 rpm, 2 min** at confirmed splash-free speed. Move **10 → HPLC**, seal and inject directly. No manual dilution/vial transfers. |
-| 8 / R2 select/refill | After all **48 valid R1 results**, Claude selects **22 new pairs +L17 reference**. Run **`refill_stocks.py` FIRST** for ligand top-ups from original carriers. Retain RockPhos and all FOUR Pd tubes; **no Pd refill**. |
-| 9 / R2 | Restore the SAME block with 23 capped robot-predosed vials. Replace reservoir 2 with a NEW EMPTY one. Uncap all 23; run R2 Python. **No SM/IS redose.** Reference uses **150 µL L17**, no B. Repeat reaction/workup; robot prepares workup fluids during this hold too. **R2 H3 is diluent only: do not inject.** |
+| 8 / R2 select/refill | After all **48 valid R1 results**, Claude selects **22 new pairs +L17 reference**. Run **`refill_stocks.py` FIRST** for ligand top-ups from original carriers. Retain RockPhos, SM/IS **4 D2** and all FOUR Pd tubes; **no SM/Pd refill**. |
+| 9 / R2 | Load **23 NEW EMPTY vials** in the SAME block; replace reservoir 2 with a NEW EMPTY one. Uncap required stocks; run R2 Python: **25 µL SM/IS each, then catalysts**. Reference uses **150 µL L17**, no B. Hand-cap; repeat reaction/workup, with fresh robot-made workup fluids during the hold. **R2 H3 is diluent only: do not inject.** |
 
 Calibration: each analyte blank +**10, 50, 150, 350, 800 µM**, independent **666.7 µM** check; constant **66.7 µM mesitylene**. Python calculates calibrated yields from integrated UV areas. Stop the clock after all 23 final injections and quantitative analysis.
 

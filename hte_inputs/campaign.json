@@ -49,7 +49,6 @@
     "exploration_backend": "lm_diversity_initialization",
     "require_lm_embeddings": true,
     "seed": 20261009,
-    "round2_predosed": true,
     "excluded_ligands": [
       {
         "ligand_id": "L07",
@@ -57,10 +56,10 @@
         "reason": "AdJohnPhos delivery delayed; 48 pairs then 22 new pairs + one L17 single reference"
       }
     ],
-    "round2_predose_mode": "robot_before_round1",
     "round2_ligand_caps": {
       "L03": 4
-    }
+    },
+    "substrate_dosing_stage": "each_round_start"
   },
   "liquids": {
     "substrate_stock_mM": 1000,
@@ -305,7 +304,6 @@
     "injection_cycle_validated": false,
     "simultaneous_heating_capacity_validated": false,
     "heating_validated": false,
-    "round2_predose_storage_validated": false,
     "homogeneity_study_waived_by_user": true,
     "staged_lc_timing_confirmed": false,
     "lc_plate_workflow_validated": false,

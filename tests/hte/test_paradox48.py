@@ -71,7 +71,7 @@ def test_deck_loads_include_every_ligand_source_and_all_stage_withdrawals(demo48
     ligand_rows=[r for r in deck if r["reagent"].startswith("L") and r["reagent"][1:].isdigit()]
     assert len(ligand_rows)==30
     for row in deck:
-        stages={"substrate","round2_predose","internal_standard","assembly"} if row["protocol"]=="dose_and_react" else {"workup","dilution"}
+        stages={"substrate","internal_standard","assembly"} if row["protocol"]=="dose_and_react" else {"workup","dilution"}
         consumed=sum(op["aspirated_ul_per_channel"]*op["channels"] for op in operations
                      if op["stage"] in stages and op["reagent"]==row["reagent"]
                      and op["source_slot"]==int(row["source_slot"]) and op["source_well"]==row["source_well"])
@@ -79,7 +79,7 @@ def test_deck_loads_include_every_ligand_source_and_all_stage_withdrawals(demo48
         assert float(row["load_ul"])>=consumed+dead
         if row["reagent"]=="Pd":
             assert float(row["load_ul"])==consumed+dead
-        elif row["reagent"] not in c["automation"]["direct_stock_ids"]:
+        elif row["reagent"] not in [*c["automation"]["direct_stock_ids"], "substrate_stock"]:
             assert float(row["load_ul"])==math.ceil((consumed+dead)/10)*10
 
 
