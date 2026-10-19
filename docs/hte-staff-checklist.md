@@ -20,7 +20,8 @@
 | Ligands | Nominal **20 mM**, generous reserves. Weighed charges in mapped carriers. |
 | RockPhos L03 | **~7.50 mg pure equivalent**, assay-corrected; 10 mg available. Robot makes **~800 µL in 1 C1**. Retain SAME tube; **max 4 R2 wells**. |
 | Pd(COD)(DQ) | Direct in **4 A3/B3/C3: 22.8 mg each; A4: 21.6 mg**. Robot adds ~1.50/~1.43 mL toluene, **40 mM**. **90 mg total; 10 mg for scope.** Retain all four; no Pd refill. |
-| SM + mesitylene | **~322.32 mg SM** at 100% assay; robot adds neat IS/toluene: nominal **1 M /100 mM**, ~2 mL. **4 D2: 1.89 mL** for both rounds; retain capped between rounds, **no SM refill**. |
+| Naphthalene source | Weigh **60 mg in 1 C2**. Robot adds ~936 µL toluene for **500 mM**, adjusted to actual mass/assay. **IS_MASTER starts empty.** |
+| SM + naphthalene | **~322.32 mg SM**; robot adds **400 µL IS source +1600 µL toluene**: nominal **1 M /100 mM**. **4 D2: 1.89 mL** for both rounds; retain capped, **no SM refill**. |
 
 Concentrations use nominal solvent addition. **No hand refills or R2 stock remake.**
 
@@ -28,7 +29,7 @@ Concentrations use nominal solvent addition. **No hand refills or R2 stock remak
 
 | Slot | Contents |
 |---|---|
-| 1 /4 | 2 mL working tubes, max 1.95 mL. Neat IS **1 C2**, SM/IS **4 D2**, Pd **4 A3/B3/C3/A4**; prep acid **4 D3**. |
+| 1 /4 | 2 mL working tubes, max 1.95 mL. 500 mM IS **1 C2**, SM/IS **4 D2**, Pd **4 A3/B3/C3/A4**; prep acid **4 D3**. |
 | 2 | EMPTY 12-channel reservoir; robot makes quench A4/A6/A9 and diluent A5/A7/A10/A11/A12. |
 | 3 /10 | Reaction block: pipetting /heater-shaker. During holds, raw solvents temporarily occupy 3. |
 | 4 /6 in R1 hold | Prepared analytical rack temporarily in 4; calibration plate in 6, then directly to LC. Later, 6 takes each final LC plate. |
@@ -54,7 +55,7 @@ Use regenerated files for the current R1 design; discard earlier dosing exports.
 | 8 / R2 select/refill | After all **48 valid R1 results**, Claude selects **22 new pairs +L17 reference**. Run **`refill_stocks.py` FIRST**; uncap required bulk/working ligand tubes for top-ups. Retain RockPhos. Keep SM/IS **4 D2** and all FOUR Pd tubes capped; **no SM/Pd refill**. |
 | 9 / R2 | Load **23 NEW EMPTY vials** in the SAME block; replace reservoir 2 with a NEW EMPTY one. Uncap required stocks; run R2 Python: **25 µL SM/IS each, then catalysts**. Reference uses **150 µL L17**, no B. Hand-cap; repeat reaction/workup, with fresh robot-made workup fluids during the hold. **R2 H3 is diluent only: do not inject.** |
 
-Calibration: each analyte blank +**10, 50, 150, 350, 800 µM**, independent **666.7 µM** check; constant **66.7 µM mesitylene**. Python calculates calibrated yields from integrated UV areas. Stop the clock after all 23 final injections and quantitative analysis.
+Calibration: each analyte blank +**10, 50, 150, 350, 800 µM**, independent **666.7 µM** check; constant **66.7 µM naphthalene**. Python calculates calibrated yields from integrated UV areas. Stop the clock after all 23 final injections and quantitative analysis.
 
 Pause for blocked tips, persistent bubbles, air uptake, obvious layers or tip contact. Do not guess liquid top-ups or repair a dilution by hand. Report deviations so stock accounting can be corrected.
 

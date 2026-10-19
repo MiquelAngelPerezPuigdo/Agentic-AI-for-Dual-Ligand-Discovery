@@ -1,7 +1,7 @@
 """Synthetic offline acceptance exercise. No scientific predictions or paid API calls."""
 from pathlib import Path
 
-from .analytics import analyze, complete_export, validate_completion
+from .analytics import analyze, calibration_identity, complete_export, validate_completion
 from .design import consensus_select, ligand_coverage, make_design, pair_features, round1_required_ligands
 from .inventory import candidates, campaign_inventory
 from .io import new_output, read_json, write_csv, write_json
@@ -20,7 +20,7 @@ def fixtures(config, dosing):
             cal.append({"sample_id": f"SYNTHETIC_CAL_{name}_{concentration}", "role": role,
                         "analyte": name, "concentration_uM": concentration, "area": concentration*10,
                         "internal_standard_area": 10000, "internal_standard_concentration_uM": config["analytics"]["internal_standard_final_uM"],
-                        "method_id": config["analytics"]["method_id"], "channel": config["analytics"]["channel"]})
+                        "method_id": config["analytics"]["method_id"], "channel": config["analytics"]["channel"], **calibration_identity(config)})
     peaks = []
     for i, dose in enumerate(dosing):
         fraction = 0.2 if dose["kind"] == "single" else (i % 17)/20

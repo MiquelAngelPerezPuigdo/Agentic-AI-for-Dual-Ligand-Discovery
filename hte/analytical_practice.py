@@ -5,7 +5,8 @@ import copy
 from pathlib import Path
 
 from .analytics import (analyze, calibration_from_peaks, normalize_export,
-                        reviewed_absences, validate_analytics_settings)
+                        reviewed_absences, validate_analytics_settings,
+                        validate_calibration_identity)
 from .io import (digest, finite, new_output, object_digest, read_csv, read_json,
                  write_csv, write_json)
 
@@ -18,7 +19,8 @@ def prepare(config, output):
     from .preparation import pilot_recipes
     plan,recipes,mapping=[],[],[]
     for i,row in enumerate(pilot_recipes(config),1):
-        plan.append({key:row[key] for key in ("sample_id","role","substrate_uM","product_uM","internal_standard_uM")})
+        plan.append({key:row[key] for key in ("sample_id","role","substrate_uM","product_uM","internal_standard_uM",
+                                            "internal_standard_identity","internal_standard_cas")})
         recipes.append(dict(row,final_ul=1000,preparation="Robot preparation from independent CHECK masters; enable automation.prepare_optional_pilot BEFORE stock preparation"))
         mapping.append(dict(inj_no=i,sample_id=row["sample_id"],method_id=config["analytics"].get("method_id") or "",lc_plate_id=row["plate_id"],well=row["well"]))
     write_csv(out/"pilot_plan.csv",plan)
@@ -38,6 +40,7 @@ def verify(config, exports, mappings, calibration_path, plan_path, output,
             or len({str(Path(p).resolve()) for p in exports})!=len(exports)):
         raise ValueError("Supply distinct pilot exports and one injection map per export")
     plan = read_csv(plan_path)
+    identity = validate_calibration_identity(config, plan)
     ids = [row["sample_id"] for row in plan]
     if not ids or len(ids)!=len(set(ids)) or any(not key.startswith("PILOT-") for key in ids):
         raise ValueError("Pilot plan needs unique PILOT- sample IDs, separate from reaction samples")
@@ -52,6 +55,7 @@ def verify(config, exports, mappings, calibration_path, plan_path, output,
     if not set(absences)<=allowed:
         raise ValueError("Pilot absence reviews are allowed only for expected-zero analytes")
     inputs = {"config_digest":object_digest(config),"plan_sha256":digest(plan_path),
+              "internal_standard":identity,
               "calibration_sha256":digest(calibration_path),
               "reviewed_absences_sha256":digest(reviewed_absences_path) if reviewed_absences_path else None,
               "sources":[{"export_sha256":digest(p),"mapping_sha256":digest(m)} for p,m in zip(exports,mappings)]}

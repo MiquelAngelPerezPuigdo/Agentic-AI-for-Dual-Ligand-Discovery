@@ -152,9 +152,9 @@ def run(protocol: protocol_api.ProtocolContext):
         if ROUND == 1:
             protocol.pause("Confirm the 48 first-round reaction vials are empty and correctly loaded. REMOVE ALL reaction-vial screw caps and open the required sources before pipetting.")
         else:
-            protocol.pause("Round two: CONFIRM the 48 first-round vials were archived after sampling and 23 NEW EMPTY, labeled R2 vials are fitted into the SAME block according to dosing.csv. REMOVE ALL 23 reaction-vial screw caps and open required sources BEFORE resuming pipetting. Retain the original combined SM/IS source at slot 4 D2; do not refill or dilute it. The robot will add 25 uL combined stock to each empty vial now, BEFORE any catalysts: 25 umol SM AND 2.5 umol mesitylene. Check orientation and any required dummy vials.")
+            protocol.pause("Round two: CONFIRM the 48 first-round vials were archived after sampling and 23 NEW EMPTY, labeled R2 vials are fitted into the SAME block according to dosing.csv. REMOVE ALL 23 reaction-vial screw caps and open required sources BEFORE resuming pipetting. Retain the original combined SM/IS source at slot 4 D2; do not refill or dilute it. The robot will add 25 uL combined stock to each empty vial now, BEFORE any catalysts: 25 umol SM AND 2.5 umol naphthalene. Check orientation and any required dummy vials.")
         transfer_stage("substrate")
-        protocol.comment("Combined stock supplies SM AND mesitylene in 25 uL retained toluene at the start of this round. No evaporation and no separate IS dose.")
+        protocol.comment("Combined stock supplies SM AND naphthalene in 25 uL retained toluene at the start of this round. No evaporation and no separate IS dose.")
         transfer_stage("internal_standard")
         transfer_stage("assembly")
         protocol.pause("TIGHTEN every occupied vial screw cap BY HAND before heating/shaking. Use HTEL's compatible septum screw caps and mounting procedure for 95 C. Check no vial remains open. Cap remaining source stocks. No stir bars. Resume for the module's heat/shake cycle.")
@@ -185,7 +185,7 @@ def run(protocol: protocol_api.ProtocolContext):
         if len(batches)==1:
             protocol.pause("Leave the cooled reaction vials CAPPED in slot 3. UNCOVER the prepared liquid reservoir in slot 2 before resuming pipetting. Load the EMPTY labeled LC plate in slot 6. The robot will add LC diluent first, so sampling can follow extract shaking promptly.")
             transfer_stage("dilution",batches[0])
-        protocol.pause("Separately CONFIRM the sealed reaction vials have cooled to HTEL's approved opening temperature in slot 3, then UNSCREW/REMOVE all occupied reaction-vial caps under HTEL SOP. UNCOVER the prepared liquid reservoir in slot 2 if still covered; keep it uncovered through LC preparation. Mesitylene is already in each reaction: workup and LC diluent contain NO added internal standard. Confirm the approved extraction composition before proceeding.")
+        protocol.pause("Separately CONFIRM the sealed reaction vials have cooled to HTEL's approved opening temperature in slot 3, then UNSCREW/REMOVE all occupied reaction-vial caps under HTEL SOP. UNCOVER the prepared liquid reservoir in slot 2 if still covered; keep it uncovered through LC preparation. Naphthalene is already in each reaction: workup and LC diluent contain NO added internal standard. Confirm the approved extraction composition before proceeding.")
         transfer_stage("workup")
         protocol.pause("Leave every quenched reaction vial OPEN. At the next manual move, transfer the block to the cooled heater-shaker; confirm secure mounting and no loose caps. The robot will shake the open vials at " + str(CONFIG["liquids"]["mix_rpm"]) + " rpm for 2 minutes, heater OFF. Do not recap before shaking or sampling.")
         onto_heater()

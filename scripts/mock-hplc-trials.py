@@ -18,7 +18,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from hte.analytics import analyze, calibration_from_peaks, normalize_export, observations
+from hte.analytics import analyze, calibration_from_peaks, calibration_identity, normalize_export, observations
 from hte.analytical_practice import prepare, verify
 from hte.demo import synthetic_config
 from hte.io import atomic_text, digest, new_output, read_csv, read_json, write_csv, write_json
@@ -35,12 +35,12 @@ CASES = [
     ("low_yield", "10% product", True, True, "Low-product mixture, still above the mock LOQ."),
     ("high_yield", "90% product", True, True, "High-product mixture inside the calibration range."),
     ("rt_inside", "Small RT drift", True, True, "Product moves +0.025 min, inside its ±0.05-min window."),
-    ("injection_scale", "20% less injected signal", True, True, "Every peak area falls 20%; mesitylene normalization should compensate."),
+    ("injection_scale", "20% less injected signal", True, True, "Every peak area falls 20%; internal-standard normalization should compensate."),
     ("extra_impurity", "Resolved extra impurity", True, True, "A large peak outside all reference windows must not become product."),
     ("rt_outside", "Product outside RT window", False, False, "Product moves +0.08 min; strict reaction QC must reject it."),
     ("split_product", "Two candidate product peaks", False, False, "Two resolved peaks lie inside the product window; assignment is ambiguous."),
-    ("missing_is", "Missing mesitylene", False, False, "The internal-standard peak is absent."),
-    ("is_outlier", "Mesitylene area outlier", False, False, "Only the mesitylene peak loses 50% area."),
+    ("missing_is", "Missing internal standard", False, False, "The internal-standard peak is absent."),
+    ("is_outlier", "Internal-standard area outlier", False, False, "Only the internal-standard peak loses 50% area."),
     ("truncated_export", "Incomplete peak export", False, False, "The export declares four detected peaks but contains three."),
     ("missing_area", "Missing selected UV area", False, False, "A detected product peak has n.a. in the selected detector column."),
     ("coelution_bias", "Hidden product coelution", True, False, "An unresolved interferent adds 18% to product area; area-only QC can miss it."),
@@ -262,6 +262,7 @@ def run(output, config_path=ROOT / "hte_inputs/campaign.json", example=None, see
         write_json(folder / "trial_report.json", record)
         cases.append(record)
     report = {"synthetic_only": True, "seed": seed, "api_calls": 0, "optimizer_feedback": False,
+              "calibration_identity": calibration_identity(config),
               "physical_execution_allowed": False, "real_method_validated": False,
               "raw_trace_integration_executed": False, "chromeleon_executed": False,
               "provenance": provenance, "generator_sha256": digest(__file__), "config_source_sha256": digest(config_path),
@@ -346,7 +347,7 @@ Traces illustrate the imposed export decisions; the pipeline reads peak areas, n
 <th>Unknown-sample QC</th><th>Known-mixture check</th><th>Outcome</th></tr></thead><tbody>$ROWS</tbody></table></div>
 <h2>What was exercised</h2><p>Fourteen simulated authentic-standard injections establish separate substrate/product
 calibrations, including independent check levels. Each trial replays seven pilot injections through the real
-Chromeleon-format importer, calibration, mesitylene normalization and concentration/yield calculations. Strict
+Chromeleon-format importer, calibration, $IS_NAME normalization and concentration/yield calculations. Strict
 reaction QC is evaluated on mixtures with both analytes above the mock LOQ. The separate pilot audit checks known
 concentrations, including reviewed absent-analyte fixtures. Rejected numeric results are removed from feedback;
 no optimizer is called here.</p>
@@ -392,6 +393,7 @@ document.getElementById('scenario').addEventListener('change',showTrial);showTri
 </script></body></html>"""
     html = Template(html).substitute(
         OPTIONS=options, CHART=chart_html, ROWS="".join(rows), PAYLOAD=payload, SEED=str(report["seed"]),
+        IS_NAME=escape(config["analytics"]["internal_standard"]),
         CHECKS=f"{sum(r['matches_declared_expectation'] for r in cases)} of {len(cases)}",
         ACCEPTED=sum(r["outcome"] == "Accepted" for r in cases),
         BLOCKED=sum(r["outcome"] == "Blocked" for r in cases),

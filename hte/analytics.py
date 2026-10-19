@@ -7,6 +7,34 @@ import numpy as np
 from .io import digest, finite, object_digest, read_csv, read_json, write_csv, write_json
 
 
+def calibration_identity(config):
+    """Bind internal-standard response factors to their actual chemical identity."""
+    if config["analytics"]["calibration_mode"] != "internal_standard":
+        return {}
+    standard = config["chemistry"].get("preloaded_internal_standard", {})
+    name = str(standard.get("identity", "")).strip()
+    cas = str(standard.get("cas", "")).strip()
+    if (not name or not cas
+            or name.casefold() != str(config["analytics"].get("internal_standard", "")).strip().casefold()):
+        raise ValueError("Configure matching reaction/analytical internal-standard identity and CAS")
+    return {"internal_standard_identity": name, "internal_standard_cas": cas}
+
+
+def validate_calibration_identity(config, rows):
+    expected = calibration_identity(config)
+    required = config.get("schema_version", 0) >= 6
+    for row in rows:
+        for field, value in expected.items():
+            actual = str(row.get(field, "")).strip()
+            if not actual and not required:
+                continue  # Historical schemas can replay their own unlabelled calibration.
+            if actual.casefold() != value.casefold():
+                raise ValueError("Calibration internal-standard identity/CAS is missing or mismatched; "
+                                 "acquire a fresh calibration for the configured internal standard. "
+                                 "Do not relabel legacy calibration data.")
+    return expected
+
+
 def validate_analytics_settings(config):
     settings = config["analytics"]
     if not settings.get("method_id") or not settings.get("channel") or not settings.get("references"):
@@ -21,6 +49,7 @@ def validate_analytics_settings(config):
                 "mass_balance_tolerance_fraction", "blank_max_product_umol"):
         finite(settings[key], key, 0)
     if settings["calibration_mode"] == "internal_standard":
+        calibration_identity(config)
         finite(settings["internal_standard_final_uM"], "final IS concentration", 1e-12)
         finite(settings["internal_standard_area_tolerance_fraction"], "IS area tolerance", 0, 1)
     needed = ["substrate", "product"]+(["internal_standard"] if settings["calibration_mode"] == "internal_standard" else [])
@@ -203,6 +232,7 @@ def calibration_from_peaks(config, peaks_path, plan_path, output, reviewed_absen
         paths["reviewed_absences"] = reviewed_absences_path
     hashes = {name: digest(path) for name, path in paths.items()}
     plan = read_csv(plan_path)
+    identity = validate_calibration_identity(config, plan)
     absences = reviewed_absences(reviewed_absences_path, settings["method_id"])
     allowed_absences = {(row["sample_id"], row["analyte"]) for row in plan
                         if finite(row["concentration_uM"], "planned concentration", 0) == 0}
@@ -246,6 +276,7 @@ def calibration_from_peaks(config, peaks_path, plan_path, output, reviewed_absen
     write_csv(output, rows)
     write_json(str(output)+".inputs.json", {"peaks_sha256":hashes["peaks"], "plan_sha256":hashes["plan"],
                "config_digest":object_digest(config), "output_sha256":digest(output),
+               "calibration_identity": identity,
                "reviewed_absences_sha256":hashes.get("reviewed_absences"),
                "reviewed_absences":list(absences.values())})
 
@@ -257,6 +288,7 @@ def fit_calibration(config, rows):
         raise ValueError("Choose a validated external or internal-standard calibration")
     if not rows or any(row["analyte"] not in ("substrate", "product") for row in rows):
         raise ValueError("Calibration requires only explicit substrate/product analyte labels")
+    validate_calibration_identity(config, rows)
     requirements = settings.get("calibration_requirements", {})
     minimum_levels = requirements.get("minimum_nonzero_levels", 3)
     minimum_checks = requirements.get("minimum_independent_checks", 1)
@@ -517,6 +549,7 @@ def analyze(config, dosing, peaks, calibration, output):
     rejected = sum(not r["qc_pass"] for r in results)
     control_failed = any(not r["qc_pass"] for r in results if r["kind"] == "blank")
     report = {"calibration": models, "samples": len(results), "rejected": rejected,
+              "calibration_identity": calibration_identity(config),
               "batch_qc_pass": not control_failed and rejected/len(results) <= settings["maximum_rejected_fraction"],
               "method_id": settings["method_id"], "channel": settings["channel"],
               "quantification_limits_uM": {

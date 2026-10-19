@@ -222,8 +222,8 @@ def analytical_summary(config):
 
 
 def validate_config(config, live=False, live_scope="all"):
-    if config.get("schema_version") != 5:
-        raise ValueError("Use campaign schema_version 5: robotic stock preparation, standards and per-round substrate dosing")
+    if config.get("schema_version") != 6:
+        raise ValueError("Use campaign schema_version 6: weighed naphthalene stock and regenerated preparation/calibration files")
     if live_scope not in ("all", "first_reaction"):
         raise ValueError("Unknown live validation scope")
     reservoir_source_pools(config)
@@ -246,6 +246,12 @@ def validate_config(config, live=False, live_scope="all"):
     if capacity > config["robot"].get("reservoir_working_volume_ul", capacity):
         raise ValueError("Reservoir fill limit exceeds the configured labware working volume")
     c, liquid = config["chemistry"], config["liquids"]
+    standard = c.get("preloaded_internal_standard", {})
+    if (standard.get("identity") != "naphthalene" or standard.get("cas") != "91-20-3"
+            or config["analytics"].get("internal_standard") != "naphthalene"
+            or not math.isclose(finite(standard.get("molecular_weight_g_mol"), "naphthalene molecular weight", 1), 128.17)
+            or not math.isclose(finite(liquid.get("internal_standard_molecular_weight_g_mol"), "IS molecular weight", 1), 128.17)):
+        raise ValueError("Schema 6 requires naphthalene (CAS 91-20-3, 128.17 g/mol) for reaction and calibration")
     for name in ("substrate_molarity_M", "reaction_volume_ul", "ligand_a_mol_percent",
                  "ligand_b_mol_percent", "pd_mol_percent", "reaction_minutes"):
         finite(c[name], name, 0.00001)
@@ -255,9 +261,9 @@ def validate_config(config, live=False, live_scope="all"):
     finite(liquid["mix_rpm"], "uncapped reaction workup shaking (750 rpm maximum)", 200, 750)
     if (liquid.get("substrate_stock_solvent") != "toluene" or liquid.get("substrate_evaporation_required") is not False
             or liquid.get("substrate_stock_contains_internal_standard") is not True):
-        raise ValueError("This campaign requires retained toluene stock containing SM and mesitylene; no evaporation")
+        raise ValueError("This campaign requires retained toluene stock containing SM and naphthalene; no evaporation")
     if liquid["internal_standard_addition_stage"] != "reaction_stock":
-        raise ValueError("Combined SM/IS stock requires reaction-stage mesitylene")
+        raise ValueError("Combined SM/IS stock requires reaction-stage naphthalene")
     expected_ratio = finite(c["preloaded_internal_standard"]["mol_percent_relative_to_substrate"], "reaction IS mol%", 0.000001)/100
     if not math.isclose(finite(liquid["internal_standard_stock_mM"], "combined stock IS", 0.000001)/finite(liquid["substrate_stock_mM"], "combined stock SM", 0.000001), expected_ratio):
         raise ValueError("Combined SM/IS concentrations do not match the required IS loading")
@@ -665,7 +671,7 @@ def stock_plan(config, inventory, operations, reserve_round2=True):
             sm_prepare=max(sm_prepare,math.ceil(bulk_required/500)*500)
         if sm_load>config["stock_preparation"]["tube_max_fill_ul"]:
             raise ValueError("Retained SM/IS working tube cannot cover both rounds")
-        records.append({"reagent":"substrate_stock", "name":"Combined SM + mesitylene; retained toluene",
+        records.append({"reagent":"substrate_stock", "name":"Combined SM + naphthalene; retained toluene",
             "solvent":"toluene", "stock_mM":liquid["substrate_stock_mM"],
             "protocol_consumption_ul":usage["substrate_stock"], "round2_reserve_ul":sm_reserve,
             "dead_ul":sm_dead,"prepare_ul":sm_prepare if reserve_round2 else 0,

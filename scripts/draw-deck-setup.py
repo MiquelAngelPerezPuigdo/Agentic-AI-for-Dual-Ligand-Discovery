@@ -89,7 +89,7 @@ def draw(output):
             labels[c["stock_preparation"]["substrate_source_well"]]=("SM/IS",BLUE)
         for source in budget["source_loads"]:
             if source["slot"]==slot: labels[source["well"]]=("Pd",AMBER)
-        for key,label,color in (("neat_is_source","IS neat",BLUE),("initial_acid_source","10% FA",AMBER)):
+        for key,label,color in (("internal_standard_source","IS 500",BLUE),("initial_acid_source","10% FA",AMBER)):
             location=c["automation"][key]
             if location["slot"]==slot:labels[location["well"]]=(label,color)
         left,bottom,width,height=x+.37,y+.28,2.59,.93
@@ -106,7 +106,7 @@ def draw(output):
                 ax.add_patch(Circle((cx,cy),.105,facecolor=color if label else "white",edgecolor=color,
                                     linewidth=.8,alpha=.15 if label else 1))
                 text(cx,cy,label,6.2 if len(label)>3 else 7.3,weight="bold",ha="center",color=color)
-        note="Ligands + neat IS; RockPhos retained in C1" if slot==1 else "Ligands + SM/IS + Pd; FA only during prep"
+        note="Ligands + IS stock; RockPhos retained in C1" if slot==1 else "Ligands + SM/IS + Pd; FA only during prep"
         text(x+1.575,y+.115,note,8.1,color=MUTED,ha="center")
 
     x,y=slots[2]
@@ -147,7 +147,7 @@ def draw(output):
     text(sx,9.23,"Bulk carriers 3 / 6: suitable geometry PENDING.",10.3,color=AMBER)
     text(sx,8.92,"Raw 8-channel reservoir in slot 2; single only.",10.3)
     text(sx,8.61,"Left p300 single + RIGHT p1000 single.",10.3)
-    text(sx,8.24,"Robot adds solvent, mixes and fills tubes.",10.5,weight="bold")
+    text(sx,8.24,"Naphthalene: 60 mg in 1 C2 → 500 mM stock.",10.3,weight="bold")
     text(sx,7.93,"Then change right p1000 → p300 eight-channel.",10.0,color=MUTED)
 
     text(sx,7.47,"2  Working sources for both rounds",12,weight="bold")
@@ -157,7 +157,7 @@ def draw(output):
     text(sx,6.80,f"4 A3/B3/C3: ~{pd_sources[0]['prepare_ul']/1000:.2f} mL; A4: ~{pd_sources[3]['prepare_ul']/1000:.2f} mL",10.3)
     text(sx,6.49,"Retain all FOUR tubes; no Pd transfer or refill.",10.3)
     text(sx,6.18,f"{budget['weigh_mg']:g} mg total; keep {budget['scope_reserved_mg']:g} mg solid for scope.",10.0,color=MUTED)
-    text(sx,5.80,"SM/IS: 1 M / 100 mM; 2 mL nominal bulk.",10.3,color=BLUE)
+    text(sx,5.80,"SM/naphthalene: 1 M / 100 mM; 2 mL bulk.",10.3,color=BLUE)
     text(sx,5.49,"4 D2: 1.89 mL; retain capped, no SM refill.",10.3)
     text(sx,5.18,"Each round: empty vials → SM/IS → catalysts.",10.0,weight="bold")
 

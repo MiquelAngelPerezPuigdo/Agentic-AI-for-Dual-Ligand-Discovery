@@ -6,11 +6,11 @@ Official **48 pairs (24 consensus +24 Sobol)**: `campaigns/hackathon2026/round1_
 
 Python 3.12: **`uv sync --locked --python 3.12 --extra sources --extra robot`**; prefix commands with `uv run`. Or install `.[sources,robot]` in a venv. Copy config to **`local_data/campaign.json`**, calibration template to `local_data/calibration-plan.csv`, key example to **`anthropic.key`**. Put the raw Claude key there; preserve existing keys. Never send it to the robot/Git.
 
-Use schema **5**; replace old protocols while preserving measured LC facts. Set both `liquids.mix_rpm` and `liquids.lc_mix_rpm` to **750**; regenerate preparation/protocol files. Workup vials now stay open between quench and sampling; recap only for storage. Older 1500/1000-rpm local settings are rejected. Configure method/channel, full cycle and RTs/LOQs. Choose nondetection policy: default `reject` stops a missing-analyte result; `censor` reports bounds after RT/LOQ validation. **Default bulk-source reach fails:** supply actual suitable short-container/rack geometry before live release. Concentrations use nominal solvent addition. Twelve hours is advisory; record real times.
+Use schema **6** and naphthalene IS; replace older configs/protocols. Preserve confirmed hardware/method facts, **re-establish IS retention time and calibration with naphthalene**; old mesitylene calibration is invalid. Both open shakes are **750 rpm /2 min**. Regenerate preparation/protocol files; leave workup vials open through sampling, recap for storage. Configure method/channel, full cycle and RTs/LOQs. Choose nondetection policy: default `reject` stops a missing-analyte result; `censor` reports bounds after RT/LOQ validation. **Default bulk-source reach fails:** supply actual suitable short-container/rack geometry before live release. Concentrations use nominal solvent addition. Twelve hours is advisory; record real times.
 
 ## Robot preparation, then R1
 
-Generate a guarded preview; fill actual masses/assays in `local_data/charges.csv` from its template. Pd: **22.8 mg each in 4 A3/B3/C3; 21.6 mg in 4 A4**, 90 mg total. Follow carrier/raw-load CSVs. After local checks:
+Generate a guarded preview; fill actual masses/assays in `local_data/charges.csv` from its template. Pd: **22.8 mg each in 4 A3/B3/C3; 21.6 mg in 4 A4**, 90 mg total. **IS_SOURCE: 60 mg naphthalene in 1 C2; IS_MASTER empty.** Follow carrier/raw-load CSVs. After local checks:
 
 ```bash
 python -m hte.cli --config local_data/campaign.json prepare-stocks \

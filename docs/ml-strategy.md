@@ -69,7 +69,7 @@ The [initialization review](initialization-review.md) maps the official selectio
 
 ## 4. Experimental feedback → final 22
 
-After all **48 first-round samples** have completed, integrated UV areas are normalized with explicit injection maps. Authentic SM/product standards at fixed mesitylene concentration establish quantitative response; calibration, sample identity, method/channel, peak assignment and analytical QC must pass. Missing/rejected measurements are not converted to zero. Configured censoring retains an upper bound. [LC handling](htel-lc-import.md), [analysis](../hte/analytics.py).
+After all **48 first-round samples** have completed, integrated UV areas are normalized with explicit injection maps. Authentic SM/product standards at fixed naphthalene concentration establish quantitative response; calibration, sample identity, method/channel, peak assignment and analytical QC must pass. Missing/rejected measurements are not converted to zero. Configured censoring retains an upper bound. [LC handling](htel-lc-import.md), [analysis](../hte/analytics.py).
 
 Claude receives the same fixed chemistry, ligand identities and single-ligand SI values, plus valid first-round pair observations and any bounds. It scores the **387 untested pairs**, again in small anchor/partner requests with five scores per pair. Select the highest-ranked **22 feasible pairs** by mean score, skipping candidates after **four R2 uses of L03 RockPhos**, with deterministic tie-breaking, and append the configured **L17 single reference at 12 mol% total ligand**. No embedding-diversity term is applied in round two. [Feedback workflow](../hte/workflow.py).
 
@@ -87,7 +87,7 @@ The current per-campaign cap is **\$20**, using incremental conservative cold-ca
 
 ## Reproduction and interpretation
 
-The frozen initial scoring used prompt format 6. Current format 7 corrects the score instruction to refer to `partner_ligand_ids`, matching the query/schema already used; chemistry, evidence and scoring policy are unchanged. [Current prompt preview](claude-scoring-prompt.txt); the original accepted request remains in the frozen scoring record. This wording correction does not rerun scoring. David's adopted initialization changes the selection while preserving those paid scores and their provenance.
+The frozen initial scoring used prompt format 6 and mesitylene IS. Current prompts use naphthalene IS and refer to `partner_ligand_ids`, matching the query/schema. The original 48-pair selection and paid records remain unchanged; the IS change is not a new scoring run. R2 receives the current chemistry and actual measured feedback. [Current prompt preview](claude-scoring-prompt.txt); the original accepted request remains in the frozen scoring record. Neither this update nor the IS substitution reruns paid initial scoring. David's adopted initialization changes the selection while preserving those paid scores and their provenance.
 
 [The campaign folder](../campaigns/hackathon2026/README.md) retains repeated scores, mean/SD ranking, source hashes, model/settings, example request and selection trace. [Development commands](development.md) reproduce the initial design without an API call. Practice loops generate synthetic yields and mocked Claude responses only; they verify data flow and never establish chemical performance. The real second selection waits for experimental results.
 

@@ -2,9 +2,9 @@
 
 Use calibrated integrated UV peak areas for yield; MS is identity support. The old supplied CSV establishes format only. Its RTs, names and wavelength settings do not validate the requested 1.7-minute method. The supplied Thermo RAW is MS data, not raw DAD for MOCCA.
 
-**Processing chain:** HTEL integrated-peak CSV → Python calibration and mesitylene normalization → yield/QC → Claude feedback. Our workstation needs no Chromeleon installation or concentration export. HTEL's instrument software performs acquisition/peak integration upstream; the importer retains compatibility with its supplied CSV layout. Standards remain required.
+**Processing chain:** HTEL integrated-peak CSV → Python calibration and naphthalene normalization → yield/QC → Claude feedback. Our workstation needs no Chromeleon installation or concentration export. HTEL's instrument software performs acquisition/peak integration upstream; the importer retains compatibility with its supplied CSV layout. Standards remain required.
 
-**Yield calculation is deterministic.** Python matches peaks to measured reference windows, fits analyte/IS area ratios against known standard concentrations, applies the recorded workup/dilution volumes and divides product amount by starting SM amount. Reaction stock concentrations and volumes are nominal under the declared solvent-addition approximation. The robot sets the SM:IS molar ratio from weighed SM and the neat IS dose. With nominal 750 µL extract, 50-fold LC dilution and 25 µmol SM, `yield (%) = 0.15 × product concentration in the LC well (µM)`. Invalid results fail QC; nondetections can be bounds rather than fabricated zeros. Claude receives accepted measurements and selects conditions; it does not calculate or estimate experimental yields.
+**Yield calculation is deterministic.** Python matches peaks to measured reference windows, fits analyte/IS area ratios against known standard concentrations, applies the recorded workup/dilution volumes and divides product amount by starting SM amount. Reaction stock concentrations and volumes are nominal under the declared solvent-addition approximation. The robot sets the SM:IS molar ratio from weighed SM and the measured 500 mM naphthalene-source dose. With nominal 750 µL extract, 50-fold LC dilution and 25 µmol SM, `yield (%) = 0.15 × product concentration in the LC well (µM)`. Invalid results fail QC; nondetections can be bounds rather than fabricated zeros. Claude receives accepted measurements and selects conditions; it does not calculate or estimate experimental yields.
 
 ## What the original paper reports
 
@@ -12,15 +12,17 @@ The [original paper](https://pubs.rsc.org/sc/article/16/40/18936/909976/Pd-catal
 
 The explicit HPLC exception is **2-fluoro-5-(trifluoromethyl)pyridine (2b)**, whose fluorine NMR signals overlap. S21 reports 89% yield from one-point calibration with authentic product and **naphthalene IS**; its amount and addition stage are unspecified. Figure S2 shows detection at **254 nm (4 nm bandwidth)** on an approximately 0–15 min displayed time axis. A strong, separated toluene peak is visible: this wavelength does not remove toluene's response. These retention times cannot be transferred to our different product or HTEL method.
 
-S2 lists a Waters Synapt G2-Si TOF ESI/LC–MS among characterization instruments. The SI supplies no analytical LC column, gradient, flow, injection volume, quantitative MS transition or 1.7-minute method. It also supplies no mesitylene calibration, ACN/water/formic-acid workup or open-vial orbital-shaking procedure. Its 500 rpm refers to magnetic stirring during the sealed reaction.
+S2 lists a Waters Synapt G2-Si TOF ESI/LC–MS among characterization instruments. The SI supplies no analytical LC column, gradient, flow, injection volume, quantitative MS transition or 1.7-minute method. It also supplies no naphthalene calibration for our product, ACN/water/formic-acid workup or open-vial orbital-shaking procedure. Its 500 rpm refers to magnetic stirring during the sealed reaction.
 
-**Our mesitylene added with SM, multilevel UV calibration and automated LC preparation are project adaptations.** Keep them as configured; establish separation, response factors and LOQs with our authentic standards. The paper does not validate these choices. SI reviewed 19 October 2026; file SHA256 `e42878c3074dde11b46d37b7f341d49e35add254e7099f99124dffbced519396`. Frozen scoring inputs and their historical source links remain unchanged.
+**Our naphthalene added with SM, multilevel UV calibration and automated LC preparation are project adaptations.** The paper supports naphthalene as an HPLC IS for a different product; it does not establish stability when added before our 95 °C reaction or validate our separation. Establish response factors, RTs and LOQs with authentic standards. **After switching from mesitylene, regenerate standards and calibration; discard its IS retention-time assignment.** Preserve confirmed hardware/method facts. SI reviewed 19 October 2026; file SHA256 `e42878c3074dde11b46d37b7f341d49e35add254e7099f99124dffbced519396`. Frozen scoring inputs and their historical source links remain unchanged.
 
 ## Configure once from authentic standards
 
 In `local_data/campaign.json`, set the actual `analytics.method_id`, one quantitative `channel` (`UV_VIS_1` to `UV_VIS_4`), `references` and `quantification_limit_uM`. References require `substrate`, `product`, `internal_standard`, each with measured `retention_time_min` and `window_min`; windows must not overlap. Record actual detector wavelength and injection volume alongside the method. We request 210 nm initially; the example's channels at 253/270/300/370 nm are historical settings. Do not sum wavelengths or substitute TIC for UV area.
 
 The 14-sample plan is `hte_inputs/calibration_template.csv`: each analyte blank +10/50/150/350/800 µM and independent 666.667 µM check, IS66.667 µM throughout. [Preparation recipes](stocks-and-calibration.md). The robot prepares/pipette-mixes these in the first hold; staff seal/move the plate directly to LC. Use the generated calibration_injection_map.csv. Initial dosing release can precede calibration. Workup release requires completed calibration.
+
+Schema 6 calibration and pilot plans retain `internal_standard_identity=naphthalene` and `internal_standard_cas=91-20-3`. Measured calibration CSVs preserve both fields. Missing or mismatched identity stops analysis; acquire fresh naphthalene standards rather than relabeling mesitylene measurements. The robot's 8 mL analytical IS master keeps its smallest solvent addition above the p300 minimum; only 1 mL is loaded into analytical A3, with the remainder retained.
 
 ## One explicit mapping per acquisition sequence
 
@@ -61,8 +63,8 @@ python -m hte.cli practice-analytics --output output/analytics-practice
 
 No key or paid calls. Outputs:
 
-- `pilot_preparation.csv`: seven robot-prepared 1 mL samples using independent CHECK-master dilutions (0.5/5 mM analyte), 2 mM analytical mesitylene and matched matrix. Enable `automation.prepare_optional_pilot=true` BEFORE generating stock preparation and R1 protocols; the robot fills A3-G3 on the calibration plate. Keep its acquisition/export map separate from the 14 calibration injections.
-- `pilot_plan.csv`: expected concentrations. Mixtures contain SM +product =666.667 µM; mesitylene stays at 66.667 µM. Sequence: 0/10/50/90/100% product, analyte-free IS blank immediately after the high-product sample, then an independently prepared 50/50 repeat.
+- `pilot_preparation.csv`: seven robot-prepared 1 mL samples using independent CHECK-master dilutions (0.5/5 mM analyte), 2 mM analytical naphthalene and matched matrix. Enable `automation.prepare_optional_pilot=true` BEFORE generating stock preparation and R1 protocols; the robot fills A3-G3 on the calibration plate. Keep its acquisition/export map separate from the 14 calibration injections.
+- `pilot_plan.csv`: expected concentrations. Mixtures contain SM +product =666.667 µM; naphthalene stays at 66.667 µM. Sequence: 0/10/50/90/100% product, analyte-free IS blank immediately after the high-product sample, then an independently prepared 50/50 repeat.
 - `pilot_injection_map.csv`, `calibration_injection_map.csv`, `absence_review_template.csv`: fill actual method/sequence and reviewer details locally.
 - `practice_report.json`, labelled `synthetic/`: mock vendor exports → 14-injection calibration → pilot replay, plus nine challenges. Synthetic reviews, methods and RTs are never real setup evidence.
 
@@ -101,11 +103,11 @@ The original file contains integrated areas, not raw traces. Peak widths, 1.7-mi
 
 ### Assumed column and gradient scenarios
 
-With `.[reports]` installed, run `python scripts/simulate-lc-separation.py --output output/lc-separation`, then open `separation-report.html`. It explores SM, product, toluene and mesitylene on an **assumed** 50 ×2.1 mm C18 column, 1.9 µm, 40 °C and 0.6 mL/min, using three 1.7-minute water/ACN gradient programs with 0.1% formic acid. Compare equal-area and concentration-weighted traces, change the assumed tail fraction, and inspect deliberately compressed-selectivity cases.
+With `.[reports]` installed, run `python scripts/simulate-lc-separation.py --output output/lc-separation`, then open `separation-report.html`. It explores SM, product, toluene and naphthalene on an **assumed** 50 ×2.1 mm C18 column, 1.9 µm, 40 °C and 0.6 mL/min, using three 1.7-minute water/ACN gradient programs with 0.1% formic acid. Compare equal-area and concentration-weighted traces, change the assumed tail fraction, and inspect deliberately compressed-selectivity cases.
 
 This is an uncalibrated linear-solvent-strength migration model. The starting retention coefficients use an explicitly invented relationship to RDKit cLogP; they are not a manufacturer's prediction or measured data. A 512-draw sensitivity sweep varies those coefficients and slopes; draw counts are not real coelution probabilities. Isocratic analytic-reference and numerical-convergence checks verify the solver only. Ionization, matrix peaks, detector saturation and full wash/re-equilibration throughput are outside the model. Gaussian-width resolution does not establish quantitative purity beside a large tailed solvent peak.
 
-The configured dilution gives about 0.667% v/v toluene (63 mM using assumed density 0.867 g/mL), versus 66.7 µM mesitylene. Relative UV responses are unknown; the weighted display assumes equal molar response. Reports, parameter tables and illustrative traces stay in the requested output folder. This script does not change the campaign method/configuration, create robot instructions or publish optimizer observations.
+The configured dilution gives about 0.667% v/v toluene (63 mM using assumed density 0.867 g/mL), versus 66.7 µM naphthalene. Relative UV responses are unknown; the weighted display assumes equal molar response. Reports, parameter tables and illustrative traces stay in the requested output folder. This script does not change the campaign method/configuration, create robot instructions or publish optimizer observations.
 
 ## Reaction results and final 22
 

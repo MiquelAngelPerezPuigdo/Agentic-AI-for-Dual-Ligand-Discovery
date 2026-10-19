@@ -88,7 +88,7 @@ def test_tip_capacity_source_ledger_and_round_start_substrate(demo, cfg, invento
     plan = stock_plan(cfg, inventory, ops)
     assert all(r["capacity_ok"] for r in plan)
     assert all(r["prepare_ul"] >= r["protocol_consumption_ul"]+r["round2_reserve_ul"]+r["dead_ul"] for r in plan)
-    assert "NO mesitylene" in next(r for r in plan if r["reagent"] == "LC_diluent")["solvent"]
+    assert "NO naphthalene" in next(r for r in plan if r["reagent"] == "LC_diluent")["solvent"]
     workup=next(r for r in plan if r["reagent"] == "workup")
     assert workup["stock_mM"] == 0
     assert workup["mass_mg"] == 0
@@ -96,7 +96,7 @@ def test_tip_capacity_source_ledger_and_round_start_substrate(demo, cfg, invento
     expected_volume = 2000 if reuse else 2500
     assert mixed["prepare_ul"] == expected_volume
     assert mixed["mass_mg"] == pytest.approx(expected_volume*161.16/1000)
-    assert mixed["internal_standard_mM"]==100 and mixed["internal_standard_mass_mg"]==pytest.approx(expected_volume*120.19/10000)
+    assert mixed["internal_standard_mM"]==100 and mixed["internal_standard_mass_mg"]==pytest.approx(expected_volume*128.17/10000)
     assert not any(r["reagent"]=="internal_standard" for r in plan)
     assert mixed["source_slot"] == 4 and mixed["source_well"] == "D2"
     assert "Original 2 mL SM/IS working tube" in mixed["storage_container"]
@@ -181,7 +181,7 @@ def test_separate_stock_assays_apply_to_each_solute(demo, cfg, inventory):
     mixed = next(r for r in stock_plan(cfg, inventory, transfer_operations(cfg, inventory, rows))
                  if r["reagent"] == "substrate_stock")
     assert mixed["mass_mg"] == pytest.approx(322.32/0.95)
-    assert mixed["internal_standard_mass_mg"]==pytest.approx(24.038/0.98)
+    assert mixed["internal_standard_mass_mg"]==pytest.approx(25.634/0.98)
 
 
 def test_combined_stock_rejects_duplicate_is_in_workup(cfg):

@@ -6934,7 +6934,7 @@ L 1149.12 692.64
     <text style="font-weight: 700; font-size: 7.3px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #24766c" x="88.98" y="606.786289" transform="rotate(-0 88.98 606.786289)">L03</text>
    </g>
    <g id="text_53">
-    <text style="font-weight: 700; font-size: 6.2px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #276d9b" x="120.06" y="606.500547" transform="rotate(-0 120.06 606.500547)">IS neat</text>
+    <text style="font-weight: 700; font-size: 6.2px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #276d9b" x="120.06" y="606.500547" transform="rotate(-0 120.06 606.500547)">IS 500</text>
    </g>
    <g id="text_54">
     <text style="font-weight: 700; font-size: 7.3px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #24766c" x="151.14" y="606.786289" transform="rotate(-0 151.14 606.786289)">L11</text>
@@ -6970,7 +6970,7 @@ L 1149.12 692.64
     <text style="font-weight: 700; font-size: 7.3px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #24766c" x="244.38" y="623.526289" transform="rotate(-0 244.38 623.526289)">L24</text>
    </g>
    <g id="text_65">
-    <text style="font-size: 8.1px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #5c666b" x="160.2" y="643.984418" transform="rotate(-0 160.2 643.984418)">Ligands + neat IS; RockPhos retained in C1</text>
+    <text style="font-size: 8.1px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #5c666b" x="160.2" y="643.984418" transform="rotate(-0 160.2 643.984418)">Ligands + IS stock; RockPhos retained in C1</text>
    </g>
    <g id="text_66">
     <text style="font-size: 7.3px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #5c666b" x="88.98" y="424.536289" transform="rotate(-0 88.98 424.536289)">1</text>
@@ -7126,7 +7126,7 @@ L 1149.12 692.64
     <text style="font-size: 10.3px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #242c31" x="794.16" y="246.755988" transform="rotate(-0 794.16 246.755988)">Left p300 single + RIGHT p1000 single.</text>
    </g>
    <g id="text_117">
-    <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #242c31" x="794.16" y="273.447949" transform="rotate(-0 794.16 273.447949)">Robot adds solvent, mixes and fills tubes.</text>
+    <text style="font-weight: 700; font-size: 10.3px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #242c31" x="794.16" y="273.395988" transform="rotate(-0 794.16 273.395988)">Naphthalene: 60 mg in 1 C2 → 500 mM stock.</text>
    </g>
    <g id="text_118">
     <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #5c666b" x="794.16" y="295.638047" transform="rotate(-0 794.16 295.638047)">Then change right p1000 → p300 eight-channel.</text>
@@ -7147,7 +7147,7 @@ L 1149.12 692.64
     <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #5c666b" x="794.16" y="421.638047" transform="rotate(-0 794.16 421.638047)">90 mg total; keep 10 mg solid for scope.</text>
    </g>
    <g id="text_124">
-    <text style="font-size: 10.3px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #276d9b" x="794.16" y="449.075988" transform="rotate(-0 794.16 449.075988)">SM/IS: 1 M / 100 mM; 2 mL nominal bulk.</text>
+    <text style="font-size: 10.3px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #276d9b" x="794.16" y="449.075988" transform="rotate(-0 794.16 449.075988)">SM/naphthalene: 1 M / 100 mM; 2 mL bulk.</text>
    </g>
    <g id="text_125">
     <text style="font-size: 10.3px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #242c31" x="794.16" y="471.395988" transform="rotate(-0 794.16 471.395988)">4 D2: 1.89 mL; retain capped, no SM refill.</text>

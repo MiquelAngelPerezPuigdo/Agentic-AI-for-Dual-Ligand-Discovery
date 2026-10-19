@@ -19,10 +19,10 @@
     "rpm": 500,
     "atmosphere": "air",
     "preloaded_internal_standard": {
-      "identity": "mesitylene",
-      "cas": "108-67-8",
-      "smiles": "Cc1cc(C)cc(C)c1",
-      "molecular_weight_g_mol": 120.19,
+      "identity": "naphthalene",
+      "cas": "91-20-3",
+      "smiles": "c1ccc2ccccc2c1",
+      "molecular_weight_g_mol": 128.17,
       "mol_percent_relative_to_substrate": 10,
       "addition_stage": "reaction_stock"
     },
@@ -72,14 +72,14 @@
     "workup_ul": 500,
     "aliquot_ul": 20,
     "diluent_ul": 980,
-    "workup_composition": "9:1 acetonitrile/water, 0.15% v/v formic acid; NO mesitylene. Addition to 250 uL reaction gives nominal 0.1% acid in 750 uL extract.",
+    "workup_composition": "9:1 acetonitrile/water, 0.15% v/v formic acid; NO naphthalene. Addition to 250 uL reaction gives nominal 0.1% acid in 750 uL extract.",
     "mix_rpm": 750,
-    "lc_diluent_composition": "1:1 water/acetonitrile, 0.1% v/v formic acid; NO mesitylene",
+    "lc_diluent_composition": "1:1 water/acetonitrile, 0.1% v/v formic acid; NO naphthalene",
     "substrate_stock_solvent": "toluene",
     "internal_standard_stock_mM": 100,
     "internal_standard_addition_stage": "reaction_stock",
     "internal_standard_workup_mM": 0,
-    "internal_standard_molecular_weight_g_mol": 120.19,
+    "internal_standard_molecular_weight_g_mol": 128.17,
     "substrate_evaporation_required": false,
     "internal_standard_stock_solvent": "toluene",
     "workup_formic_acid_percent": 0.15,
@@ -238,7 +238,7 @@
     "method_id": null,
     "channel": null,
     "calibration_mode": "internal_standard",
-    "internal_standard": "mesitylene",
+    "internal_standard": "naphthalene",
     "internal_standard_final_uM": 66.66666666666667,
     "internal_standard_area_tolerance_fraction": 0.3,
     "minimum_calibration_r2": 0.995,
@@ -313,7 +313,7 @@
     "lc_plate_workflow_validated": false,
     "robot_stock_preparation_validated": false
   },
-  "schema_version": 5,
+  "schema_version": 6,
   "automation": {
     "enabled": true,
     "concentration_basis": "nominal_solvent_addition",
@@ -334,13 +334,6 @@
       "L03"
     ],
     "raw_definition_path": "hte_inputs/labware/axygen_8_reservoir_30000ul.json",
-    "neat_is_source": {
-      "slot": 1,
-      "well": "C2",
-      "minimum_load_ul": 500
-    },
-    "neat_is_density_g_ml": 0.864,
-    "neat_is_assay_fraction": 1,
     "initial_acid_source": {
       "slot": 4,
       "well": "D3"
@@ -357,6 +350,12 @@
     "preparation_large_pipette": "p1000_single_gen2",
     "preparation_manifest_path": "local_data/stock-prep/preparation_manifest.json",
     "prepare_optional_pilot": false,
-    "stock_preparation_atmosphere": "Air on OT-2; weigh ligands in glovebox and retain original reagent bottles there"
+    "stock_preparation_atmosphere": "Air on OT-2; weigh ligands in glovebox and retain original reagent bottles there",
+    "internal_standard_source": {
+      "slot": 1,
+      "well": "C2",
+      "stock_mM": 500,
+      "planned_mass_mg": 60
+    }
   }
 }

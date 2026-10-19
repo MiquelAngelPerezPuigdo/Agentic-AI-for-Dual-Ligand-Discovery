@@ -46,7 +46,7 @@ def test_preparation_preserves_all_volume_and_finite_reagent_budgets(setup):
     assert stocks["L03"]["kind"]=="direct"
     assert "solute displacement" in plan["concentration_basis"]
     assert not plan["actual_weighed_charges_supplied"] and not plan["physical_run_completed"]
-    assert len([s for s in plan["steps"] if s["type"]=="transfer" and s["label"]=="neat mesitylene"])==2
+    assert len([s for s in plan["steps"] if s["type"]=="transfer" and s["label"]=="naphthalene stock"])==2
 
 
 def test_every_calibration_well_has_the_expected_analyte_and_constant_is(setup):
@@ -83,7 +83,7 @@ def test_workup_fluids_are_built_from_raw_solvents_with_correct_acid_and_no_is(s
             assert total==pytest.approx(float(load["load_ul"]))
             assert acid/total==pytest.approx(.0015 if load["reagent"]=="workup" else .001)
             assert acn/total==pytest.approx(.9 if load["reagent"]=="workup" else .5)
-            assert not any("mesitylene" in s["label"] for s in additions)
+            assert not any("naphthalene" in s["label"] for s in additions)
 
 
 def test_horizontal_raw_reservoir_never_uses_eight_channels(setup):
@@ -189,7 +189,7 @@ def test_actual_sdk_executes_automated_preparation_and_holds(setup,stage):
         first_aspiration = next(i for i, message in enumerate(text) if message.startswith("Aspirating"))
         loading = next(message for message in text[:first_aspiration] if "ALL PREWEIGHED DIRECT STOCKS" in message)
         direct = [row for row in manifest["stocks"] if row["kind"] == "direct"]
-        assert {row["stock_id"] for row in direct} == {"L03", "Pd_1", "Pd_2", "Pd_3", "Pd_4"}
+        assert {row["stock_id"] for row in direct} == {"L03", "Pd_1", "Pd_2", "Pd_3", "Pd_4", "IS_SOURCE"}
         for row in direct:
             assert f"{row['stock_id']} at slot {row['source_slot']} {row['source_well']}" in loading
         assert "individually weighed solids" in loading and "Caps OPEN" in loading

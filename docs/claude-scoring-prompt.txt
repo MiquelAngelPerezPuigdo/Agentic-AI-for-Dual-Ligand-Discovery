@@ -227,13 +227,13 @@ cache_control={"type": "ephemeral", "ttl": "1h"}
   },
   "target_conditions": {
     "additives": [],
-    "atmosphere": "air; ligand stocks prepared in glovebox",
+    "atmosphere": "air",
     "ligand_a_mol_percent": 6,
     "ligand_b_mol_percent": 6,
     "pd_identity": "Pd(COD)(DQ), CAS 86228-59-3, one Pd atom per complex",
     "pd_mol_percent": 12,
     "preloaded_internal_standard": {
-      "identity": "mesitylene",
+      "identity": "naphthalene",
       "mol_percent_relative_to_substrate": 10
     },
     "product": "2-fluoropyridine",

@@ -198,19 +198,24 @@ def raw_sources(plan, phase):
     return pools,rows
 
 
-def matrix(plan,target,volume,pools,acid_source):
-    # Match nominal final samples using the configured extract and LC dilution.
+def matrix(plan,target,volume,pools,acid_source,toluene_credit_ul=0):
+    # Match final samples, accounting for toluene already delivered in the IS stock.
+    volume=finite(volume,"analytical matrix final volume",0.000001)
+    credit=finite(toluene_credit_ul,"analytical matrix toluene credit",0,volume)
+    if credit > plan.amounts.get(tuple(target),0)+1e-7:
+        raise ValueError("Analytical matrix toluene credit exceeds liquid already delivered")
     liquid=plan.config["liquids"];reaction=plan.config["chemistry"]["reaction_volume_ul"]
     extract=reaction+liquid["workup_ul"];total=liquid["aliquot_ul"]+liquid["diluent_ul"]
     aliquot=liquid["aliquot_ul"];diluent=liquid["diluent_ul"]
     toluene=reaction/extract*aliquot/total
     acn=(liquid["workup_ul"]*liquid["quench_acetonitrile_fraction"]/extract*aliquot+diluent*liquid["lc_diluent_acetonitrile_fraction"])/total
     acid=(liquid["workup_ul"]*liquid["workup_formic_acid_percent"]/100/extract*aliquot+diluent*liquid["lc_diluent_formic_acid_percent"]/100)/total
-    plan.raw("toluene",target,volume*toluene,pools)
+    toluene_addition=finite(volume*toluene-credit,"analytical matrix remaining toluene",0)
+    plan.raw("toluene",target,toluene_addition,pools)
     plan.raw("ACN",target,volume*acn,pools)
     plan.transfer(acid_source,target,volume*acid/.1,"10% aqueous FA stock")
     plan.raw("water",target,volume*max(0,1-toluene-acn-acid/.1),pools)
-    plan.mix(target,channels=1 if target[0]=="raw" else 8)
+    plan.mix(target,channels=8 if target[0]=="reservoir" else 1)
 
 
 def stock_records(config,inventory,design,charges=None):
@@ -235,6 +240,11 @@ def stock_records(config,inventory,design,charges=None):
             name="Independent authentic "+key,planned_mass_mg=row["mass_mg"],
             mw=config["chemistry"]["substrate_molecular_weight_g_mol"] if key.startswith("SM") else 97.09,
             stock_mM=10,kind="analytical",solvent="matrix",prepare_ul=row["prepare_ul"]))
+    is_source=config["automation"]["internal_standard_source"]
+    records.append(dict(stock_id="IS_SOURCE",reagent="internal_standard",name="Naphthalene source in toluene",
+        planned_mass_mg=is_source["planned_mass_mg"],mw=config["liquids"]["internal_standard_molecular_weight_g_mol"],
+        stock_mM=is_source["stock_mM"],kind="direct",solvent="toluene",
+        source_slot=is_source["slot"],source_well=is_source["well"]))
     given={}
     for row in charges or []:
         key=row["stock_id"]
@@ -262,11 +272,12 @@ def stock_records(config,inventory,design,charges=None):
     pd_limit=min(config["stock_preparation"]["available_mass_mg"]["Pd"],config["stock_preparation"]["fixed_stock_mass_mg"]["Pd"])
     if pd_mass>pd_limit+1e-8:
         raise ValueError("Combined Pd charges exceed available mass; preserve scope reserve")
-    # Use one common, neat mesitylene source for combined reaction stock and analytical IS master.
-    mass=25*config["automation"]["neat_is_density_g_ml"]
-    records.append(dict(stock_id="IS_MASTER",reagent="mesitylene",name="Analytical mesitylene master",planned_mass_mg=0,
-        actual_mass_mg=mass,assay_fraction=config["automation"]["neat_is_assay_fraction"],mw=config["liquids"]["internal_standard_molecular_weight_g_mol"],
-        stock_mM=20,kind="analytical",solvent="matrix",prepare_ul=mass*config["automation"]["neat_is_assay_fraction"]/config["liquids"]["internal_standard_molecular_weight_g_mol"]/20*1e6))
+    # This master is derived from the weighed source, never a second manual charge.
+    master_mM,master_ul=2,8000
+    records.append(dict(stock_id="IS_MASTER",reagent="internal_standard",name="Analytical naphthalene master",
+        planned_mass_mg=0,actual_mass_mg=master_mM*master_ul*config["liquids"]["internal_standard_molecular_weight_g_mol"]/1e6,
+        assay_fraction=1,mw=config["liquids"]["internal_standard_molecular_weight_g_mol"],
+        stock_mM=master_mM,kind="analytical",solvent="matrix",prepare_ul=master_ul))
     bulk=[r for r in records if r["kind"]!="direct"]
     for i,row in enumerate(bulk):
         batch=i//12+1;side=(i%12)//6;well=config["automation"]["bulk_wells"][i%6]
@@ -291,9 +302,8 @@ def build_stock_preparation(config,inventory,design,charges=None):
     validate_automation(config,inventory)
     records,stocks,operations=stock_records(config,inventory,design,charges)
     plan=Plan(config,large=True);pools,raw_loads=raw_sources(plan,"stocks")
-    auto=config["automation"];neat=["working"+str(auto["neat_is_source"]["slot"]),auto["neat_is_source"]["well"]]
-    plan.initial_liquid(neat,auto["neat_is_source"]["minimum_load_ul"],100)
-    raw_loads.append(dict(phase="stocks",reagent="NEAT mesitylene",slot=auto["neat_is_source"]["slot"],well=auto["neat_is_source"]["well"],minimum_load_ul=auto["neat_is_source"]["minimum_load_ul"],instruction="Coarse load at least this amount; keep below 1.95 mL. Robot measures the actual doses."))
+    auto=config["automation"];is_config=auto["internal_standard_source"]
+    is_source=["working"+str(is_config["slot"]),is_config["well"]]
     acid=["working"+str(auto["initial_acid_source"]["slot"]),auto["initial_acid_source"]["well"]]
     plan.raw("water",acid,1620,pools);plan.raw("FA",acid,180,pools);plan.mix(acid)
     matrix(plan,["raw","H1"],25000,pools,acid)
@@ -304,6 +314,8 @@ def build_stock_preparation(config,inventory,design,charges=None):
         if row["kind"]!="direct":continue
         target=["working"+str(row["source_slot"]),row["source_well"]]
         plan.raw("toluene",target,row["prepare_ul"],pools);plan.mix(target)
+        if row["stock_id"]=="IS_SOURCE":
+            plan.steps.append(dict(type="pause",message="Confirm the robot-prepared naphthalene source at slot " + str(is_config["slot"]) + " " + is_config["well"] + " is fully dissolved and visibly clear before it is used. If crystals remain, stop and resolve dissolution; do not transfer a suspension as an internal standard. Keep this source OPEN during stock preparation."))
     deck=working_loads(config,operations,stocks)
     for batch in sorted({r["carrier_id"].split('-')[1] for r in records if r["kind"]!="direct"}):
         group=[r for r in records if r["kind"]!="direct" and r["carrier_id"].split('-')[1]==batch]
@@ -315,24 +327,28 @@ def build_stock_preparation(config,inventory,design,charges=None):
             bulk_load(plan,subset,config)
             for row in subset:
                 target=[row["carrier_id"],row["source_well"]]
-                neat_volume=0
+                is_volume=0
                 if row["stock_id"]=="substrate_stock":
                     umol=row["actual_mass_mg"]*row["assay_fraction"]/row["mw"]*1000*config["chemistry"]["preloaded_internal_standard"]["mol_percent_relative_to_substrate"]/100
-                    neat_volume=umol*config["liquids"]["internal_standard_molecular_weight_g_mol"]/1000/auto["neat_is_density_g_ml"]/auto["neat_is_assay_fraction"]
-                elif row["stock_id"]=="IS_MASTER":neat_volume=25
-                if neat_volume:plan.transfer(neat,target,neat_volume,"neat mesitylene")
-                if row["solvent"]=="toluene":plan.raw("toluene",target,row["prepare_ul"]-neat_volume,pools)
+                    is_volume=umol/is_config["stock_mM"]*1000
+                elif row["stock_id"]=="IS_MASTER":
+                    is_volume=row["stock_mM"]*row["prepare_ul"]/is_config["stock_mM"]
+                if is_volume:plan.transfer(is_source,target,is_volume,"naphthalene stock")
+                if row["stock_id"]=="IS_MASTER":
+                    matrix(plan,target,row["prepare_ul"],pools,acid,toluene_credit_ul=is_volume)
                 else:
-                    ensure_matrix(row["prepare_ul"]-neat_volume)
-                    plan.transfer(["raw","H1"],target,row["prepare_ul"]-neat_volume,"analytical matrix")
-                plan.mix(target)
+                    if row["solvent"]=="toluene":plan.raw("toluene",target,row["prepare_ul"]-is_volume,pools)
+                    else:
+                        ensure_matrix(row["prepare_ul"])
+                        plan.transfer(["raw","H1"],target,row["prepare_ul"],"analytical matrix")
+                    plan.mix(target)
                 if not analytical_mode:
                     for load in [r for r in deck if r["reagent"]==row["stock_id"]]:
                         plan.transfer(target,["working"+str(load["source_slot"]),load["source_well"]],load["load_ul"],"fill "+row["stock_id"])
                 row["remaining_bulk_ul"]=plan.amounts[tuple(target)]
             if analytical_mode:
-                ensure_matrix(2465+(1564 if auto.get("prepare_optional_pilot") else 0))
-                plan.steps += [dict(type="pause",message="Store working stock rack 4 capped. Load a NEW empty 2 mL analytical rack in slot 4; leave working rack 1 in place for the neat IS source."),dict(type="off",key="working4"),dict(type="load",key="analytical",slot=4,labware=config["robot"]["ligand_source_labware"],label="Analytical source rack")]
+                ensure_matrix(1565+(1564 if auto.get("prepare_optional_pilot") else 0))
+                plan.steps += [dict(type="pause",message="Store working stock rack 4 capped. Load a NEW empty 2 mL analytical rack in slot 4; leave working rack 1 in place with the naphthalene source."),dict(type="off",key="working4"),dict(type="load",key="analytical",slot=4,labware=config["robot"]["ligand_source_labware"],label="Analytical source rack")]
                 for row in subset:
                     if row["stock_id"]=="IS_MASTER":continue
                     target=[row["carrier_id"],row["source_well"]]
@@ -340,8 +356,7 @@ def build_stock_preparation(config,inventory,design,charges=None):
                     if aliquot<600:raise ValueError("Authentic master charge too small for robotic preparation")
                     plan.transfer(target,["analytical",ANALYTICAL[row["stock_id"]]],aliquot,"authentic master "+row["stock_id"])
                 master=next(r for r in subset if r["stock_id"]=="IS_MASTER")
-                plan.transfer([master["carrier_id"],master["source_well"]],["analytical",ANALYTICAL["IS_WORK"]],100,"20 mM IS master")
-                plan.transfer(["raw","H1"],["analytical",ANALYTICAL["IS_WORK"]],900,"analytical matrix")
+                plan.transfer([master["carrier_id"],master["source_well"]],["analytical",ANALYTICAL["IS_WORK"]],1000,"2 mM naphthalene master")
                 for analyte in ("SM","P"):
                     for level,master_ul,matrix_ul in (("LOW",20,380),("HIGH",400,400)):
                         dest=["analytical",ANALYTICAL[analyte+"_"+level]]
@@ -363,7 +378,7 @@ def build_stock_preparation(config,inventory,design,charges=None):
     # Check reserve demands from worst-case R2 before any hardware file is released.
     for row in records:
         if row["kind"]=="direct":
-            if row["reagent"]=="Pd":continue  # Each actual charge was checked against its full two-round demand.
+            if row["reagent"] in ("Pd","internal_standard"):continue  # Pd demand was checked above; IS consumption is fully tracked by Plan.
             first=sum(r["consumption_ul"] for r in deck if r["reagent"]==row["stock_id"])
             reserve=sum(r["round2_reserve_ul"] for r in stocks if r["reagent"]==row["stock_id"])
             if row["prepare_ul"] < first+reserve+100:raise ValueError("Direct stock cannot cover both rounds: "+row["stock_id"])
@@ -504,17 +519,20 @@ def design_signature(rows):
 def validate_automation(config,inventory):
     a=config["automation"]
     if a.get("enabled") is not True or a.get("concentration_basis")!="nominal_solvent_addition" or a.get("approximation_accepted") is not True:
-        raise ValueError("Schema 5 requires the declared, accepted nominal robot-preparation concentration basis")
+        raise ValueError("Schema 6 requires the declared, accepted nominal robot-preparation concentration basis")
     if a["preparation_large_pipette"] not in ("p1000_single_gen2","p1000_single"):
         raise ValueError("Use the actual available p1000 single model for preparation")
     if type(a["mix_cycles"]) is not int or not 1<=a["mix_cycles"]<=50:raise ValueError("Choose 1-50 preparation mixing cycles")
     finite(a["mix_ul"],"preparation mixing volume",20,297)
-    finite(a["neat_is_density_g_ml"],"mesitylene density",.1,3)
-    finite(a["neat_is_assay_fraction"],"mesitylene assay",.000001,1)
+    is_source=a.get("internal_standard_source")
+    if not isinstance(is_source,dict):raise ValueError("Configure the weighed naphthalene internal_standard_source; neat-liquid IS settings are obsolete")
+    finite(is_source.get("stock_mM"),"naphthalene source concentration",.000001)
+    finite(is_source.get("planned_mass_mg"),"naphthalene source mass",.000001)
+    if any(key.startswith("neat_is_") for key in a):raise ValueError("Remove obsolete neat-liquid IS settings")
     positions={(int(r["source_slot"]),r["source_well"]) for r in inventory.values()}
     positions.add((config["stock_preparation"]["substrate_source_slot"],config["stock_preparation"]["substrate_source_well"]))
     positions.update((s["slot"],s["well"]) for s in config["stock_preparation"]["pd_source_pool"])
-    for key in ("neat_is_source","initial_acid_source"):
+    for key in ("internal_standard_source","initial_acid_source"):
         source=a[key];location=(source["slot"],source["well"])
         if location in positions or source["slot"] not in (1,4) or source["well"] not in {r+str(col) for r in "ABCD" for col in range(1,7)}:
             raise ValueError("Preparation source overlaps an occupied/invalid working position")
@@ -552,7 +570,7 @@ def export_stock_preparation(config,inventory,design,output,charges=None,live=Fa
     if charges is not None:write_csv(out/"weighed_charges_used.csv",charges)
     write_csv(out/"weighed_charges_template.csv",[dict(stock_id=r["stock_id"],name=r["name"],planned_mass_mg=r["planned_mass_mg"],actual_mass_mg="",assay_fraction=r["assay_fraction"])
         for r in plan["stocks"] if r["stock_id"]!="IS_MASTER"])
-    write_csv(out/"bulk_carriers.csv",[dict(stock_id=r["stock_id"],carrier_id=r.get("carrier_id","WORKING RACK"),slot=r.get("carrier_slot",r.get("source_slot","")),well=r.get("source_well",""),preloaded_mass_mg=0 if r["stock_id"]=="IS_MASTER" else r["actual_mass_mg"],preload_action="EMPTY: robot adds neat IS and matrix" if r["stock_id"]=="IS_MASTER" else "Weigh SM ONLY; robot adds mesitylene" if r["stock_id"]=="substrate_stock" else "Weigh independently from actual charges CSV",nominal_stock_mM=r["stock_mM"],robot_prepared_ul=r["prepare_ul"])
+    write_csv(out/"bulk_carriers.csv",[dict(stock_id=r["stock_id"],carrier_id=r.get("carrier_id","WORKING RACK"),slot=r.get("carrier_slot",r.get("source_slot","")),well=r.get("source_well",""),preloaded_mass_mg=0 if r["stock_id"]=="IS_MASTER" else r["actual_mass_mg"],preload_action="EMPTY: robot adds naphthalene source and matrix components" if r["stock_id"]=="IS_MASTER" else "Weigh SM ONLY; robot adds naphthalene source" if r["stock_id"]=="substrate_stock" else "Weigh independently from actual charges CSV",nominal_stock_mM=r["stock_mM"],robot_prepared_ul=r["prepare_ul"])
         for r in plan["stocks"]])
     write_csv(out/"raw_reagents_to_load.csv",plan["raw_loads"])
     source="from opentrons import protocol_api\n"
@@ -569,8 +587,7 @@ def run(protocol: protocol_api.ProtocolContext):
     labware={"working1":protocol.load_labware(CONFIG["robot"]["ligand_source_labware"],1),"working4":protocol.load_labware(CONFIG["robot"]["ligand_source_labware"],4),
         "raw":protocol.load_labware_from_definition(PREP_DEFINITIONS[CONFIG["automation"]["raw_definition_path"]],2)}
     direct_stocks = ", ".join(row["stock_id"] + " at slot " + str(row["source_slot"]) + " " + row["source_well"] for row in PLAN["stocks"] if row["kind"] == "direct")
-    neat = CONFIG["automation"]["neat_is_source"]
-    protocol.pause("Load ALL PREWEIGHED DIRECT STOCKS from bulk_carriers.csv: " + direct_stocks + ". These tubes must already contain their individually weighed solids. All other working tubes start EMPTY except neat mesitylene at slot " + str(neat["slot"]) + " " + neat["well"] + ". Load raw solvents per raw_reagents_to_load.csv. No hand aliquoting. Caps OPEN; slots 7 and 11 empty. Bulk carriers will be requested by ID.")
+    protocol.pause("Load ALL PREWEIGHED DIRECT STOCKS from bulk_carriers.csv: " + direct_stocks + ". These tubes must already contain their individually weighed solids. All other working tubes start EMPTY. The IS_SOURCE tube contains weighed SOLID naphthalene; the robot adds its toluene. Load raw solvents per raw_reagents_to_load.csv. No hand aliquoting. Caps OPEN; slots 7 and 11 empty. Bulk carriers will be requested by ID.")
     execute_liquid_plan(protocol,PLAN,labware,single,large=large)
     protocol.pause("Stocks ready. Replace the RIGHT p1000 single with p300 eight-channel GEN2, and 1000 uL tip racks 8/9 with 300 uL racks, through the local App installation/calibration workflow. Leave the left single installed. Cap and retain all labeled carriers and analytical rack. Leave working racks 1/4 in their exact positions. Remove raw reservoir 2; install a NEW EMPTY 12-channel workup reservoir in slot 2. Load the reaction block in slot 3 with " + str(CONFIG["design"]["round1_total"]) + " NEW EMPTY R1 vials and the empty calibration LC plate in slot 6 for the R1 protocol. No precise manual liquid transfers.")
 '''
@@ -585,6 +602,7 @@ def repr_constants(config,plan,live):
 
 def calibration_recipes(config):
     """All aliquots meet the p300 minimum; each authentic analyte has its own blank/check."""
+    from .analytics import calibration_identity
     rows=[]
     is_ul=config["analytics"]["internal_standard_final_uM"]/2000*1000
     for analyte,prefix in (("substrate","SM"),("product","P")):
@@ -595,12 +613,13 @@ def calibration_recipes(config):
             rows.append(dict(sample_id=f"CAL-{prefix}-{suffix}",role="check" if suffix=="CHECK" else "calibration",
                 analyte=analyte,concentration_uM=concentration,plate_id="CALIBRATION",well="ABCDEFG"[len(rows)%7]+str(1 if prefix=="SM" else 2),
                 source_id=source,stock_mM=stock,analyte_ul=volume,is_ul=is_ul,matrix_ul=1000-is_ul-volume,
-                internal_standard_concentration_uM=config["analytics"]["internal_standard_final_uM"]))
+                internal_standard_concentration_uM=config["analytics"]["internal_standard_final_uM"],**calibration_identity(config)))
     return rows
 
 
 def pilot_recipes(config):
     """Optional known mixtures, independently robot-diluted from CHECK masters."""
+    from .analytics import calibration_identity
     liquid=config["liquids"]
     maximum=(config["chemistry"]["substrate_molarity_M"]*config["chemistry"]["reaction_volume_ul"]*1e6
              /(config["chemistry"]["reaction_volume_ul"]+liquid["workup_ul"])
@@ -611,7 +630,7 @@ def pilot_recipes(config):
         product=maximum*fraction if fraction is not None else 0
         row=dict(sample_id=f"PILOT-{i:02d}",role="carryover_blank" if fraction is None else "independent_repeat" if i==7 else "mixture",
                  substrate_uM=sm,product_uM=product,internal_standard_uM=config["analytics"]["internal_standard_final_uM"],
-                 well="ABCDEFG"[i-1]+"3",plate_id="CALIBRATION",is_ul=config["analytics"]["internal_standard_final_uM"]/2)
+                 well="ABCDEFG"[i-1]+"3",plate_id="CALIBRATION",is_ul=config["analytics"]["internal_standard_final_uM"]/2,**calibration_identity(config))
         for prefix,concentration in (("SM",sm),("P",product)):
             stock=.5 if 0<concentration<100 else 5
             row[prefix+"_source"]=prefix+"_CHECK_"+("LOW" if stock==.5 else "HIGH")

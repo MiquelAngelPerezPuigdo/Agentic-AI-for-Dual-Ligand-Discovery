@@ -58,7 +58,7 @@ def test_combined_stock_has_practical_rounded_margin_and_covers_source_losses():
     stock=next(r for r in stock_plan(c,inv,ops) if r["reagent"]=="substrate_stock")
     assert stock["prepare_ul"]==2000
     assert stock["mass_mg"]==pytest.approx(322.32)
-    assert stock["internal_standard_mass_mg"]==pytest.approx(24.038)
+    assert stock["internal_standard_mass_mg"]==pytest.approx(25.634)
     assert stock["on_deck_ul"]+100 <= stock["prepare_ul"]
     assert stock["protocol_consumption_ul"] == 48*25+1
     assert stock["round2_reserve_ul"] >= 23*25+1

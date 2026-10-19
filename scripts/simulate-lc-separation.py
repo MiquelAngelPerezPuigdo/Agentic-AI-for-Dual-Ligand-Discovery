@@ -47,7 +47,7 @@ GRADIENTS = {
 SCENARIOS = {
     "heuristic": "Uncalibrated logP-based starting guess",
     "early_overlap": "Stress: SM and product have similar retention",
-    "aromatic_overlap": "Stress: toluene and mesitylene have similar retention",
+    "aromatic_overlap": "Stress: toluene and the internal standard have similar retention",
 }
 
 
@@ -111,7 +111,7 @@ def compounds(config):
     entries = [("SM", chemistry["substrate"], chemistry["substrate_smiles"], max_uM / 2),
                ("Product", chemistry["product"], chemistry["product_smiles"], max_uM / 2),
                ("Toluene", "Toluene", "Cc1ccccc1", None),
-               ("IS", "Mesitylene", chemistry["preloaded_internal_standard"]["smiles"],
+               ("IS", chemistry["preloaded_internal_standard"]["identity"], chemistry["preloaded_internal_standard"]["smiles"],
                 config["analytics"]["internal_standard_final_uM"])]
     for key, name, smiles, concentration in entries:
         mol = Chem.MolFromSmiles(smiles)
@@ -290,7 +290,7 @@ def render(out, report, visuals, time):
     axes[2, 1].set(xticks=x, xticklabels=["5–95%", "5–60%, wash", "35–95%"],
                    ylabel="Gaussian-width Rs (assumed)", title="Starting guess only; tailing assessed separately")
     axes[2, 1].legend(frameon=False, fontsize=8)
-    fig.suptitle("Assumed C18 separation: SM, product, toluene and mesitylene\nUncalibrated scenarios — not manufacturer predictions", fontsize=15)
+    fig.suptitle(f"Assumed C18 separation: SM, product, toluene and {records[3]['name']}\nUncalibrated scenarios — not manufacturer predictions", fontsize=15)
     fig.savefig(out / "separation-overview.png", dpi=150)
     plt.close(fig)
 
@@ -319,8 +319,8 @@ $CHART<div id="gradient"></div><p id="result" class="note"></p><div class="table
 <p class="small">Concentration-weighted traces use a logarithmic signal axis. Molar UV responses are assumed equal, not measured.
 Gaussian-width Rs ignores the added tail; it is a geometric reference, not a quantitative purity guarantee.</p>
 <h2>Starting assumptions</h2><table><thead><tr><th>Compound</th><th>RDKit cLogP</th><th>Assumed k₄₀</th><th>Concentration (µM)</th></tr></thead><tbody>$ASSUMPTIONS</tbody></table>
-<p>The sample represents a 50% yield mixture at the configured dilution: SM/product about 333 µM each, mesitylene 66.7 µM,
-toluene about 63,000 µM (0.667% v/v). This is about $RATIO toluene molecules per IS molecule.</p>
+<p>The sample represents a 50% yield mixture at the configured dilution: SM/product about $ANALYTE_CONC µM each, $IS_NAME $IS_CONC µM,
+toluene about $TOLUENE_CONC µM ($TOLUENE_PERCENT% v/v). This is about $RATIO toluene molecules per IS molecule.</p>
 <p><code>log10(k₄₀) = 0.6 × computed cLogP − 0.7</code>, with <code>log10(k) = log10(k₄₀) − S × (fraction B − 0.40)</code> and S=4.5.
 The first equation is an <b>unfitted illustrative choice</b>; cLogP alone is not a validated retention model. Neither ionization nor column selectivity is learned here.
 The two stress cases deliberately bring one pair's retention coefficients together; they are possible scenarios, not predictions.</p>
@@ -358,6 +358,10 @@ document.getElementById('case').addEventListener('change',update);document.getEl
 document.getElementById('tail').addEventListener('change',update);update();
 </script></body></html>""").substitute(T0=f"{report['t0_min']:.3f}", OPTIONS=options, CHART=plot_html,
                       ASSUMPTIONS=assumptions, RATIO=f"{report['toluene_to_IS_molar_ratio']:.0f}",
+                      IS_NAME=escape(records[3]["name"]), IS_CONC=f"{records[3]['concentration_uM']:.1f}",
+                      ANALYTE_CONC=f"{records[0]['concentration_uM']:.1f}",
+                      TOLUENE_CONC=f"{records[2]['concentration_uM']:,.0f}",
+                      TOLUENE_PERCENT=f"{report['toluene_final_vv_fraction']*100:.3f}",
                       DRAWS=report["sensitivity"][0]["synthetic_draws"], SENSITIVITY=sensitivity,
                       SOURCES=links, PAYLOAD=payload)
     atomic_text(out / "separation-report.html", html)

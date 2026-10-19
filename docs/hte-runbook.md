@@ -1,23 +1,23 @@
 # Experiment
 
-Use the [two-page bench sheet](HTE-staff-checklist.pdf). Every precise liquid transfer is robotic. Staff supply weighed chemicals/bulk liquids, handle caps and labeled labware moves, and import/start Python locally. Keep generated CSVs with their protocol.
+Use the [bench sheet](HTE-staff-checklist.pdf). Staff weigh/coarse-load chemicals, handle caps/labware and start Python locally; the robot measures liquids. Keep generated CSVs with their protocol.
 
 ## Chemistry and design
 
-**Pyridine-2-sulfonyl fluoride → 2-fluoropyridine.** Nominal per vial: 25 µmol SM, 1.5 µmol each ligand, 3 µmol Pd(COD)(DQ), 2.5 µmol mesitylene; 250 µL toluene, 95 °C, 500 rpm, 4 h under air. No base/external fluoride. Solvent addition defines nominal concentrations; solute displacement/contraction are accepted approximations.
+**Pyridine-2-sulfonyl fluoride → 2-fluoropyridine.** Nominal per vial: 25 µmol SM, 1.5 µmol each ligand, 3 µmol Pd(COD)(DQ), 2.5 µmol naphthalene; 250 µL toluene, 95 °C, 500 rpm, 4 h under air. No base/external fluoride. Solvent addition defines nominal concentrations; solute displacement/contraction are accepted approximations.
 
-R1: **48 pairs covering all 30 ligands**, from the official 24-consensus +24-Sobol design; L07 excluded. Regenerate stocks/protocols/maps from the current design; earlier R1 exports are superseded. R2: **22 pairs +L17 tBuBrettPhos at 12 mol% total ligand**; L03 at most four wells. No repeats. Higher yield than the reference identifies a preliminary candidate; R1 comparisons also confound batch effects. Reproducibility and cooperativity require later matched controls.
+R1: **48 pairs covering all 30 ligands**, official 24-consensus +24-Sobol design; L07 excluded. Regenerate stocks/protocols/maps. R2: **22 pairs +L17 tBuBrettPhos at 12 mol% total ligand**; L03 at most four wells. No repeats. Higher yield identifies a preliminary candidate; batch effects, reproducibility and cooperativity need later matched controls.
 
 ## Robot stock preparation
 
-1. Generate `weighed_charges_template.csv`; enter **actual masses/assays**. Weigh ligands in the glovebox; preserve original bottles there. Pd goes directly into four 2 mL tubes: **4 A3/B3/C3, 22.8 mg each; 4 A4, 21.6 mg**. Total ≤90 mg; keep 10 mg for scope. On the OT-2 under air, the robot adds solvents/neat mesitylene, mixes and fills working sources. Stock preparation is inside the campaign.
+1. Enter **actual masses/assays** in `weighed_charges_template.csv`. Weigh ligands in the glovebox; keep bottles there. Pd: **4 A3/B3/C3, 22.8 mg each; A4, 21.6 mg** (≤90 mg; keep 10 mg). Naphthalene: **60 mg in 1 C2**; `IS_MASTER` empty. Under air, the robot adds solvents, mixes and prepares reaction/analytical stocks. Preparation is inside campaign time.
 2. **Live release is blocked:** bottom aspiration in the configured 15 mL tubes requires unverified nozzle entry; the conservative reach check fails. Obtain actual short, solvent-compatible stock containers and matching rack JSON, then regenerate and check reach/capacity. Follow carrier/raw-load CSVs; no invented glass-vial dimensions.
 3. Run `prepare_stocks.py`: **p300 single left, p1000 single right**; tips 5 /8-9 respectively. Carriers occupy 3/6 temporarily; working racks 1/4. The supplied horizontal 8 ×30 mL reservoir in 2 is **single-channel only**. Robot prepares analytical matrix/masters/working stocks too.
 4. Cap/store reserve carriers and the prepared analytical rack. Leave working tubes in mapped positions. Change right pipette to **p300 eight-channel GEN2**, replace tips 8/9 with 300 µL racks using the local App installation/calibration workflow. Keep left p300 single.
 
 | Slot | Reaction-stage use |
 |---|---|
-| 1 / 4 | 2 mL working tubes; max 1.95 mL. Ligands at CSV addresses; neat IS **1 C2**, SM/IS **4 D2**, Pd **4 A3/B3/C3/A4**; prep acid **4 D3**. Retain RockPhos, SM/IS and all four Pd tubes. |
+| 1 / 4 | 2 mL working tubes; max 1.95 mL. Ligands at CSV addresses; 500 mM IS **1 C2**, SM/IS **4 D2**, Pd **4 A3/B3/C3/A4**; prep acid **4 D3**. Retain RockPhos, SM/IS and all four Pd tubes. |
 | 2 | New EMPTY 12-channel reservoir. Robot prepares workup fluids here during the hold; no staff premixing/refills. |
 | 3 / 10 | Reaction block at pipetting / heater-shaker positions; manual moves. During holds, 3 temporarily takes raw solvents. |
 | 6 | Calibration plate during R1; later a fresh final sample plate per round. Three compatible 96-well LC plates total. |
@@ -31,7 +31,7 @@ Start R1 Python with **48 NEW EMPTY vials** in the block at 3. Robot doses **25 
 
 Hand-cap all R1 vials; move/latch at App prompts. Run **95 °C /500 rpm /4 h**. During this hold the robot prepares **14 standards** and quench/diluent. Swap analytical rack into 4 and **uncap its source tubes**; raw reservoir into 3. Seal/move calibration plate 6→HPLC. **Reaction stays on 10.** Restore rack 4 and remove raw reservoir when prompted.
 
-**Start a 4 h external timer at the App's hold-start message, in both rounds.** Preparation and pauses count. Code checks/logs time but cannot stop heat while App-paused. At deadline, stop heat/shaking through the App; record deviations and do not resume dosing. The 60-second logging tolerance does not establish chemical equivalence.
+**Start a 4 h external timer at each App hold-start message.** Preparation/pauses count. Code cannot stop heat while App-paused. At deadline, stop heat/shaking through the App; record deviations and do not resume dosing. Logging tolerance does not establish chemical equivalence.
 
 
 ---
@@ -44,7 +44,7 @@ Hand-cap all R1 vials; move/latch at App prompts. Run **95 °C /500 rpm /4 h**. 
 4. Recap reaction vials. Move final LC plate **6→cooled shaker 10**, A1 orientation unchanged. Robot shakes **UNCOVERED, heater OFF, 750 rpm /2 min** at the locally confirmed splash-free speed. Reaction block remains in 3.
 5. Move LC plate **10→HPLC**, apply compatible pierceable seal and inject directly. R1: **R1-LC01 A1-H6**, 48 samples. R2: **R2-LC01 A1-H2 plus A3-G3**, 23 samples. **H3 is diluent only; never inject.** Follow generated sequence/maps; reaction and LC coordinates differ.
 
-Final sample: 1 mL; nominal maximum analyte **666.7 µM**, mesitylene **66.7 µM**, FA **0.1%**, toluene **0.667%**. Use the calibrated injection volume. Seal after final shaking to limit evaporation. There are four final-sample plate moves plus the calibration-plate handoff.
+Final sample: 1 mL; nominal maximum analyte **666.7 µM**, naphthalene **66.7 µM**, FA **0.1%**, toluene **0.667%**. Use the calibrated injection volume. Seal after final shaking to limit evaporation. There are four final-sample plate moves plus the calibration-plate handoff.
 
 ## R2 and finish
 
