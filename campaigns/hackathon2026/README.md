@@ -2,7 +2,7 @@
 
 This folder contains the adopted **48-pair, 24-consensus +24-Sobol selection** and its reproducibility record. All 30 available ligands are represented; no pair-yield measurements were used.
 
-David Ming Segura contributed the [notebook implementation](../../notebook/batch_suggestions.ipynb) in commit `c2682f3`. The production selector preserves its defaults: raw-T5/Claude baseline; standardization →16-component PCA →[0,1] scaling; retain 24 baseline pairs by diversity with all-ligand coverage; add 24 unique Sobol matches, seed 1. The adopted batch retains 26 pairs from the previous design and replaces 22. The previous all-consensus design is preserved at parent commit `c931e47`; **use the files in this checkout for the hackathon**.
+David Ming Segura contributed the [notebook implementation](https://github.com/MiquelAngelPerezPuigdo/Agentic-AI-for-Dual-Ligand-Discovery/blob/c2682f3db09eb496b92d11fb6725e9870157e301/notebook/batch_suggestions.ipynb) in commit `c2682f3`. The production selector preserves its defaults: raw-T5/Claude baseline; standardization →16-component PCA →[0,1] scaling; retain 24 baseline pairs by diversity with all-ligand coverage; add 24 unique Sobol matches, seed 1. The adopted batch retains 26 pairs from the previous design and replaces 22. The previous all-consensus design is preserved at parent commit `c931e47`; **use the files in this checkout for the hackathon**.
 
 - `round1_design.csv`: canonical sample IDs, ligand pairs and reaction/LC well assignments.
 - Companion `.selection.csv`, `.ligand_coverage.csv`, `.metadata.json`: selection sources/trace, inclusion counts, settings and provenance.

@@ -1,5 +1,4 @@
 """An internal-standard switch requires new, chemically identified calibration."""
-import importlib.util
 from pathlib import Path
 
 import pytest
@@ -91,18 +90,6 @@ def test_quantification_report_identifies_the_standard(tmp_path):
     assert report["batch_qc_pass"]
     assert report["calibration_identity"] == {
         "internal_standard_identity": "naphthalene", "internal_standard_cas": "91-20-3"}
-
-
-def test_separation_simulation_uses_configured_standard_structure_and_name():
-    spec = importlib.util.spec_from_file_location("lc_identity_simulation", ROOT / "scripts/simulate-lc-separation.py")
-    simulation = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(simulation)
-    config, _ = naphthalene_calibration()
-    records, _ = simulation.compounds(config)
-    standard = next(row for row in records if row["id"] == "IS")
-    assert standard["name"] == "naphthalene"
-    assert standard["smiles"] == "c1ccc2ccccc2c1"
-    assert standard["MW_g_mol"] == pytest.approx(128.17, abs=0.01)
 
 
 def test_generated_pilot_plan_preserves_standard_identity(tmp_path):

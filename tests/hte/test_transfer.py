@@ -13,11 +13,11 @@ from hte.transfer import copy_verified, return_package, snapshot_settings
 @pytest.fixture
 def campaign(tmp_path):
     root = tmp_path / "handoff"
-    for folder in ("hte", "notebook", "local_data/robot_logs", "local_data/instrument_raw", "output/r1-decision"):
+    for folder in ("hte", "campaigns/hackathon2026", "local_data/robot_logs", "local_data/instrument_raw", "output/r1-decision"):
         (root / folder).mkdir(parents=True, exist_ok=True)
     (root / "README.md").write_text("Source snapshot without a Git checkout\n")
     (root / "hte/fixture.py").write_text("print('offline')\n")
-    (root / "notebook/contributor.ipynb").write_text('{"cells":[],"nbformat":4}\n')
+    (root / "campaigns/hackathon2026/round1_design.csv").write_text("sample_id,pair_id\nR1-001,L01__L02\n")
     (root / "uv.lock").write_text("version = 1\n")
     for path, data in {
         "local_data/calibration.csv": b"analyte,concentration\nproduct,50\n",
@@ -52,7 +52,7 @@ def test_return_archive_round_trip_hashes_raw_directory_and_no_git(campaign):
             original = campaign / name.removeprefix("source/")
             assert data == original.read_bytes()
         assert "local_data/instrument_raw/sample.raw/trace.bin" in archive.namelist()
-        assert "source/notebook/contributor.ipynb" in archive.namelist()
+        assert "source/campaigns/hackathon2026/round1_design.csv" in archive.namelist()
         assert "source/uv.lock" in archive.namelist()
     before = (campaign / "transfer/results.zip").read_bytes()
     with pytest.raises(ValueError, match="already exists"):

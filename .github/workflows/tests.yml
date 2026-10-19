@@ -32,5 +32,3 @@ jobs:
         run: uv run --locked python scripts/initialization-report.py --output output/initialization-review
       - name: Replay visual mock LC challenges
         run: uv run --locked python scripts/mock-hplc-trials.py --output output/mock-hplc
-      - name: Build assumed LC separation scenarios and check numerical solver
-        run: uv run --locked python scripts/simulate-lc-separation.py --draws 64 --output output/lc-separation

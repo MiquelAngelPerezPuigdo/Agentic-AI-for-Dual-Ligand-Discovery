@@ -4,7 +4,7 @@ import argparse
 from pathlib import Path
 
 from .io import digest, object_digest, read_csv, read_json, write_csv, write_json
-from .inventory import candidates, campaign_inventory, import_workbook
+from .inventory import candidates, campaign_inventory
 
 
 def main():
@@ -13,9 +13,6 @@ def main():
     parser.add_argument("--inventory", default="hte_inputs/ligands.csv")
     parser.add_argument("--evidence", default="hte_inputs/literature.json")
     commands = parser.add_subparsers(dest="command", required=True)
-    imp = commands.add_parser("import-inventory")
-    imp.add_argument("workbook")
-    imp.add_argument("--output", default="hte_inputs/ligands.csv")
     commands.add_parser("check")
     s = commands.add_parser("score")
     s.add_argument("--output", required=True)
@@ -82,10 +79,6 @@ def main():
     rehearsal.add_argument("--embeddings", default="hte_inputs/pair_embeddings_t5-base.npz")
     args = parser.parse_args()
     try:
-        if args.command == "import-inventory":
-            import_workbook(args.workbook, args.output)
-            print(args.output)
-            return
         if args.command == "rehearse-loop":
             from .rehearsal import run
             print(run(args.output, args.inventory, args.config, args.evidence, args.embeddings))

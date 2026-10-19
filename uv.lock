@@ -101,10 +101,10 @@ robot = [
 ]
 sources = [
     { name = "openpyxl" },
-    { name = "pypdf" },
 ]
 test = [
     { name = "opentrons" },
+    { name = "pypdf" },
     { name = "pytest" },
 ]
 
@@ -119,7 +119,7 @@ requires-dist = [
     { name = "opentrons", marker = "extra == 'test'", specifier = "==8.8.2" },
     { name = "plotly", marker = "extra == 'reports'", specifier = ">=6,<7" },
     { name = "pypdf", marker = "extra == 'docs'", specifier = ">=5,<7" },
-    { name = "pypdf", marker = "extra == 'sources'", specifier = ">=5" },
+    { name = "pypdf", marker = "extra == 'test'", specifier = ">=5,<7" },
     { name = "pytest", marker = "extra == 'test'", specifier = ">=8" },
     { name = "rdkit", specifier = ">=2024.3" },
     { name = "reportlab", marker = "extra == 'docs'", specifier = ">=4.4,<5" },

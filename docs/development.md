@@ -2,98 +2,84 @@
 
 ## Architecture
 
-| File / folder | Responsibility |
+| Files | Responsibility |
 |---|---|
-| `hte/inventory.py`, `io.py` | Immutable ligand IDs, availability, checked CSV/JSON and hashes |
-| `hte/embeddings.py` | Frozen T5 embedding generation/loading; model downloads are optional |
-| `hte/scoring.py`, `design.py`, `initialization.py` | Small cached Claude requests, strict scores, repeated aggregation, 24-consensus +24-Sobol initialization and Claude-only feedback selection |
-| `hte/analytics.py`, `ingestion.py` | HTEL peak-table normalization, calibration/QC and complete-batch joins |
-| `hte/analytical_stocks.py` | Small independent analytical masters, with a practical minimum weighing and explicit containers |
-| `hte/analytical_practice.py`, `scripts/mock-hplc-trials.py` | Calibration/pilot replay and visual mock-LC fault challenges |
-| `scripts/simulate-lc-separation.py` | Uncalibrated column/gradient scenarios; separate from campaign quantification |
-| `hte/preparation.py` | Weighed charges → robot solvent addition, stock mixing/source filling; standard/workup preparation during holds; depletion-aware R2 refills |
-| `hte/planning.py`, `protocols.py` | Stoichiometry, reserves, deck loads, timing and standalone local OT-2 Python |
-| `hte/workflow.py` | Complete LC event → measured-feedback scoring → next batch, with replay guards |
-| `hte/transfer.py`, `scripts/hte-return-package.py` | Exact input snapshots and a private, hashed archive for knowledge transfer |
-| `hte/rehearsal.py`, `demo.py` | Offline rehearsal / synthetic test fixtures generated on demand |
-| `hte/cli.py`, `scripts/hte-lc-results.py` | CLI and staff-facing LC entry point |
-| `hte_inputs/` | Canonical configuration, inventory, evidence, frozen vectors and actual labware |
-| `campaigns/hackathon2026/` | Real initial selection and the compact evidence needed to reproduce it |
+| `hte/inventory.py`, `io.py` | Ligand IDs, checked input files and hashes |
+| `hte/embeddings.py` | Frozen T5 vectors and optional regeneration |
+| `hte/scoring.py`, `design.py`, `initialization.py` | Cached repeated scoring, initial consensus/Sobol selection and R2 selection |
+| `hte/analytics.py`, `ingestion.py`, `analytical_stocks.py` | Calibration, peak-table normalization, QC and analytical recipes |
+| `hte/preparation.py`, `planning.py`, `protocols.py` | Stock preparation/refills, volume/deck planning and standalone OT-2 Python |
+| `hte/workflow.py`, `cli.py`, `scripts/hte-lc-results.py` | Local commands, complete-batch feedback and resumable staff workflow |
+| `hte/transfer.py`, `scripts/hte-return-package.py` | Input snapshots and private hashed return package |
+| `hte/rehearsal.py`, `demo.py`, `analytical_practice.py`, `scripts/mock-hplc-trials.py` | Offline feedback, calibration and analytical fault rehearsals |
+| `hte_inputs/` | Campaign configuration, ligand/SI evidence, frozen vectors and labware |
+| `campaigns/hackathon2026/` | Official first batch and selection provenance |
 
-Generated protocols, stock/deck CSVs and synthetic runs belong in ignored `output/`. The repository keeps one campaign configuration; local measured settings go in ignored `local_data/`. Old generated runs and unused GP/MOCCA integrations were removed; Git history preserves previous versions. The supplied integrated LC export is processed directly, and the current project needs neither a trained GoLLuM optimizer nor raw-DAD integration.
+Generated protocols, CSVs and practice runs belong in ignored `output/`; measured configuration and experimental records belong in ignored `local_data/`. [Operator commands](start-here.md), [stock recipes](stocks-and-calibration.md) and [LC workflow](htel-lc-import.md) are the operational references.
 
 ## Install and test
 
-Use Python 3.12 in a virtual environment:
-
 ```bash
-python -m pip install -e '.[sources,test,docs]'
-python -m pytest -q
-python -m hte.cli rehearse-loop --output output/practice
+uv sync --locked --python 3.12 --extra sources --extra test --extra robot --extra docs
+uv run python -m pytest -q
+uv run hte rehearse-loop --output output/practice
 ```
 
-Equivalent uv setup: `uv sync --locked --python 3.12 --extra sources --extra test --extra docs`, then prefix commands with `uv run`. Routine operation/tests use the included embedding matrix and require no PyTorch/model download. Install `.[embeddings]` only to deliberately rebuild vectors. Tested dependency versions are recorded in `software_validation.json`; CI installs the committed `uv.lock` too.
+An activated Python 3.12 virtual environment can instead use `python -m pip install -e '.[sources,test,robot,docs]'`; omit `uv run` and invoke the CLI as `python -m hte.cli`. Tests and routine operation use included vectors, requiring no model download, GPU or API key. Install the optional `embeddings` extra only to rebuild vectors. CI uses the committed `uv.lock`; [validation evidence](../software_validation.json) records tested versions and scope.
 
 ## Reproduce the real first batch without spending
 
 ```bash
-python -m hte.cli design \
+uv run hte design \
   --ranking campaigns/hackathon2026/scoring/ranking.csv \
   --embeddings hte_inputs/pair_embeddings_t5-base.npz \
   --output output/reproduced-initial.csv
-```
-
-The design CSV should match the adopted **24-consensus +24-Sobol** `campaigns/hackathon2026/round1_design.csv` byte for byte. It reproduces David's notebook defaults from cached embeddings and paid scores; no GPU or Claude key is needed. Companion files record source labels, coverage, PCA/Sobol settings and selection provenance. Embeddings are checked against their encoded reaction conditions; changes require rebuilding vectors and reviewing the Claude ranking. Time, atmosphere and precursor identity are outside this embedding template and still require ranking review. The previous all-consensus batch is retired in Git history. **Regenerate stock plans, preparation files, robot protocols and LC maps for the adopted design; do not reuse exports from the previous batch.** To inspect/simulate matching files:
-
-```bash
-python -m hte.cli export \
+uv run hte export \
   --design campaigns/hackathon2026/round1_design.csv \
   --output output/round1-preview
 ```
 
-This writes self-contained guarded Python, stock preparation/deck loads and LC mappings. Each round starts with empty vials: **48 R1, 23 R2**; robot doses **25 µL SM/IS, then catalysts**. The original SM/IS tube **4 D2** starts at **1.89 mL** from the same 2 mL nominal stock and remains capped between rounds without refill. `pd_material_budget.json` reconciles four direct Pd charges (**22.8/22.8/22.8/21.6 mg; 90 mg total**) in working rack **4 A3/B3/C3/A4**. The robot adds actual-mass/assay-adjusted toluene directly; R2 uses the original tubes without Pd bulk transfers or refills. R1 uses **18/18/12** doses from A3/B3/C3; R2 uses **6 C3 +17 A4**. `catalyst_mixing_timing.json` reports pumping/waits from source remixing; include it within measured dosing times. Generate actual-weight preparation with `hte prepare-stocks`; its manifest links retained sources to R2 ligand refills. Replace the right p1000 single with the p300 multi once before R1. Live release uses the [local operator workflow](start-here.md); never edit generated Python to bypass its guard.
+The first CSV must match the official **24-consensus +24-Sobol** design byte for byte. The production selector reproduces [David's original implementation](https://github.com/MiquelAngelPerezPuigdo/Agentic-AI-for-Dual-Ligand-Discovery/blob/c2682f3db09eb496b92d11fb6725e9870157e301/notebook/batch_suggestions.ipynb) from cached scores/vectors. Companion files record selection sources, coverage and PCA/Sobol settings. The export produces guarded standalone Python, preparation/deck tables and LC maps. Regenerate these after configuration or selection changes; use the [live workflow](start-here.md) only after local release checks.
 
-`preview-prompts --output output/prompt-preview` exports exact requests with no API call. `score` is for a deliberately new paid campaign; normal setup reuses the prepared first batch. Retry an interrupted staff helper with the SAME command/output so accepted scores, uncertain-request blocks and cost accounting survive. Changed inputs deliberately require a new directory; inspect uncertain request records first.
+Embedding reuse checks encoded reaction conditions. Changes require rebuilding vectors and reviewing Claude scores. Time, atmosphere and precursor identity are outside the embedding template and also require score review. Keep original paid records unchanged and record each adopted design's provenance/hashes.
 
-## Review initialization maps and statistics
+`uv run hte preview-prompts --output output/prompt-preview` exports exact requests without a call. `score` starts a deliberately new paid campaign; normal setup reuses R1. Retry an interrupted staff helper with the **same command and output directory** so accepted scores, uncertain-request blocks and costs survive. Inspect uncertain API attempts before recovery; changed inputs require a new directory.
+
+## Campaign figures and analytical practice
 
 ```bash
-python -m pip install -e '.[reports]'
-python scripts/initialization-report.py --output output/initialization-review
+uv sync --locked --python 3.12 --extra sources --extra robot --extra reports
+uv run python scripts/initialization-report.py --output output/initialization-review
+uv run python scripts/draw-deck-setup.py
+uv run python scripts/mock-hplc-trials.py --output output/mock-hplc
 ```
 
-Open `output/initialization-review/initialization-review.html` for hoverable pair identities, a ligand network, use counts and a dropdown comparing cached-score weight previews. The folder includes SVG/PNG, JSON statistics and comparison/count CSVs. No API key or model download is required. The script validates the frozen design against the current selector before drawing it; alternative selections remain previews and do not change campaign files.
+The initialization HTML contains pair identities, a ligand network, use counts and cached-score weight previews. It checks the official design before drawing it; alternatives do not change the campaign. Review before using `--publish-docs` to update the compact [overview](initialization-review.md) and SVG. The deck script updates SVG/PNG from current source positions and stock budgets; inspect labels/routes after changes.
 
-The compact [published overview](initialization-review.md) stores only Markdown and SVG. Deliberately refresh those two files with `--publish-docs` after reviewing a newly generated report. Full interactive outputs remain in ignored `output/`.
-
-Rebuild the [OT-2 setup figure](figures/ot2-deck-setup.svg) with `python scripts/draw-deck-setup.py` (requires `.[reports]`). It reads current ligand positions and the frozen R1 Pd stock budget, and writes editable SVG plus a print-resolution PNG in `docs/figures/`. Review labels and manual routes after changing the campaign setup; this schematic does not validate mechanical fit.
+Mock LC reports show accepted, rejected and undetected-bias cases using synthetic peak tables. `uv run hte practice-analytics --output output/analytics-practice` exercises calibration/import/QC alone. [Known-mixture preparation and actual pilot replay](htel-lc-import.md). These tests do not validate physical separation or extraction.
 
 ## Return the campaign to Miquel
 
-The staff LC helper snapshots effective configuration, inventory, SI evidence (for selection), installed versions and calibration before processing. Ingestion preserves exact source exports, injection maps and dosing tables under `ingestion/sources/`; normalization does not discard the archived all-channel export. Iterations also retain effective settings, normalized source tables, yields/QC, exact Claude requests and responses, repeated scores/rankings, usage/cost/cache records, selection and dosing CSVs, and any released protocols. Failed attempts remain available; use fresh folders for corrected imports, and review uncertain API attempts before retrying.
+The staff helper preserves effective settings, inventory, SI evidence, versions, calibration, original LC exports/maps and dosing tables. Iterations retain normalized peaks, yields/QC, exact Claude requests/responses, repeated scores/rankings, usage/cache/cost records, selections and generated protocols. Failed attempts remain available; use fresh folders for corrected imports and inspect uncertain API attempts before retrying.
 
-Staff must copy files that live on separate instruments:
+Staff must also copy records held on separate instruments:
 
-- `local_data/robot_logs/`: actual OT-2 JSON run logs for both rounds/stages.
-- `local_data/instrument_raw/`: original raw LC/MS data (including `.raw` directories), method/gradient and sequence exports, calibration/pilot files, and rejected/replacement injections.
-- `local_data/run-notes.txt`: actual stock masses/assays and volumes, run IDs, real times, manual interventions, deviations and reasons for rejected injections.
+- `local_data/robot_logs/`: OT-2 JSON logs for every stage.
+- `local_data/instrument_raw/`: original LC/MS data (including `.raw` directories), method/gradient, sequences, calibration/pilot and rejected/replacement injections.
+- `local_data/run-notes.txt`: actual weights/assays, run IDs, times, interventions, deviations and rejection reasons.
 
-Keep any additional files under `local_data/` too. Once all writers have stopped, run from the repository root:
+Once writers have stopped:
 
 ```bash
-python scripts/hte-return-package.py
+uv run python scripts/hte-return-package.py
 ```
 
-Send **`transfer/hte-results.zip` privately**. The default includes the source snapshot (including the contributor notebook and dependency lock), all `local_data/` and all `output/`, including practice runs. It works without Git and requires no paid call. To omit practice or large obsolete outputs, supply the real, nonoverlapping run folders with `--runs folder1 folder2 ...`; never omit a campaign's dosing, workup, decision or final-analysis folder. Choose `--output transfer/hte-results-v2.zip` for a later archive; an existing archive is never overwritten.
+Send **`transfer/hte-results.zip` privately**. It includes the source snapshot and dependency lock, all `local_data/` and all `output/`, including practice. To omit obsolete/practice outputs, pass the real nonoverlapping run folders with `--runs folder1 folder2 ...`; retain every preparation, dosing, workup, decision and final-analysis folder. Choose `--output transfer/hte-results-v2.zip` for later packages; existing archives are never overwritten.
 
-`TRANSFER_MANIFEST.json` lists file sizes/SHA-256 hashes, source revision when available, installed versions, exclusions and whether external-log/raw/notes files were supplied. Presence is not a completeness or scientific-validity check: review the original instrument files and final QC. Named key/environment/credential files and symlinks are excluded; a Claude token pasted into an ordinary file blocks packaging without printing it. Do not store unrelated secrets in run/data directories. Packaging refuses files that change while read; stop writers and retry with a fresh filename.
+`TRANSFER_MANIFEST.json` records hashes, source revision, versions and supplied instrument-file categories. Presence does not establish completeness: inspect originals and QC. Credentials and symlinks are excluded; a Claude token in an ordinary file blocks packaging without printing it. Files changing during packaging also stop it. The command works without Git or paid calls.
 
-For replay, extract the archive and copy `local_data/` and `output/` alongside the contents of `source/`. Use new output folders. Saved yields/rankings/prompts can be inspected offline, without repeating paid scoring. **Git ignores experimental outputs and local settings; a repository push alone is not a data handoff.**
+For replay, extract the archive and place `local_data/` and `output/` alongside `source/` contents. Use new output folders. Saved yields/rankings/prompts can be inspected offline. **A Git push alone is not an experimental-data handoff.**
 
-Practice remains `python -m hte.cli rehearse-loop --output output/practice` (mocked feedback, no paid calls), or `practice-analytics --output output/pilot` for calibration/import/QC alone. [Real pilot replay](htel-lc-import.md).
+## Maintenance
 
-## Maintaining the project
-
-Explore assumed column/gradient scenarios with `python scripts/simulate-lc-separation.py --output output/lc-separation` after installing `.[reports]`. The standalone report includes explicit retention/peak/response assumptions, three gradients, overlap stresses and numerical checks. It does not fit a retention predictor or alter the analytical method. [Scope and assumptions](htel-lc-import.md#assumed-column-and-gradient-scenarios).
-
-Keep practical instructions in the staff/runbook sources and expert algorithm details in [ml-strategy.md](ml-strategy.md). Change configuration plus corresponding prose together, run the relevant checks, rebuild/visually inspect [the PDFs](updating-the-handbook.md), and refresh `software_validation.json`. Preserve frozen paid scores and source provenance; record each adopted selection change with its parent design, method provenance and refreshed hashes. Tests generate their own fixtures in temporary directories. GitHub CI runs the active acceptance suite and PDF builds independently. No network access or Claude key is required by tests.
+Keep bench instructions in the [editable handbook sources](updating-the-handbook.md) and algorithm details in [ml-strategy.md](ml-strategy.md). Update configuration and prose together, run relevant checks, rebuild/inspect PDFs and refresh `software_validation.json`. Tests generate temporary fixtures; CI runs acceptance tests and PDF builds independently. Historical exploratory notebooks, hypothetical retention simulations and earlier versions remain available through Git history.
