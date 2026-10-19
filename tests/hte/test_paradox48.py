@@ -76,8 +76,10 @@ def test_deck_loads_include_every_ligand_source_and_all_stage_withdrawals(demo48
                      if op["stage"] in stages and op["reagent"]==row["reagent"]
                      and op["source_slot"]==int(row["source_slot"]) and op["source_well"]==row["source_well"])
         dead=c["stock_preparation"]["tube_dead_ul" if int(row["source_slot"]) in (1,4) else "reservoir_dead_ul"]
-        assert float(row["load_ul"])>=math.ceil((consumed+dead)/10)*10
-        if row["reagent"] not in c["automation"]["direct_stock_ids"]:
+        assert float(row["load_ul"])>=consumed+dead
+        if row["reagent"]=="Pd":
+            assert float(row["load_ul"])==consumed+dead
+        elif row["reagent"] not in c["automation"]["direct_stock_ids"]:
             assert float(row["load_ul"])==math.ceil((consumed+dead)/10)*10
 
 

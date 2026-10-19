@@ -38,71 +38,123 @@ def pd_source_pool(config):
     return sources
 
 
-def _route_pd(config, operations):
-    """Reserve every aspiration conservatively before same-source tip reuse."""
-    sources = pd_source_pool(config)
-    stock, p = config["stock_preparation"], config["pipetting"]
-    limit = stock["tube_max_fill_ul"]-stock["tube_dead_ul"]
-    index, used = 0, 0
-    for op in operations:
-        if op["reagent"] != "Pd":
-            continue
-        if op["channels"] != 1:
-            raise ValueError("Pd working tubes require single-channel dosing")
-        withdrawal = op["volume_ul_per_channel"]+p["surplus_ul"]
-        if withdrawal > limit:
-            raise ValueError("Pd aspiration exceeds usable working-tube volume")
-        if used+withdrawal > limit+1e-8:
-            index += 1
-            used = 0
-        if index >= len(sources):
-            raise ValueError("Pd source pool cannot cover this dosing plan")
-        op["source_slot"], op["source_well"] = sources[index]
-        used += withdrawal
-
-
-def _pd_loads_for_count(config, count):
-    c, p = config["chemistry"], config["pipetting"]
-    volume = c["substrate_molarity_M"]*c["reaction_volume_ul"]*c["pd_mol_percent"]/100/config["liquids"]["pd_stock_mM"]*1000
+def _pd_campaign(config):
+    """Prepare Pd directly in its retained working tubes and route both rounds once."""
+    stock, chemistry, pipetting = config["stock_preparation"], config["chemistry"], config["pipetting"]
+    if stock.get("pd_preparation_mode") != "direct_retained_working_tubes":
+        raise ValueError("Pd must be prepared directly in its retained 2 mL working tubes")
+    addresses = pd_source_pool(config)
+    total_mass = finite(stock["fixed_stock_mass_mg"]["Pd"], "fixed Pd stock mass", 0.000001)
+    concentration = finite(config["liquids"]["pd_stock_mM"], "Pd stock concentration", 0.000001)
+    assay_fractions = stock.get("assay_fractions", {})
+    records = []
+    for entry, (slot, well) in zip(stock["pd_source_pool"], addresses):
+        stock_id = entry.get("stock_id")
+        if not isinstance(stock_id, str) or not stock_id.startswith("Pd_"):
+            raise ValueError("Each direct Pd source needs its own Pd_ stock_id")
+        mass = finite(entry.get("planned_mass_mg"), stock_id + " planned mass", 0.000001)
+        assay = finite(assay_fractions.get(stock_id, assay_fractions.get("Pd", 1)), stock_id + " assay", 0.000001, 1)
+        volume = mass * assay / chemistry["pd_molecular_weight_g_mol"] / concentration * 1e6
+        if volume > stock["tube_max_fill_ul"] + 1e-8:
+            raise ValueError("Direct Pd source exceeds working-tube capacity: " + stock_id)
+        records.append({"stock_id": stock_id, "reagent": "Pd", "source_slot": slot, "source_well": well,
+                        "planned_mass_mg": mass, "assay_fraction": assay, "prepare_ul": volume,
+                        "round1_consumption_ul": 0.0, "round2_consumption_ul": 0.0})
+    if len({r["stock_id"] for r in records}) != len(records):
+        raise ValueError("Direct Pd stock IDs must be distinct")
+    if not math.isclose(sum(r["planned_mass_mg"] for r in records), total_mass, rel_tol=0, abs_tol=1e-8):
+        raise ValueError("Direct Pd source masses must sum to the fixed campaign Pd mass")
+    available = finite(stock["available_mass_mg"]["Pd"], "Pd campaign mass limit", 0.000001)
+    if total_mass > available + 1e-8:
+        raise ValueError("Direct Pd sources exceed the campaign mass limit; preserve the scope reserve")
+    per_well = chemistry["substrate_molarity_M"] * chemistry["reaction_volume_ul"] * chemistry["pd_mol_percent"] / 100 / concentration * 1000
     _, capacity = single_pipette(config)
-    strokes = math.ceil(volume/(capacity-p["air_gap_ul"]-p["surplus_ul"]))
-    operations = [{"reagent":"Pd", "channels":1, "volume_ul_per_channel":volume/strokes}
-                  for _ in range(count*strokes)]
-    _route_pd(config, operations)
-    usage, previous = defaultdict(float), None
-    for op in operations:
-        source = (op["source_slot"], op["source_well"])
-        usage[source] += op["volume_ul_per_channel"]+(0 if p["reuse_tips"] and source == previous else p["surplus_ul"])
-        previous = source
-    dead = config["stock_preparation"]["tube_dead_ul"]
-    return {source:math.ceil((volume+dead)/10)*10 for source,volume in usage.items()}
+    strokes = math.ceil(per_well / (capacity - pipetting["air_gap_ul"] - pipetting["surplus_ul"]))
+    per_stroke = per_well / strokes
+    remaining = [r["prepare_ul"] for r in records]
+    index, routes = 0, {}
+    for round_number in (1, 2):
+        previous = None  # A fresh tip is mandatory at the second-round boundary.
+        routes[round_number] = []
+        for _ in range(config["design"][f"round{round_number}_total"] * strokes):
+            while index < len(records):
+                withdrawal = per_stroke + (0 if pipetting["reuse_tips"] and previous == index else pipetting["surplus_ul"])
+                if remaining[index] - withdrawal >= stock["tube_dead_ul"] - 1e-8:
+                    break
+                index += 1
+            if index == len(records):
+                raise ValueError("Direct Pd sources cannot cover the full campaign at the configured assay and tip usage; do not use the scope reserve")
+            remaining[index] -= withdrawal
+            records[index][f"round{round_number}_consumption_ul"] += withdrawal
+            routes[round_number].append({"source_index": index, "volume_ul_per_channel": per_stroke,
+                                         "aspirated_ul_per_channel": withdrawal})
+            previous = index
+    for record, residual in zip(records, remaining):
+        record["full_campaign_consumption_ul"] = record["round1_consumption_ul"] + record["round2_consumption_ul"]
+        record["full_campaign_required_ul"] = record["full_campaign_consumption_ul"] + stock["tube_dead_ul"]
+        record["remaining_after_campaign_ul"] = residual
+    return records, routes
+
+
+def pd_source_recipes(config, round_number=1):
+    """All individually weighed Pd working sources, including retained R2 balances."""
+    if round_number not in (1, 2):
+        raise ValueError("Pd source recipes require round 1 or 2")
+    records, _ = _pd_campaign(config)
+    for record in records:
+        record["current_round_consumption_ul"] = record[f"round{round_number}_consumption_ul"]
+        record["remaining_before_round_ul"] = record["prepare_ul"] - (record["round1_consumption_ul"] if round_number == 2 else 0)
+        record["remaining_after_round_ul"] = record["remaining_before_round_ul"] - record["current_round_consumption_ul"]
+    return records
+
+
+def _route_pd(config, operations, round_number=1):
+    """Apply the campaign-wide route, retaining rather than refilling sources for R2."""
+    records, routes = _pd_campaign(config)
+    requested = [op for op in operations if op["reagent"] == "Pd"]
+    planned = routes[round_number]
+    if len(requested) != len(planned):
+        raise ValueError("Pd dosing operation count differs from the configured round")
+    for operation, route in zip(requested, planned):
+        if operation["channels"] != 1 or not math.isclose(operation["volume_ul_per_channel"], route["volume_ul_per_channel"], abs_tol=1e-8):
+            raise ValueError("Pd working tubes require the planned single-channel doses")
+        source = records[route["source_index"]]
+        operation.update(source_slot=source["source_slot"], source_well=source["source_well"], stock_id=source["stock_id"])
 
 
 def pd_material_budget(config, operations, reserve_round2=True):
-    stock, c = config["stock_preparation"], config["chemistry"]
-    mass = stock["fixed_stock_mass_mg"]["Pd"]
-    assay = finite(stock.get("assay_fractions", {}).get("Pd", 1), "Pd assay fraction", 0.000001, 1)
-    concentration = config["liquids"]["pd_stock_mM"]
-    volume = mass*assay/c["pd_molecular_weight_g_mol"]/concentration*1e6
+    stock = config["stock_preparation"]
+    round_number = 1 if reserve_round2 else 2
+    records = pd_source_recipes(config, round_number)
     usage = defaultdict(float)
     for op in operations:
         if op["reagent"] == "Pd":
             usage[(op["source_slot"], op["source_well"])] += op["aspirated_ul_per_channel"]
-    loads = {key:math.ceil((value+stock["tube_dead_ul"])/10)*10 for key,value in usage.items()}
-    reserved = _pd_loads_for_count(config, config["design"]["round2_total"]) if reserve_round2 else {}
-    # R2 exports still verify the original full-campaign budget, not a fresh 90 mg preparation.
-    campaign_loads = sum(
-        sum(_pd_loads_for_count(config, config["design"][f"round{r}_total"]).values()) for r in (1, 2))
-    required = max(campaign_loads, sum(loads.values())+sum(reserved.values()))+stock["bulk_transfer_reserve_ul"]
-    if volume+1e-8 < required:
-        raise ValueError(f"Fixed {mass:g} mg Pd stock at assay {assay:g} cannot cover deck fills and reserves ({volume:.1f} < {required:.1f} uL); do not use the scope reserve")
-    return {"weigh_mg":mass, "scope_reserved_mg":stock.get("scope_reserved_mass_mg", {}).get("Pd", 0),
-            "assay_fraction":assay, "stock_mM":concentration, "make_to_final_ul":volume,
-            "current_round_deck_ul":sum(loads.values()), "round2_reserved_deck_ul":sum(reserved.values()),
-            "full_campaign_deck_ul":campaign_loads, "bulk_transfer_reserve_ul":stock["bulk_transfer_reserve_ul"],
-            "unallocated_bulk_ul":volume-campaign_loads,
-            "source_loads":[{"slot":key[0], "well":key[1], "load_ul":value, "consumption_ul":usage[key]} for key,value in loads.items()],
-            "instruction":"Weigh Pd ONCE before R1. Use assay-corrected nominal solvent addition, never increase the 90 mg mass. The robot fills/refills both rounds from this same bulk."}
+    expected = {(r["source_slot"], r["source_well"]): r["current_round_consumption_ul"] for r in records}
+    if any(not math.isclose(usage[key], value, abs_tol=1e-8) for key, value in expected.items()) or set(usage) - set(expected):
+        raise ValueError("Pd operation consumption differs from the campaign-wide retained-source plan")
+    sources = []
+    for record in records:
+        used = record["current_round_consumption_ul"]
+        if not reserve_round2 and used == 0:
+            continue
+        sources.append({**record, "slot": record["source_slot"], "well": record["source_well"],
+                        "load_ul": used + stock["tube_dead_ul"],
+                        "consumption_ul": used})
+    volume = sum(r["prepare_ul"] for r in records)
+    required = sum(r["full_campaign_required_ul"] for r in records)
+    return {"weigh_mg": stock["fixed_stock_mass_mg"]["Pd"],
+            "scope_reserved_mg": stock.get("scope_reserved_mass_mg", {}).get("Pd", 0),
+            "assay_fraction": sum(r["planned_mass_mg"] * r["assay_fraction"] for r in records) / stock["fixed_stock_mass_mg"]["Pd"],
+            "stock_mM": config["liquids"]["pd_stock_mM"], "make_to_final_ul": volume,
+            "preparation_mode": "direct_retained_working_tubes", "new_pd_mass_this_round_mg": stock["fixed_stock_mass_mg"]["Pd"] if reserve_round2 else 0,
+            "current_round_deck_ul": sum(s["load_ul"] for s in sources),
+            "round2_reserved_deck_ul": sum(r["round2_consumption_ul"] + stock["tube_dead_ul"] for r in records if r["round2_consumption_ul"] > 0) if reserve_round2 else 0,
+            "full_campaign_deck_ul": required, "full_campaign_consumption_ul": sum(r["full_campaign_consumption_ul"] for r in records),
+            "bulk_transfer_reserve_ul": 0, "unallocated_bulk_ul": 0,
+            "excess_above_required_dead_volume_ul": volume - required,
+            "source_loads": sources, "all_source_recipes": records,
+            "instruction": "Weigh the Pd campaign charge directly into its four labeled 2 mL working tubes once. Robot adds solvent in place; retain all tubes unchanged for both rounds. No Pd bulk stock, aliquoting or refill; preserve the 10 mg scope reserve."}
 
 
 def reservoir_source_pools(config):
@@ -498,7 +550,7 @@ def transfer_operations(config, inventory, rows):
                     del remaining[w]
     for r in remaining.values():
         add("sampling", r["sample_id"], 3, r["well"], 6, [r["lc_well"]], r["aliquot_ul"])
-    _route_pd(config, operations)
+    _route_pd(config, operations, int(rows[0]["round"]))
     # Allocate complete aspirations to reservoir channels before assigning reused tips.
     # Worst-case fresh surplus makes this conservative when a tip is retained.
     pools = reservoir_source_pools(config)
@@ -539,7 +591,7 @@ def transfer_operations(config, inventory, rows):
             key = (op["reagent"], op["source_slot"], op["source_well"])
             remaining[key] += op["aspirated_ul_per_channel"]
     dead = config["stock_preparation"]["tube_dead_ul"]
-    remaining = {key:math.ceil((value+dead)/10)*10 for key,value in remaining.items()}
+    remaining = {key:value+dead if key[0] == "Pd" else math.ceil((value+dead)/10)*10 for key,value in remaining.items()}
     for op in operations:
         op["source_mix_cycles"], op["source_mix_ul"] = 0, 0
         key = (op["reagent"], op["source_slot"], op["source_well"])
@@ -617,19 +669,20 @@ def stock_plan(config, inventory, operations, reserve_round2=True):
             "on_deck_ul":sm_load,"source_capacity_ul":config["stock_preparation"]["tube_max_fill_ul"],
             "capacity_ok":sm_load <= config["stock_preparation"]["tube_max_fill_ul"]})
     pd_budget = pd_material_budget(config, operations, reserve_round2)
-    for index, source in enumerate(pd_budget["source_loads"]):
+    for source in pd_budget["source_loads"]:
         slot, well, used, load = source["slot"], source["well"], source["consumption_ul"], source["load_ul"]
-        bulk = reserve_round2 and index == 0
-        records.append({"reagent":"Pd", "name":"Pd(COD)(DQ); ONE shared bulk stock", "solvent":"toluene",
+        records.append({"reagent":"Pd", "stock_id": source["stock_id"], "name":"Pd(COD)(DQ); direct retained working tube", "solvent":"toluene",
             "stock_mM":liquid["pd_stock_mM"], "protocol_consumption_ul":used,
-            "round2_reserve_ul":pd_budget["round2_reserved_deck_ul"] if bulk else 0,
+            "round2_reserve_ul":source["round2_consumption_ul"] if reserve_round2 else 0,
             "dead_ul":config["stock_preparation"]["tube_dead_ul"],
-            "prepare_ul":pd_budget["make_to_final_ul"] if bulk else load,
-            "mass_mg":pd_budget["weigh_mg"] if bulk else 0,
+            "prepare_ul":source["prepare_ul"] if reserve_round2 else 0,
+            "mass_mg":source["planned_mass_mg"] if reserve_round2 else 0,
             "source_slot":slot, "source_well":well, "on_deck_ul":load,
             "source_capacity_ul":config["stock_preparation"]["tube_max_fill_ul"],
             "capacity_ok":load <= config["stock_preparation"]["tube_max_fill_ul"],
-            "preparation_action":f"Prepare ONE {pd_budget['weigh_mg']:g} mg bulk before R1; aliquot all Pd tubes from it" if bulk else "ALIQUOT from existing Pd bulk; DO NOT weigh more solid"})
+            "full_campaign_required_ul":source["full_campaign_required_ul"],
+            "expected_retained_ul":source["remaining_before_round_ul"],
+            "preparation_action":"Weigh directly in original 2 mL working tube; robot adds solvent in place" if reserve_round2 else "RETAIN original Pd tube and residual stock; NO refill or new weighing"})
     common = [("toluene", "toluene", None, "A3", c["reaction_volume_ul"]),
               ("workup", liquid["workup_composition"], "internal_standard_workup_mM", "A4", liquid["workup_ul"]),
               ("LC_diluent", liquid["lc_diluent_composition"], None, "A5", liquid["diluent_ul"])]
@@ -658,20 +711,23 @@ def stock_plan(config, inventory, operations, reserve_round2=True):
                         "capacity_ok": consumption + dead <= config["stock_preparation"]["reservoir_max_fill_ul"]})
     for record in records:
         key = record["reagent"]
+        record.setdefault("stock_id", key)
+        record.setdefault("full_campaign_required_ul", "")
+        record.setdefault("expected_retained_ul", "")
         volume = record["prepare_ul"]
         container = ("4 mL capped glass vial" if volume <= 3000 else "8 mL capped glass vial" if volume <= 6000
                      else "20 mL capped glass vial" if volume <= 16000 else "250 mL compatible solvent bottle")
         record["storage_container"] = config["stock_preparation"]["substrate_storage_container"] if key == "substrate_stock" else container
         record.setdefault("preparation_action", "Prepare bulk before campaign; refill R2 from reserves")
-        if key == "Pd" and record["mass_mg"] == 0:
-            record["storage_container"] = "2 mL working tube; aliquot existing Pd bulk only"
+        if key == "Pd":
+            record["storage_container"] = "Original 2 mL working tube; retained across both rounds"
         record["internal_standard_mM"] = liquid["internal_standard_stock_mM"] if key == "substrate_stock" else ""
         record["internal_standard_mass_mg"] = corrected_mass("internal_standard",liquid["internal_standard_stock_mM"]*volume*liquid["internal_standard_molecular_weight_g_mol"]/1e6) if key == "substrate_stock" else ""
         if config.get("automation",{}).get("enabled"):
             if key in ("workup","LC_diluent"):
                 record.update(storage_container="Slot 2 reservoir; robot prepares from raw solvents during hold",
                               preparation_action="NO manual premixing; use the raw-solvent loading CSV")
-            elif key in config["automation"]["direct_stock_ids"]:
+            elif key == "Pd" or key in config["automation"]["direct_stock_ids"]:
                 record.update(storage_container="Original 2 mL working tube; retained across both rounds",
                               preparation_action="Weigh into working tube once; robot adds solvent and mixes; DO NOT replace for R2")
             else:
@@ -679,7 +735,7 @@ def stock_plan(config, inventory, operations, reserve_round2=True):
                               preparation_action="Robot prepares from weighed charge and fills working tubes; R2 uses existing bulk ONLY")
             if not reserve_round2:
                 record["mass_mg"]=0
-                record["preparation_action"]="NO new weighing: robot refills from original stock; retain direct stocks"
+                record["preparation_action"]="RETAIN original Pd tube and residual stock; NO refill or new weighing" if key == "Pd" else "NO new weighing: robot refills from original stock; retain direct stocks"
     return records
 
 

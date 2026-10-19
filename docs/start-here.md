@@ -10,7 +10,7 @@ Use schema **5**; replace old protocols while preserving measured LC facts. Conf
 
 ## Robot preparation, then R1
 
-Generate a guarded preview; copy its charges template to `local_data/charges.csv` and fill actual masses/assays. Follow carrier/raw-load CSVs. After local checks:
+Generate a guarded preview; fill actual masses/assays in `local_data/charges.csv` from its template. Pd: **22.8 mg each in 4 A3/B3/C3; 21.6 mg in 4 A4**, 90 mg total. Follow carrier/raw-load CSVs. After local checks:
 
 ```bash
 python -m hte.cli --config local_data/campaign.json prepare-stocks \
@@ -40,7 +40,7 @@ python scripts/hte-lc-results.py next \
   --injections local_data/r1-map*.csv --output output/r1-decision
 ```
 
-Calibration defaults to `local_data/calibration.csv`. QC precedes Claude: **387 untested pairs →22 +L17 reference**, L03 max four. **After interruption rerun the SAME command/output**; accepted scores are reused. Inspect uncertain API requests; a new folder may repeat charges. Run printed **`refill_stocks.py` FIRST** with original carriers/tubes, then R2 with predosed vials and NEW EMPTY reservoir 2; no SM/IS redose. If unreleased, export `next_design.csv` with R1 `--history`, `--live` and a new export folder. After 23 final injections, run helper **`final`**; no Claude.
+Calibration defaults to `local_data/calibration.csv`. QC precedes Claude: **387 untested pairs →22 +L17 reference**, L03 max four. **After interruption rerun the SAME command/output**; accepted scores are reused. Inspect uncertain API requests; a new folder may repeat charges. Run printed **`refill_stocks.py` FIRST** for ligand top-ups; retain all four Pd tubes without refilling. Then R2 uses predosed vials and NEW EMPTY reservoir 2; no SM/IS redose. If unreleased, export `next_design.csv` with R1 `--history`, `--live` and a new export folder. After 23 final injections, run helper **`final`**; no Claude.
 
 ## Return records
 

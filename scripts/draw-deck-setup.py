@@ -151,10 +151,12 @@ def draw(output):
     text(sx,7.93,"Then change right p1000 → p300 eight-channel.",10.0,color=MUTED)
 
     text(sx,7.47,"2  Working sources for both rounds",12,weight="bold")
-    text(sx,7.11,f"Pd: {budget['weigh_mg']:g} mg → {budget['make_to_final_ul']/1000:.2f} mL nominal / 40 mM",10.5,color=AMBER)
-    text(sx,6.80,"R1: 4 A3/B3, 1.91 mL each; retain tubes.",10.3)
-    text(sx,6.49,"Robot tops up A3 for R2 from the SAME bulk.",10.3)
-    text(sx,6.18,"Keep 10 mg Pd solid for scope.",10.0,color=MUTED)
+    pd_sources=budget["source_loads"]
+    pd_charges="/".join(f"{source['planned_mass_mg']:g}" for source in pd_sources)
+    text(sx,7.11,f"Pd: {pd_charges} mg; {budget['stock_mM']:g} mM",10.5,color=AMBER)
+    text(sx,6.80,f"4 A3/B3/C3: ~{pd_sources[0]['prepare_ul']/1000:.2f} mL; A4: ~{pd_sources[3]['prepare_ul']/1000:.2f} mL",10.3)
+    text(sx,6.49,"Retain all FOUR tubes; no Pd transfer or refill.",10.3)
+    text(sx,6.18,f"{budget['weigh_mg']:g} mg total; keep {budget['scope_reserved_mg']:g} mg solid for scope.",10.0,color=MUTED)
     text(sx,5.80,"SM/IS: 1 M / 100 mM; 2 mL nominal bulk.",10.3,color=BLUE)
     text(sx,5.49,"Robot loads 1.88 mL in 4 D2 for all 71 vials.",10.3)
     text(sx,5.18,"R2 SM predosed automatically BEFORE R1.",10.0,weight="bold")
@@ -178,10 +180,10 @@ def draw(output):
     for x,label in ((8.83,"Slot 6"),(11.30,"Slot 10"),(14.18,"HPLC")):
         text(x,1.62,label,16,weight="bold",color=BLUE)
     arrow(9.84,1.62,11.05,1.62,BLUE);arrow(12.51,1.62,13.93,1.62,BLUE)
-    text(8.83,1.16,"20 µL extract + 980 µL diluent • one final plate per round",10.6)
+    text(8.83,1.16,"Prefill 980 µL before quench; add 20 µL extract after shaking",10.6)
     text(8.83,.82,"Shake uncovered: heater OFF / 1000 rpm / 2 min; then seal for LC",10.1)
     text(8.83,.49,"Reaction block stays in slot 3 while the LC plate occupies the shaker.",9.1,color=MUTED)
-    text(.65,.16,"PREVIEW: current 15 mL bulk sources fail tip reach. Replace with actual suitable geometry before release. Schematic only; validate mounting, offsets, solvent delivery and shaking.",8.5,color=MUTED)
+    text(.65,.16,"PREVIEW: other 15 mL bulk sources fail the conservative nozzle-entry check; physical clearance remains unverified. Validate containers, mounting, offsets, delivery and shaking.",8.5,color=MUTED)
 
     output.parent.mkdir(parents=True,exist_ok=True)
     fig.savefig(output.with_suffix(".svg"),facecolor="white",metadata={"Date":None})

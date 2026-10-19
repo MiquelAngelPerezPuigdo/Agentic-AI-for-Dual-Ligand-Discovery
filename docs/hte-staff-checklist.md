@@ -19,7 +19,7 @@
 |---|---|
 | Ligands | Nominal **20 mM**, generous reserves. Weighed charges in mapped carriers. |
 | RockPhos L03 | **~7.50 mg pure equivalent**, assay-corrected; 10 mg available. Robot makes **~800 µL in 1 C1**. Retain SAME tube; **max 4 R2 wells**. |
-| Pd(COD)(DQ) | **90 mg maximum**, nominal **40 mM /~5.94 mL**. SAME bulk both rounds; **10 mg solid reserved for scope**. |
+| Pd(COD)(DQ) | Direct in **4 A3/B3/C3: 22.8 mg each; A4: 21.6 mg**. Robot adds ~1.50/~1.43 mL toluene, **40 mM**. **90 mg total; 10 mg for scope.** Retain all four; no Pd refill. |
 | SM + mesitylene | **~322.32 mg SM** at 100% assay; robot adds neat IS/toluene: nominal **1 M /100 mM**, ~2 mL. **4 D2: 1.88 mL** for all 71 vials. |
 
 Concentrations use nominal solvent addition. **No hand refills or R2 stock remake.**
@@ -28,7 +28,7 @@ Concentrations use nominal solvent addition. **No hand refills or R2 stock remak
 
 | Slot | Contents |
 |---|---|
-| 1 /4 | 2 mL working tubes, max 1.95 mL. Neat IS **1 C2**, SM/IS **4 D2**, Pd **4 A3/B3**. |
+| 1 /4 | 2 mL working tubes, max 1.95 mL. Neat IS **1 C2**, SM/IS **4 D2**, Pd **4 A3/B3/C3/A4**; prep acid **4 D3**. |
 | 2 | EMPTY 12-channel reservoir; robot makes quench A4/A6/A9 and diluent A5/A7/A10/A11/A12. |
 | 3 /10 | Reaction block: pipetting /heater-shaker. During holds, raw solvents temporarily occupy 3. |
 | 4 /6 in R1 hold | Prepared analytical rack temporarily in 4; calibration plate in 6, then directly to LC. Later, 6 takes each final LC plate. |
@@ -48,10 +48,10 @@ Follow App pauses and matching loading CSVs. Staff handle weighing, coarse liqui
 | 2 / R2 predose first | Load **23 NEW R2 vials** in the SAME reaction block. R1 Python doses **25 µL SM/IS each**. Hand-cap/store them, then fit **48 NEW EMPTY R1 vials** and uncap. No manual pipetting. |
 | 3 / R1 reaction | Robot doses **25 µL SM/IS +75 µL ligand A +75 µL ligand B +75 µL Pd**. Hand-cap; move/latch. **95 °C, 500 rpm, 4 h. Start the external timer when the App announces the hold starts.** |
 | 4 / During R1 hold | Leave reaction on 10. Load raw solvents in 3 and analytical rack in 4 at prompts. Robot makes **14 standards** and quench/diluent in 2. Seal/move calibration plate **6 → HPLC**; start sequence. Restore rack 4; remove raw reservoir. **Monitor the timer:** pauses do not stop heating. If the deadline arrives while paused, stop heat/shaking via App and record the overrun; do not resume dosing. |
-| 5 / Cool / quench | Move sealed block to 3; cool before opening. Robot adds **500 µL quench**. Hand-recap ALL; shake **1500 rpm, 2 min**, heater off; return to 3. |
-| 6 / LC samples | Let bubbles clear; uncap indicated vials. Robot adds **20 µL extract to 980 µL diluent**, fresh sample tips. Recap reaction vials. |
+| 5 / Cool / quench | Sealed block to 3; cool. **Keep capped while robot pre-fills LC wells with 980 µL diluent.** Then uncap; robot adds **500 µL quench**. Recap ALL; shake **1500 rpm, 2 min**, heater off; return to 3. |
+| 6 / LC samples | Let bubbles clear; uncap indicated vials. Robot promptly adds **20 µL extract to prefilled LC wells**, fresh sample tips. Recap reaction vials. |
 | 7 / Final plate | Move **6 → cooled shaker 10**. Robot shakes **UNCOVERED, heater OFF, 1000 rpm, 2 min** at confirmed splash-free speed. Move **10 → HPLC**, seal and inject directly. No manual dilution/vial transfers. |
-| 8 / R2 select/refill | After all **48 valid R1 results**, Claude selects **22 new pairs +L17 reference**. Run **`refill_stocks.py` FIRST**: present original bulk carriers; robot tops up original working tubes. Retain RockPhos. |
+| 8 / R2 select/refill | After all **48 valid R1 results**, Claude selects **22 new pairs +L17 reference**. Run **`refill_stocks.py` FIRST** for ligand top-ups from original carriers. Retain RockPhos and all FOUR Pd tubes; **no Pd refill**. |
 | 9 / R2 | Restore the SAME block with 23 capped robot-predosed vials. Replace reservoir 2 with a NEW EMPTY one. Uncap all 23; run R2 Python. **No SM/IS redose.** Reference uses **150 µL L17**, no B. Repeat reaction/workup; robot prepares workup fluids during this hold too. **R2 H3 is diluent only: do not inject.** |
 
 Calibration: each analyte blank +**10, 50, 150, 350, 800 µM**, independent **666.7 µM** check; constant **66.7 µM mesitylene**. Python calculates calibrated yields from integrated UV areas. Stop the clock after all 23 final injections and quantitative analysis.

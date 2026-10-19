@@ -184,6 +184,10 @@ def run(protocol: protocol_api.ProtocolContext):
         protocol.comment("Start workup with the cooled block in slot 3. Keep reaction-vial and LC-well mappings distinct. Archive first-round vials after sampling before changing to round two.")
     else:
         wait_for_cool_module()
+        batches=sorted({op["lc_batch"] for op in OPERATIONS if op["stage"]=="sampling"})
+        if len(batches)==1:
+            protocol.pause("Leave the cooled reaction vials CAPPED in slot 3. Load the EMPTY labeled LC plate in slot 6. The robot will add LC diluent first, so sampling can follow extract shaking promptly.")
+            transfer_stage("dilution",batches[0])
         protocol.pause("Separately CONFIRM the sealed reaction vials have cooled to HTEL's approved opening temperature in slot 3, then UNSCREW/REMOVE all occupied reaction-vial caps under HTEL SOP and open workup sources. Mesitylene is already in each reaction: workup and LC diluent contain NO added internal standard. Confirm the approved extraction composition before proceeding.")
         transfer_stage("workup")
         protocol.pause("SCREW every vial cap back on BY HAND before vigorous shaking. Check tightness and mounting. Do not shake open vials at high rpm.")
@@ -197,7 +201,6 @@ def run(protocol: protocol_api.ProtocolContext):
         off_heater()
         protocol.pause("After vigorous shaking, keep ALL reaction vials screw-capped until their sampling batch. Let bubbles clear briefly. No stir bars are present.")
         protocol.pause("Sample promptly after vigorous mixing and bubble settling. If distinct layers, solids in the aspiration path or bubbles are obvious, pause for review; do not choose a layer or assume repeated aspiration dissolves solids. Keep the tip above the bottom and below the liquid surface.")
-        batches=sorted({op["lc_batch"] for op in OPERATIONS if op["stage"]=="sampling"})
         for batch in batches:
             if batch != batches[0]:
                 protocol.pause("Load a NEW empty LC autosampler plate in slot 6 for R"+str(ROUND)+"-LC"+str(batch).zfill(2)+". Keep the preceding plate at HPLC; do not reuse it. Use the exact wells in lc_sequence.csv, which retain their campaign column numbers.")
@@ -206,7 +209,8 @@ def run(protocol: protocol_api.ProtocolContext):
             active=[op["source_well"] for op in OPERATIONS if op["stage"]=="sampling" and op["lc_batch"]==batch]
             active=list(dict.fromkeys(active))
             protocol.pause("Label the LC plate R"+str(ROUND)+"-LC"+str(batch).zfill(2)+". Sampling batch "+str(batch)+": let visible bubbles settle after the automated extract shake, then UNSCREW/REMOVE the caps ONLY from "+", ".join(active)+". Keep all other reaction vials capped. Confirm caps lie below the 45 mm labware clearance envelope. Resume only with these aspiration targets open.")
-            transfer_stage("dilution",batch)
+            if len(batches)>1:
+                transfer_stage("dilution",batch)
             transfer_stage("sampling",batch)
             shake_and_release_lc(batch)
         protocol.comment("All final LC plates prepared and shaken automatically. Retain reaction-vial archives and LC plates, and record actual plate/well identities and sequence start times.")
@@ -335,7 +339,7 @@ def export(config, inventory, design, output, live=False, history=None, stage="a
             address = (r["reagent"],int(r["source_slot"]),r["source_well"])
             if address in use:
                 deck.append({"protocol": deck_stage, "reagent": r["reagent"], "source_slot": r["source_slot"],
-                             "source_well": r["source_well"], "load_ul": max(math_ceil10(use[address] + r["dead_ul"]),r["on_deck_ul"]) if deck_stage=="dose_and_react" else math_ceil10(use[address]+r["dead_ul"]),
+                             "source_well": r["source_well"], "load_ul": max(use[address]+r["dead_ul"] if r["reagent"]=="Pd" else math_ceil10(use[address]+r["dead_ul"]),r["on_deck_ul"]) if deck_stage=="dose_and_react" else math_ceil10(use[address]+r["dead_ul"]),
                              "stock_mM": r["stock_mM"],
                              "solvent": r["solvent"]})
     write_csv(output / "deck_loads.csv", deck)

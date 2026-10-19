@@ -1,4 +1,4 @@
-"""One finite Pd preparation must cover both rounds, including actual source losses."""
+"""Four directly prepared Pd working stocks cover both rounds without refills."""
 import copy
 from pathlib import Path
 
@@ -27,7 +27,7 @@ def campaign():
 
 
 @pytest.mark.parametrize("assay", [1, .98])
-def test_same_ninety_mg_bulk_covers_both_rounds_without_reweighing(assay):
+def test_same_ninety_mg_direct_stocks_cover_both_rounds_without_reweighing(assay):
     c, inv, first, second = campaign()
     c["stock_preparation"]["assay_fractions"]["Pd"] = assay
     plans, all_ops = [], []
@@ -40,13 +40,16 @@ def test_same_ninety_mg_bulk_covers_both_rounds_without_reweighing(assay):
         budget = pd_material_budget(c, ops, reserve)
         assert budget["weigh_mg"] == 90 and budget["scope_reserved_mg"] == 10
         assert budget["make_to_final_ul"] == pytest.approx(90*assay/378.8/40*1e6)
-        assert budget["make_to_final_ul"] >= 5650+100
-    assert [r["on_deck_ul"] for r in plans] == [1910, 1910, 1830]
-    assert [(int(r["source_slot"]), r["source_well"]) for r in plans] == [(4,"A3"),(4,"B3"),(4,"A3")]
+        assert budget["full_campaign_consumption_ul"] == 5330
+        assert budget["full_campaign_deck_ul"] == 5730
+        assert budget["bulk_transfer_reserve_ul"] == 0 and budget["unallocated_bulk_ul"] == 0
+        assert all(r["remaining_after_campaign_ul"] >= 100 for r in budget["all_source_recipes"])
+    assert [r["on_deck_ul"] for r in plans] == [1451, 1451, 1001, 100, 551, 1376]
+    assert [(int(r["source_slot"]), r["source_well"]) for r in plans] == [(4,"A3"),(4,"B3"),(4,"C3"),(4,"A4"),(4,"C3"),(4,"A4")]
     assert sum(r["mass_mg"] for r in plans) == 90
-    assert "Compatible bulk source" in plans[0]["storage_container"]
-    assert "Robot" in plans[1]["preparation_action"]
-    assert "NO new weighing" in plans[2]["preparation_action"]
+    assert [r["mass_mg"] for r in plans] == [22.8, 22.8, 22.8, 21.6, 0, 0]
+    assert all("Original 2 mL working tube" in r["storage_container"] for r in plans)
+    assert all("RETAIN" in r["preparation_action"] and "NO refill" in r["preparation_action"] for r in plans[4:])
     # 71 x 3 umol = 80.6844 mg active Pd reagent; source losses remain within 90 mg.
     assert sum(o["volume_ul_per_channel"] for o in all_ops if o["reagent"] == "Pd")*.04*378.8/1000 == pytest.approx(80.6844)
 
@@ -54,9 +57,8 @@ def test_same_ninety_mg_bulk_covers_both_rounds_without_reweighing(assay):
 def test_insufficient_active_pd_or_mass_cannot_silently_take_scope_reserve():
     c, inv, first, _ = campaign()
     c["stock_preparation"]["assay_fractions"]["Pd"] = .95
-    ops = transfer_operations(c, inv, dosing_rows(c, inv, first))
     with pytest.raises(ValueError, match="do not use the scope reserve"):
-        stock_plan(c, inv, ops)
+        transfer_operations(c, inv, dosing_rows(c, inv, first))
     c["stock_preparation"]["available_mass_mg"]["Pd"] = 89
     with pytest.raises(ValueError, match="scope reserve"):
         validate_config(c)

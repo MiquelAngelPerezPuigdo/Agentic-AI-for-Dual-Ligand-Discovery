@@ -8,10 +8,10 @@
 |---|---|---|
 | SM + mesitylene | **~322.32 mg SM**, nominal 2 mL, **1 M SM +100 mM IS**. Robot adds ~27.82 µL NEAT mesitylene (0.864 g/mL) and the remaining toluene; calculated from actual SM mass/assays. | **25 µL**, retained |
 | Each ligand | **20 mM toluene**; weighed charges/reserves in CSV. Robot prepares bulk, mixes and fills working tubes. | **75 µL each**; reference 150 µL L17 |
-| Pd(COD)(DQ) | **90 mg maximum**, nominal **40 mM /~5.94 mL**; robot adds toluene. The same bulk serves both rounds. **10 mg solid for scope.** | 75 µL |
+| Pd(COD)(DQ) | Direct in **4 A3/B3/C3: 22.8 mg each; A4: 21.6 mg**. Robot adds ~1.50/~1.43 mL toluene for **40 mM**. Total **90 mg**, ~5.94 mL; **10 mg for scope**. | 75 µL |
 | RockPhos L03 | **~800 µL /20 mM**, 7.50 mg pure equivalent; 7.73 mg at 97%. Prepared directly in **1 C1**; retain that tube. **10 mg available, max 4 R2 wells.** | 75 µL |
 
-Working tubes: 2 mL, max 1.95 mL. **4 D2: 1.88 mL SM/IS**, for all 71 vials. Default 15 mL bulk geometry fails tip reach; live release requires actual suitable sources. R2 refills use original reserves and calculated R1 residuals; record losses.
+Working tubes: 2 mL, max 1.95 mL. **4 D2: 1.88 mL SM/IS** for 71 vials; acid **4 D3**. Retain all four Pd tubes, without refilling: R1 **18/18/12** doses from A3/B3/C3; R2 **6 C3 +17 A4**. CSVs give exact additions from actual masses/assays, checked per tube and in total. Remaining 15 mL bulk sources fail conservative reach; supply suitable geometry. R2 ligand refills use original reserves; record losses.
 
 ## Robot-made workup fluids
 

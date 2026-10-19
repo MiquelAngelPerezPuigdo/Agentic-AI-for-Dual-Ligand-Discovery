@@ -40,7 +40,8 @@ def test_preparation_preserves_all_volume_and_finite_reagent_budgets(setup):
     final=sum(r["volume_ul"] for r in plan["expected_final_liquids"])
     assert initial-final==pytest.approx(plan["discarded_surplus_ul"])
     stocks={r["stock_id"]:r for r in plan["stocks"]}
-    assert stocks["Pd"]["actual_mass_mg"]==90 and stocks["L03"]["actual_mass_mg"]<10
+    assert sum(r["actual_mass_mg"] for r in plan["stocks"] if r["reagent"]=="Pd")==pytest.approx(90)
+    assert stocks["L03"]["actual_mass_mg"]<10
     assert stocks["substrate_stock"]["prepare_ul"]==pytest.approx(2000)
     assert stocks["L03"]["kind"]=="direct"
     assert "solute displacement" in plan["concentration_basis"]
@@ -118,7 +119,7 @@ def test_actual_weighed_charges_cannot_bypass_amount_or_coverage_guards(setup,fa
     directory,c,inv,first,*_=setup
     base=read_json(directory/"preparation/preparation_manifest.json")
     charges=[dict(stock_id=r["stock_id"],actual_mass_mg=r["planned_mass_mg"],assay_fraction=r["assay_fraction"]) for r in base["stocks"] if r["stock_id"]!="IS_MASTER"]
-    if fault=="too_much_pd":next(r for r in charges if r["stock_id"]=="Pd")["actual_mass_mg"]=90.1
+    if fault=="too_much_pd":next(r for r in charges if r["stock_id"]=="Pd_1")["actual_mass_mg"]+=.1
     elif fault=="too_little_rockphos":next(r for r in charges if r["stock_id"]=="L03")["actual_mass_mg"]=1
     elif fault=="missing":charges.pop()
     else:charges.append(charges[0])
@@ -174,10 +175,26 @@ def test_actual_mass_rounding_and_assay_still_cover_campaign(setup):
     directory,c,inv,first,*_=setup
     c=copy.deepcopy(c);c['stock_preparation']['analytical_minimum_weigh_mg']=5
     planned=build_stock_preparation(c,inv,first)
-    charges=[dict(stock_id=r['stock_id'],actual_mass_mg=r['planned_mass_mg'],assay_fraction=.98 if r['stock_id']=='Pd' else r['assay_fraction']) for r in planned['stocks'] if r['stock_id']!='IS_MASTER']
+    charges=[dict(stock_id=r['stock_id'],actual_mass_mg=r['planned_mass_mg'],assay_fraction=.98 if r['reagent']=='Pd' else r['assay_fraction']) for r in planned['stocks'] if r['stock_id']!='IS_MASTER']
     actual=build_stock_preparation(c,inv,first,charges)
     assert actual['actual_weighed_charges_supplied']
     stocks={r['stock_id']:r for r in actual['stocks']}
-    assert stocks['Pd']['actual_mass_mg']==90
-    assert stocks['Pd']['remaining_bulk_ul']>1830+100
+    pd=[r for r in actual['stocks'] if r['reagent']=='Pd']
+    assert sum(r['actual_mass_mg'] for r in pd)==pytest.approx(90)
+    assert all(r['prepare_ul']>=r['full_campaign_required_ul'] for r in pd)
     assert stocks['SM_FIT']['actual_mass_mg']>=5
+
+
+@pytest.mark.parametrize("round_number", [1, 2])
+def test_sdk_prefills_lc_diluent_before_extract_shaking_then_samples(setup, round_number):
+    from opentrons.simulate import simulate
+    directory, *_ = setup
+    with (directory/f"r{round_number}/workup.py").open() as stream:
+        commands, _ = simulate(stream)
+    text = [command["payload"].get("text", "") for command in commands]
+    dilution = [i for i, message in enumerate(text) if message.startswith("LC_diluent:")]
+    quench = [i for i, message in enumerate(text) if message.startswith("workup:")]
+    extract_shake_done = next(i for i, message in enumerate(text) if "After vigorous shaking" in message)
+    samples = [i for i, message in enumerate(text) if message.startswith(f"R{round_number}-") and "uL per channel" in message]
+    assert dilution and quench and samples
+    assert max(dilution) < min(quench) < max(quench) < extract_shake_done < min(samples)

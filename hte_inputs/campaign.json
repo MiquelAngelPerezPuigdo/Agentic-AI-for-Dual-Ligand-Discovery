@@ -180,18 +180,31 @@
     "bulk_transfer_reserve_ul": 100,
     "pd_source_pool": [
       {
+        "stock_id": "Pd_1",
         "slot": 4,
-        "well": "A3"
+        "well": "A3",
+        "planned_mass_mg": 22.8
       },
       {
+        "stock_id": "Pd_2",
         "slot": 4,
-        "well": "B3"
+        "well": "B3",
+        "planned_mass_mg": 22.8
       },
       {
+        "stock_id": "Pd_3",
         "slot": 4,
-        "well": "C3"
+        "well": "C3",
+        "planned_mass_mg": 22.8
+      },
+      {
+        "stock_id": "Pd_4",
+        "slot": 4,
+        "well": "A4",
+        "planned_mass_mg": 21.6
       }
-    ]
+    ],
+    "pd_preparation_mode": "direct_retained_working_tubes"
   },
   "llm": {
     "model": "claude-opus-4-8",

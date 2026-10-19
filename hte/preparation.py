@@ -216,14 +216,16 @@ def matrix(plan,target,volume,pools,acid_source):
 def stock_records(config,inventory,design,charges=None):
     operations=transfer_operations(config,inventory,dosing_rows(config,inventory,design))
     stocks=stock_plan(config,inventory,operations)
-    unique={r["reagent"]:dict(r) for r in reversed(stocks) if r["reagent"] in {*inventory,"Pd","substrate_stock"}}
-    # Pd rows contain one bulk recipe plus aliquot rows. Select the actual bulk recipe.
-    unique["Pd"]=next(dict(r) for r in stocks if r["reagent"]=="Pd" and r["mass_mg"]>0)
+    unique={r["reagent"]:dict(r) for r in reversed(stocks) if r["reagent"] in {*inventory,"substrate_stock"}}
+    unique.update({r["stock_id"]:dict(r) for r in stocks if r["reagent"]=="Pd"})
     records=[]
     for key,row in unique.items():
-        mw=float(inventory[key]["molecular_weight_g_mol"]) if key in inventory else config["chemistry"]["pd_molecular_weight_g_mol"] if key=="Pd" else config["chemistry"]["substrate_molecular_weight_g_mol"]
-        records.append(dict(stock_id=key,reagent=key,name=row["name"],planned_mass_mg=row["mass_mg"],mw=mw,
-                            stock_mM=row["stock_mM"],kind="direct" if key in config["automation"]["direct_stock_ids"] else "reaction",
+        reagent=row["reagent"]
+        mw=float(inventory[key]["molecular_weight_g_mol"]) if key in inventory else config["chemistry"]["pd_molecular_weight_g_mol"] if reagent=="Pd" else config["chemistry"]["substrate_molecular_weight_g_mol"]
+        records.append(dict(stock_id=key,reagent=reagent,name=row["name"],planned_mass_mg=row["mass_mg"],mw=mw,
+                            stock_mM=row["stock_mM"],kind="direct" if reagent=="Pd" or key in config["automation"]["direct_stock_ids"] else "reaction",
+                            source_slot=row["source_slot"],source_well=row["source_well"],
+                            full_campaign_required_ul=row.get("full_campaign_required_ul"),
                             solvent="toluene",prepare_ul=row["prepare_ul"]))
     from .analytical_stocks import preparation
     for row in preparation(config):
@@ -242,7 +244,8 @@ def stock_records(config,inventory,design,charges=None):
         raise ValueError("Weighed charges must cover each stock_id exactly once")
     for record in records:
         key=record["stock_id"];reagent=record["reagent"]
-        assay=config["stock_preparation"].get("assay_fractions",{}).get(reagent,1)
+        assays=config["stock_preparation"].get("assay_fractions",{})
+        assay=assays.get(key,assays.get(reagent,1))
         if charges is not None:
             mass=finite(given[key]["actual_mass_mg"],key+" actual mass",.000001)
             assay=finite(given[key]["assay_fraction"],key+" assay",.000001,1)
@@ -250,8 +253,15 @@ def stock_records(config,inventory,design,charges=None):
         limit=config["stock_preparation"].get("available_mass_mg",{}).get(reagent)
         if limit is not None and mass>limit+1e-8:raise ValueError(key+" exceeds available mass; preserve scope reserve")
         record.update(actual_mass_mg=mass,assay_fraction=assay,prepare_ul=mass*assay/record["mw"]/record["stock_mM"]*1e6)
-        if record["prepare_ul"]>config["automation"]["bulk_max_fill_ul"]:
-            raise ValueError("Bulk stock exceeds container capacity: "+key)
+        capacity=config["stock_preparation"]["tube_max_fill_ul"] if record["kind"]=="direct" else config["automation"]["bulk_max_fill_ul"]
+        if record["prepare_ul"]>capacity:
+            raise ValueError("Stock exceeds container capacity: "+key)
+        if reagent=="Pd" and record["prepare_ul"]+1e-8<record["full_campaign_required_ul"]:
+            raise ValueError("Direct Pd source cannot cover both rounds and dead volume: "+key)
+    pd_mass=sum(r["actual_mass_mg"] for r in records if r["reagent"]=="Pd")
+    pd_limit=min(config["stock_preparation"]["available_mass_mg"]["Pd"],config["stock_preparation"]["fixed_stock_mass_mg"]["Pd"])
+    if pd_mass>pd_limit+1e-8:
+        raise ValueError("Combined Pd charges exceed available mass; preserve scope reserve")
     # Use one common, neat mesitylene source for combined reaction stock and analytical IS master.
     mass=25*config["automation"]["neat_is_density_g_ml"]
     records.append(dict(stock_id="IS_MASTER",reagent="mesitylene",name="Analytical mesitylene master",planned_mass_mg=0,
@@ -292,7 +302,7 @@ def build_stock_preparation(config,inventory,design,charges=None):
             matrix(plan,["raw","H1"],min(20000,29000-plan.amounts[("raw","H1")]),pools,acid)
     for row in records:
         if row["kind"]!="direct":continue
-        item=inventory[row["stock_id"]];target=["working"+str(item["source_slot"]),item["source_well"]]
+        target=["working"+str(row["source_slot"]),row["source_well"]]
         plan.raw("toluene",target,row["prepare_ul"],pools);plan.mix(target)
     deck=working_loads(config,operations,stocks)
     for batch in sorted({r["carrier_id"].split('-')[1] for r in records if r["kind"]!="direct"}):
@@ -353,6 +363,7 @@ def build_stock_preparation(config,inventory,design,charges=None):
     # Check reserve demands from worst-case R2 before any hardware file is released.
     for row in records:
         if row["kind"]=="direct":
+            if row["reagent"]=="Pd":continue  # Each actual charge was checked against its full two-round demand.
             first=sum(r["consumption_ul"] for r in deck if r["reagent"]==row["stock_id"])
             reserve=sum(r["round2_reserve_ul"] for r in stocks if r["reagent"]==row["stock_id"])
             if row["prepare_ul"] < first+reserve+100:raise ValueError("Direct stock cannot cover both rounds: "+row["stock_id"])
@@ -376,7 +387,8 @@ def working_loads(config,operations,stocks):
     for stock in stocks:
         key=(stock["reagent"],int(stock["source_slot"]),stock["source_well"])
         if key not in used:continue
-        load=max(math.ceil((used[key]+stock["dead_ul"])/10)*10,stock["on_deck_ul"])
+        required=used[key]+stock["dead_ul"]
+        load=max(required if key[0]=="Pd" else math.ceil(required/10)*10,stock["on_deck_ul"])
         result.append(dict(reagent=key[0],source_slot=key[1],source_well=key[2],load_ul=load,consumption_ul=used[key]))
     return result
 
@@ -540,7 +552,7 @@ def export_stock_preparation(config,inventory,design,output,charges=None,live=Fa
     if charges is not None:write_csv(out/"weighed_charges_used.csv",charges)
     write_csv(out/"weighed_charges_template.csv",[dict(stock_id=r["stock_id"],name=r["name"],planned_mass_mg=r["planned_mass_mg"],actual_mass_mg="",assay_fraction=r["assay_fraction"])
         for r in plan["stocks"] if r["stock_id"]!="IS_MASTER"])
-    write_csv(out/"bulk_carriers.csv",[dict(stock_id=r["stock_id"],carrier_id=r.get("carrier_id","WORKING RACK"),slot=r.get("carrier_slot",inventory.get(r["stock_id"],{}).get("source_slot","")),well=r.get("source_well",inventory.get(r["stock_id"],{}).get("source_well","")),preloaded_mass_mg=0 if r["stock_id"]=="IS_MASTER" else r["actual_mass_mg"],preload_action="EMPTY: robot adds neat IS and matrix" if r["stock_id"]=="IS_MASTER" else "Weigh SM ONLY; robot adds mesitylene" if r["stock_id"]=="substrate_stock" else "Weigh independently from actual charges CSV",nominal_stock_mM=r["stock_mM"],robot_prepared_ul=r["prepare_ul"])
+    write_csv(out/"bulk_carriers.csv",[dict(stock_id=r["stock_id"],carrier_id=r.get("carrier_id","WORKING RACK"),slot=r.get("carrier_slot",r.get("source_slot","")),well=r.get("source_well",""),preloaded_mass_mg=0 if r["stock_id"]=="IS_MASTER" else r["actual_mass_mg"],preload_action="EMPTY: robot adds neat IS and matrix" if r["stock_id"]=="IS_MASTER" else "Weigh SM ONLY; robot adds mesitylene" if r["stock_id"]=="substrate_stock" else "Weigh independently from actual charges CSV",nominal_stock_mM=r["stock_mM"],robot_prepared_ul=r["prepare_ul"])
         for r in plan["stocks"]])
     write_csv(out/"raw_reagents_to_load.csv",plan["raw_loads"])
     source="from opentrons import protocol_api\n"
@@ -688,6 +700,7 @@ def build_refill(config,inventory,design,history,prep):
         location=("working"+str(load["source_slot"]),load["source_well"])
         fill=max(0,load["load_ul"]-amounts.get(location,0))
         if fill:
+            if load["reagent"]=="Pd":raise ValueError("Retained direct Pd source cannot cover R2; no bulk refill exists")
             record=records[load["reagent"]]
             if record["kind"]=="direct":raise ValueError("Retained direct stock cannot cover R2")
             needed.append((record,location,fill))

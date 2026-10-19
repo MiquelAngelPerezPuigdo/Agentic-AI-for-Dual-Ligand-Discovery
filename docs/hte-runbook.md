@@ -10,14 +10,14 @@ R1: **48 pairs covering all 30 ligands**; L07 excluded. R2: **22 pairs +L17 tBuB
 
 ## Robot stock preparation
 
-1. Generate `weighed_charges_template.csv`; weigh labeled charges and enter **actual masses/assays**. Ligands are weighed in the glovebox; preserve original reagent bottles there. Stock preparation is under air on the OT-2. The robot calculates solvent volumes, adds neat mesitylene, mixes stocks and fills working tubes. Stock preparation is inside the campaign.
+1. Generate `weighed_charges_template.csv`; enter **actual masses/assays**. Weigh ligands in the glovebox; preserve original bottles there. Pd goes directly into four 2 mL tubes: **4 A3/B3/C3, 22.8 mg each; 4 A4, 21.6 mg**. Total ≤90 mg; keep 10 mg for scope. On the OT-2 under air, the robot adds solvents/neat mesitylene, mixes and fills working sources. Stock preparation is inside the campaign.
 2. **Live release is blocked:** bottom aspiration in the configured 15 mL tubes requires unverified nozzle entry; the conservative reach check fails. Obtain actual short, solvent-compatible stock containers and matching rack JSON, then regenerate and check reach/capacity. Follow carrier/raw-load CSVs; no invented glass-vial dimensions.
 3. Run `prepare_stocks.py`: **p300 single left, p1000 single right**; tips 5 /8-9 respectively. Carriers occupy 3/6 temporarily; working racks 1/4. The supplied horizontal 8 ×30 mL reservoir in 2 is **single-channel only**. Robot prepares analytical matrix/masters/working stocks too.
 4. Cap/store reserve carriers and the prepared analytical rack. Leave working tubes in mapped positions. Change right pipette to **p300 eight-channel GEN2**, replace tips 8/9 with 300 µL racks using the local App installation/calibration workflow. Keep left p300 single.
 
 | Slot | Reaction-stage use |
 |---|---|
-| 1 / 4 | 2 mL working tubes; max 1.95 mL. Ligands at CSV addresses; neat IS **1 C2**, SM/IS **4 D2**, Pd **4 A3/B3**. Retain RockPhos **1 C1** throughout. |
+| 1 / 4 | 2 mL working tubes; max 1.95 mL. Ligands at CSV addresses; neat IS **1 C2**, SM/IS **4 D2**, Pd **4 A3/B3/C3/A4**; prep acid **4 D3**. Retain RockPhos **1 C1** and all four Pd tubes. |
 | 2 | New EMPTY 12-channel reservoir. Robot prepares workup fluids here during the hold; no staff premixing/refills. |
 | 3 / 10 | Reaction block at pipetting / heater-shaker positions; manual moves. During holds, 3 temporarily takes raw solvents. |
 | 6 | Calibration plate during R1; later a fresh final sample plate per round. Three compatible 96-well LC plates total. |
@@ -38,9 +38,9 @@ Hand-cap all R1 vials; move/latch at App prompts. Run **95 °C /500 rpm /4 h**. 
 
 ## Workup and final LC plates
 
-1. Move sealed block to 3; **cool vials before opening**. The App separately checks module <=30 °C. Robot adds **500 µL 9:1 ACN/water +0.15% FA** from the prepared reservoir. Nominal extract: 750 µL, 0.1% acid, 1.25 mL headspace. Quench/diluent contain no IS.
+1. Move sealed block to 3; **cool vials before opening**. App separately checks module <=30 °C. **Keep vials capped while robot pre-fills the fresh LC plate in 6 with 980 µL diluent/well.** Then uncap; robot adds **500 µL 9:1 ACN/water +0.15% FA**. Nominal extract: 750 µL, 0.1% acid, 1.25 mL headspace. Neither fluid contains IS.
 2. **Hand-recap ALL vials**; shake **1500 rpm /2 min**, heater off. Return block to 3. Let bubbles settle; open the indicated vials for sampling.
-3. Robot uses a fresh sample tip, two slow same-well prewets, **21 µL aspiration at 1.5 mm**, 1 µL retained reverse surplus and 2 µL air gap. Dispense nominal **20 µL into 980 µL diluent**, noncontact; discard tip. No manual dilution or sample-vial transfer.
+3. Sample promptly after shaking; LC diluent is already in place. Robot uses a fresh tip, two slow same-well prewets, **21 µL aspiration at 1.5 mm**, 1 µL retained reverse surplus and 2 µL air gap. Dispense nominal **20 µL into prefilled LC wells**, noncontact; discard tip. No manual dilution/vial transfer.
 4. Recap reaction vials. Move final LC plate **6→cooled shaker 10**, A1 orientation unchanged. Robot shakes **UNCOVERED, heater OFF, 1000 rpm /2 min** at the locally confirmed splash-free speed. Reaction block remains in 3.
 5. Move LC plate **10→HPLC**, apply compatible pierceable seal and inject directly. R1: **R1-LC01 A1-H6**, 48 samples. R2: **R2-LC01 A1-H2 plus A3-G3**, 23 samples. **H3 is diluent only; never inject.** Follow generated sequence/maps; reaction and LC coordinates differ.
 
@@ -48,7 +48,7 @@ Final sample: 1 mL; nominal maximum analyte **666.7 µM**, mesitylene **66.7 µM
 
 ## R2 and finish
 
-After ALL 48 R1 results pass QC, the pipeline selects 22 pairs +L17 reference. Run **`refill_stocks.py` before R2 dosing**. Temporarily remove block/LC plate from 3/6; present the ORIGINAL bulk carriers by ID. Robot calculates top-ups from R1 consumption and refills original working tubes. **No new catalyst weighing or hand aliquoting. Keep RockPhos in its original tube.**
+After ALL 48 R1 results pass QC, select 22 pairs +L17 reference. Run **`refill_stocks.py` before R2 dosing**. Remove block/LC plate from 3/6; present ORIGINAL bulk carriers by ID for robotic ligand top-ups. **No new weighing or hand aliquoting. Retain RockPhos and all four Pd tubes; no Pd refill.** Pd routing: R1 uses A3/B3/C3 for **18/18/12 doses**; R2 uses **six from C3, 17 from A4**. Exact solvent additions and each tube's capacity follow actual mass/assay.
 
 Restore the SAME block with the 23 capped robot-predosed vials; replace reservoir 2 with a NEW EMPTY one. Uncap all 23. R2 Python adds catalysts only; reference receives **150 µL L17**. No SM/IS redose. During R2 hold the robot makes fresh workup fluids; no new calibration. Repeat workup and final LC analysis.
 
