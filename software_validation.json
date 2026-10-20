@@ -2,9 +2,9 @@
   "campaign": "hackathon2026-paradox48",
   "schema_version": 6,
   "validation_scope": {
-    "baseline_revision": "2e79e3326fed92b42e274a9588736bfa85a9adc6",
-    "scope": "Campaign-only repository cleanup: 364 current tests pass. One test of the removed hypothetical retention simulator was deleted; all campaign tests remain. Chemistry and robot generators were unchanged, so SDK/rehearsal evidence is retained from the baseline revision rather than represented as newly executed.",
-    "superseded_audits": "Earlier audit history and the 365-test baseline are recoverable from software_validation.json at the baseline revision.",
+    "baseline_revision": "02943a1ba120fe33a7d4e15bf84b87988ea2e366",
+    "scope": "Final submission review: fresh Git-archive checkout, new Python 3.12 environment installed from uv.lock, complete acceptance suite, regenerated six-stage SDK simulation, independent synthetic LC replay, mocked feedback, adversarial stock selections and private return-package roundtrip. No new software defect found; physical release remains blocked pending local facts.",
+    "superseded_audits": "Earlier audit records remain recoverable in Git history.",
     "reports": "output/ paths identify ignored local evidence, not bundled public files. Retained test and rehearsal commands regenerate their reports.",
     "source_hashes": "Current runtime, configuration, tests, scripts and locked dependency inputs are listed in source_sha256. PDF builds have separate manifests; frozen campaign records have their own manifest."
   },
@@ -15,20 +15,20 @@
     "skipped": 0,
     "warnings": 30,
     "warning_scope": "Opentrons SDK deprecations",
-    "duration_seconds": 60.67,
-    "report": "output/cleanup/tests.xml",
-    "scope": "Current campaign-only cleanup working tree; one non-campaign retention-simulation test removed from the 365-test baseline."
+    "duration_seconds": 87.104,
+    "report": "output/final-review/clean-install-tests.xml",
+    "scope": "Full suite in a fresh archived checkout and locked-dependency environment; runtime/configuration unchanged by this review."
   },
   "versions": {
     "anthropic": "0.125.0",
     "numpy": "1.26.4",
-    "rdkit": "2026.3.6",
+    "rdkit": "2026.9.1",
     "opentrons": "8.8.2",
     "openpyxl": "3.1.5",
-    "pypdf": "6.19.0",
+    "pypdf": "6.21.1",
     "pytest": "9.1.1",
     "reportlab": "4.5.1",
-    "mistune": "3.3.4",
+    "mistune": "3.4.0",
     "scipy": "1.17.1",
     "scikit-learn": "1.9.1"
   },
@@ -46,7 +46,10 @@
       "Vial heating/cooling and actual whole-campaign timing",
       "Authentic-standard 1.7-min separation, quantitative UV channel, RTs/LOQs and calibration"
     ],
-    "scope_note": "Software and simulations validate code/data flow only; all physical release flags remain false in canonical settings. Earlier revision-specific records remain in Git history."
+    "scope_note": "Software and simulations validate code/data flow only; all physical release flags remain false in canonical settings. Earlier revision-specific records remain in Git history.",
+    "confirmed_supply": {
+      "naphthalene": "Available at HTEL; planned 60 mg charge; availability confirmed 2026-10-21."
+    }
   },
   "initialization": {
     "method": "David Ming Segura default 24 retained consensus + 24 Sobol",
@@ -354,45 +357,45 @@
     }
   },
   "opentrons_simulations": {
-    "tested_revision": "2e79e3326fed92b42e274a9588736bfa85a9adc6",
+    "tested_revision": "02943a1ba120fe33a7d4e15bf84b87988ea2e366",
     "SDK_version": "8.8.2",
-    "report": "output/naphthalene/simulations/report.json",
+    "report": "output/final-review/robot/simulations/report.json",
     "stages": [
       {
         "stage": "stock_preparation",
-        "protocol_sha256": "44cc917c9cfa410cfde68f83cc9e8acc2c8ac2837f0062aa7249be67d9a8a27c",
         "passed": true,
-        "command_count": 3844
+        "command_count": 3844,
+        "protocol_sha256": "44cc917c9cfa410cfde68f83cc9e8acc2c8ac2837f0062aa7249be67d9a8a27c"
       },
       {
         "stage": "round1_dosing",
-        "protocol_sha256": "85434a11e81ef061a96a6efe211ae28076fa7262f44ca5c72d3721d411536b77",
         "passed": true,
-        "command_count": 6087
+        "command_count": 6087,
+        "protocol_sha256": "e4b6717bfb66f4325dbe146973db815321c4d1f5bc34a99c96a7e7a661c30bc0"
       },
       {
         "stage": "round1_workup",
-        "protocol_sha256": "e78f3c01c8e01d3057015a375db18e1135e42d1947a89c9ca95c9cc10bee12d1",
         "passed": true,
-        "command_count": 1736
+        "command_count": 1736,
+        "protocol_sha256": "f6e8135951c6a7c5f4802c90b283c20da9ab24a3e22afcbdcc3820f41628e195"
       },
       {
         "stage": "round2_refill",
-        "protocol_sha256": "0ddec444bf0028e917b80483f47fd030ad6fc242810a820b5d60683986461deb",
         "passed": true,
-        "command_count": 1331
+        "command_count": 1331,
+        "protocol_sha256": "4e09f413b0010bc58a437039204c0dec7c119e46aa54d896e3907cfc343e2e3e"
       },
       {
         "stage": "round2_dosing",
-        "protocol_sha256": "41193d02d0cd4d32d93756db41d5b201da5ce28c4911bab62d6307693dcae674",
         "passed": true,
-        "command_count": 2391
+        "command_count": 2391,
+        "protocol_sha256": "99e2f36b4e1ac85f33f40b7e6429d6d03206413d992d19c1a2ea8e4a93f9a804"
       },
       {
         "stage": "round2_workup",
-        "protocol_sha256": "3881e1ff3be0e3b7a2912e0c22fb1e2216af3d4090f562675ab1b55c6e299b47",
         "passed": true,
-        "command_count": 859
+        "command_count": 859,
+        "protocol_sha256": "0902ba88b9d32c947c18c06b4e270a8804ac40c8af36d24d64b973eebc19f165"
       }
     ],
     "total_commands": 16248,
@@ -406,10 +409,11 @@
       "LC prefill before quench; extraction mixing before sample transfer",
       "sealed 500 rpm and uncapped 750 rpm; heaters off during open shaking",
       "single archive recap after reaction sampling"
-    ]
+    ],
+    "environment": "Existing review environment: Opentrons 8.8.2; fresh locked installation additionally passed all SDK regression tests in the full suite."
   },
   "offline_lc_feedback_rehearsal": {
-    "source_report": "output/naphthalene/rehearsal/rehearsal_report.json",
+    "source_report": "output/final-review/selection/rehearsal/rehearsal_report.json",
     "synthetic_only": true,
     "paid_api_calls": 0,
     "round1_pairs": 48,
@@ -427,7 +431,7 @@
     "mocked_request_count": 660,
     "both_prompt_stages_include_17_SI_yields": true,
     "result_interpretation": "Synthetic yields and mocked rankings validate data flow only.",
-    "tested_revision": "2e79e3326fed92b42e274a9588736bfa85a9adc6"
+    "tested_revision": "02943a1ba120fe33a7d4e15bf84b87988ea2e366"
   },
   "analytical_practice": {
     "synthetic_only": true,
@@ -492,8 +496,8 @@
     "all_expected_outcomes_passed": true,
     "scope": "Merged interference/area loss can pass unknown-sample QC; known pilot truth detects these simulated biases. Real chromatograms still need identity/separation review.",
     "command": "python -m hte.cli practice-analytics --output output/analytics-practice",
-    "source_report": "output/naphthalene/analytics-practice/practice_report.json",
-    "tested_revision": "2e79e3326fed92b42e274a9588736bfa85a9adc6"
+    "source_report": "output/final-review/analytics/practice/practice_report.json",
+    "tested_revision": "02943a1ba120fe33a7d4e15bf84b87988ea2e366"
   },
   "visual_mock_hplc_trials": {
     "synthetic_only": true,
@@ -505,8 +509,8 @@
     "raw_trace_integration_executed": false,
     "real_method_validated": false,
     "command": "python scripts/mock-hplc-trials.py --output output/mock-hplc",
-    "source_report": "output/naphthalene/mock-hplc/trial_report.json",
-    "tested_revision": "2e79e3326fed92b42e274a9588736bfa85a9adc6"
+    "source_report": "output/final-review/analytics/mock-hplc/trial_report.json",
+    "tested_revision": "02943a1ba120fe33a7d4e15bf84b87988ea2e366"
   },
   "timing": {
     "stock_preparation_counts_inside_campaign": true,
@@ -595,19 +599,6 @@
     "unchanged_input_staff_retry_preserves_scoring_records": true,
     "retry_rejects_changed_source_or_archive": true
   },
-  "cleanup_checks": {
-    "locked_dependencies": "uv lock --check --offline passed; 108 packages",
-    "pypdf_dependency": "Retained for tests/docs; removed from sources extra after retirement of one-off SI extraction.",
-    "initialization_reproduced": "output/cleanup/reproduced-initial.csv",
-    "frozen_round1_byte_identical": true,
-    "pair_wells": 48,
-    "active_ligands_covered": 30,
-    "markdown_links_resolve": true,
-    "campaign_manifest_hashes_match": true,
-    "new_paid_API_calls": 0,
-    "new_embedding_inference": 0,
-    "robot_generators_changed": false
-  },
   "source_sha256": {
     ".github/workflows/handbook.yml": "83549acbce05c2020224641eef30263c51def492d3743cfa5d613fd029f570be",
     ".github/workflows/tests.yml": "2a106ffa474eb436b26f7e74a9d2cdad07ac7926c46866b11c1548dc457d1020",
@@ -677,5 +668,37 @@
     "tests/hte/test_toluene_inventory.py": "b258a06a69738126ddf789751a7c7e8be5b4d6fd0167baa6722d9d5ed4efbb26",
     "tests/hte/test_transfer.py": "baff19aa4b65dbb003581d12d4d26c250d94b4b255e31dd920a7996b0891e74b",
     "uv.lock": "aa781a38974aa7830c5fa48cc714b04acfd05d08d308e333a607f9b915e01d26"
+  },
+  "review_date": "2026-10-21",
+  "submission_checks": {
+    "clean_locked_install": true,
+    "python": "3.12.15",
+    "full_suite_passed": true,
+    "frozen_round1_byte_identical": true,
+    "pair_wells": 48,
+    "active_ligands_covered": 30,
+    "new_paid_API_calls": 0,
+    "new_embedding_inference": 0,
+    "runtime_or_chemistry_changes": false,
+    "independent_analytical_replay": {
+      "samples": 48,
+      "sequences": 2,
+      "yield_error_percentage_points": 7.105427357601002e-14,
+      "all_five_faults_rejected": true,
+      "source_report": "output/final-review/analytics/independent-roundtrip/review_report.json"
+    },
+    "adversarial_R2_stock_scenarios": {
+      "scenarios": 30,
+      "all_passed": true,
+      "source_report": "output/final-review/robot/conservation_report.json"
+    },
+    "private_return_package": {
+      "files": 133,
+      "all_hashes_verified": true,
+      "includes_raw_directory": true,
+      "gitless_checkout": true,
+      "synthetic_only": true
+    },
+    "new_code_defects_found": []
   }
 }

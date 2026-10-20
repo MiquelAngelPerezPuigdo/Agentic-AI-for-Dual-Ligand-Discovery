@@ -1,15 +1,15 @@
 {
-  "edition_date": "2026-10-20",
+  "edition_date": "2026-10-21",
   "edition_timezone": "Europe/Zurich",
-  "source_sha256": "7da1958357211faecc543ee16bf5acfbba1ac76f6f1417bbd25c67653853c6dc",
+  "source_sha256": "03763b272c45d1c8e707ba8e144cf76917ba4295d9300607ff3f982b2fd52348",
   "sources": {
     "docs/hte-runbook.md": "81af3f665c55c07f00a8e893242dc9afaaaff73044d8a6d5255495e2716dd05e",
-    "docs/stocks-and-calibration.md": "3ecdf3ac65112af67bf8b33d17476e05c58aa113d6f5e94ef928b63aa7c21052",
+    "docs/stocks-and-calibration.md": "6002fa19d566305024740b6faaa4c8399542857bc56613b741cc51bd777539d0",
     "docs/start-here.md": "49b70e0125f54af181cb1017f555689f9ef8c210f682cb311698cc3865cc5eff",
     "hte_inputs/campaign.json": "d0dda2faac063835f4b295c3ab23a80ab256597432a922edd25c5e8fb72f5753",
     "hte_inputs/calibration_template.csv": "9aab903969587dbc6d2045aa18669cfe03eecb54209fe59afde1932fe6322d4e",
     "hte_inputs/ligands.csv": "a24c186b814eaeb8b5950e7a059e21b8df001764e83b19f127a3da179f4a5876",
-    "software_validation.json": "d683780ee2b842c7a1c05fa31ddd961fc0def79e304dca4400acc5a7c77e0aca",
+    "software_validation.json": "7d44abf6021b26433c9726f2e57fc111f12a25742b1f7b245bb1cf180e10de5b",
     "scripts/build-hte-pdf.py": "4b5f4aa4f0ed8179cb55e2a7a5e6601217b4ac8879bfe364e26b16e77772bc05",
     "hte/planning.py": "81fc6f70debe6c524fa91012199de2a5e0e9e3e1445c16a7013cce937a180469",
     "hte/io.py": "786202cab5646cd4d9d21dd73bfda7d9249704761544a11cc0406964edbf6d2a",
@@ -35,7 +35,7 @@
     "campaigns/hackathon2026/round1_design.csv": "3c68d4fe7429cd5b880cdbec25debd4fd6d6e794e95022c88c317c07c5d5dd27",
     "campaigns/hackathon2026/scoring/campaign_provenance.json": "a97c2eec55f40228c5002f197a074dee898f26eacf24fdf2f61424707cca13fb"
   },
-  "pdf_sha256": "5963f88db8ef8347497a5d4716bc559d286afd77d799cf170593b93c84abb734",
+  "pdf_sha256": "33b3a016ba4399385ed031fdba9ab4fc510622f15731d7b2a676638f6d1e3583",
   "pages": 4,
   "editable_master": "docs/hte-runbook.md, docs/stocks-and-calibration.md, docs/start-here.md; rebuild with scripts/build-hte-pdf.py",
   "private_email_included": false,
