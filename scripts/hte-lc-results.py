@@ -84,13 +84,18 @@ def process(args, config, inventory, evidence, sources):
         if args.mode == "next":
             iteration = iterate(config, inventory, evidence, dosing,
                                 peaks, ready, calibration, output / "decision")
+            print("R2 DIRECTORY:", iteration)
             print("NEXT DOSING:", iteration / "next_dosing.csv")
             print(read_json(iteration / "complete.json")["hardware_status"])
             if (iteration / "protocols/dose_and_react.py").exists():
                 if (iteration/"protocols/refill_stocks.py").exists():
                     print("RUN R2 AUTOMATIC STOCK REFILL FIRST:",iteration/"protocols/refill_stocks.py")
                 print("R2 PROTOCOL:", iteration / "protocols/dose_and_react.py")
+                print("R2 WORKUP AFTER REACTION/COOLING:", iteration / "protocols/workup.py")
                 print("R2 DECK LOADS:", iteration / "protocols/deck_loads.csv")
+                print("R2 LC SEQUENCE:", iteration / "protocols/lc_sequence.csv")
+                for mapping in sorted((iteration / "protocols").glob("lc_batch*_injections.csv")):
+                    print("R2 INJECTION MAP (UPDATE TO ACTUAL INJECTIONS):", mapping)
             print("Expected: 22 new pairs + one L17 reference. Review deck loads and import/start the released Python locally.")
         else:
             tables, hashes = read_completed_inputs(config, dosing, peaks, ready, calibration)

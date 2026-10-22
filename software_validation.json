@@ -636,7 +636,7 @@
     "pyproject.toml": "c71ae4b0e674bd2f72e9a019291ac307831526046f81ee88106cfe2de370a7ac",
     "scripts/build-hte-pdf.py": "4b5f4aa4f0ed8179cb55e2a7a5e6601217b4ac8879bfe364e26b16e77772bc05",
     "scripts/draw-deck-setup.py": "5951371eda7ca92a28a8caf279b0ae2f2405e81e1b408cbc1786b418cce12050",
-    "scripts/hte-lc-results.py": "8c860d4c0e96fa72fda82e9dc84fc2856138ba79b7c04a078bc4166f5cb978c0",
+    "scripts/hte-lc-results.py": "ec93906dd68a861a3d53aede52ec2469a8780698f09527a4ac2f64fc65262c3d",
     "scripts/hte-return-package.py": "9f5f563510bc172fc28c051e6da07d8cba58b6f560260ba4823b38909b8e5e86",
     "scripts/initialization-report.py": "a984e00a5fb5e4014dd16d721ce8fc876222440890c1edfbcf24150d21b5b67d",
     "scripts/mock-hplc-trials.py": "48068da924d1a306c271caa85bbcfa08fcd06c425c17472421fa8869165e2115",
@@ -700,5 +700,24 @@
       "synthetic_only": true
     },
     "new_code_defects_found": []
+  },
+  "sharing_review": {
+    "date": "2026-10-22",
+    "baseline_revision": "375efe0f91cb5d51eab9d15bbc457dbcc5ce5ee0",
+    "scope": "Operator handoff and independent cross-file consistency review. Clarified R2 workup/LC-map paths and the final-analysis command; selection, chemistry, quantitative analysis and generated robot behavior are unchanged.",
+    "changes": [
+      "scripts/hte-lc-results.py: print R2 directory, workup, sequence and injection-map paths",
+      "docs/start-here.md: explicit final-analysis command and R2 workup handoff"
+    ],
+    "tests": {
+      "tests": 57,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "report": "output/final-review/sharing/helper-tests.xml",
+    "new_paid_API_calls": 0,
+    "physical_release_status_unchanged": true,
+    "full_suite_and_robot_simulation_evidence": "The complete locked-install and six-stage simulation records above are from 2026-10-21; this follow-up reran the 57 affected helper/resume/repository checks."
   }
 }
