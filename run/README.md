@@ -6,7 +6,7 @@ We compare 48 ligand pairs for Pd-catalysed conversion of **pyridine-2-sulfonyl 
 
 [Weighing sheet](WEIGHING.md) · [Stock-holder map](images/stock-map.png) · [Deck map](images/deck.png) · [Printable bench sheet](bench-sheet.pdf) · [Robot program](run_screen.py)
 
-**[Open the nine-step flow diagram](images/workflow.png)** for the whole sequence, with staff and robot actions side by side. Step 5 runs during the heated hold; the LC plate leaves the robot only at the end.
+**[Open the nine-step flow diagram](images/workflow.png)** for the whole sequence, with staff and robot actions side by side. Standards and reaction samples are prepared after the heated hold, then analyzed together. The LC plate leaves the robot only at the end.
 
 ## 1. Prepare the chemicals
 
@@ -35,7 +35,7 @@ These are the three pieces you will handle. Label them and keep A1 at the back-l
 | **Reaction block** | Para-Dox block, 48 empty 2 mL reaction vials with screw caps available | **3** |
 | **LC sample plate** | One empty **VWR 96 deep-well plate, 2.2 mL, V-bottom square wells**, with a cover and a seal available | **6** |
 
-The **Axygen 12-channel reservoir, 12 mL/channel, high-profile V-bottom** goes in **2**. These are the plate/reservoir geometries embedded in the program. Load 300 µL tip racks in **5 and 8** for the **left p300 single GEN2**, and **9** for the **right p300 eight-channel GEN2**. Heater-shaker/flat adapter: **10**. Leave **4, 7 and 11 empty**. Have a contact temperature probe and suitable hot-block handling tools.
+The **Axygen 12-channel reservoir, 12 mL/channel, high-profile V-bottom** goes in **2**. These are the plate/reservoir geometries embedded in the program. Load 300 µL tip racks in **5 and 8** for the **left p300 single GEN2**, and **9** for the **right p300 eight-channel GEN2**. Heater-shaker/flat adapter: **10**. Leave **4, 7 and 11 empty**. Have suitable hot-block handling tools.
 
 Start with ligand vials A1–F5 and SM_IS A6 / Pd B6 **open**; analytical/working vials **C6, D6, E6, F6, A7, B7, C7, D7, E7, F7 capped**. Reaction vials and the LC plate start empty and open. Covers stay off the reservoir and LC plate for initial pipetting.
 
@@ -57,33 +57,31 @@ Download [run_screen.py](run_screen.py) using **Download raw file**, save it as 
 
 **You, at 4a:** screw all **48 reaction caps** on securely. Cover the reservoir and LC plate in place. Keep the ten analytical vials capped. At the move prompt, move the **reaction block 3 → 10**.
 
-**Robot:** heats to **95 °C** and shakes at **500 rpm**. **At 4b, start an external four-hour timer and resume.** This is the beginning of the nominal heated hold. Arrange to return at about three hours and at the end of the hold.
+**Robot:** heats to **95 °C** and shakes at **500 rpm**. **At 4b, start an external four-hour timer and resume promptly.** This is the beginning of the nominal heated hold. Return at its end; there is no three-hour intervention. For an agreed longer heated hold, remain at 4b until the agreed elapsed endpoint, then resume. Heating/shaking continue during this pause; actual duration is logged.
 
-## 5. Return at three hours for the calibration standards
-
-**You, at 5a:** remove the reservoir/LC covers and open the ten analytical vials listed in step 2. Resume.
-
-**Robot:** makes the analytical stocks and seven mixed SM/product standards in **LC wells A7–G7**. HIGH, LOW, CHECK and IS_WORK are robot-made calibration mixtures; those labelled working vials started empty.
-
-**You, at 5b:** cover the reservoir and LC plate again. Used source vials may remain open. **Leave the LC plate in slot 6: the robot still needs to add the 48 reaction samples later.** Resume promptly for a four-hour hold. For an agreed longer heated hold, wait at this pause until the agreed endpoint, then resume. Heating/shaking continue during this pause; actual times are logged.
-
-## 6. Cool the sealed reactions
+## 5. Move the sealed reactions to cool; prepare calibration
 
 **Robot:** stops heating and shaking at the end of the hold.
 
-**You, at 6a and the move prompt:** move the **sealed reaction block 10 → 3** using suitable thermal handling. Leave every reaction cap on while it cools passively.
+**You, at 5:** remove the reservoir/LC covers and open the ten analytical vials listed in step 2. Keep all reaction vials sealed. At the move prompt, move the **sealed reaction block 10 → 3** using suitable thermal handling. It cools passively there.
 
-**You, at 6b:** confirm the **block and vials are ≤30 °C with a contact probe**. The program separately waits for the heater-shaker's own plate reading to reach ≤30 °C. Remove the reservoir/LC covers; keep reaction vials capped for now. Resume.
+**Robot:** makes the analytical stocks and seven mixed SM/product standards in **LC wells A7–G7**, while the reactions cool. HIGH, LOW, CHECK and IS_WORK are robot-made calibration mixtures; those labelled working vials started empty. Used source vials may remain open. **Leave the LC plate in slot 6**, ready for the reaction samples.
+
+## 6. Open, quench and mix when cooled
+
+**You, at 6:** decide when the **reaction block/vials and heater-shaker** have cooled sufficiently for opening and unheated workup. Keep the reaction vials sealed until then. Unscrew all 48 reaction caps and press **Resume** when ready. The program waits for your decision; there is no numerical cooldown threshold.
+
+**Robot:** adds **400 µL quench** to each reaction; each vial now contains **500 µL extract**.
+
+**You, at the next two move prompts:** move the **open reaction block 3 → 10 → 3**. Between those moves, the robot shakes it **750 rpm for two minutes, heater off**. It then waits **15 seconds** before sampling.
 
 Four hours is nominal: longer heated holds and a wait before quenching are allowed. The log records actual heated duration and heater-off-to-quench intervals. Conversion may continue during cooling; include actual timing in the run notes.
 
-## 7. Open, quench and sample
+## 7. Prepare the LC reaction samples
 
-**Robot:** first adds **480 µL LC diluent** to sample wells A1–H6 using the eight-channel pipette.
+**Robot:** works through LC columns 1–6. For each column it transfers **20 µL extract per reaction into the eight empty LC wells first**, using fresh single-channel tips. It then adds **480 µL acidified LC diluent on top** with the eight-channel pipette, in two 240 µL additions, before continuing to the next column. Each sample well ends at **500 µL**; no staff action is needed for this step.
 
-**You, at 7:** unscrew all 48 cooled reaction caps and resume. **Robot:** adds **400 µL quench** to each reaction; each vial now contains 500 µL extract.
-
-**You, at the next two move prompts:** move the **open reaction block 3 → 10 → 3**. Between those moves, the robot shakes it **750 rpm for two minutes, heater off**. It then waits 15 seconds and transfers **20 µL extract per reaction**, with fresh tips, into the LC plate. Each sample well now contains **500 µL**.
+The **quench** was added to the reaction vials in step 6. The liquid added on top of each LC aliquot here is the separate **LC diluent containing 0.1% formic acid**.
 
 ## 8. Mix the final LC sample plate
 
@@ -101,7 +99,7 @@ Four hours is nominal: longer heated holds and a wait before quenching are allow
 | A1–H6 | 48 reaction samples | **Then: 48 injections** |
 | All other wells | Empty | Leave uninjected |
 
-**LC operator:** load the provided injection list using its LC plate positions. Use the requested **1.7-minute method** and establish SM/product/naphthalene peak assignments and quantitative UV settings from the authentic standards. Naphthalene is **80 µM** in every prepared LC well; product at 100% yield is **800 µM**. The 55 injections take nominally **93.5 minutes**, plus instrument overhead.
+**LC operator:** run the standards and reaction samples **together in one LC sequence**, using the provided injection list and its LC plate positions. Use the requested **1.7-minute method** and establish SM/product/naphthalene peak assignments and quantitative UV settings from the authentic standards. Naphthalene is **80 µM** in every prepared LC well; product at 100% yield is **800 µM**. The 55 injections take nominally **93.5 minutes**, plus instrument overhead.
 
 Export the integrated-peak CSV and retain the original LC/MS files. The person handling quantification follows [ANALYSIS.md](ANALYSIS.md). Return the **LC/MS files, actual injection list/method, calculated yields/QC, robot logs and run notes** privately to Miquel.
 

@@ -30,16 +30,16 @@ def draw_workflow(plan, out):
          'Add solvent → pipette-mix → shake stocks\n750 rpm / 2 min, heater OFF → dose reactions.\n100 µL = 20 SM/IS + 30 L-A + 30 L-B + 20 Pd.'),
         ('Seal and start the heated hold',
          'Screw on all 48 REACTION caps.\nCover reservoir / LC plate.\nREACTION BLOCK 3 → 10; start timer at 4b.',
-         f'Heat to {c["temperature_C"]} °C; shake at {c["reaction_rpm"]} rpm.\nNominal {c["reaction_minutes"]//60}-hour hold starts at the App prompt.\nHeating / shaking continue during step 5.'),
-        ('During the hold: prepare calibration at about hour 3',
-         'At 5a: uncover reservoir / LC; open the ten\nanalytical vials. At 5b: cover reservoir / LC\nagain. Keep the LC plate in slot 6.',
-         'While reactions continue heating / shaking:\nmake analytical stocks and seven standards\nin LC wells A7–G7. Then finish the hold.'),
-        ('Cool before opening',
-         'At the prompt: SEALED BLOCK 10 → 3.\nCool passively, with all reaction caps ON.\nConfirm block / vials ≤30 °C with a probe.',
-         'Stop heating and shaking.\nWait for module ≤30 °C and staff confirmation.\nKeep the reactions capped until step 7.'),
-        ('Quench, mix, then sample',
-         'After LC diluent is added: uncap reactions.\nAt move prompts: OPEN BLOCK 3 → 10 → 3.\nThe robot shakes between those moves.',
-         '480 µL LC diluent / well → 400 µL quench /\nreaction → 750 rpm / 2 min, heater OFF →\nwait 15 s → transfer 20 µL extract to LC plate\nwith fresh tips.'),
+         f'Heat to {c["temperature_C"]} °C; shake at {c["reaction_rpm"]} rpm.\nNominal {c["reaction_minutes"]//60}-hour hold starts at the App prompt.\nThen stop heating and shaking.'),
+        ('After the hold: prepare standards while reactions cool',
+         'At the prompt: SEALED BLOCK 10 → 3.\nUncover reservoir / LC plate; open the ten\nanalytical vials. Reaction caps stay ON.',
+         'Make analytical stocks and seven standards\nin LC wells A7–G7 while the sealed reaction\nblock cools. Keep the LC plate in slot 6.'),
+        ('Open cooled reactions, quench and mix',
+         'Operator decides when safe to open and\nmodule is ready for unheated workup. Uncap\nreactions; OPEN BLOCK 3 → 10 → 3 at prompts.',
+         'Add 400 µL quench / reaction (500 µL total).\nShake open block: 750 rpm / 2 min, heater OFF.\nReturn to slot 3, then wait 15 s.'),
+        ('Prepare LC samples: aliquot first, then diluent',
+         'No labware move or manual pipetting.\nLeave the LC plate in slot 6.',
+         'For each of six columns: transfer eight\n20 µL extract aliquots with fresh tips FIRST.\nThen add 480 µL diluent / well (2 × 240 µL)\nwith the eight-channel pipette.'),
         ('Mix the completed LC plate',
          'Recap reactions for storage.\nAt the prompt: UNCOVERED LC PLATE 6 → 10.\nRemove the plate when the App requests it.',
          'Mix 48 samples + seven standards:\n750 rpm / 2 min, heater OFF.\nEach filled LC well contains 500 µL.'),
@@ -65,7 +65,7 @@ def draw_workflow(plan, out):
         ax.text(.33,top-.24,str(i+1),ha='center',va='center',fontsize=10,
                 fontweight='bold',color='white')
         ax.text(.78,top-.24,title,va='center',fontsize=12,fontweight='bold',color=ink)
-        for x,text,color in [(0.78,left,staff),(5.91,right,warm if i in (3,4) else robot)]:
+        for x,text,color in [(0.78,left,staff),(5.91,right,warm if i==3 else robot)]:
             ax.add_patch(FancyBboxPatch((x,bottom),4.87,1.26,
                                        boxstyle='round,pad=0.03,rounding_size=0.06',
                                        facecolor=color,edgecolor='none'))
@@ -73,7 +73,7 @@ def draw_workflow(plan, out):
                     linespacing=1.45,color=ink)
     fig.text(.10,.038,'Move labware only at the App prompts. Read both columns, then follow the numbered staff guide.',
              fontsize=9.5,color=ink)
-    fig.text(.10,.018,'Heated hold: nominal 4 h; longer holds / waits are allowed and logged. Reaction caps stay ON during cooling.',
+    fig.text(.10,.018,'Longer hold: remain at 4b until the agreed endpoint. Holds / waits are logged. Keep reaction caps ON during cooling.',
              fontsize=9,color=muted)
     for ext in ('svg','png'):
         file=out/f'workflow.{ext}'

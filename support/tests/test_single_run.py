@@ -36,7 +36,8 @@ def test_reserves_headspace_and_material_budget(plan):
     assert next(s for s in plan['stocks'] if s['stock_id']=='L03')['mass_mg']<10
     assert sum(s['mass_mg'] for s in plan['stocks'] if re.fullmatch('L\\d+',s['stock_id']))<85
     assert plan['tips']['single_total']==170
-    assert all(20<=op['volume']<=250 for group in ['steps_before_reaction','steps_during_hold','steps_quench','steps_sample']
+    assert plan['tips']['multi_columns']==6
+    assert all(20<=op['volume']<=250 for group in ['steps_before_reaction','steps_calibration','steps_quench','steps_sample']
                for op in plan[group] if op['type']=='transfer')
 
 
@@ -48,6 +49,47 @@ def test_stock_shaking_after_preparation_before_any_reaction_dose(plan):
     assert len({tuple(op['location']) for op in ops[:index] if op['type']=='mix'})==32
     reaction_doses=[i for i,op in enumerate(ops) if op['type']=='transfer' and op['dest'][0]=='reaction']
     assert min(reaction_doses)>index
+
+
+def test_lc_aliquots_precede_diluent_one_complete_column_at_a_time(plan):
+    # Reaction workup stays separate: LC wells receive quenched extracts, not raw reactions.
+    quench_totals=defaultdict(float)
+    for op in plan['steps_quench']:
+        if op['type']!='transfer':continue
+        assert op['chemical']=='quench' and op['dest'][0]=='reaction'
+        quench_totals[op['dest'][1]]+=op['volume']
+    assert quench_totals=={r['well']:400 for r in plan['dosing']}
+
+    transfers=[op for op in plan['steps_sample'] if op['type']=='transfer']
+    expected={r['lc_well']:r for r in plan['dosing']}
+    volumes=defaultdict(float)
+    previous_column_end=-1
+    for column in range(1,7):
+        wells={row+str(column) for row in 'ABCDEFGH'}
+        aliquots=[(i,op) for i,op in enumerate(transfers)
+                  if op['channels']==1 and op['dest'][1] in wells]
+        dilutions=[(i,op) for i,op in enumerate(transfers)
+                   if op['channels']==8 and any(dest[1] in wells for dest in op['dest'])]
+        assert len(aliquots)==8 and len(dilutions)==2
+        assert {op['dest'][1] for _,op in aliquots}==wells
+        assert previous_column_end<min(i for i,_ in aliquots)
+        assert max(i for i,_ in aliquots)<min(i for i,_ in dilutions)
+        for _,op in aliquots:
+            well=op['dest'][1]
+            assert op['dest'][0]=='lc' and volumes[well]==0
+            assert op['source']==['reaction',expected[well]['well']]
+            assert op['chemical']==expected[well]['sample_id']
+            assert op['sample'] and op['fresh'] and op['volume']==20
+            volumes[well]+=op['volume']
+        assert [op['fresh'] for _,op in dilutions]==[True,False]
+        for _,op in dilutions:
+            assert op['source'][0]=='res' and op['chemical']=='lc_diluent'
+            assert op['volume']==240
+            assert {tuple(dest) for dest in op['dest']}=={('lc',well) for well in wells}
+            for well in wells:volumes[well]+=op['volume']
+        assert all(volumes[well]==500 for well in wells)
+        previous_column_end=max(i for i,_ in dilutions)
+    assert len(transfers)==60 and len(volumes)==48
 
 
 def test_molar_and_solvent_balance_through_every_liquid_transfer(plan):
@@ -83,7 +125,7 @@ def test_molar_and_solvent_balance_through_every_liquid_transfer(plan):
         assert a[r['ligand_b']]==pytest.approx(.6)
         # A known 50% conversion, used only in this synthetic accounting test.
         a['SM']=5;a['P']=5
-    apply(plan['steps_during_hold'])
+    apply(plan['steps_calibration'])
     for row in plan['calibration']:
         loc=('lc',row['well']);key='SM' if row['analyte']=='substrate' else 'P'
         assert volume[loc]==pytest.approx(500)
@@ -118,8 +160,9 @@ def test_real_sdk_continuous_protocol_and_tip_positions():
     with (ROOT/'run/run_screen.py').open() as stream:log,_=simulate(stream)
     texts=[e['payload'].get('text','') for e in log]
     picks=[e['payload']['text'] for e in log if e['level']==0 and 'Picking up tip' in e['payload'].get('text','')]
-    assert len(picks)==len(set(picks))==171  # 170 single tips + one eight-tip column; no reuse or rack refill.
-    assert 'B4' in picks[122] and 'slot 8' in picks[122]
+    assert len(picks)==len(set(picks))==176  # 170 single tips + six eight-tip columns; no rack refill.
+    assert sum('slot 9' in pick for pick in picks)==6
+    assert sum('slot 5' in pick or 'slot 8' in pick for pick in picks)==170
     assert not any('Replace empty tip racks' in text for text in texts)
     source=(ROOT/'run/run_screen.py').read_text()
     assert '1.5 mm' in source
@@ -135,15 +178,17 @@ def test_real_sdk_continuous_protocol_and_tip_positions():
     # Workup follows the completed hold in the same simulation, without a restart.
     phases=['3a. Shake the stock holder', 'STOCK SHAKE START', '3b. Check stocks before dosing',
             '4a. Seal the reactions', '4b. Start the reaction timer',
-            '5a. Prepare the LC calibration standards', '5b. Cover the standards',
-            '6a. Move the sealed reaction block', '6b. Confirm the reaction block',
-            '7. Open the cooled reactions', '8. Mix the completed LC sample plate',
+            'HEATED HOLD COMPLETE', '5. Move the sealed reaction block to cool',
+            'CALIBRATION PREPARATION START',
+            '6. Continue when cooling is complete',
+            '7. Prepare LC samples', '8. Mix the completed LC sample plate',
             '9. Hand the sample plate to HPLC-MS']
     positions=[next(i for i,text in enumerate(texts) if phase in text) for phase in phases]
     assert positions==sorted(positions)
 
 
-def test_late_heated_hold_and_cooling_wait_continue_and_are_logged():
+@pytest.mark.parametrize('hold_pause_seconds,expected_hold_minutes',[(0,240),(6*3600,360)])
+def test_heated_hold_and_operator_cooling_wait_are_logged(hold_pause_seconds,expected_hold_minutes):
     # Use the SDK for robot I/O and an accelerated clock for the live timing branch.
     from types import SimpleNamespace
     from opentrons.simulate import get_protocol_api
@@ -152,9 +197,17 @@ def test_late_heated_hold_and_cooling_wait_continue_and_are_logged():
     elapsed=[0.0];comments=[];pauses=[]
     namespace['time']=SimpleNamespace(monotonic=lambda:elapsed[0])
     sdk=get_protocol_api('2.18',robot_type='OT-2')
+    class OperatorCooledModule:
+        def __init__(self,module):self.module=module
+        def __getattr__(self,name):
+            if name=='current_temperature':
+                raise AssertionError('Cooling must wait for the operator, not a numerical module threshold')
+            return getattr(self.module,name)
     class TimedContext:
         def __getattr__(self,name):return getattr(sdk,name)
         def is_simulating(self):return False
+        def load_module(self,*args,**kwargs):
+            return OperatorCooledModule(sdk.load_module(*args,**kwargs))
         def delay(self,seconds=0,**kwargs):
             assert seconds>=0
             elapsed[0]+=seconds
@@ -162,19 +215,19 @@ def test_late_heated_hold_and_cooling_wait_continue_and_are_logged():
         def pause(self,message):
             pauses.append(message)
             assert len(pauses)<100
-            if message.startswith('5b. Cover the standards'):elapsed[0]+=3*3600
-            if message.startswith('6b. Confirm the reaction block'):elapsed[0]+=45*60
+            if message.startswith('4b. Start the reaction timer'):elapsed[0]+=hold_pause_seconds
+            if message.startswith('6. Continue when cooling is complete'):elapsed[0]+=45*60
             return sdk.pause(message)
         def comment(self,message):
             comments.append(message)
             return sdk.comment(message)
     namespace['run'](TimedContext())
-    assert any(t.startswith('Nominal hold elapsed during standards') for t in comments)
     heated=next(t for t in comments if t.startswith('HEATED HOLD COMPLETE: actual'))
-    assert float(re.search(r'heated hold ([\d.]+) min',heated)[1])>=360
+    assert float(re.search(r'heated hold ([\d.]+) min',heated)[1])==pytest.approx(expected_hold_minutes,abs=.01)
     quench=next(t for t in comments if t.startswith('QUENCH START:'))
     assert float(re.search(r'QUENCH START: ([\d.]+) min',quench)[1])>=45
     assert any(t.startswith('QUENCH COMPLETE:') for t in comments)
+    assert not any(p.startswith(('5a.','5b.')) for p in pauses)
     assert pauses[-1].startswith('9. Hand the sample plate to HPLC-MS')
 
 

@@ -301,7 +301,7 @@ Q 433.975156 567.698324 433.975156 570.680034
 L 433.975156 630.314223
 Q 433.975156 633.295933 438.19776 633.295933
 z
-" clip-path="url(#p7d0df95e3d)" style="fill: #fbefd9"/>
+" clip-path="url(#p7d0df95e3d)" style="fill: #e3eee6"/>
    </g>
    <g id="patch_25">
     <path d="M 43.38432 667.08864
@@ -520,56 +520,55 @@ z
    <g id="text_16">
     <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 484.486752)">Heat to 95 °C; shake at 500 rpm.</text>
     <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 498.261752)">Nominal 4-hour hold starts at the App prompt.</text>
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 512.036752)">Heating / shaking continue during step 5.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 512.036752)">Then stop heating and shaking.</text>
    </g>
    <g id="text_17">
     <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #ffffff" x="43.38432" y="553.896578" transform="rotate(-0 43.38432 553.896578)">5</text>
    </g>
    <g id="text_18">
-    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="75.053847" y="554.416578" transform="rotate(-0 75.053847 554.416578)">During the hold: prepare calibration at about hour 3</text>
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="75.053847" y="554.416578" transform="rotate(-0 75.053847 554.416578)">After the hold: prepare standards while reactions cool</text>
    </g>
    <g id="text_19">
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 588.846583)">At 5a: uncover reservoir / LC; open the ten</text>
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 602.621583)">analytical vials. At 5b: cover reservoir / LC</text>
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 616.396583)">again. Keep the LC plate in slot 6.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 588.846583)">At the prompt: SEALED BLOCK 10 → 3.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 602.621583)">Uncover reservoir / LC plate; open the ten</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 616.396583)">analytical vials. Reaction caps stay ON.</text>
    </g>
    <g id="text_20">
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 588.846583)">While reactions continue heating / shaking:</text>
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 602.621583)">make analytical stocks and seven standards</text>
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 617.316896)">in LC wells A7–G7. Then finish the hold.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 588.846583)">Make analytical stocks and seven standards</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 603.541896)">in LC wells A7–G7 while the sealed reaction</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 616.396583)">block cools. Keep the LC plate in slot 6.</text>
    </g>
    <g id="text_21">
     <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #ffffff" x="43.38432" y="658.25641" transform="rotate(-0 43.38432 658.25641)">6</text>
    </g>
    <g id="text_22">
-    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="75.053847" y="658.77641" transform="rotate(-0 75.053847 658.77641)">Cool before opening</text>
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="75.053847" y="658.77641" transform="rotate(-0 75.053847 658.77641)">Open cooled reactions, quench and mix</text>
    </g>
    <g id="text_23">
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 693.206415)">At the prompt: SEALED BLOCK 10 → 3.</text>
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 706.981415)">Cool passively, with all reaction caps ON.</text>
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 720.756415)">Confirm block / vials ≤30 °C with a probe.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 693.206415)">Operator decides when safe to open and</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 706.981415)">module is ready for unheated workup. Uncap</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 720.756415)">reactions; OPEN BLOCK 3 → 10 → 3 at prompts.</text>
    </g>
    <g id="text_24">
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 693.206415)">Stop heating and shaking.</text>
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 707.901727)">Wait for module ≤30 °C and staff confirmation.</text>
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 720.756415)">Keep the reactions capped until step 7.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 693.206415)">Add 400 µL quench / reaction (500 µL total).</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 706.981415)">Shake open block: 750 rpm / 2 min, heater OFF.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 721.192079)">Return to slot 3, then wait 15 s.</text>
    </g>
    <g id="text_25">
     <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #ffffff" x="43.38432" y="762.616242" transform="rotate(-0 43.38432 762.616242)">7</text>
    </g>
    <g id="text_26">
-    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="75.053847" y="763.136242" transform="rotate(-0 75.053847 763.136242)">Quench, mix, then sample</text>
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="75.053847" y="763.136242" transform="rotate(-0 75.053847 763.136242)">Prepare LC samples: aliquot first, then diluent</text>
    </g>
    <g id="text_27">
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 797.566246)">After LC diluent is added: uncap reactions.</text>
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 811.257379)">At move prompts: OPEN BLOCK 3 → 10 → 3.</text>
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 826.036559)">The robot shakes between those moves.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 804.453746)">No labware move or manual pipetting.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 818.228746)">Leave the LC plate in slot 6.</text>
    </g>
    <g id="text_28">
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 790.678746)">480 µL LC diluent / well → 400 µL quench /</text>
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 804.453746)">reaction → 750 rpm / 2 min, heater OFF →</text>
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 818.228746)">wait 15 s → transfer 20 µL extract to LC plate</text>
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 832.003746)">with fresh tips.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 790.678746)">For each of six columns: transfer eight</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 804.453746)">20 µL extract aliquots with fresh tips FIRST.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 818.228746)">Then add 480 µL diluent / well (2 × 240 µL)</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 832.003746)">with the eight-channel pipette.</text>
    </g>
    <g id="text_29">
     <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #ffffff" x="43.38432" y="866.976073" transform="rotate(-0 43.38432 866.976073)">8</text>
@@ -620,7 +619,7 @@ z
    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="80.64" y="1094.3712" transform="rotate(-0 80.64 1094.3712)">Move labware only at the App prompts. Read both columns, then follow the numbered staff guide.</text>
   </g>
   <g id="text_42">
-   <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #53636c" x="80.64" y="1117.1232" transform="rotate(-0 80.64 1117.1232)">Heated hold: nominal 4 h; longer holds / waits are allowed and logged. Reaction caps stay ON during cooling.</text>
+   <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #53636c" x="80.64" y="1117.1232" transform="rotate(-0 80.64 1117.1232)">Longer hold: remain at 4b until the agreed endpoint. Holds / waits are logged. Keep reaction caps ON during cooling.</text>
   </g>
  </g>
  <defs>

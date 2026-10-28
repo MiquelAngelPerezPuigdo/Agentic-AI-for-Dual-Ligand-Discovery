@@ -13,7 +13,7 @@
 | Print the instructions | [Two-page bench sheet](run/bench-sheet.pdf) |
 | Calculate yields | [LC analysis instructions](run/ANALYSIS.md) |
 
-Plan for staff to be present during loading/dosing, at about **three hours** for calibration preparation, and from the **end of the heated hold through cooling, sampling and LC handoff**. The same labware and tip racks are used throughout.
+Plan for staff to be present during loading/dosing and from the **end of the heated hold through cooling, calibration preparation, sampling and LC handoff**. There is no mid-reaction visit. The same labware and tip racks are used throughout.
 
 **Ready for the local Opentrons App:** save the Python download as `run_screen.py`, import it, complete the App's setup/labware checks and start. The file already includes all custom labware definitions, stock volumes and the 48-pair dosing plan. HTE can use it directly without generating protocols or uploading CSV/JSON files to the robot.
 
@@ -24,7 +24,7 @@ Everything for the bench is in **`run/`**. Its `images/` and `tables/` subfolder
 
 [![Nine-step workflow from weighing through LC analysis, with separate staff and robot actions](run/images/workflow.png)](run/images/workflow.png)
 
-Click the diagram to open it at full size. Calibration preparation in step 5 happens **during** the heated reaction hold.
+Click the diagram to open it at full size. Calibration standards and reaction samples are prepared **after** the heated hold, then analyzed together in one LC sequence.
 
 </details>
 
@@ -40,7 +40,7 @@ Before dosing, leave the 30 ligand vials and SM_IS/Pd vials **open**, with analy
 
 Used reaction stocks may remain open after dosing. Analytical vials stay capped until standards preparation, then may also remain open. Keep the reservoir and LC plate covered at the App prompts.
 
-The reaction's heated hold is **nominally four hours**; longer holds or a wait before quenching are allowed and logged. Keep reaction vials sealed while the block cools in slot 3; confirm block/vials are **≤30 °C before opening**.
+The reaction's heated hold is **nominally four hours**; longer holds or a wait before quenching are allowed and logged. The robot prepares the calibration standards while the sealed reaction block cools in slot 3. The operator decides when the block/vials and heater-shaker are ready for opening and unheated workup, then resumes the program.
 
 **Smallest liquid dose: 20 µL.** Each 100 µL reaction receives **20 µL SM/internal-standard stock + 30 µL ligand A + 30 µL ligand B + 20 µL Pd stock**.
 

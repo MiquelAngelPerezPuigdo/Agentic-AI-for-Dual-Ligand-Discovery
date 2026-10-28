@@ -55,12 +55,12 @@ def main():
                   ['2','Load deck. Open A1-F5 and A6/B6; keep ten analytical vials capped. Check offsets, 150 µL source pickup and both capped assemblies ≤45 mm. Import <b>run_screen.py</b>.','Follow staff-guide setup checks, then start. Numbered pauses give the next action.'],
                   ['3','At move prompts: <b>stock holder 1 → 10 → 1</b>. Inspect stocks; leave reaction sources open.','Makes/mixes stocks; shakes 750 rpm / 2 min, heater OFF; doses 48 reactions.'],
                   ['4','Cap all <b>48 reaction vials</b>. Cover reservoir/LC. Move <b>reaction block 3 → 10</b>. Start timer at hold-start prompt.','95 °C / 500 rpm; nominal 4 h heated hold.'],
-                  ['5','At ~3 h: uncover reservoir/LC; uncap ten analytical vials. After standards, cover reservoir/LC again. <b>LC plate stays in 6.</b>','Makes seven standards in A7-G7. Used source vials may stay open.'],
-                  ['6','Move <b>sealed block 10 → 3</b>. Cool passively; confirm <b>block/vials ≤30 °C</b> with contact probe. Remove reservoir/LC covers.','Stops heater/shaker; waits for module ≤30 °C and staff confirmation; adds LC diluent.'],
-                  ['7','Uncap 48 cooled reactions. At move prompts: <b>open block 3 → 10 → 3</b>.','400 µL quench/vial; 750 rpm / 2 min; fresh-tip sampling: 20 µL into 480 µL diluent.'],
+                  ['5','After heating stops: <b>sealed block 10 → 3</b>. Uncover reservoir/LC; open ten analytical vials. Reaction caps stay on.','Makes seven standards A7-G7 while sealed reactions cool. LC plate stays in 6.'],
+                  ['6','Operator decides when safe to open and module ready for unheated workup. Uncap reactions; <b>open block 3 → 10 → 3</b> at prompts.','400 µL quench/vial (500 µL total); 750 rpm / 2 min, heater OFF; settle 15 s.'],
+                  ['7','No manual pipetting or labware move. Keep LC plate in slot 6.','Per column: eight fresh-tip 20 µL aliquots FIRST, then 480 µL diluent/well (8-channel, 2 × 240 µL).'],
                   ['8','Recap reaction vials for storage. Move <b>uncovered LC plate 6 → 10</b>, then remove when asked.','Final LC plate mix: 750 rpm / 2 min, heater OFF.'],
                   ['9','Seal/label plate and mark A1. Finish robot program. Carry flat to <b>HPLC-MS with lc-injections.csv</b>.','LC operator: 7 standards A7-G7 FIRST, then 48 samples A1-H6; other wells uninjected.']],[30,285,195]),
-           para('<b>Timing:</b> longer holds and pre-quench waits are allowed/logged. For a longer hold, wait at 5b before resuming. App pauses keep heating/shaking on. Return LC/MS files, actual injection map/method, yields/QC, robot log and run notes.',small),PageBreak(),
+           para('<b>Timing:</b> longer holds and pre-quench waits are allowed/logged. For a longer hold, remain at 4b until the agreed endpoint; heating/shaking stay on there. Return LC/MS files, actual injection map/method, yields/QC, robot log and run notes.',small),PageBreak(),
            para('Weighing / stock-holder positions',title),
            para('All positions are in the HTEL stock holder in <b>slot 1</b>. Ligands occupy columns 1-5. Column 8 stays empty. The robot adds solvent directly in these vials. No stock transfers or refills.'),]
     rows=[['Vial','Label','Material','mg']]

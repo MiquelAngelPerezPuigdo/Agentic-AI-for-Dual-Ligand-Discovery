@@ -166,15 +166,20 @@ def build_plan():
         if amount: transfer(locations[strength], dest, amount)
         mix(dest, 4)
     drop()
-    split_hold = len(steps)
-    for col in range(1, 7):
-        transfer('lc_diluent', [['lc', row+str(col)] for row in 'ABCDEFGH'], 480, chemical='lc_diluent', channels=8)
-    drop()
+    split_calibration = len(steps)
     for row in design: transfer('quench', ['reaction', row['well']], 400, chemical='quench')
     drop()
     split_quench = len(steps)
-    for row in design:
-        transfer(['reaction', row['well']], ['lc', row['lc_well']], 20, chemical=row['sample_id'], sample=True)
+    # Fill and dilute one LC column at a time: aliquots first, then acidified
+    # diluent, so small volatile aliquots do not wait for all 48 samples.
+    by_lc_well = {row['lc_well']: row for row in design}
+    for col in range(1, 7):
+        destinations = [['lc', letter+str(col)] for letter in 'ABCDEFGH']
+        for _, well in destinations:
+            row = by_lc_well[well]
+            transfer(['reaction', row['well']], ['lc', well], 20, chemical=row['sample_id'], sample=True)
+            drop()
+        transfer('lc_diluent', destinations, 480, chemical='lc_diluent', channels=8)
         drop()
     for stock in stocks:
         loc = tuple(stock['location'])
@@ -182,14 +187,16 @@ def build_plan():
         if liquids[loc] < c['tube_dead_ul'] - 1e-6: raise ValueError('Tube reserve violated')
     dosing = [dict(**row, reaction_volume_ul=100, substrate_umol=10, workup_ul=400, aliquot_ul=20,
                    diluent_ul=480, internal_standard_final_uM=80) for row in design]
-    first_tips=sum(op['type']=='mix' or op['type']=='transfer' and op['channels']==1 and op['fresh'] for op in steps[:split_hold])
+    first_tips=sum(op['type']=='mix' or op['type']=='transfer' and op['channels']==1 and op['fresh'] for op in steps[:split_calibration])
     total_tips=sum(op['type']=='mix' or op['type']=='transfer' and op['channels']==1 and op['fresh'] for op in steps)
+    multi_columns=sum(op['type']=='transfer' and op['channels']==8 and op['fresh'] for op in steps)
     if not first_tips < total_tips <= 192:raise ValueError('Single-channel tip budget exceeds two racks')
+    if not 0 < multi_columns <= 12:raise ValueError('Eight-channel tip budget exceeds one rack')
     return dict(config=c, locations=locations, stocks=stocks, dosing=dosing, calibration=calibration,
-                tips=dict(single_before_workup=first_tips,single_total=total_tips,multi_columns=1),
+                tips=dict(single_before_workup=first_tips,single_total=total_tips,multi_columns=multi_columns),
                 reservoir=[dict(well=w, liquid=k, load_ul=v, final_remaining_ul=liquids[('res',w)]) for w,k,v in RESERVOIR],
-                steps_before_reaction=steps[:split_reaction], steps_during_hold=steps[split_reaction:split_hold],
-                steps_quench=steps[split_hold:split_quench], steps_sample=steps[split_quench:],
+                steps_before_reaction=steps[:split_reaction], steps_calibration=steps[split_reaction:split_calibration],
+                steps_quench=steps[split_calibration:split_quench], steps_sample=steps[split_quench:],
                 final_volumes=[dict(location=list(k), volume_ul=v) for k,v in liquids.items()],
                 source_files={p: digest(ROOT/p) for p in ['support/hte_inputs/ligands.csv', 'support/campaigns/hackathon2026/round1_design.csv',
                                                          c['stock_definition'],c['reaction_definition'],c['lc_definition'],c['reservoir_definition']]})
@@ -262,20 +269,13 @@ def run(ctx: protocol_api.ProtocolContext):
     def move_block_back():
         hs.deactivate_shaker();hs.deactivate_heater();hs.open_labware_latch()
         ctx.move_labware(lw['reaction'],3,use_gripper=False)
-    def cool_module(stage='6'):
+    def shake_stocks(op):
         hs.close_labware_latch()
         hs.deactivate_shaker();hs.deactivate_heater()
-        while not ctx.is_simulating() and (hs.current_temperature is None or hs.current_temperature>30):
-            operator_pause(stage+'. Wait for the heater-shaker to cool',
-                'The heater is off. The module cools passively.',
-                'Wait for its plate reading to reach <=30 C. Reaction-block/vial cooling is checked separately at step 6b.',
-                'The module reading is <=30 C. It will be used for unheated shaking.')
-    def shake_stocks(op):
-        cool_module('3')
         operator_pause('3a. Shake the stock holder',
             'Stock solvent addition and pipette mixing are complete. The holder will shake at 750 rpm for 2 minutes, heater OFF.',
             'Leave the 30 ligand vials and SM_IS A6 / Pd B6 OPEN. Keep the ten analytical vials capped. Resume; the App will then ask you to move the STOCK HOLDER 1 -> 10 and, after shaking, back to 1.',
-            'The stock holder is ready to move. Move it only at the separate App move prompt.')
+            'The stock holder is ready to move and the module is ready for unheated shaking. Move it only at the separate App move prompt.')
         hs.open_labware_latch()
         ctx.move_labware(lw['stocks'],adapter,use_gripper=False)
         hs.close_labware_latch()
@@ -301,59 +301,41 @@ def run(ctx: protocol_api.ProtocolContext):
     try:
         hs.set_and_wait_for_temperature(c['temperature_C']);hs.set_and_wait_for_shake_speed(c['reaction_rpm'])
         hold_seconds=c['reaction_minutes']*60
-        standards_after=max(0,hold_seconds-60*60)
         start=time.monotonic();deadline=start+hold_seconds
         operator_pause('4b. Start the reaction timer',
             'REACTION HOLD START: 95 C and 500 rpm reached; the nominal four-hour heated hold starts NOW.',
-            'Start an external four-hour timer. Plan to return at about three hours for standards and at the end for cooling/workup. Heating/shaking stay on during App pauses.',
-            'The timer is running. Resume now for the normal schedule. Longer agreed holds and a later quench are allowed; actual intervals are logged.')
-        # Make aqueous standards in the last hour rather than leaving them for four hours.
-        ctx.delay(seconds=standards_after if ctx.is_simulating() else max(0,start+standards_after-time.monotonic()))
-        operator_pause('5a. Prepare the LC calibration standards',
-            'This standards-preparation step is normally scheduled near hour three. The robot now needs the analytical source vials.',
-            'Remove the reservoir and LC plate covers. Uncap C6,D6,E6,F6,A7,B7,C7,D7,E7,F7 in the STOCK HOLDER. Used reaction stocks may stay open.',
-            'Those ten analytical vials and the reservoir/LC plate are open. The robot will make seven standards while the reactions continue.')
-        steps(PLAN['steps_during_hold']);drop()
-        operator_pause('5b. Cover the standards; leave the LC plate on the robot',
-            'Seven mixed-analyte standards are ready in LC wells A7:G7. The 48 reaction samples will be added later.',
-            'Cover the LC plate and reservoir IN PLACE. All used source vials may stay open. Keep the LC plate in slot 6.',
-            'Both covers are on. Resume promptly for a four-hour hold, or wait here until an agreed longer endpoint. The LC plate goes to HPLC-MS only after step 8.')
+            'Start an external timer and Resume promptly for the nominal four-hour hold. Return at its end for cooling, calibration and sample preparation. For an agreed longer heated hold, remain at THIS pause until the chosen elapsed endpoint, then Resume. Heating/shaking stay on while paused.',
+            'The timer is running. Resume for the normal schedule, or at your agreed longer endpoint. Actual heated duration and the later quench interval are logged.')
         if not ctx.is_simulating() and time.monotonic()>=deadline:
-            ctx.comment('Nominal hold elapsed during standards preparation/pauses. Continuing with the completed standards; actual heated duration is recorded at heater-off.')
-        ctx.delay(seconds=min(60*60,hold_seconds) if ctx.is_simulating() else max(0,deadline-time.monotonic()))
+            ctx.comment('Nominal hold elapsed during the operator pause. Actual heated duration is recorded at heater-off.')
+        ctx.delay(seconds=hold_seconds if ctx.is_simulating() else max(0,deadline-time.monotonic()))
     finally:
         hs.deactivate_shaker();hs.deactivate_heater()
         if start is not None:
             if ctx.is_simulating():ctx.comment('HEATED HOLD COMPLETE (SIMULATION): nominal duration only; no physical elapsed time measured.')
             else:ctx.comment(f'HEATED HOLD COMPLETE: actual elapsed heated hold {(time.monotonic()-start)/60:.2f} min; heater OFF.')
     heat_off=time.monotonic()
-    operator_pause('6a. Move the sealed reaction block to cool',
+    operator_pause('5. Move the sealed reaction block to cool',
         'The heated hold is complete; heater and shaker are OFF. Actual heated duration is recorded.',
-        'Keep all 48 reaction caps CLOSED. Have suitable hot-block handling tools ready. Resume; the App will then request REACTION BLOCK 10 -> 3. Let the sealed block cool there.',
-        'You are ready to handle the sealed block. Move it only at the separate App move prompt. Extra cooling/waiting time is allowed.')
+        'Keep all 48 reaction caps CLOSED. Remove reservoir/LC covers and uncap analytical vials C6,D6,E6,F6,A7,B7,C7,D7,E7,F7. Have hot-block handling tools ready. Resume; the App will request REACTION BLOCK 10 -> 3. The robot will then make seven standards while the sealed block cools.',
+        'Analytical vials, reservoir and LC plate are open, and you are ready to move the sealed block at the separate App prompt.')
     move_block_back()
-    # Same context and pipettes: preserve deck state and used tips through workup.
-    cool_module()
-    operator_pause('6b. Confirm the reaction block and vials are cool',
-        'The module has cooled. Staff must also confirm the sealed REACTION BLOCK and vials in slot 3 are <=30 C with a contact probe.',
-        'Check that temperature and remove the reservoir/LC plate covers. Keep the reaction vials CAPPED. Use the same LC plate with standards in A7:G7 and the same tip racks.',
-        'The block/vials are <=30 C and covers are off. The robot will first add LC diluent to sample wells A1:H6.')
-    # First fill LC destinations, then request uncapping before any quench.
-    dilution=[op for op in PLAN['steps_quench'] if op.get('chemical')=='lc_diluent']
-    steps(dilution);drop()
-    operator_pause('7. Open the cooled reactions for quenching',
-        'The LC sample wells now contain 480 uL diluent each. The reaction block is cool.',
-        'Unscrew all 48 reaction caps. Leave reaction vials OPEN. The robot will add 400 uL quench per vial, then request block moves 3 -> 10 -> 3 for unheated mixing.',
-        'All reaction vials are open in slot 3. Resume for quenching, 750 rpm / 2 minute mixing and fresh-tip sampling.')
-    quench=[op for op in PLAN['steps_quench'] if op.get('chemical')=='quench']
+    hs.close_labware_latch()
+    ctx.comment('CALIBRATION PREPARATION START: heated hold complete; sealed reaction block cools in slot 3.')
+    steps(PLAN['steps_calibration']);drop()
+    operator_pause('6. Continue when cooling is complete',
+        'Seven calibration standards are ready in A7:G7. The sealed reaction block and empty heater-shaker have been cooling. The operator decides when cooling is sufficient; there is no programmed temperature threshold.',
+        'Wait until the block/vials are ready for opening and the module is ready for unheated workup. Unscrew all 48 reaction caps. Keep the reservoir and LC plate open. Resume to add 400 uL quench per reaction, followed by block moves 3 -> 10 -> 3 for mixing.',
+        'The operator has accepted cooling, and all reaction vials are open in slot 3. Resume for quenching and 750 rpm / 2 minute unheated mixing.')
     if not ctx.is_simulating():ctx.comment(f'QUENCH START: {(time.monotonic()-heat_off)/60:.2f} min since heater-off, including cooling and handling.')
-    steps(quench);drop()
+    steps(PLAN['steps_quench']);drop()
     if not ctx.is_simulating():ctx.comment(f'QUENCH COMPLETE: {(time.monotonic()-heat_off)/60:.2f} min since heater-off.')
     move_block_to_module()
     try:
         hs.set_and_wait_for_shake_speed(750);ctx.delay(seconds=120)
     finally:hs.deactivate_shaker();hs.deactivate_heater()
     move_block_back();ctx.delay(seconds=15)
+    ctx.comment('7. Prepare LC samples: one column at a time, eight fresh-tip 20 uL aliquots FIRST, then 480 uL acidified LC diluent per well with the eight-channel pipette.')
     steps(PLAN['steps_sample']);drop()
     operator_pause('8. Mix the completed LC sample plate',
         'All 48 reaction samples are in LC wells A1:H6; the seven standards are in A7:G7. Each filled well contains 500 uL.',

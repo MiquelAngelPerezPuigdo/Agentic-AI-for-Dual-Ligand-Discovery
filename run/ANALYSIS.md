@@ -1,6 +1,6 @@
 # Analyze the one-run LC sequence
 
-This step is for the person handling the LC export and quantification, after [staff-guide step 9](README.md#9-take-the-plate-to-hplc-ms-and-return-the-results). The OT-2 run is finished, staff have carried the sealed sample plate to HPLC-MS, and the LC operator has run seven standards followed by 48 samples. This page turns the exported peak areas into calibrated yields.
+This step is for the person handling the LC export and quantification, after [staff-guide step 9](README.md#9-take-the-plate-to-hplc-ms-and-return-the-results). The OT-2 prepares calibration standards and reaction samples after the heated hold. Staff carry the completed sealed plate to HPLC-MS, where the LC operator runs **one sequence: seven standards followed by 48 reaction samples**. This page turns the exported peak areas into calibrated yields.
 
 **LC operator hands over:** the integrated-peak CSV, original LC/MS files, actual injection list and method, measured peak assignments/UV channel and quantification limits. **Quantification operator returns:** the complete results/QC folder below, together with the robot log and run notes. These roles can be handled by the same person. No API key is needed.
 

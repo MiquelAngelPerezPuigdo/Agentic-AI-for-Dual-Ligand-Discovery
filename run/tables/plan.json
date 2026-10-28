@@ -1732,7 +1732,7 @@
   "tips": {
     "single_before_workup": 121,
     "single_total": 170,
-    "multi_columns": 1
+    "multi_columns": 6
   },
   "reservoir": [
     {
@@ -1775,19 +1775,19 @@
       "well": "A7",
       "liquid": "lc_diluent",
       "load_ul": 10000,
-      "final_remaining_ul": 2819.0
+      "final_remaining_ul": 2811.0
     },
     {
       "well": "A8",
       "liquid": "lc_diluent",
       "load_ul": 10000,
-      "final_remaining_ul": 2320.0
+      "final_remaining_ul": 2304.0
     },
     {
       "well": "A9",
       "liquid": "lc_diluent",
       "load_ul": 10000,
-      "final_remaining_ul": 2320.0
+      "final_remaining_ul": 2304.0
     },
     {
       "well": "A10",
@@ -6520,7 +6520,7 @@
       "type": "drop"
     }
   ],
-  "steps_during_hold": [
+  "steps_calibration": [
     {
       "type": "transfer",
       "source": [
@@ -8051,561 +8051,6 @@
     }
   ],
   "steps_quench": [
-    {
-      "type": "transfer",
-      "source": [
-        "res",
-        "A7"
-      ],
-      "dest": [
-        [
-          "lc",
-          "A1"
-        ],
-        [
-          "lc",
-          "B1"
-        ],
-        [
-          "lc",
-          "C1"
-        ],
-        [
-          "lc",
-          "D1"
-        ],
-        [
-          "lc",
-          "E1"
-        ],
-        [
-          "lc",
-          "F1"
-        ],
-        [
-          "lc",
-          "G1"
-        ],
-        [
-          "lc",
-          "H1"
-        ]
-      ],
-      "volume": 240.0,
-      "channels": 8,
-      "fresh": true,
-      "chemical": "lc_diluent",
-      "sample": false
-    },
-    {
-      "type": "transfer",
-      "source": [
-        "res",
-        "A7"
-      ],
-      "dest": [
-        [
-          "lc",
-          "A1"
-        ],
-        [
-          "lc",
-          "B1"
-        ],
-        [
-          "lc",
-          "C1"
-        ],
-        [
-          "lc",
-          "D1"
-        ],
-        [
-          "lc",
-          "E1"
-        ],
-        [
-          "lc",
-          "F1"
-        ],
-        [
-          "lc",
-          "G1"
-        ],
-        [
-          "lc",
-          "H1"
-        ]
-      ],
-      "volume": 240.0,
-      "channels": 8,
-      "fresh": false,
-      "chemical": "lc_diluent",
-      "sample": false
-    },
-    {
-      "type": "transfer",
-      "source": [
-        "res",
-        "A7"
-      ],
-      "dest": [
-        [
-          "lc",
-          "A2"
-        ],
-        [
-          "lc",
-          "B2"
-        ],
-        [
-          "lc",
-          "C2"
-        ],
-        [
-          "lc",
-          "D2"
-        ],
-        [
-          "lc",
-          "E2"
-        ],
-        [
-          "lc",
-          "F2"
-        ],
-        [
-          "lc",
-          "G2"
-        ],
-        [
-          "lc",
-          "H2"
-        ]
-      ],
-      "volume": 240.0,
-      "channels": 8,
-      "fresh": false,
-      "chemical": "lc_diluent",
-      "sample": false
-    },
-    {
-      "type": "transfer",
-      "source": [
-        "res",
-        "A8"
-      ],
-      "dest": [
-        [
-          "lc",
-          "A2"
-        ],
-        [
-          "lc",
-          "B2"
-        ],
-        [
-          "lc",
-          "C2"
-        ],
-        [
-          "lc",
-          "D2"
-        ],
-        [
-          "lc",
-          "E2"
-        ],
-        [
-          "lc",
-          "F2"
-        ],
-        [
-          "lc",
-          "G2"
-        ],
-        [
-          "lc",
-          "H2"
-        ]
-      ],
-      "volume": 240.0,
-      "channels": 8,
-      "fresh": false,
-      "chemical": "lc_diluent",
-      "sample": false
-    },
-    {
-      "type": "transfer",
-      "source": [
-        "res",
-        "A8"
-      ],
-      "dest": [
-        [
-          "lc",
-          "A3"
-        ],
-        [
-          "lc",
-          "B3"
-        ],
-        [
-          "lc",
-          "C3"
-        ],
-        [
-          "lc",
-          "D3"
-        ],
-        [
-          "lc",
-          "E3"
-        ],
-        [
-          "lc",
-          "F3"
-        ],
-        [
-          "lc",
-          "G3"
-        ],
-        [
-          "lc",
-          "H3"
-        ]
-      ],
-      "volume": 240.0,
-      "channels": 8,
-      "fresh": false,
-      "chemical": "lc_diluent",
-      "sample": false
-    },
-    {
-      "type": "transfer",
-      "source": [
-        "res",
-        "A8"
-      ],
-      "dest": [
-        [
-          "lc",
-          "A3"
-        ],
-        [
-          "lc",
-          "B3"
-        ],
-        [
-          "lc",
-          "C3"
-        ],
-        [
-          "lc",
-          "D3"
-        ],
-        [
-          "lc",
-          "E3"
-        ],
-        [
-          "lc",
-          "F3"
-        ],
-        [
-          "lc",
-          "G3"
-        ],
-        [
-          "lc",
-          "H3"
-        ]
-      ],
-      "volume": 240.0,
-      "channels": 8,
-      "fresh": false,
-      "chemical": "lc_diluent",
-      "sample": false
-    },
-    {
-      "type": "transfer",
-      "source": [
-        "res",
-        "A8"
-      ],
-      "dest": [
-        [
-          "lc",
-          "A4"
-        ],
-        [
-          "lc",
-          "B4"
-        ],
-        [
-          "lc",
-          "C4"
-        ],
-        [
-          "lc",
-          "D4"
-        ],
-        [
-          "lc",
-          "E4"
-        ],
-        [
-          "lc",
-          "F4"
-        ],
-        [
-          "lc",
-          "G4"
-        ],
-        [
-          "lc",
-          "H4"
-        ]
-      ],
-      "volume": 240.0,
-      "channels": 8,
-      "fresh": false,
-      "chemical": "lc_diluent",
-      "sample": false
-    },
-    {
-      "type": "transfer",
-      "source": [
-        "res",
-        "A9"
-      ],
-      "dest": [
-        [
-          "lc",
-          "A4"
-        ],
-        [
-          "lc",
-          "B4"
-        ],
-        [
-          "lc",
-          "C4"
-        ],
-        [
-          "lc",
-          "D4"
-        ],
-        [
-          "lc",
-          "E4"
-        ],
-        [
-          "lc",
-          "F4"
-        ],
-        [
-          "lc",
-          "G4"
-        ],
-        [
-          "lc",
-          "H4"
-        ]
-      ],
-      "volume": 240.0,
-      "channels": 8,
-      "fresh": false,
-      "chemical": "lc_diluent",
-      "sample": false
-    },
-    {
-      "type": "transfer",
-      "source": [
-        "res",
-        "A9"
-      ],
-      "dest": [
-        [
-          "lc",
-          "A5"
-        ],
-        [
-          "lc",
-          "B5"
-        ],
-        [
-          "lc",
-          "C5"
-        ],
-        [
-          "lc",
-          "D5"
-        ],
-        [
-          "lc",
-          "E5"
-        ],
-        [
-          "lc",
-          "F5"
-        ],
-        [
-          "lc",
-          "G5"
-        ],
-        [
-          "lc",
-          "H5"
-        ]
-      ],
-      "volume": 240.0,
-      "channels": 8,
-      "fresh": false,
-      "chemical": "lc_diluent",
-      "sample": false
-    },
-    {
-      "type": "transfer",
-      "source": [
-        "res",
-        "A9"
-      ],
-      "dest": [
-        [
-          "lc",
-          "A5"
-        ],
-        [
-          "lc",
-          "B5"
-        ],
-        [
-          "lc",
-          "C5"
-        ],
-        [
-          "lc",
-          "D5"
-        ],
-        [
-          "lc",
-          "E5"
-        ],
-        [
-          "lc",
-          "F5"
-        ],
-        [
-          "lc",
-          "G5"
-        ],
-        [
-          "lc",
-          "H5"
-        ]
-      ],
-      "volume": 240.0,
-      "channels": 8,
-      "fresh": false,
-      "chemical": "lc_diluent",
-      "sample": false
-    },
-    {
-      "type": "transfer",
-      "source": [
-        "res",
-        "A9"
-      ],
-      "dest": [
-        [
-          "lc",
-          "A6"
-        ],
-        [
-          "lc",
-          "B6"
-        ],
-        [
-          "lc",
-          "C6"
-        ],
-        [
-          "lc",
-          "D6"
-        ],
-        [
-          "lc",
-          "E6"
-        ],
-        [
-          "lc",
-          "F6"
-        ],
-        [
-          "lc",
-          "G6"
-        ],
-        [
-          "lc",
-          "H6"
-        ]
-      ],
-      "volume": 240.0,
-      "channels": 8,
-      "fresh": false,
-      "chemical": "lc_diluent",
-      "sample": false
-    },
-    {
-      "type": "transfer",
-      "source": [
-        "res",
-        "A10"
-      ],
-      "dest": [
-        [
-          "lc",
-          "A6"
-        ],
-        [
-          "lc",
-          "B6"
-        ],
-        [
-          "lc",
-          "C6"
-        ],
-        [
-          "lc",
-          "D6"
-        ],
-        [
-          "lc",
-          "E6"
-        ],
-        [
-          "lc",
-          "F6"
-        ],
-        [
-          "lc",
-          "G6"
-        ],
-        [
-          "lc",
-          "H6"
-        ]
-      ],
-      "volume": 240.0,
-      "channels": 8,
-      "fresh": false,
-      "chemical": "lc_diluent",
-      "sample": false
-    },
-    {
-      "type": "drop"
-    },
     {
       "type": "transfer",
       "source": [
@@ -10302,6 +9747,101 @@
     {
       "type": "transfer",
       "source": [
+        "res",
+        "A7"
+      ],
+      "dest": [
+        [
+          "lc",
+          "A1"
+        ],
+        [
+          "lc",
+          "B1"
+        ],
+        [
+          "lc",
+          "C1"
+        ],
+        [
+          "lc",
+          "D1"
+        ],
+        [
+          "lc",
+          "E1"
+        ],
+        [
+          "lc",
+          "F1"
+        ],
+        [
+          "lc",
+          "G1"
+        ],
+        [
+          "lc",
+          "H1"
+        ]
+      ],
+      "volume": 240.0,
+      "channels": 8,
+      "fresh": true,
+      "chemical": "lc_diluent",
+      "sample": false
+    },
+    {
+      "type": "transfer",
+      "source": [
+        "res",
+        "A7"
+      ],
+      "dest": [
+        [
+          "lc",
+          "A1"
+        ],
+        [
+          "lc",
+          "B1"
+        ],
+        [
+          "lc",
+          "C1"
+        ],
+        [
+          "lc",
+          "D1"
+        ],
+        [
+          "lc",
+          "E1"
+        ],
+        [
+          "lc",
+          "F1"
+        ],
+        [
+          "lc",
+          "G1"
+        ],
+        [
+          "lc",
+          "H1"
+        ]
+      ],
+      "volume": 240.0,
+      "channels": 8,
+      "fresh": false,
+      "chemical": "lc_diluent",
+      "sample": false
+    },
+    {
+      "type": "drop"
+    },
+    {
+      "type": "transfer",
+      "source": [
         "reaction",
         "C2"
       ],
@@ -10447,6 +9987,101 @@
       "fresh": true,
       "chemical": "R1-016",
       "sample": true
+    },
+    {
+      "type": "drop"
+    },
+    {
+      "type": "transfer",
+      "source": [
+        "res",
+        "A7"
+      ],
+      "dest": [
+        [
+          "lc",
+          "A2"
+        ],
+        [
+          "lc",
+          "B2"
+        ],
+        [
+          "lc",
+          "C2"
+        ],
+        [
+          "lc",
+          "D2"
+        ],
+        [
+          "lc",
+          "E2"
+        ],
+        [
+          "lc",
+          "F2"
+        ],
+        [
+          "lc",
+          "G2"
+        ],
+        [
+          "lc",
+          "H2"
+        ]
+      ],
+      "volume": 240.0,
+      "channels": 8,
+      "fresh": true,
+      "chemical": "lc_diluent",
+      "sample": false
+    },
+    {
+      "type": "transfer",
+      "source": [
+        "res",
+        "A8"
+      ],
+      "dest": [
+        [
+          "lc",
+          "A2"
+        ],
+        [
+          "lc",
+          "B2"
+        ],
+        [
+          "lc",
+          "C2"
+        ],
+        [
+          "lc",
+          "D2"
+        ],
+        [
+          "lc",
+          "E2"
+        ],
+        [
+          "lc",
+          "F2"
+        ],
+        [
+          "lc",
+          "G2"
+        ],
+        [
+          "lc",
+          "H2"
+        ]
+      ],
+      "volume": 240.0,
+      "channels": 8,
+      "fresh": false,
+      "chemical": "lc_diluent",
+      "sample": false
     },
     {
       "type": "drop"
@@ -10606,6 +10241,101 @@
     {
       "type": "transfer",
       "source": [
+        "res",
+        "A8"
+      ],
+      "dest": [
+        [
+          "lc",
+          "A3"
+        ],
+        [
+          "lc",
+          "B3"
+        ],
+        [
+          "lc",
+          "C3"
+        ],
+        [
+          "lc",
+          "D3"
+        ],
+        [
+          "lc",
+          "E3"
+        ],
+        [
+          "lc",
+          "F3"
+        ],
+        [
+          "lc",
+          "G3"
+        ],
+        [
+          "lc",
+          "H3"
+        ]
+      ],
+      "volume": 240.0,
+      "channels": 8,
+      "fresh": true,
+      "chemical": "lc_diluent",
+      "sample": false
+    },
+    {
+      "type": "transfer",
+      "source": [
+        "res",
+        "A8"
+      ],
+      "dest": [
+        [
+          "lc",
+          "A3"
+        ],
+        [
+          "lc",
+          "B3"
+        ],
+        [
+          "lc",
+          "C3"
+        ],
+        [
+          "lc",
+          "D3"
+        ],
+        [
+          "lc",
+          "E3"
+        ],
+        [
+          "lc",
+          "F3"
+        ],
+        [
+          "lc",
+          "G3"
+        ],
+        [
+          "lc",
+          "H3"
+        ]
+      ],
+      "volume": 240.0,
+      "channels": 8,
+      "fresh": false,
+      "chemical": "lc_diluent",
+      "sample": false
+    },
+    {
+      "type": "drop"
+    },
+    {
+      "type": "transfer",
+      "source": [
         "reaction",
         "A5"
       ],
@@ -10751,6 +10481,101 @@
       "fresh": true,
       "chemical": "R1-032",
       "sample": true
+    },
+    {
+      "type": "drop"
+    },
+    {
+      "type": "transfer",
+      "source": [
+        "res",
+        "A8"
+      ],
+      "dest": [
+        [
+          "lc",
+          "A4"
+        ],
+        [
+          "lc",
+          "B4"
+        ],
+        [
+          "lc",
+          "C4"
+        ],
+        [
+          "lc",
+          "D4"
+        ],
+        [
+          "lc",
+          "E4"
+        ],
+        [
+          "lc",
+          "F4"
+        ],
+        [
+          "lc",
+          "G4"
+        ],
+        [
+          "lc",
+          "H4"
+        ]
+      ],
+      "volume": 240.0,
+      "channels": 8,
+      "fresh": true,
+      "chemical": "lc_diluent",
+      "sample": false
+    },
+    {
+      "type": "transfer",
+      "source": [
+        "res",
+        "A9"
+      ],
+      "dest": [
+        [
+          "lc",
+          "A4"
+        ],
+        [
+          "lc",
+          "B4"
+        ],
+        [
+          "lc",
+          "C4"
+        ],
+        [
+          "lc",
+          "D4"
+        ],
+        [
+          "lc",
+          "E4"
+        ],
+        [
+          "lc",
+          "F4"
+        ],
+        [
+          "lc",
+          "G4"
+        ],
+        [
+          "lc",
+          "H4"
+        ]
+      ],
+      "volume": 240.0,
+      "channels": 8,
+      "fresh": false,
+      "chemical": "lc_diluent",
+      "sample": false
     },
     {
       "type": "drop"
@@ -10910,6 +10735,101 @@
     {
       "type": "transfer",
       "source": [
+        "res",
+        "A9"
+      ],
+      "dest": [
+        [
+          "lc",
+          "A5"
+        ],
+        [
+          "lc",
+          "B5"
+        ],
+        [
+          "lc",
+          "C5"
+        ],
+        [
+          "lc",
+          "D5"
+        ],
+        [
+          "lc",
+          "E5"
+        ],
+        [
+          "lc",
+          "F5"
+        ],
+        [
+          "lc",
+          "G5"
+        ],
+        [
+          "lc",
+          "H5"
+        ]
+      ],
+      "volume": 240.0,
+      "channels": 8,
+      "fresh": true,
+      "chemical": "lc_diluent",
+      "sample": false
+    },
+    {
+      "type": "transfer",
+      "source": [
+        "res",
+        "A9"
+      ],
+      "dest": [
+        [
+          "lc",
+          "A5"
+        ],
+        [
+          "lc",
+          "B5"
+        ],
+        [
+          "lc",
+          "C5"
+        ],
+        [
+          "lc",
+          "D5"
+        ],
+        [
+          "lc",
+          "E5"
+        ],
+        [
+          "lc",
+          "F5"
+        ],
+        [
+          "lc",
+          "G5"
+        ],
+        [
+          "lc",
+          "H5"
+        ]
+      ],
+      "volume": 240.0,
+      "channels": 8,
+      "fresh": false,
+      "chemical": "lc_diluent",
+      "sample": false
+    },
+    {
+      "type": "drop"
+    },
+    {
+      "type": "transfer",
+      "source": [
         "reaction",
         "E7"
       ],
@@ -11058,6 +10978,101 @@
     },
     {
       "type": "drop"
+    },
+    {
+      "type": "transfer",
+      "source": [
+        "res",
+        "A9"
+      ],
+      "dest": [
+        [
+          "lc",
+          "A6"
+        ],
+        [
+          "lc",
+          "B6"
+        ],
+        [
+          "lc",
+          "C6"
+        ],
+        [
+          "lc",
+          "D6"
+        ],
+        [
+          "lc",
+          "E6"
+        ],
+        [
+          "lc",
+          "F6"
+        ],
+        [
+          "lc",
+          "G6"
+        ],
+        [
+          "lc",
+          "H6"
+        ]
+      ],
+      "volume": 240.0,
+      "channels": 8,
+      "fresh": true,
+      "chemical": "lc_diluent",
+      "sample": false
+    },
+    {
+      "type": "transfer",
+      "source": [
+        "res",
+        "A10"
+      ],
+      "dest": [
+        [
+          "lc",
+          "A6"
+        ],
+        [
+          "lc",
+          "B6"
+        ],
+        [
+          "lc",
+          "C6"
+        ],
+        [
+          "lc",
+          "D6"
+        ],
+        [
+          "lc",
+          "E6"
+        ],
+        [
+          "lc",
+          "F6"
+        ],
+        [
+          "lc",
+          "G6"
+        ],
+        [
+          "lc",
+          "H6"
+        ]
+      ],
+      "volume": 240.0,
+      "channels": 8,
+      "fresh": false,
+      "chemical": "lc_diluent",
+      "sample": false
+    },
+    {
+      "type": "drop"
     }
   ],
   "final_volumes": [
@@ -11108,21 +11123,21 @@
         "res",
         "A7"
       ],
-      "volume_ul": 2819.0
+      "volume_ul": 2811.0
     },
     {
       "location": [
         "res",
         "A8"
       ],
-      "volume_ul": 2320.0
+      "volume_ul": 2304.0
     },
     {
       "location": [
         "res",
         "A9"
       ],
-      "volume_ul": 2320.0
+      "volume_ul": 2304.0
     },
     {
       "location": [
