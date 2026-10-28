@@ -31,6 +31,8 @@ The complete continuous protocol is simulated through the Opentrons SDK in the t
 
 The common reservoir is prefilled by HTE. Its channel allocator preserves 1.5 mL per channel. Each stock source retains at least 150 µL and stays below 1.6 mL nominal fill. No use of the stock holder with the eight-channel pipette is permitted: vial pitch is 13 mm. All source pipetting and reaction sampling use the single; only LC diluent distribution uses eight channels.
 
+Source caps follow last use: the 32 reaction-stock vials may remain open after dosing. The ten analytical/working vials start capped, are opened for standards preparation and may remain open afterward. Reservoir and LC covers are still used during the hold; the reaction vials remain sealed for heating and cooling.
+
 `run/run_screen.py` keeps one protocol context and the same loaded pipettes from stocks through sampling. Tip tracking continues automatically; no starting-tip override or protocol restart is required. Preserve all tip racks and the LC plate throughout. Do not skip operations or silently substitute stocks; record deviations and reconcile the actual source ledger before continuing.
 
 The SDK establishes software command validity, not mounting, offsets, solvent compatibility, splash containment, dissolution or LC separation. The local App/setup checks and real calibration remain necessary. An integrated-area CSV cannot detect every coelution or verify upstream peak integration.

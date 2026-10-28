@@ -85,7 +85,7 @@ def run(ctx: protocol_api.ProtocolContext):
     ctx.pause('Use ONLY the one-run loading sheet. Stock holder home: 1; it moves to 10 and back for pre-dose shaking. ONE reservoir and SAME LC plate stay on deck. Check offsets, 1.5 mm bottom clearance, capped stock-vial height <=45 mm and confirmed stock-holder mounting on the flat adapter. Slots 4/7/11 empty. p300 single LEFT; p300 eight-channel RIGHT. No pipette change. Confirm actual labware/solvent compatibility before resuming.')
     ctx.pause('Load weighed solids directly in their listed final glass vials. Five working vials start EMPTY. Open ligand vials A1:F5 plus SM_IS A6 and Pd B6 in the STOCK holder. Keep analytical vials C6:F7 capped until the three-hour prompt. Load 48 EMPTY UNCAPPED reaction vials and an EMPTY LC plate. Reservoir: staff-sheet loads. Do not use earlier two-round files.')
     steps(PLAN['steps_before_reaction']);drop()
-    ctx.pause('Hand-tighten ALL 48 reaction-vial screw caps. Cap the stock vials and cover the reservoir and empty LC plate in place. Move block 3 -> heater-shaker 10 at the next prompt. No source-holder or reservoir swaps. The App will request uncapping the analytical sources after three hours.')
+    ctx.pause('Hand-tighten ALL 48 reaction-vial screw caps. The 32 reaction-stock vials are finished and may remain OPEN. Keep the ten analytical/working vials capped until their preparation prompt. Cover the reservoir and empty LC plate in place. Move block 3 -> heater-shaker 10 at the next prompt. No source-holder or reservoir swaps.')
     move_block_to_module()
     start=None
     try:
@@ -96,9 +96,9 @@ def run(ctx: protocol_api.ProtocolContext):
         ctx.pause('REACTION HOLD START: start an external timer NOW. Nominal heated hold is 4 hours. Longer holds and a later quench are permitted; record actual times. Resume now for the standards-preparation prompt after 3 hours. Heating and shaking continue during App pauses, so a long pause extends the heated hold.')
         # Make aqueous standards in the last hour rather than leaving them for four hours.
         ctx.delay(seconds=standards_after if ctx.is_simulating() else max(0,start+standards_after-time.monotonic()))
-        ctx.pause('Three hours into the nominal reaction hold: REMOVE reservoir and LC plate covers in place. Uncap analytical source/working vials C6,D6,E6,F6,A7,B7,C7,D7,E7,F7 in the STOCK holder. Keep ligand vials, SM_IS A6 and Pd B6 capped. Resume to prepare standards; record any extension of the nominal heated hold.')
+        ctx.pause('Three hours into the nominal reaction hold: REMOVE reservoir and LC plate covers in place. Uncap analytical source/working vials C6,D6,E6,F6,A7,B7,C7,D7,E7,F7 in the STOCK holder. Used ligand, SM_IS and Pd stocks may remain OPEN. Resume to prepare standards; record any extension of the nominal heated hold.')
         steps(PLAN['steps_during_hold']);drop()
-        ctx.pause('Seven mixed-analyte standards prepared in LC wells A7:G7. Cover the LC plate and reservoir IN PLACE against evaporation. Cap the ten analytical source/working vials. Resume to finish the nominal hold; longer actual holds are recorded. Remove covers only at the workup prompt. One final LC handoff.')
+        ctx.pause('Seven mixed-analyte standards prepared in LC wells A7:G7. Cover the LC plate and reservoir IN PLACE against evaporation. All source/working vials are now finished and may remain OPEN. Resume to finish the nominal hold; longer actual holds are recorded. Remove covers only at the workup prompt. One final LC handoff.')
         if not ctx.is_simulating() and time.monotonic()>=deadline:
             ctx.comment('Nominal hold elapsed during standards preparation/pauses. Continuing with the completed standards; actual heated duration is recorded at heater-off.')
         ctx.delay(seconds=min(60*60,hold_seconds) if ctx.is_simulating() else max(0,deadline-time.monotonic()))
@@ -112,7 +112,7 @@ def run(ctx: protocol_api.ProtocolContext):
     move_block_back()
     # Same context and pipettes: preserve deck state and used tips through workup.
     cool_module()
-    ctx.pause('Confirm the SEALED reaction vials AND block in slot 3 have cooled to <=30 C before opening; check with a suitable contact temperature probe. The module reading covers its own plate. Extra cooling/waiting time is allowed and recorded before quench. Use the SAME reservoir, LC plate and partly used tip racks; standards occupy A7:G7. REMOVE LC/reservoir covers. Keep reaction vials capped while LC diluent is added. Stock-vial caps remain closed.')
+    ctx.pause('Confirm the SEALED reaction vials AND block in slot 3 have cooled to <=30 C before opening; check with a suitable contact temperature probe. The module reading covers its own plate. Extra cooling/waiting time is allowed and recorded before quench. Use the SAME reservoir, LC plate and partly used tip racks; standards occupy A7:G7. REMOVE LC/reservoir covers. Keep reaction vials capped while LC diluent is added. Used source/working vials may remain OPEN.')
     # First fill LC destinations, then request uncapping before any quench.
     dilution=[op for op in PLAN['steps_quench'] if op.get('chemical')=='lc_diluent']
     steps(dilution);drop()
