@@ -105,6 +105,16 @@ The original file contains integrated areas, not raw traces. Peak widths, 1.7-mi
 
 After all 48 injections, run `scripts/hte-lc-results.py next` as shown on the [start page](start-here.md), giving one plate export and its map per round. It normalizes each sequence separately, rejects duplicate samples and byte-identical copied exports, combines them, and publishes a completion marker only for full expected sample coverage. Calibration/QC must then pass before any paid Claude call. The result is 22 new pairs plus one L17 reference, with local release status printed. Use `final` after the 23 final samples; it analyzes without Claude.
 
+If the decision CSV was generated but live protocol export was blocked, resolve the reported validation issue first. Then replace `R2_DIR` with the printed R2 directory and run:
+
+```bash
+python -m hte.cli --config local_data/campaign.json export \
+  --design "R2_DIR/next_design.csv" --history output/r1-dose/dosing.csv \
+  --live --output output/r2-live
+```
+
+Use `output/r2-live/refill_stocks.py` first, then `dose_and_react.py` and `workup.py`. The same folder contains the deck loads, LC sequence and injection maps. Use **`output/r2-live/dosing.csv`** for final analysis when the protocols were exported separately.
+
 After interruption, **repeat the exact helper command with the same output directory**. It verifies source and archive hashes, reuses completed ingestion/accepted scores, and retains uncertain-request blocks and the cost ledger. Do not choose a fresh folder merely to retry: that can create a new paid campaign. Changed inputs intentionally require a new decision directory; inspect uncertain API attempts before any recovery. Older helper outputs without `helper_inputs.json` need inspection or direct `iterate` recovery.
 
 Alternatively use separate `normalize`, `complete-export`, `analyze`/`iterate` commands or the local watcher. Use one workflow per campaign and preserve its state. Retain hashes, original exports and map versions. Populate exported injection names/positions in the mapping when available: software coverage checks cannot prove that the physical autosampler order matches an incorrectly authored map.
