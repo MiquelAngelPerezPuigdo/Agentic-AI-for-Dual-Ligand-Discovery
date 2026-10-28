@@ -38,7 +38,8 @@ python scripts/build-hte-pdf.py --date 2026-10-17
 
 | Change | Editable source |
 |---|---|
-| Guided menu and first steps | `docs/HTE-START-HERE.md`, `scripts/hte-guide.py` |
+| Browser instructions and deck loading | `docs/HTE-START-HERE.md`, `docs/deck-loading.md` |
+| Optional technical menu | `scripts/hte-guide.py` |
 | Short action sheet for staff | `docs/hte-staff-checklist.md` |
 | Responsibilities, API-key setup and quickstart | `docs/start-here.md` |
 | Operator sequence, deck, pipetting, analytics and live handoff | `docs/hte-runbook.md` |

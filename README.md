@@ -6,11 +6,12 @@ Local OT-2 dosing, calibrated LC quantification and Claude-guided selection for 
 
 ## Run the campaign
 
-**Start here:** [HTE step-by-step guide](docs/HTE-START-HERE.md). It includes one local menu for stock files, LC processing and the R2 decision.
+**Start here:** [HTE experimental procedure](docs/HTE-START-HERE.md). Open it in a browser and follow the linked weighing and deck maps.
 
 | Task | Instructions |
 |---|---|
 | Follow the campaign step by step | **[HTE start guide](docs/HTE-START-HERE.md)** |
+| Solvent amounts and deck positions | **[Deck loading](docs/deck-loading.md)** |
 | Staff actions at the bench | **[Two-page checklist](docs/HTE-staff-checklist.pdf)** |
 | Install, prepare files and process R1/R2 results | **[Local pipeline commands](docs/start-here.md)** |
 | Complete operator reference | [Four-page handbook](docs/HTE-operator-handbook.pdf) |

@@ -1,12 +1,12 @@
 # Local pipeline
 
-For the guided menu, start with [HTE campaign: start here](HTE-START-HERE.md). The commands below are the detailed reference.
+Browser: [experimental procedure](HTE-START-HERE.md). Commands below are for the pipeline operator.
 
 Frozen R1: **48 pairs, all 30 ligands**. No paid R1 rerun. Regenerate stocks/protocols/maps after updating the repository. Physical actions: [bench sheet](HTE-staff-checklist.pdf).
 
 ## Install and configure
 
-Python 3.12: **`uv sync --locked --python 3.12 --extra sources --extra robot`**; prefix commands with `uv run`. Create `local_data/` (`mkdir -p local_data`). Copy `hte_inputs/campaign.json` to **`local_data/campaign.json`**, `hte_inputs/calibration_template.csv` to `local_data/calibration-plan.csv`, and `anthropic.key.example` to **`anthropic.key`**. Put the raw Claude key there; preserve existing keys. Never send it to the robot/Git.
+Python 3.12: **`uv sync --locked --python 3.12 --extra sources --extra robot`**; prefix commands with `uv run`. Create `local_data/`. Copy `hte_inputs/campaign.json` to **`local_data/campaign.json`**, `hte_inputs/calibration_template.csv` to `local_data/calibration-plan.csv`, and `anthropic.key.example` to **`anthropic.key`**. Keep any existing files. Add the Claude key; never send it to the robot/Git.
 
 Use schema **6** and **fresh naphthalene calibration**; old mesitylene calibration is invalid. Start from the current configuration; discard old stock-preparation outputs. Configure method/channel, cycle and RTs/LOQs. Default `reject` stops missing-analyte results; `censor` reports validated bounds. **Axygen bulk reservoirs:** check the actual geometry, solvent/cover compatibility and recoverable residual volumes before live release. Concentrations use nominal solvent addition; record actual times.
 
@@ -55,4 +55,4 @@ python scripts/hte-lc-results.py final \
 
 ## Return records
 
-Copy robot logs to `local_data/robot_logs/`, raw LC/MS/method files to `local_data/instrument_raw/`, and times/deviations to `local_data/run-notes.txt`. Keep LC exports/maps, calibration, QC and run outputs. Stop writers; **`python scripts/hte-return-package.py`** creates **`transfer/hte-results.zip`**. Send privately.
+Save robot logs, raw LC/MS files, maps and run notes under `local_data/`. Stop writers and run **`python scripts/hte-return-package.py`**; send **`transfer/hte-results.zip`** privately.

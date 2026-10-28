@@ -1,5 +1,7 @@
 # Development and reproduction
 
+The optional local menu is started with `uv run python scripts/hte-guide.py`; the chemist-facing procedure is [here](HTE-START-HERE.md).
+
 ## Architecture
 
 | Files | Responsibility |

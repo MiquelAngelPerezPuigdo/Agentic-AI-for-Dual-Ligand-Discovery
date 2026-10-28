@@ -3,20 +3,20 @@
   "schema_version": 6,
   "validation_scope": {
     "baseline_revision": "02943a1ba120fe33a7d4e15bf84b87988ea2e366",
-    "scope": "2026-10-28 local operator guide: full tests and a synthetic menu rehearsal. Earlier stock-layout SDK simulations and calibration practices retain their stated scope. Physical release requires local validation.",
+    "scope": "2026-10-28 browser-first HTE handoff: full tests, link checks and comparison of published solvent loads with generated robot plans. Prior operator-guide mock and six-stage SDK simulations retain their recorded scope. Physical validation remains required.",
     "superseded_audits": "Earlier audit records remain recoverable in Git history.",
     "reports": "output/ paths identify ignored local evidence, not bundled public files. Retained test and rehearsal commands regenerate their reports.",
     "source_hashes": "Current tracked runtime, configuration, tests and scripts are listed in source_sha256. PDF builds and frozen campaign have separate manifests."
   },
   "tests": {
-    "tests": 377,
+    "tests": 379,
     "failures": 0,
     "errors": 0,
     "skipped": 0,
     "warnings": 30,
     "warning_scope": "SDK and other dependency warnings",
-    "duration_seconds": 63.07,
-    "scope": "Full tests/hte suite, including nine guide tests; source-fingerprint and PDF rebuild checks were run separately after minor handbook input-list updates."
+    "duration_seconds": 64.77,
+    "scope": "Full tests/hte suite, including browser links and raw-solvent loading-table checks; updated heading-anchor assertions passed in a separate targeted rerun."
   },
   "versions": {
     "anthropic": "0.125.0",
@@ -633,7 +633,7 @@
     "hte_inputs/pair_embeddings_t5-base.npz": "22d626dea637cb4aaf43fd56c94b05ecf602ba1a3272af675c20cc760d4a0caa",
     "hte_inputs/pair_embeddings_t5-base.npz.metadata.json": "108fa20ef4429be734504a2f17c23dc1a5d8878c3b587b4b4c40499c86abac18",
     "pyproject.toml": "c71ae4b0e674bd2f72e9a019291ac307831526046f81ee88106cfe2de370a7ac",
-    "scripts/build-hte-pdf.py": "f9d6240ac31b3661b9491f0192f370d9cd50acd6b39d1d015c1400cd99ef2786",
+    "scripts/build-hte-pdf.py": "92c0a8f0bd6259c627122f2161c30df8a0baf9995cce95852833f47c3aa2d91f",
     "scripts/draw-deck-setup.py": "1e0c90b55bf242c842751a5f963c27abadb92e5c7849079406af656f9bfd3a4c",
     "scripts/hte-lc-results.py": "ec93906dd68a861a3d53aede52ec2469a8780698f09527a4ac2f64fc65262c3d",
     "scripts/hte-return-package.py": "9f5f563510bc172fc28c051e6da07d8cba58b6f560260ba4823b38909b8e5e86",
@@ -668,7 +668,8 @@
     "tests/hte/test_transfer.py": "baff19aa4b65dbb003581d12d4d26c250d94b4b255e31dd920a7996b0891e74b",
     "uv.lock": "aa781a38974aa7830c5fa48cc714b04acfd05d08d308e333a607f9b915e01d26",
     "scripts/hte-guide.py": "6e35584b2f88d0d5e2eeaffa224dfde7822e1a2f7638635a0767c2b0c2e0f246",
-    "tests/hte/test_operator_guide.py": "823f4a783fa82304b7d07f0429c8142f4add4bda2249b33708935cc387bd18b0"
+    "tests/hte/test_operator_guide.py": "823f4a783fa82304b7d07f0429c8142f4add4bda2249b33708935cc387bd18b0",
+    "tests/hte/test_browser_procedure.py": "60200776590671ef9a9396c7cd347ec23a3951b2071d6ebc2e07222e9813e91d"
   },
   "review_date": "2026-10-28",
   "submission_checks": {
@@ -765,5 +766,15 @@
     "paid_calls": 0,
     "physical_execution": false,
     "scope": "Guide exercises the existing guarded pipeline; physical setup, validated LC settings, local file mapping and operator actions remain required."
+  },
+  "browser_handoff_review_2026_10_28": {
+    "start_page": "docs/HTE-START-HERE.md",
+    "deck_page": "docs/deck-loading.md",
+    "relative_links_resolved": true,
+    "published_stock_and_hold_solvent_loads_match_generator": true,
+    "full_tests_passed": 379,
+    "physical_execution": false,
+    "paid_api_calls": 0,
+    "relative_heading_anchors_resolved": true
   }
 }

@@ -4,7 +4,7 @@
 
 The **22 October sharing review** found one operator handoff gap: R2 workup/map paths and the final-analysis command needed to be explicit. These are now provided; **57 relevant helper/resume/repository checks passed again**. Chemistry, selection, quantification and generated robot behavior are unchanged.
 
-On **28 October**, all **377 tests passed**. The guided menu completed a synthetic end-to-end rehearsal; its checks cover setup, preview and live file generation, protected retries and R2 dosing consistency. Earlier six-stage Opentrons 8.8.2 simulations passed (**16,827 commands**) with the Axygen layout, frozen R1 design and synthetic R2. Fourteen synthetic LC challenge scenarios also passed. No API spending or hardware execution occurred. Earlier review records remain in Git history.
+On **28 October**, all **379 tests passed**, including checks that the browser procedure's links resolve and its solvent loading table matches the robot plan. The optional technical menu completed a synthetic end-to-end rehearsal. Earlier six-stage Opentrons 8.8.2 simulations passed (**16,827 commands**) with the Axygen layout, frozen R1 design and synthetic R2. Fourteen synthetic LC challenge scenarios also passed. No API spending or hardware execution occurred. Earlier review records remain in Git history.
 
 **No physical robot experiment, real calibration or 95 °C pair measurement has been performed.** All physical release flags remain false. The Axygen layout replaces the earlier deep-tube plan; local geometry, liquid recovery, compatibility and hardware validation remain necessary before live release.
 
