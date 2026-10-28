@@ -232,8 +232,10 @@ def test_heated_hold_and_operator_cooling_wait_are_logged(hold_pause_seconds,exp
 
 
 def test_staff_links_and_one_authoritative_protocol_folder():
-    files=[ROOT/'README.md',ROOT/'support/README.md',*(ROOT/'run').glob('*.md'),*(ROOT/'support/docs').glob('*.md'),ROOT/'support/research/README.md',ROOT/'support/research/METHOD.md',ROOT/'support/archive/README.md']
+    files=[ROOT/'README.md',*(ROOT/'run').rglob('*.md'),*(ROOT/'support').rglob('*.md')]
     for file in files:
+        if (ROOT/'support/archive/previous-two-round') in file.parents:
+            continue  # Preserved historical pages retain their original paths.
         for link in re.findall(r'\]\(([^)]+)\)',file.read_text()):
             p=urlsplit(link)
             if not p.scheme and p.path:assert (file.parent/p.path).exists(),(file,link)
