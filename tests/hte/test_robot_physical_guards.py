@@ -8,7 +8,7 @@ from hte.inventory import campaign_inventory
 from hte.io import read_csv, read_json
 from hte.planning import required_validations
 from hte.preparation import (LIQUID_RUNTIME, Plan, build_stock_preparation, export_stock_preparation,
-                             preparation_timing, validate_source_reach)
+                             load_preparation, preparation_timing, validate_source_reach)
 from hte.protocols import export
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -37,6 +37,22 @@ def test_measured_bulk_residual_is_enforced_on_every_transfer(inputs):
     ledger.transfer(["raw", "A1"], ["BULK-test", "A1"], 1000, "load")
     with pytest.raises(ValueError, match="Insufficient robot-preparation source"):
         ledger.transfer(["BULK-test", "A1"], ["working1", "A1"], 500, "must leave residual and surplus")
+
+
+def test_live_nominal_stock_preparation_needs_no_weighing_csv(inputs, tmp_path):
+    config, inventory, first = inputs
+    config["analytics"]["method_id"] = "TEST_ONLY_METHOD"
+    for key in required_validations(config):
+        config["validation"][key] = True  # Fictional software fixture, not a physical sign-off.
+    folder = export_stock_preparation(config, inventory, first, tmp_path / "nominal", live=True)
+    report = load_preparation(config, inventory, folder / "preparation_manifest.json", live=True)
+    assert report["weighing_basis"] == "nominal_target" and report["live_export"] is True
+    assert not report["actual_weighed_charges_supplied"]
+    assert not (folder / "weighed_charges_template.csv").exists()
+    assert not (folder / "weighed_charges_used.csv").exists()
+    export(config, inventory, first, tmp_path / "r1", live=True, stage="dose_and_react",
+           preparation_path=folder / "preparation_manifest.json")
+    assert (tmp_path / "r1" / "dose_and_react.py").exists()
 
 
 def test_deep_falcon_fails_reach_for_both_pipettes(inputs):

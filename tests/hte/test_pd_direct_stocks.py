@@ -101,7 +101,7 @@ def test_actual_small_underweighing_is_accepted_without_inventing_material(pd_ca
             row["actual_mass_mg"] -= 0.05
     actual = build_stock_preparation(config, inventory, first, charges)
     records = [row for row in actual["stocks"] if row["reagent"] == "Pd"]
-    assert sum(row["actual_mass_mg"] for row in records) == pytest.approx(89.8)
+    assert sum(row["mass_mg_used"] for row in records) == pytest.approx(89.8)
     assert sum(row["prepare_ul"] for row in records) == pytest.approx(89.8 * 0.98 / 378.8 / 40 * 1e6)
 
 

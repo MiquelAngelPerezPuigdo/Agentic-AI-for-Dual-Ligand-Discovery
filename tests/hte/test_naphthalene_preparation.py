@@ -99,9 +99,7 @@ def test_source_cannot_overfill_or_run_below_dead_volume(campaign, mass, assay, 
 def test_loading_files_request_one_solid_is_charge_and_an_empty_master(campaign, tmp_path):
     config, inventory, design = campaign
     folder = export_stock_preparation(config, inventory, design, tmp_path / "preparation")
-    template = read_csv(folder / "weighed_charges_template.csv")
-    assert sum(row["stock_id"] == "IS_SOURCE" for row in template) == 1
-    assert not any(row["stock_id"] == "IS_MASTER" for row in template)
+    assert not (folder / "weighed_charges_template.csv").exists()
     loading = {row["stock_id"]: row for row in read_csv(folder / "bulk_carriers.csv")}
     assert loading["IS_SOURCE"]["carrier_id"] == "WORKING RACK"
     assert loading["IS_SOURCE"]["slot"] == "1" and loading["IS_SOURCE"]["well"] == "C2"
@@ -168,7 +166,7 @@ def test_independent_component_ledger_reaches_every_final_calibration_well(campa
         chemical = ("SM" if row["reagent"] == "substrate_stock" else
                     "P" if row["reagent"] == "product_standard" else
                     "IS" if row["reagent"] == "internal_standard" else row["reagent"])
-        contents(location)["amounts"][chemical] += row["actual_mass_mg"] * row["assay_fraction"] / row["mw"] * 1000
+        contents(location)["amounts"][chemical] += row["mass_mg_used"] * row["assay_fraction"] / row["mw"] * 1000
 
     def execute(report):
         # Each phase explicitly loads a new raw reservoir, including its empty H1.

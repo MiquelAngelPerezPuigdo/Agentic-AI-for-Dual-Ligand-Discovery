@@ -1,16 +1,16 @@
 # Stocks and calibration
 
-**Staff weigh; the OT-2 measures liquids.** See the [weighing list](weighing-list.md); record actual masses/assays and follow `bulk_carriers.csv`. Concentrations are nominal. Naphthalene charge: **60 mg**.
+**Staff weigh; the OT-2 measures liquids.** See the [weighing list](weighing-list.md) and `bulk_carriers.csv`. Naphthalene charge: **60 mg**.
 
 ## Reaction stocks
 
 | Stock | Preparation target at 100% assay | Per reaction |
 |---|---|---|
-| Naphthalene source | **60 mg solid in 1 C2**; robot adds ~936 µL toluene for **500 mM**, adjusted to actual mass/assay. | Used to make stocks below |
+| Naphthalene source | **60 mg solid in 1 C2**; robot adds ~936 µL toluene for **500 mM**. | Used to make stocks below |
 | SM + naphthalene | **403 mg SM** in **BULK-01-3 A1**; add **500 µL IS +2 mL toluene** robotically, mix and load **1.89 mL in 4 D2**. Nominal **1 M SM /100 mM IS**. | **25 µL** |
 | Each ligand | **20 mM toluene**; weighed charges/reserves in CSV. Robot prepares bulk, mixes and fills working tubes. | **75 µL each**; reference 150 µL L17 |
 | Pd(COD)(DQ) | Direct in **4 A3/B3/C3: 22.8 mg each; A4: 21.6 mg**. Robot adds ~1.50/~1.43 mL toluene for **40 mM**. Total **90 mg**, ~5.94 mL; **10 mg for scope**. | 75 µL |
-| RockPhos L03 | **~800 µL /20 mM**, 7.50 mg pure equivalent; 7.73 mg at 97%. Prepared directly in **1 C1**; retain that tube. **10 mg available, max 4 R2 wells.** | 75 µL |
+| RockPhos L03 | **~800 µL /20 mM**, 7.50 mg. Prepared directly in **1 C1**; retain that tube. **10 mg available, max 4 R2 wells.** | 75 µL |
 
 **Retain SM/IS 4 D2, all Pd tubes and RockPhos 1 C1** for both rounds; no SM/Pd refill. See [experiment](hte-runbook.md) and ledgers.
 
@@ -25,7 +25,7 @@ Each hold: robot makes 10% aqueous FA, then fluids in reservoir 2. Coarse-load r
 
 ## Robot-made authentic standards
 
-Weigh separate FIT and CHECK charges per analyte: **at least 5 mg**, assay-corrected; enter actual masses. Weigh liquid product by difference. Robot makes **10 mM** masters (SM ~6.45 mg /4 mL; product ~5.83 mg /6 mL), matched matrix and **0.5/5 mM FIT dilutions**. Retain reserves.
+Weigh separate FIT and CHECK charges per analyte using the [weighing list](weighing-list.md). Weigh liquid product by difference. Robot makes **10 mM** masters (SM ~6.45 mg /4 mL; product ~5.83 mg /6 mL), matched matrix and **0.5/5 mM FIT dilutions**. Retain reserves.
 
 Robot makes **8 mL /2 mM analytical IS** from **32 µL of 500 mM source**, crediting carrier toluene toward the matched matrix; loads **1 mL into analytical A3**. `IS_MASTER` starts empty; weigh only `IS_SOURCE`. [Solid naphthalene](https://www.sigmaaldrich.com/GL/en/product/aldrich/147141): CAS 91-20-3; MW 128.17.
 

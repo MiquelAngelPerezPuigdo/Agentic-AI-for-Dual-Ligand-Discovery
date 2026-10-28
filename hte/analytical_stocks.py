@@ -27,5 +27,5 @@ def preparation(config):
                 "mass_mg":10*volume*mw/1e6/assay,
                 "required_master_ul":required,"solvent":"Matched analytical matrix; NO IS",
                 "storage_container":"Labeled channel of the configured Axygen bulk reservoir",
-                "instruction":"Weigh independently; record actual mass/assay in the charges CSV. Robot adds nominal matrix volume and makes working dilutions. Save unused stock."})
+                "instruction":"Weigh independently using the listed target mass. Robot adds matrix and makes working dilutions. Save unused stock."})
     return result

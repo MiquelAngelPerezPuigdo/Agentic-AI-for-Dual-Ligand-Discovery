@@ -10,7 +10,7 @@ R1: **48 pairs covering all 30 ligands**, official 24-consensus +24-Sobol design
 
 ## Robot stock preparation
 
-1. Enter **actual masses/assays** in `weighed_charges_template.csv`. Weigh ligands in the glovebox; keep bottles there. Pd: **4 A3/B3/C3, 22.8 mg each; A4, 21.6 mg** (≤90 mg; keep 10 mg). Naphthalene: **60 mg in 1 C2**; `IS_MASTER` empty. Under air, the robot adds solvents, mixes and prepares reaction/analytical stocks. Preparation is inside campaign time.
+1. Weigh the amounts in the [weighing list](weighing-list.md); no mass-entry spreadsheet is needed. Weigh ligands in the glovebox; keep bottles there. Pd: **4 A3/B3/C3, 22.8 mg each; A4, 21.6 mg** (≤90 mg; keep 10 mg). Naphthalene: **60 mg in 1 C2**; `IS_MASTER` empty. Under air, the robot adds solvents, mixes and prepares reaction/analytical stocks. Preparation is inside campaign time.
 2. Use six labeled **Axygen 12-channel reservoirs** as listed in [the weighing/loading map](weighing-list.md); carriers occupy slots 3/6 in batches. Verify actual geometry, solvent and cover compatibility, liquid recovery, mixing and offsets before live release. Follow generated carrier/raw-load CSVs.
 3. Run `prepare_stocks.py`: **p300 single left, p1000 single right**; tips 5 /8-9 respectively. Carriers occupy 3/6 temporarily; working racks 1/4. The supplied horizontal 8 ×30 mL reservoir in 2 is **single-channel only**. Robot prepares analytical matrix/masters/working stocks too.
 4. Cover/store reserve reservoirs and cap/store the prepared analytical rack. Leave working tubes in mapped positions. Change right pipette to **p300 eight-channel GEN2**, replace tips 8/9 with 300 µL racks using the local App installation/calibration workflow. Keep left p300 single.
@@ -48,7 +48,7 @@ Final sample: 1 mL; nominal maximum analyte **666.7 µM**, naphthalene **66.7 µ
 
 ## R2 and finish
 
-After ALL 48 R1 results pass QC, select 22 pairs +L17 reference. Run **`refill_stocks.py` before R2 dosing**. Remove block/LC plate from 3/6; present ORIGINAL Axygen reservoirs by ID. **Remove reservoir covers and uncap required working ligand tubes for top-ups.** No new weighing or hand aliquoting. Retain RockPhos; **keep SM/IS and all four Pd tubes capped during refill**. Pd routing: R1 **18/18/12 doses** from A3/B3/C3; R2 **six C3 +17 A4**. Actual mass/assay determines solvent additions and capacity.
+After ALL 48 R1 results pass QC, select 22 pairs +L17 reference. Run **`refill_stocks.py` before R2 dosing**. Remove block/LC plate from 3/6; present ORIGINAL Axygen reservoirs by ID. **Remove reservoir covers and uncap required working ligand tubes for top-ups.** No new weighing or hand aliquoting. Retain RockPhos; **keep SM/IS and all four Pd tubes capped during refill**. Pd routing: R1 **18/18/12 doses** from A3/B3/C3; R2 **six C3 +17 A4**.
 
 Load **23 NEW EMPTY vials** in the SAME block; replace reservoir 2 with a NEW EMPTY one. Uncap required stocks. R2 Python doses **25 µL SM/IS each, then catalysts**; reference receives **150 µL L17**. Hand-cap and start the reaction. During R2 hold the robot makes fresh workup fluids; no new calibration. Repeat workup and final LC analysis.
 
@@ -56,4 +56,4 @@ Cap stock reserves between stages. Robot mixes sources before first use/every ei
 
 Pause for visible layers, blocked tips, persistent bubbles, air uptake, dripping or tip contact. Do not sample an arbitrary layer, guess a top-up or filter/decant without recording the effect. Reprepare an uncertain analytical dilution robotically and record the replacement; retain rejected measurements. No separate homogeneity study is planned.
 
-Finish after all 23 final injections and quantitative analysis. Save robot JSON logs, raw LC/MS/method/sequence files, actual weighed charges, times and deviations under `local_data/`. Run **`python scripts/hte-return-package.py`**; send its ZIP privately. It retains code, preparation/source ledgers, inputs, results, Claude records and file hashes; credentials are excluded.
+Finish after all 23 final injections and quantitative analysis. Save robot JSON logs, raw LC/MS/method/sequence files, times and deviations under `local_data/`. Run **`python scripts/hte-return-package.py`**; send its ZIP privately. It retains code, preparation/source ledgers, inputs, results, Claude records and file hashes; credentials are excluded.

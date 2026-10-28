@@ -1,6 +1,6 @@
 # Weighing list for stock solutions
 
-These are approximate target masses for the current 48-pair + 22-pair campaign, assuming **100% assay**. Use labeled, separate containers. Record actual mass and assay for robot stock preparation.
+Use these target masses for the current 48-pair + 22-pair campaign. Use labeled, separate containers; no mass-entry spreadsheet is needed.
 
 ## Ligands
 
@@ -37,7 +37,7 @@ These are approximate target masses for the current 48-pair + 22-pair campaign, 
 | L30 | N-XantPhos | 31.99 | BULK-01-3 / A3 |
 | L31 | Trixie Phos | 23.11 | BULK-01-3 / A2 |
 
-**L03 RockPhos:** 7.50 mg is the pure-equivalent target; at 97% assay, weigh approximately 7.73 mg. Maximum available: 10 mg. L07 is unavailable and excluded.
+**L03 RockPhos:** target 7.50 mg; maximum available 10 mg. L07 is unavailable and excluded.
 
 ### Containers for ligand stocks
 
@@ -62,7 +62,7 @@ The supplied Sarstedt 6- and 12-well **cell-culture** plate definitions correspo
 | Pd(COD)(DQ) | Pd_3, tube 4 C3 | 22.80 |
 | Pd(COD)(DQ) | Pd_4, tube 4 A4 | 21.60 |
 
-Weigh **SM only** into Axygen channel BULK-01-3 A1; the robot adds approximately 500 µL naphthalene stock plus 2000 µL toluene, mixes and transfers 1.89 mL to tube 4 D2. Approximately 609 µL remains in the channel; verify recovery physically. Retain tube 4 D2 for both rounds. The analytical IS_MASTER starts empty at BULK-03-6 A5. Pd charges total **90 mg**, leaving 10 mg for scope; do not increase the Pd charges for assay correction. Check stock coverage using actual assay.
+Weigh **SM only** into Axygen channel BULK-01-3 A1; the robot adds approximately 500 µL naphthalene stock plus 2000 µL toluene, mixes and transfers 1.89 mL to tube 4 D2. Approximately 609 µL remains in the channel; verify recovery physically. Retain tube 4 D2 for both rounds. The analytical IS_MASTER starts empty at BULK-03-6 A5. Pd charges total **90 mg**, leaving 10 mg for scope.
 
 ## Authentic calibration standards
 
@@ -75,4 +75,4 @@ Weigh **SM only** into Axygen channel BULK-01-3 A1; the robot adds approximately
 
 Weigh FIT and CHECK independently for each analyte. Weigh the liquid product by difference.
 
-Targets assume 100% assay. For lower assay, adjust within material and container limits. Record actual mass and assay; the robot calculates additions. The SM charge must cover the 1.89 mL working transfer, its surplus and the measured bulk residual. If it cannot, the program stops. For generated files, follow [local pipeline](start-here.md).
+For generated files, follow the [local pipeline](start-here.md). Keep Pd within the 90 mg campaign allocation and RockPhos within the available 10 mg.

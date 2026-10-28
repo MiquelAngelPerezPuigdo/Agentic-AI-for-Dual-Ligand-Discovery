@@ -3,20 +3,20 @@
   "schema_version": 6,
   "validation_scope": {
     "baseline_revision": "02943a1ba120fe33a7d4e15bf84b87988ea2e366",
-    "scope": "2026-10-28 Axygen stock layout and 2.5 mL SM bulk preparation reviewed in the existing locked environment; full tests, six-stage SDK simulations and offline LC replay. Historical fresh-install and other records retain their dates. Physical release requires local validation.",
+    "scope": "2026-10-28 target-mass workflow: full tests, six-stage SDK simulations and release-contract test. Historical reviews retain their dates. Physical release requires local validation.",
     "superseded_audits": "Earlier audit records remain recoverable in Git history.",
     "reports": "output/ paths identify ignored local evidence, not bundled public files. Retained test and rehearsal commands regenerate their reports.",
     "source_hashes": "Current tracked runtime, configuration, tests and scripts are listed in source_sha256. PDF builds and frozen campaign have separate manifests."
   },
   "tests": {
-    "tests": 367,
+    "tests": 368,
     "failures": 0,
     "errors": 0,
     "skipped": 0,
     "warnings": 30,
     "warning_scope": "SDK and other dependency warnings",
-    "duration_seconds": 59.85,
-    "scope": "Full tests/hte suite against current Axygen layout in existing locked Python environment; no physical execution."
+    "duration_seconds": 59.03,
+    "scope": "Full tests/hte suite against target-mass workflow; live preparation and R1 export without a mass CSV were also retested after adding the assertion."
   },
   "versions": {
     "anthropic": "0.125.0",
@@ -181,7 +181,7 @@
         "planned_solid_mg": 60,
         "stock_mM": 500,
         "robot_added_toluene_ul_at_planned_mass_and_pure_assay": 936.2565342903956,
-        "actual_mass_and_assay_scale_solvent_volume": true,
+        "actual_mass_and_assay_scale_solvent_volume": "Only when optional recorded charges are supplied; default uses target masses.",
         "combined_SM_stock_addition_ul": 500,
         "analytical_master_addition_ul": 32,
         "surplus_discard_total_ul": 2,
@@ -253,7 +253,7 @@
       "actual_weighing_by_human": true,
       "all_precise_liquid_transfers_by_robot": true,
       "concentration_basis": "Accepted nominal solvent addition; no final-volume or contraction measurement",
-      "actual_weighed_charges_required_for_live": true,
+      "actual_weighed_charges_required_for_live": false,
       "real_weighed_charges_supplied": false,
       "preparation_counts_inside_campaign": true,
       "pipettes_initial": [
@@ -268,7 +268,8 @@
       "preview_liquid_ledger_balance_verified": true,
       "invalid_mass_assay_coverage_and_manifest_changes_rejected": true,
       "stock_preparation_atmosphere": "air on OT-2 after glovebox weighing",
-      "analytical_minimum_weigh_mg": 5
+      "analytical_minimum_weigh_mg": 5,
+      "mass_basis": "nominal target masses; actual charges may optionally be supplied"
     },
     "Pd_budget": {
       "four_direct_sources": true,
@@ -278,7 +279,7 @@
         22.8,
         21.6
       ],
-      "all_source_actual_masses_and_assays_checked": true,
+      "all_source_actual_masses_and_assays_checked": false,
       "aggregate_actual_mass_max_mg": 90,
       "remaining_scope_solid_mg": 10,
       "pd_bulk_transfers": 0,
@@ -358,45 +359,45 @@
     }
   },
   "opentrons_simulations": {
-    "tested_revision": "2026-10-28 Axygen working tree; see source_sha256",
+    "tested_revision": "2026-10-28 target-mass workflow; see source_sha256",
     "SDK_version": "8.8.2",
-    "report": "output/axygen-review/final-sim (ignored local preview)",
+    "report": "output/nominal-review/final-sim (ignored local preview)",
     "stages": [
       {
         "stage": "stock_preparation",
         "passed": true,
         "command_count": 3844,
-        "protocol_sha256": "b011f631278cc4740b45dfa4af7bddad947853716fc081832a6d1b519248882b"
+        "protocol_sha256": "9e1d4db6db17acf29880a73759d160dd7c8e8a30374df459a58257d2d08ad9f1"
       },
       {
         "stage": "round1_dosing",
         "passed": true,
         "command_count": 6087,
-        "protocol_sha256": "d0c277e5d259969dc4c1df643e95c3355e2c05839107977b2303187e0805ac6d"
+        "protocol_sha256": "2fd05ad95e4a33e38db53b4ff4b43f241474b0ecdaf31809bd63edc25e589705"
       },
       {
         "stage": "round1_workup",
         "passed": true,
         "command_count": 1736,
-        "protocol_sha256": "096be08ace27b9728636bcdc50bbe5e53e110a22753db3d8c2d68ced224125af"
+        "protocol_sha256": "59d984fbce648a25eaa887d49caa09e920d565a91af2d8703e5750bb919381b6"
       },
       {
         "stage": "round2_refill",
         "passed": true,
         "command_count": 1826,
-        "protocol_sha256": "5585b8e247f60d4736c03f0a9d74490c36025b7a8f653baa2aa4fd5a8e16523e"
+        "protocol_sha256": "0814f444bb5c50add5306d341fd2d7f09a7c5be3e4134ff4c9e4857a9b024872"
       },
       {
         "stage": "round2_dosing",
         "passed": true,
         "command_count": 2475,
-        "protocol_sha256": "ae05415de22afd4f07be3e2d039a3b379222b27a1f1e0cb5f6d1c6e8dcc78563"
+        "protocol_sha256": "b1ae5bff841ca3d14cf1d0cb37b898b34b538b3abf70409c45c4082801444c95"
       },
       {
         "stage": "round2_workup",
         "passed": true,
         "command_count": 859,
-        "protocol_sha256": "ab9651144a7811e60b59598a52c93b729b9006e787e4791e7da21053049b732b"
+        "protocol_sha256": "41b741703037c9a4e3add4be8faf9494f5ea742a9fe8fb0e0862d806c74b4a22"
       }
     ],
     "total_commands": 16827,
@@ -602,9 +603,9 @@
     ".github/workflows/tests.yml": "2a106ffa474eb436b26f7e74a9d2cdad07ac7926c46866b11c1548dc457d1020",
     "hte/__init__.py": "f7115236038072601738e1f90ffbc1c3e9af449a367f58221b8f25d1b3b86542",
     "hte/analytical_practice.py": "6356ea324a2bdac1cb30e844458de39b5cd55bdf579977cfb6fd009fb3a3780e",
-    "hte/analytical_stocks.py": "ebd2e1fbf19e83f901b9f9c55b097503c2f066a8686257cdef57208438e7b1f7",
+    "hte/analytical_stocks.py": "abde42b9b988af9bcfca01fd9e622eb2abffc73185209df6b54798440ac237c4",
     "hte/analytics.py": "2dd59c46b18fc5662cb59e72217ab79712232eaedee378768445cf10cf3cc33b",
-    "hte/cli.py": "bd2c4ec2c83e18c87b63b9b54af22912399416743d644123cd1b20ff7cb94ec5",
+    "hte/cli.py": "1328a864ecce9de62c2a230fb1413741817447e75a31378e8bd65af39e3686c7",
     "hte/demo.py": "5e7b05bea253fa78e5b04d3547a32e1e7a58ee701296fa77bfb9c3478bf1f199",
     "hte/design.py": "2f5eb755d19c91e1dcb39591a4a4e6c1f97813681637bdd38c484c0b5eadb3dd",
     "hte/embeddings.py": "6e4ef35bc706f9ffd7fccc50bc5075ac4b39868334c3f0440727798317280ae1",
@@ -613,8 +614,8 @@
     "hte/inventory.py": "1e5ede1973d38228c6c4aa28ab54181d503f3d653cba5f7887bc5394bee0deb6",
     "hte/io.py": "786202cab5646cd4d9d21dd73bfda7d9249704761544a11cc0406964edbf6d2a",
     "hte/planning.py": "2b055c1399457eccccaa1292d36446fc24bcae081c1b306b52aa05660e8ed885",
-    "hte/preparation.py": "9c5a3d5f5fe2a44c1942699cbf5a21cfbc294d7f2b436efb182bfbf494b7afb7",
-    "hte/protocols.py": "b7964e79c8d16718bd886afc4de0e7f2b0533a3bceb090f22092869e50810ba5",
+    "hte/preparation.py": "13be9c868b9681f92e5378e08646b1bf732d2e56df622e46223bf1ecd0e825b1",
+    "hte/protocols.py": "02315a6a1dff1d57e8f57303ee4a541c4b1dd679c52d5a1d02d709dd55f25336",
     "hte/rehearsal.py": "f57dddceb0fcb1ed79a599bba41eb3acc82a54719e9d2ec895c54250092defe6",
     "hte/scoring.py": "8b89c7d6d24e5b7f242fed961137b4ec7f20d2e9c7f2c5608a19da9887e1d52a",
     "hte/transfer.py": "9deb44eef9c218fa7e35ef9931d69462e13d0a6545229e85755331366b1811cf",
@@ -651,15 +652,15 @@
     "tests/hte/test_lc_plates.py": "387e9b0865ba8f7899688b57f62fd38fd8fd65a1b210eec0ebbc43c1eb5f1bae",
     "tests/hte/test_ligand_coverage.py": "33561f4d39f0773b3179805aa8165130bf0e4e38dc6349df2c2e921495d9e5f0",
     "tests/hte/test_mock_hplc_trials.py": "725df4db011526293cfe4c2a6eab4fa88badb9e81204fd71523b45f2475dfa41",
-    "tests/hte/test_naphthalene_preparation.py": "f22ccadebb91755238fdf53941e97cfa5516fa0dc1b97232422cd77e8d19ad11",
+    "tests/hte/test_naphthalene_preparation.py": "a0afba97fa43bf9285d0547a6469f91dd448b71cd13b564efe93f5c194d7f049",
     "tests/hte/test_paradox48.py": "02849dba1f3d8aed02549409bd5baab11db0b691246dbba3392993aa08a63d16",
     "tests/hte/test_pd_and_source_mixing.py": "d3681cb6d2a501c46b963b5e3fe12cf95169c6f8fcbd2007fa803b2f873418e2",
-    "tests/hte/test_pd_direct_stocks.py": "6c1356a821d33fe8f4aa61a77f058dcc47e204b19ba4d3f3af184a425785b8f1",
+    "tests/hte/test_pd_direct_stocks.py": "1f96e8eadc7e66b8fad3994d726fade274aaa5446226506453be6c40dd3970f9",
     "tests/hte/test_prompt_caching.py": "9eab3cad1b3888acb214eca6e3eee14a14da32323eb613692f48a899da8971b4",
     "tests/hte/test_rehearsal.py": "2cf7796922df2c57c646607f3fc758ab11062b355f078b88a863bcf03075c866",
     "tests/hte/test_repository_audit.py": "acfd70acc52dffdff118b15edf7e2abc651b365f5c76e88988ba33a1c8aa6fb3",
-    "tests/hte/test_robot_physical_guards.py": "2764e71544ee282de646ac95e5ee0f1847c1fa59e8f8d8787290fe39e1656121",
-    "tests/hte/test_robot_preparation.py": "ee805f824bcf83401707a19d18649b6b9958be76c1d5feb5e921c37414ab9607",
+    "tests/hte/test_robot_physical_guards.py": "14b6bf7446055aa791f11f37cc564ada943788c57e48de38f20ba17019bef432",
+    "tests/hte/test_robot_preparation.py": "71e2b4c4bd46cf3ad943a0f65730473a8e59a97166d9b009ba4ff7358f30f18f",
     "tests/hte/test_round_start_dosing.py": "099146c593064e3427cde955990631eba60628a184a59e9246d2b73507994642",
     "tests/hte/test_sobol_initialization.py": "c86c3c255dba6344185687c8b9a97e1d43205852874f6ed6353a44897882f422",
     "tests/hte/test_staff_resume.py": "735561a2677aee2a5ae3605657fa78aef19605232d0e59ea071eacec63a29de6",
@@ -742,5 +743,13 @@
     "default_bulk_dead_ul_is_measured": false,
     "full_mock_feedback_loop_passed": true,
     "mock_feedback_calls": 660
+  },
+  "nominal_mass_update_2026_10_28": {
+    "tests_passed": 368,
+    "sdk_stages_passed": 6,
+    "actual_mass_csv_required": false,
+    "live_preparation_and_round1_export_tested_without_csv": true,
+    "physical_execution": false,
+    "paid_api_calls": 0
   }
 }

@@ -40,14 +40,14 @@ def test_preparation_preserves_all_volume_and_finite_reagent_budgets(setup):
     final=sum(r["volume_ul"] for r in plan["expected_final_liquids"])
     assert initial-final==pytest.approx(plan["discarded_surplus_ul"])
     stocks={r["stock_id"]:r for r in plan["stocks"]}
-    assert sum(r["actual_mass_mg"] for r in plan["stocks"] if r["reagent"]=="Pd")==pytest.approx(90)
-    assert stocks["L03"]["actual_mass_mg"]<10
+    assert sum(r["mass_mg_used"] for r in plan["stocks"] if r["reagent"]=="Pd")==pytest.approx(90)
+    assert stocks["L03"]["mass_mg_used"]<10
     assert stocks["substrate_stock"]["prepare_ul"]==pytest.approx(2500)
     assert stocks["substrate_stock"]["kind"]=="reaction"
     assert stocks["substrate_stock"]["remaining_bulk_ul"]==pytest.approx(609)
     assert stocks["L03"]["kind"]=="direct"
     assert "solute displacement" in plan["concentration_basis"]
-    assert not plan["actual_weighed_charges_supplied"] and not plan["physical_run_completed"]
+    assert not plan["actual_weighed_charges_supplied"] and plan["weighing_basis"]=="nominal_target" and not plan["physical_run_completed"]
     assert len([s for s in plan["steps"] if s["type"]=="transfer" and s["label"]=="naphthalene stock"])==2
 
 
@@ -188,7 +188,7 @@ def test_actual_weighed_charges_cannot_bypass_amount_or_coverage_guards(setup,fa
 def test_stock_manifest_changes_and_preview_weights_cannot_release_live(setup):
     directory,c,inv,*_=setup
     path=directory/"preparation/preparation_manifest.json"
-    with pytest.raises(ValueError,match="actual weighed"):load_preparation(c,inv,path,live=True)
+    with pytest.raises(ValueError,match="live stock preparation"):load_preparation(c,inv,path,live=True)
     changed=copy.deepcopy(c);changed["demo"]=False;changed["liquids"]["pd_stock_mM"]=41
     with pytest.raises(ValueError,match="does not match"):load_preparation(changed,inv,path)
 
@@ -286,9 +286,9 @@ def test_actual_mass_rounding_and_assay_still_cover_campaign(setup):
     assert actual['actual_weighed_charges_supplied']
     stocks={r['stock_id']:r for r in actual['stocks']}
     pd=[r for r in actual['stocks'] if r['reagent']=='Pd']
-    assert sum(r['actual_mass_mg'] for r in pd)==pytest.approx(90)
+    assert sum(r['mass_mg_used'] for r in pd)==pytest.approx(90)
     assert all(r['prepare_ul']>=r['full_campaign_required_ul'] for r in pd)
-    assert stocks['SM_FIT']['actual_mass_mg']>=5
+    assert stocks['SM_FIT']['mass_mg_used']>=5
 
 
 @pytest.mark.parametrize("round_number", [1, 2])

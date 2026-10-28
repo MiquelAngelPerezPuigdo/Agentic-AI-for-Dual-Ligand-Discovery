@@ -10,13 +10,13 @@ Use schema **6** and **fresh naphthalene calibration**; old mesitylene calibrati
 
 ## Robot preparation, then R1
 
-Use the [weighing list](weighing-list.md), then generate a guarded preview. `output/prep-preview/` contains **`weighed_charges_template.csv`**, `bulk_carriers.csv` and `raw_reagents_to_load.csv`. Copy the template to `local_data/charges.csv`; enter actual masses/assays. After local checks:
+Use the [weighing list](weighing-list.md), then generate a guarded preview. `output/prep-preview/` contains `bulk_carriers.csv` and `raw_reagents_to_load.csv`. After local checks, generate the live protocol; no mass-entry CSV is needed:
 
 ```bash
 python -m hte.cli --config local_data/campaign.json prepare-stocks \
   --output output/prep-preview
 python -m hte.cli --config local_data/campaign.json prepare-stocks \
-  --charges local_data/charges.csv --output local_data/stock-prep --live
+  --output local_data/stock-prep --live
 ```
 
 Run **`local_data/stock-prep/prepare_stocks.py`** locally: p300 single left /p1000 single right. Preserve its manifest at the default configured path. Follow swaps; afterward change right to p300 multi and tips 8/9 to 300 µL through the App installation/calibration workflow.
@@ -53,4 +53,4 @@ python scripts/hte-lc-results.py final \
 
 ## Return records
 
-Copy robot logs to `local_data/robot_logs/`, raw LC/MS/method files to `local_data/instrument_raw/`, and times/deviations to `local_data/run-notes.txt`. Keep actual weights, LC exports/maps, calibration, QC and run outputs. Stop writers; **`python scripts/hte-return-package.py`** creates **`transfer/hte-results.zip`**. Send privately.
+Copy robot logs to `local_data/robot_logs/`, raw LC/MS/method files to `local_data/instrument_raw/`, and times/deviations to `local_data/run-notes.txt`. Keep LC exports/maps, calibration, QC and run outputs. Stop writers; **`python scripts/hte-return-package.py`** creates **`transfer/hte-results.zip`**. Send privately.

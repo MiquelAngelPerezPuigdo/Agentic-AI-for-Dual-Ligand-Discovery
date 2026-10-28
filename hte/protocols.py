@@ -304,7 +304,7 @@ def export(config, inventory, design, output, live=False, history=None, stage="a
     if prep and int(rows[0]["round"])==1:
         from .preparation import design_signature
         if prep["design_signature"]!=design_signature(design):raise ValueError("Stock preparation differs from this first-round design")
-    if live and not prep:raise ValueError("Run robot stock preparation from actual weights and supply --preparation or automation.preparation_manifest_path")
+    if live and not prep:raise ValueError("Run robot stock preparation and supply --preparation or automation.preparation_manifest_path")
     if prep is None and int(rows[0]["round"])==1:prep=build_stock_preparation(config,inventory,design)
     hold=build_hold_preparation(config,ops,int(rows[0]["round"]),prep)
     refill=build_refill(config,inventory,design,history,prep) if int(rows[0]["round"])==2 and history and prep else None

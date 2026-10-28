@@ -66,7 +66,7 @@ Staff must also copy records held on separate instruments:
 
 - `local_data/robot_logs/`: OT-2 JSON logs for every stage.
 - `local_data/instrument_raw/`: original LC/MS data (including `.raw` directories), method/gradient, sequences, calibration/pilot and rejected/replacement injections.
-- `local_data/run-notes.txt`: actual weights/assays, run IDs, times, interventions, deviations and rejection reasons.
+- `local_data/run-notes.txt`: run IDs, times, interventions, deviations and rejection reasons.
 
 Once writers have stopped:
 

@@ -262,20 +262,21 @@ def stock_records(config,inventory,design,charges=None):
         else:mass=record["planned_mass_mg"]
         limit=config["stock_preparation"].get("available_mass_mg",{}).get(reagent)
         if limit is not None and mass>limit+1e-8:raise ValueError(key+" exceeds available mass; preserve scope reserve")
-        record.update(actual_mass_mg=mass,assay_fraction=assay,prepare_ul=mass*assay/record["mw"]/record["stock_mM"]*1e6)
+        record.update(mass_mg_used=mass,mass_basis="actual_recorded" if charges is not None else "nominal_target",
+                      assay_fraction=assay,prepare_ul=mass*assay/record["mw"]/record["stock_mM"]*1e6)
         capacity=config["stock_preparation"]["tube_max_fill_ul"] if record["kind"]=="direct" else config["automation"]["bulk_max_fill_ul"]
         if record["prepare_ul"]>capacity+1e-7:
             raise ValueError("Stock exceeds container capacity: "+key)
         if reagent=="Pd" and record["prepare_ul"]+1e-8<record["full_campaign_required_ul"]:
             raise ValueError("Direct Pd source cannot cover both rounds and dead volume: "+key)
-    pd_mass=sum(r["actual_mass_mg"] for r in records if r["reagent"]=="Pd")
+    pd_mass=sum(r["mass_mg_used"] for r in records if r["reagent"]=="Pd")
     pd_limit=min(config["stock_preparation"]["available_mass_mg"]["Pd"],config["stock_preparation"]["fixed_stock_mass_mg"]["Pd"])
     if pd_mass>pd_limit+1e-8:
         raise ValueError("Combined Pd charges exceed available mass; preserve scope reserve")
     # This master is derived from the weighed source, never a second manual charge.
     master_mM,master_ul=2,8000
     records.append(dict(stock_id="IS_MASTER",reagent="internal_standard",name="Analytical naphthalene master",
-        planned_mass_mg=0,actual_mass_mg=master_mM*master_ul*config["liquids"]["internal_standard_molecular_weight_g_mol"]/1e6,
+        planned_mass_mg=0,mass_mg_used=master_mM*master_ul*config["liquids"]["internal_standard_molecular_weight_g_mol"]/1e6,mass_basis="derived_from_IS_SOURCE",
         assay_fraction=1,mw=config["liquids"]["internal_standard_molecular_weight_g_mol"],
         stock_mM=master_mM,kind="analytical",solvent="matrix",prepare_ul=master_ul))
     bulk=[r for r in records if r["kind"]!="direct"]
@@ -330,7 +331,7 @@ def build_stock_preparation(config,inventory,design,charges=None):
                 target=[row["carrier_id"],row["source_well"]]
                 is_volume=0
                 if row["stock_id"]=="substrate_stock":
-                    umol=row["actual_mass_mg"]*row["assay_fraction"]/row["mw"]*1000*config["chemistry"]["preloaded_internal_standard"]["mol_percent_relative_to_substrate"]/100
+                    umol=row["mass_mg_used"]*row["assay_fraction"]/row["mw"]*1000*config["chemistry"]["preloaded_internal_standard"]["mol_percent_relative_to_substrate"]/100
                     is_volume=umol/is_config["stock_mM"]*1000
                 elif row["stock_id"]=="IS_MASTER":
                     is_volume=row["stock_mM"]*row["prepare_ul"]/is_config["stock_mM"]
@@ -391,7 +392,9 @@ def build_stock_preparation(config,inventory,design,charges=None):
             raise ValueError("Prepared bulk cannot cover R2 and dead volume: "+row["stock_id"])
     report.update(stocks=records,raw_loads=raw_loads,working_loads=deck,
                   config_digest=object_digest(config),inventory_digest=object_digest(inventory),design_digest=object_digest(design),
-                  actual_weighed_charges_supplied=charges is not None,design_signature=design_signature(design))
+                  actual_weighed_charges_supplied=charges is not None,
+                  weighing_basis="actual_recorded" if charges is not None else "nominal_target",
+                  design_signature=design_signature(design))
     return report
 
 
@@ -556,23 +559,20 @@ def load_preparation(config,inventory,path,live=False):
     if report.get("recipe_digest")!=recipe_digest(config) or report.get("inventory_digest")!=object_digest(inventory):
         if config.get("demo") and not live and not report.get("actual_weighed_charges_supplied"):return None
         raise ValueError("Stock preparation manifest does not match this campaign recipe/inventory")
-    if live and not report.get("actual_weighed_charges_supplied"):
-        raise ValueError("Live run requires stock preparation generated from actual weighed charges")
+    if live and not report.get("actual_weighed_charges_supplied") and not (report.get("weighing_basis")=="nominal_target" and report.get("live_export") is True):
+        raise ValueError("Live run requires a live stock preparation generated using target or recorded masses")
     if live: validate_source_reach(config, report)
     return report
 
 
 def export_stock_preparation(config,inventory,design,output,charges=None,live=False):
     validate_config(config,live=live,live_scope="first_reaction")
-    if live and charges is None:raise ValueError("Live stock preparation requires the actual weighed charges CSV")
     plan=build_stock_preparation(config,inventory,design,charges)
     if live: validate_source_reach(config, plan)
-    plan["recipe_digest"]=recipe_digest(config)
+    plan["recipe_digest"]=recipe_digest(config);plan["live_export"]=live
     out=new_output(output);write_json(out/"preparation_manifest.json",plan)
     if charges is not None:write_csv(out/"weighed_charges_used.csv",charges)
-    write_csv(out/"weighed_charges_template.csv",[dict(stock_id=r["stock_id"],name=r["name"],planned_mass_mg=r["planned_mass_mg"],actual_mass_mg="",assay_fraction=r["assay_fraction"])
-        for r in plan["stocks"] if r["stock_id"]!="IS_MASTER"])
-    write_csv(out/"bulk_carriers.csv",[dict(stock_id=r["stock_id"],carrier_id=r.get("carrier_id","WORKING RACK"),slot=r.get("carrier_slot",r.get("source_slot","")),well=r.get("source_well",""),preloaded_mass_mg=0 if r["stock_id"]=="IS_MASTER" else r["actual_mass_mg"],preload_action="EMPTY: robot adds naphthalene source and matrix components" if r["stock_id"]=="IS_MASTER" else "Weigh SM ONLY; robot adds naphthalene source" if r["stock_id"]=="substrate_stock" else "Weigh independently from actual charges CSV",nominal_stock_mM=r["stock_mM"],robot_prepared_ul=r["prepare_ul"])
+    write_csv(out/"bulk_carriers.csv",[dict(stock_id=r["stock_id"],carrier_id=r.get("carrier_id","WORKING RACK"),slot=r.get("carrier_slot",r.get("source_slot","")),well=r.get("source_well",""),preloaded_mass_mg=0 if r["stock_id"]=="IS_MASTER" else r["mass_mg_used"],preload_action="EMPTY: robot adds naphthalene source and matrix components" if r["stock_id"]=="IS_MASTER" else "Weigh SM ONLY; robot adds naphthalene source" if r["stock_id"]=="substrate_stock" else "Weigh listed amount independently",nominal_stock_mM=r["stock_mM"],robot_prepared_ul=r["prepare_ul"])
         for r in plan["stocks"]])
     write_csv(out/"raw_reagents_to_load.csv",plan["raw_loads"])
     source="from opentrons import protocol_api\n"
@@ -581,7 +581,7 @@ def export_stock_preparation(config,inventory,design,output,charges=None,live=Fa
     source+=LIQUID_RUNTIME
     source+='''
 def run(protocol: protocol_api.ProtocolContext):
-    if DEMO and not protocol.is_simulating():raise RuntimeError("Preview only; use actual weights and local release checks")
+    if DEMO and not protocol.is_simulating():raise RuntimeError("Preview only; complete local release checks and generate the live protocol")
     tips=protocol.load_labware("opentrons_96_tiprack_20ul" if CONFIG["robot"]["single"]=="p20_single_gen2" else "opentrons_96_tiprack_300ul",5)
     large_tips=[protocol.load_labware("opentrons_96_tiprack_1000ul",s) for s in (8,9)]
     single=protocol.load_instrument(CONFIG["robot"]["single"],"left",tip_racks=[tips])
