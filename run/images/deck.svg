@@ -128,7 +128,7 @@ z
     <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="43.8048" y="398.61432" transform="rotate(-0 43.8048 398.61432)">1</text>
    </g>
    <g id="text_2">
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(92.480781 427.812564)">STOCK VIALS</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(85.790937 427.812564)">STOCK HOLDER</text>
     <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.774531 443.812564)">HTEL 48 × 2 mL</text>
     <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(74.238594 458.932095)">Shake before dosing</text>
    </g>
@@ -136,7 +136,7 @@ z
     <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="242.5248" y="398.61432" transform="rotate(-0 242.5248 398.61432)">2</text>
    </g>
    <g id="text_4">
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(283.189062 427.812564)">ONE RESERVOIR</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(271.303906 427.812564)">SOLVENT RESERVOIR</text>
     <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(293.658594 443.900845)">12 channels</text>
     <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(289.048437 458.932095)">Stays in place</text>
    </g>
@@ -165,9 +165,9 @@ z
     <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="441.2448" y="294.71832" transform="rotate(-0 441.2448 294.71832)">6</text>
    </g>
    <g id="text_12">
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(487.267656 323.916564)">ONE LC PLATE</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(478.141875 323.916564)">LC SAMPLE PLATE</text>
     <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(457.06375 339.036095)">48 samples + 7 standards</text>
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(470.424687 355.036095)">500 µL per filled well</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(453.677031 356.004845)">Take to HPLC-MS at the end</text>
    </g>
    <g id="text_13">
     <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="43.8048" y="190.82232" transform="rotate(-0 43.8048 190.82232)">7</text>
@@ -193,8 +193,9 @@ z
     <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="43.8048" y="86.92632" transform="rotate(-0 43.8048 86.92632)">10</text>
    </g>
    <g id="text_20">
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(83.772187 124.124564)">HEATER-SHAKER</text>
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(70.993281 139.244095)">Universal flat adapter</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(83.772187 116.124564)">HEATER-SHAKER</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(70.993281 131.244095)">Universal flat adapter</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(61.012812 147.244095)">Staff load at App prompts</text>
    </g>
    <g id="text_21">
     <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="242.5248" y="86.92632" transform="rotate(-0 242.5248 86.92632)">11</text>
@@ -210,13 +211,13 @@ z
    </g>
   </g>
   <g id="text_25">
-   <text style="font-weight: 700; font-size: 19px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="324" y="30.421031" transform="rotate(-0 324 30.421031)">Load once — one 48-reaction run</text>
+   <text style="font-weight: 700; font-size: 18px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="324" y="29.661188" transform="rotate(-0 324 29.661188)">Staff loading — one semi-automated run</text>
   </g>
   <g id="text_26">
    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="324" y="47.952" transform="rotate(-0 324 47.952)">LEFT: p300 single GEN2     |     RIGHT: p300 eight-channel GEN2</text>
   </g>
   <g id="text_27">
-   <text style="font-size: 8.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="324" y="511.488" transform="rotate(-0 324 511.488)">FRONT / OPERATOR  •  Stock holder: 1 → 10 → 1 before dosing; reaction block and LC plate use 10 later.</text>
+   <text style="font-size: 8.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="324" y="511.488" transform="rotate(-0 324 511.488)">FRONT / OPERATOR  •  Staff move labware at App prompts. The robot pipettes, heats and shakes.</text>
   </g>
  </g>
  <defs>

@@ -119,7 +119,11 @@ def build_plan():
 
     group_fill([s for s in stocks if s['stock_id'] in {*ligands, 'SM_IS', 'Pd'}])
     steps.append(dict(type='shake_stocks', rpm=c['stock_mix_rpm'], seconds=c['stock_mix_seconds']))
-    steps.append(dict(type='pause', message='Stock-holder shaking complete. Reaction stocks prepared in their final tubes. Confirm holder back in slot 1, A1 at back-left. Keep 30 ligand vials A1:F5 plus SM_IS A6 and Pd B6 OPEN for dosing. Keep analytical/working vials C6,D6,E6,F6,A7,B7,C7,D7,E7,F7 CAPPED until the standards-preparation prompt. Check liquids, bubbles and visible solids. All 48 reaction vials must be EMPTY and UNCAPPED in slot 3. Resume for dosing.'))
+    steps.append(dict(type='pause', message=chr(10).join([
+        '3b. Check stocks before dosing', '',
+        'What happened: the robot made and shook the 32 reaction stocks.',
+        'You: confirm the STOCK HOLDER is back in slot 1, A1 at back-left. Check stocks for bubbles, visible solids or a transfer fault. Keep ligand vials A1:F5 and SM_IS A6 / Pd B6 OPEN; the ten analytical vials stay capped.',
+        'Resume when: stocks are ready and all 48 reaction vials are empty and open in the REACTION BLOCK, slot 3. The robot will now dose the reactions.'])))
     for key, volume in [('SM_IS', 20), *[(k, 30) for k in ligands], ('Pd', 20)]:
         affected = design if key in ('SM_IS', 'Pd') else [r for r in design if key in (r['ligand_a'], r['ligand_b'])]
         for index, row in enumerate(affected):
@@ -195,18 +199,23 @@ RUNTIME = '''
 import time
 from opentrons import protocol_api
 requirements = {"robotType": "OT-2", "apiLevel": "2.18"}
-metadata = {"protocolName": "Single 48-reaction screen"}
+metadata = {"protocolName": "Single 48-reaction screen", "description": "Semi-automated HTE screen: staff weigh/load chemicals; OT-2 makes stocks, doses reactions and prepares LC samples. Staff handle caps, move labware at numbered pauses, and carry the final plate to HPLC-MS."}
 
 def run(ctx: protocol_api.ProtocolContext):
     c = PLAN['config']
     hs = ctx.load_module('heaterShakerModuleV1', 10)
     adapter = hs.load_adapter('opentrons_universal_flat_adapter')
-    lw = {name: ctx.load_labware_from_definition(DEFINITIONS[name], slot)
+    labels={'stocks':'Stock holder (home slot 1)', 'res':'Solvent reservoir (slot 2)',
+            'reaction':'Reaction block (home slot 3)', 'lc':'LC sample plate (home slot 6)'}
+    lw = {name: ctx.load_labware_from_definition(DEFINITIONS[name], slot, label=labels[name])
           for name, slot in [('stocks',1),('res', 2), ('reaction', 3), ('lc', 6)]}
     lt = [ctx.load_labware('opentrons_96_tiprack_300ul', s) for s in (5, 8)]
     rt = ctx.load_labware('opentrons_96_tiprack_300ul', 9)
     single = ctx.load_instrument('p300_single_gen2', 'left', tip_racks=lt)
     multi = ctx.load_instrument('p300_multi_gen2', 'right', tip_racks=[rt])
+    def operator_pause(title, status, action, ready):
+        ctx.pause(chr(10).join([title, '', 'What is happening: '+status,
+                               'You: '+action, 'Resume when: '+ready]))
     def drop():
         for p in (single, multi):
             if p.has_tip: p.drop_tip()
@@ -253,14 +262,20 @@ def run(ctx: protocol_api.ProtocolContext):
     def move_block_back():
         hs.deactivate_shaker();hs.deactivate_heater();hs.open_labware_latch()
         ctx.move_labware(lw['reaction'],3,use_gripper=False)
-    def cool_module():
+    def cool_module(stage='6'):
         hs.close_labware_latch()
         hs.deactivate_shaker();hs.deactivate_heater()
         while not ctx.is_simulating() and (hs.current_temperature is None or hs.current_temperature>30):
-            ctx.pause('Heater is OFF. Wait for the heater-shaker plate reading to reach <=30 C before unheated shaking. Cooling is passive. Reaction-vial cooling is confirmed separately before opening. Resume afterward.')
+            operator_pause(stage+'. Wait for the heater-shaker to cool',
+                'The heater is off. The module cools passively.',
+                'Wait for its plate reading to reach <=30 C. Reaction-block/vial cooling is checked separately at step 6b.',
+                'The module reading is <=30 C. It will be used for unheated shaking.')
     def shake_stocks(op):
-        cool_module()
-        ctx.pause('Before dosing: leave the 30 ligand vials A1:F5 plus SM_IS A6 and Pd B6 OPEN for stock shaking. Keep the ten analytical/working vials C6,D6,E6,F6,A7,B7,C7,D7,E7,F7 CAPPED. The confirmed compatible stock holder moves from 1 to heater-shaker 10 at the next prompt. Reservoir and LC plate stay in place. Stock shaking: 750 rpm for 2 minutes, heater OFF.')
+        cool_module('3')
+        operator_pause('3a. Shake the stock holder',
+            'Stock solvent addition and pipette mixing are complete. The holder will shake at 750 rpm for 2 minutes, heater OFF.',
+            'Leave the 30 ligand vials and SM_IS A6 / Pd B6 OPEN. Keep the ten analytical vials capped. Resume; the App will then ask you to move the STOCK HOLDER 1 -> 10 and, after shaking, back to 1.',
+            'The stock holder is ready to move. Move it only at the separate App move prompt.')
         hs.open_labware_latch()
         ctx.move_labware(lw['stocks'],adapter,use_gripper=False)
         hs.close_labware_latch()
@@ -272,10 +287,15 @@ def run(ctx: protocol_api.ProtocolContext):
         hs.open_labware_latch()
         ctx.move_labware(lw['stocks'],1,use_gripper=False)
         ctx.delay(seconds=15)
-    ctx.pause('Use ONLY the one-run loading sheet. Stock holder home: 1; it moves to 10 and back for pre-dose shaking. ONE reservoir and SAME LC plate stay on deck. Check offsets, 1.5 mm bottom clearance, capped stock-vial height <=45 mm and confirmed stock-holder mounting on the flat adapter. Slots 4/7/11 empty. p300 single LEFT; p300 eight-channel RIGHT. No pipette change. Confirm actual labware/solvent compatibility before resuming.')
-    ctx.pause('Load weighed solids directly in their listed final glass vials. Five working vials start EMPTY. Open ligand vials A1:F5 plus SM_IS A6 and Pd B6 in the STOCK holder. Keep analytical vials C6:F7 capped until the three-hour prompt. Load 48 EMPTY UNCAPPED reaction vials and an EMPTY LC plate. Reservoir: staff-sheet loads. Do not use earlier two-round files.')
+    operator_pause('2. Check loading before making stocks',
+        'The robot will ADD STOCK SOLVENT to the weighed chemicals. Use the numbered staff guide and its deck/stock maps.',
+        'Load weighed source chemicals with NO stock solvent yet. Open ligand vials A1:F5 and SM_IS A6 / Pd B6; keep the ten analytical vials capped. Load empty open reaction vials in slot 3, an empty LC plate in 6, and the prefilled reservoir in 2.',
+        'App setup/offset checks are complete: p300 single LEFT, eight-channel RIGHT; heater-shaker 10; slots 4/7/11 empty; 1.5 mm aspiration clearance; capped source height <=45 mm; confirmed holder/adapter fit.')
     steps(PLAN['steps_before_reaction']);drop()
-    ctx.pause('Hand-tighten ALL 48 reaction-vial screw caps. The 32 reaction-stock vials are finished and may remain OPEN. Keep the ten analytical/working vials capped until their preparation prompt. Cover the reservoir and empty LC plate in place. Move block 3 -> heater-shaker 10 at the next prompt. No source-holder or reservoir swaps.')
+    operator_pause('4a. Seal the reactions',
+        'All 48 reactions are dosed, 100 uL each. The reaction stocks are finished and may stay open.',
+        'Screw all 48 REACTION caps on securely. Cover the reservoir and LC plate. Keep the ten analytical vials capped. Resume; the App will then request REACTION BLOCK 3 -> 10.',
+        'All reaction vials are sealed and both covers are in place. Move the block only at the separate App move prompt.')
     move_block_to_module()
     start=None
     try:
@@ -283,12 +303,21 @@ def run(ctx: protocol_api.ProtocolContext):
         hold_seconds=c['reaction_minutes']*60
         standards_after=max(0,hold_seconds-60*60)
         start=time.monotonic();deadline=start+hold_seconds
-        ctx.pause('REACTION HOLD START: start an external timer NOW. Nominal heated hold is 4 hours. Longer holds and a later quench are permitted; record actual times. Resume now for the standards-preparation prompt after 3 hours. Heating and shaking continue during App pauses, so a long pause extends the heated hold.')
+        operator_pause('4b. Start the reaction timer',
+            'REACTION HOLD START: 95 C and 500 rpm reached; the nominal four-hour heated hold starts NOW.',
+            'Start an external four-hour timer. Plan to return at about three hours for standards and at the end for cooling/workup. Heating/shaking stay on during App pauses.',
+            'The timer is running. Resume now for the normal schedule. Longer agreed holds and a later quench are allowed; actual intervals are logged.')
         # Make aqueous standards in the last hour rather than leaving them for four hours.
         ctx.delay(seconds=standards_after if ctx.is_simulating() else max(0,start+standards_after-time.monotonic()))
-        ctx.pause('Three hours into the nominal reaction hold: REMOVE reservoir and LC plate covers in place. Uncap analytical source/working vials C6,D6,E6,F6,A7,B7,C7,D7,E7,F7 in the STOCK holder. Used ligand, SM_IS and Pd stocks may remain OPEN. Resume to prepare standards; record any extension of the nominal heated hold.')
+        operator_pause('5a. Prepare the LC calibration standards',
+            'This standards-preparation step is normally scheduled near hour three. The robot now needs the analytical source vials.',
+            'Remove the reservoir and LC plate covers. Uncap C6,D6,E6,F6,A7,B7,C7,D7,E7,F7 in the STOCK HOLDER. Used reaction stocks may stay open.',
+            'Those ten analytical vials and the reservoir/LC plate are open. The robot will make seven standards while the reactions continue.')
         steps(PLAN['steps_during_hold']);drop()
-        ctx.pause('Seven mixed-analyte standards prepared in LC wells A7:G7. Cover the LC plate and reservoir IN PLACE against evaporation. All source/working vials are now finished and may remain OPEN. Resume to finish the nominal hold; longer actual holds are recorded. Remove covers only at the workup prompt. One final LC handoff.')
+        operator_pause('5b. Cover the standards; leave the LC plate on the robot',
+            'Seven mixed-analyte standards are ready in LC wells A7:G7. The 48 reaction samples will be added later.',
+            'Cover the LC plate and reservoir IN PLACE. All used source vials may stay open. Keep the LC plate in slot 6.',
+            'Both covers are on. Resume promptly for a four-hour hold, or wait here until an agreed longer endpoint. The LC plate goes to HPLC-MS only after step 8.')
         if not ctx.is_simulating() and time.monotonic()>=deadline:
             ctx.comment('Nominal hold elapsed during standards preparation/pauses. Continuing with the completed standards; actual heated duration is recorded at heater-off.')
         ctx.delay(seconds=min(60*60,hold_seconds) if ctx.is_simulating() else max(0,deadline-time.monotonic()))
@@ -298,15 +327,24 @@ def run(ctx: protocol_api.ProtocolContext):
             if ctx.is_simulating():ctx.comment('HEATED HOLD COMPLETE (SIMULATION): nominal duration only; no physical elapsed time measured.')
             else:ctx.comment(f'HEATED HOLD COMPLETE: actual elapsed heated hold {(time.monotonic()-start)/60:.2f} min; heater OFF.')
     heat_off=time.monotonic()
-    ctx.pause('Four-hour nominal hold complete; heater and shaker OFF. Longer actual hold or delay before quench is allowed; record times. Move the SEALED reaction block back to slot 3 at the next prompt using approved thermal handling. Leave ALL reaction vials capped and allow block/vials to cool to <=30 C before opening. Continue this SAME program; retain all labware and tip racks.')
+    operator_pause('6a. Move the sealed reaction block to cool',
+        'The heated hold is complete; heater and shaker are OFF. Actual heated duration is recorded.',
+        'Keep all 48 reaction caps CLOSED. Have suitable hot-block handling tools ready. Resume; the App will then request REACTION BLOCK 10 -> 3. Let the sealed block cool there.',
+        'You are ready to handle the sealed block. Move it only at the separate App move prompt. Extra cooling/waiting time is allowed.')
     move_block_back()
     # Same context and pipettes: preserve deck state and used tips through workup.
     cool_module()
-    ctx.pause('Confirm the SEALED reaction vials AND block in slot 3 have cooled to <=30 C before opening; check with a suitable contact temperature probe. The module reading covers its own plate. Extra cooling/waiting time is allowed and recorded before quench. Use the SAME reservoir, LC plate and partly used tip racks; standards occupy A7:G7. REMOVE LC/reservoir covers. Keep reaction vials capped while LC diluent is added. Used source/working vials may remain OPEN.')
+    operator_pause('6b. Confirm the reaction block and vials are cool',
+        'The module has cooled. Staff must also confirm the sealed REACTION BLOCK and vials in slot 3 are <=30 C with a contact probe.',
+        'Check that temperature and remove the reservoir/LC plate covers. Keep the reaction vials CAPPED. Use the same LC plate with standards in A7:G7 and the same tip racks.',
+        'The block/vials are <=30 C and covers are off. The robot will first add LC diluent to sample wells A1:H6.')
     # First fill LC destinations, then request uncapping before any quench.
     dilution=[op for op in PLAN['steps_quench'] if op.get('chemical')=='lc_diluent']
     steps(dilution);drop()
-    ctx.pause('Now unscrew all 48 cooled reaction-vial caps. Robot adds 400 uL quench per vial. Keep all vials OPEN for the following 750 rpm / 2 minute mixing and sampling.')
+    operator_pause('7. Open the cooled reactions for quenching',
+        'The LC sample wells now contain 480 uL diluent each. The reaction block is cool.',
+        'Unscrew all 48 reaction caps. Leave reaction vials OPEN. The robot will add 400 uL quench per vial, then request block moves 3 -> 10 -> 3 for unheated mixing.',
+        'All reaction vials are open in slot 3. Resume for quenching, 750 rpm / 2 minute mixing and fresh-tip sampling.')
     quench=[op for op in PLAN['steps_quench'] if op.get('chemical')=='quench']
     if not ctx.is_simulating():ctx.comment(f'QUENCH START: {(time.monotonic()-heat_off)/60:.2f} min since heater-off, including cooling and handling.')
     steps(quench);drop()
@@ -317,13 +355,19 @@ def run(ctx: protocol_api.ProtocolContext):
     finally:hs.deactivate_shaker();hs.deactivate_heater()
     move_block_back();ctx.delay(seconds=15)
     steps(PLAN['steps_sample']);drop()
-    ctx.pause('Recap reaction vials for storage. Leave LC plate UNCOVERED. Move ONLY the LC plate from 6 to the cooled heater-shaker at the next prompt; preserve A1 orientation. Stock-vial holder and reservoir remain in place.')
+    operator_pause('8. Mix the completed LC sample plate',
+        'All 48 reaction samples are in LC wells A1:H6; the seven standards are in A7:G7. Each filled well contains 500 uL.',
+        'Recap reaction vials for storage. Leave the LC SAMPLE PLATE UNCOVERED. Resume; the App will request ONLY this plate 6 -> 10 for 750 rpm / 2 minute mixing, heater OFF.',
+        'The LC plate is uncovered and A1 orientation is marked. Keep the stock holder and reservoir in place.')
     hs.open_labware_latch();ctx.move_labware(lw['lc'],adapter,use_gripper=False);hs.close_labware_latch()
     try:
         hs.set_and_wait_for_shake_speed(750);ctx.delay(seconds=120)
     finally:hs.deactivate_shaker();hs.deactivate_heater()
     hs.open_labware_latch();ctx.move_labware(lw['lc'],protocol_api.OFF_DECK,use_gripper=False)
-    ctx.pause('Seal the LC plate and hand it to LC ONCE. Inject the seven standards FIRST, followed by the 48 samples, using lc-injections.csv and the actual 1.7-minute method settings. Never inject unused wells. Archive real export, actual injection map and robot logs. There is no second reaction batch.')
+    operator_pause('9. Hand the sample plate to HPLC-MS',
+        'Robot pipetting and final mixing are complete: 7 standards plus 48 samples, all in this LC plate.',
+        'Seal the removed plate, label it with the run/date and mark A1. Give the LC operator tables/lc-injections.csv: seven standards FIRST, then 48 samples, using the agreed 1.7-minute method.',
+        'The plate is sealed and labelled. Resume to finish the OT-2 program, then carry it flat to HPLC-MS. Save the LC/MS files, actual injection list/method, robot log and run notes; follow ANALYSIS.md for yields.')
 '''
 
 
@@ -341,6 +385,9 @@ def generate(output):
     defs['stocks']['stackingOffsetWithLabware']={'opentrons_universal_flat_adapter':{'x':0,'y':0,'z':0}}
     (output / 'run_screen.py').write_text(
         '# Generated by hte.single_run; self-contained, local OT-2 only.\n'
+        '# STAFF: weigh chemicals into labelled vials; the ROBOT adds stock solvent.\n'
+        '# Load stocks with no solvent added yet. Follow staff-guide steps 1-9 and App pauses.\n'
+        '# Staff handle caps/labware moves and carry the finished LC plate to HPLC-MS.\n'
         + f'PLAN={plan!r}\nDEFINITIONS={defs!r}\n' + RUNTIME)
     write_json(tables/'plan.json',plan)
     write_csv(tables/'dosing.csv',plan['dosing'])

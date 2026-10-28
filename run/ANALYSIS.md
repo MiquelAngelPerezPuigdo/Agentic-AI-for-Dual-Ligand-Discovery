@@ -1,6 +1,8 @@
 # Analyze the one-run LC sequence
 
-This step is for the software/LC operator. It calculates calibrated yields; it does not select or dose another batch. No Claude key or Chromeleon installation is needed on the workstation.
+This step is for the person handling the LC export and quantification, after [staff-guide step 9](README.md#9-take-the-plate-to-hplc-ms-and-return-the-results). The OT-2 run is finished, staff have carried the sealed sample plate to HPLC-MS, and the LC operator has run seven standards followed by 48 samples. This page turns the exported peak areas into calibrated yields.
+
+**LC operator hands over:** the integrated-peak CSV, original LC/MS files, actual injection list and method, measured peak assignments/UV channel and quantification limits. **Quantification operator returns:** the complete results/QC folder below, together with the robot log and run notes. These roles can be handled by the same person. No API key is needed.
 
 1. Install Python 3.12 and run `uv sync --locked --python 3.12` from the repository root.
 2. Copy [lc-settings-template.json](tables/lc-settings-template.json) to **`local_data/lc-settings.json`**. Enter the actual method ID, quantitative UV channel (`UV_VIS_1` to `UV_VIS_4`), measured SM/product/naphthalene retention windows and measured LOQs. Do not use guessed retention times.

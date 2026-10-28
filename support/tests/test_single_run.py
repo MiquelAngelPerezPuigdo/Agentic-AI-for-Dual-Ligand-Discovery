@@ -126,16 +126,19 @@ def test_real_sdk_continuous_protocol_and_tip_positions():
     assert 'starting_tip' not in source and 'STAGE=' not in source
     moves=[text for text in texts if text.startswith('Moving ')]
     assert len(moves)==8
-    assert 'htelvialholder' in moves[0] and 'opentrons_universal_flat_adapter' in moves[0]
-    assert 'htelvialholder' in moves[1] and 'slot 1' in moves[1]
-    assert not any('htelvialholder' in text for text in moves[2:])
-    assert not any('axygen' in text for text in moves)
+    assert 'Stock holder' in moves[0] and 'opentrons_universal_flat_adapter' in moves[0]
+    assert 'Stock holder' in moves[1] and 'slot 1' in moves[1]
+    assert not any('Stock holder' in text for text in moves[2:])
+    assert not any('Solvent reservoir' in text for text in moves)
     speeds=[int(re.search(r'Shake at (\d+) RPM',text)[1]) for text in texts if 'Setting Heater-Shaker to Shake at' in text]
     assert speeds==[750,500,750,750]
     # Workup follows the completed hold in the same simulation, without a restart.
-    phases=['STOCK SHAKE START', 'Reaction stocks prepared', 'REACTION HOLD START', 'Three hours into the nominal reaction hold',
-            'Four-hour nominal hold complete', 'Confirm the SEALED reaction vials AND block',
-            'Now unscrew all 48', 'Recap reaction vials for storage', 'Seal the LC plate']
+    phases=['3a. Shake the stock holder', 'STOCK SHAKE START', '3b. Check stocks before dosing',
+            '4a. Seal the reactions', '4b. Start the reaction timer',
+            '5a. Prepare the LC calibration standards', '5b. Cover the standards',
+            '6a. Move the sealed reaction block', '6b. Confirm the reaction block',
+            '7. Open the cooled reactions', '8. Mix the completed LC sample plate',
+            '9. Hand the sample plate to HPLC-MS']
     positions=[next(i for i,text in enumerate(texts) if phase in text) for phase in phases]
     assert positions==sorted(positions)
 
@@ -159,8 +162,8 @@ def test_late_heated_hold_and_cooling_wait_continue_and_are_logged():
         def pause(self,message):
             pauses.append(message)
             assert len(pauses)<100
-            if message.startswith('Seven mixed-analyte standards prepared'):elapsed[0]+=3*3600
-            if message.startswith('Confirm the SEALED reaction vials'):elapsed[0]+=45*60
+            if message.startswith('5b. Cover the standards'):elapsed[0]+=3*3600
+            if message.startswith('6b. Confirm the reaction block'):elapsed[0]+=45*60
             return sdk.pause(message)
         def comment(self,message):
             comments.append(message)
@@ -172,7 +175,7 @@ def test_late_heated_hold_and_cooling_wait_continue_and_are_logged():
     quench=next(t for t in comments if t.startswith('QUENCH START:'))
     assert float(re.search(r'QUENCH START: ([\d.]+) min',quench)[1])>=45
     assert any(t.startswith('QUENCH COMPLETE:') for t in comments)
-    assert pauses[-1].startswith('Seal the LC plate')
+    assert pauses[-1].startswith('9. Hand the sample plate to HPLC-MS')
 
 
 def test_staff_links_and_one_authoritative_protocol_folder():

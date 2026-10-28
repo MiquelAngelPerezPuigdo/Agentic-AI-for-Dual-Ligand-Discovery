@@ -3157,7 +3157,7 @@
     },
     {
       "type": "pause",
-      "message": "Stock-holder shaking complete. Reaction stocks prepared in their final tubes. Confirm holder back in slot 1, A1 at back-left. Keep 30 ligand vials A1:F5 plus SM_IS A6 and Pd B6 OPEN for dosing. Keep analytical/working vials C6,D6,E6,F6,A7,B7,C7,D7,E7,F7 CAPPED until the standards-preparation prompt. Check liquids, bubbles and visible solids. All 48 reaction vials must be EMPTY and UNCAPPED in slot 3. Resume for dosing."
+      "message": "3b. Check stocks before dosing\n\nWhat happened: the robot made and shook the 32 reaction stocks.\nYou: confirm the STOCK HOLDER is back in slot 1, A1 at back-left. Check stocks for bubbles, visible solids or a transfer fault. Keep ligand vials A1:F5 and SM_IS A6 / Pd B6 OPEN; the ten analytical vials stay capped.\nResume when: stocks are ready and all 48 reaction vials are empty and open in the REACTION BLOCK, slot 3. The robot will now dose the reactions."
     },
     {
       "type": "transfer",

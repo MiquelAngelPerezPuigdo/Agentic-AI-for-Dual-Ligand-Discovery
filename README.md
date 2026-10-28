@@ -1,6 +1,8 @@
 # HTE: one 48-reaction screen
 
-**Start with [the staff procedure](run/README.md).** It explains what to weigh, where to load it and what to do at each App pause.
+**This is a semi-automated experiment.** Staff weigh chemicals, prepare two bulk liquids and load the OT-2. The robot adds stock solvents, doses reactions and prepares the LC samples. Staff handle caps and labware moves, then carry the finished plate to HPLC-MS.
+
+**Follow [the numbered staff guide](run/README.md)** from weighing through HPLC-MS handoff and return of results. The App pauses use the same step numbers and state what staff must do before resuming.
 
 | Task | File |
 |---|---|
@@ -10,7 +12,7 @@
 | Print the instructions | [Two-page bench sheet](run/bench-sheet.pdf) |
 | Calculate yields | [LC analysis instructions](run/ANALYSIS.md) |
 
-Load once and start one program: stocks → stock shaking → dosing → reaction and analytical standards → quenching → LC sampling. Staff handle caps, covers and shaker moves at the prompts. The same labware and tip racks are used throughout.
+Plan for staff to be present during loading/dosing, at about **three hours** for calibration preparation, and from the **end of the heated hold through cooling, sampling and LC handoff**. The same labware and tip racks are used throughout.
 
 **Ready for the local Opentrons App:** save the Python download as `run_screen.py`, import it, complete the App's setup/labware checks and start. The file already includes all custom labware definitions, stock volumes and the 48-pair dosing plan. HTE can use it directly without generating protocols or uploading CSV/JSON files to the robot.
 
