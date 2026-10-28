@@ -6,6 +6,8 @@ We compare 48 ligand pairs for Pd-catalysed conversion of **pyridine-2-sulfonyl 
 
 [Weighing sheet](WEIGHING.md) · [Stock-holder map](images/stock-map.png) · [Deck map](images/deck.png) · [Printable bench sheet](bench-sheet.pdf) · [Robot program](run_screen.py)
 
+**[Open the nine-step flow diagram](images/workflow.png)** for the whole sequence, with staff and robot actions side by side. Step 5 runs during the heated hold; the LC plate leaves the robot only at the end.
+
 ## 1. Prepare the chemicals
 
 **You:** weigh the amounts in the [weighing sheet](WEIGHING.md) into the labelled 2 mL glass source vials. Weigh each ligand once, in the glovebox. Keep the original reagent bottles there. The OT-2 adds the stock solvents: **load weighed chemicals, with no stock solvent added yet**. The five working vials B7–F7 start empty.

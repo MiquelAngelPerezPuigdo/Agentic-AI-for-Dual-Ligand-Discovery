@@ -1,14 +1,85 @@
 #!/usr/bin/env python3
-"""Two uncluttered maps, both read from the active run plan."""
+"""Deck/stock maps and a staff/robot workflow for the active run plan."""
 from pathlib import Path
 import json
 import textwrap
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle
+from matplotlib.patches import Rectangle, FancyBboxPatch, Circle
 
 ROOT=Path(__file__).resolve().parents[2]
+
+
+def draw_workflow(plan, out):
+    """Match the nine staff-guide/App stages; show actions and handoffs."""
+    c=plan['config']
+    ink='#202a30';muted='#53636c';line='#bcc5c9'
+    staff='#e4eef6';robot='#e3eee6';warm='#fbefd9'
+    # Left/right cells are roles within a stage, not simultaneous commands.
+    # Their sequence is explicit where hands-on actions interrupt robot work.
+    stages=[
+        ('Prepare chemicals',
+         'Weigh each ligand once into its labelled vial.\nPrepare the two bulk workup liquids.\nLoad solids with NO stock solvent added.',
+         'The robot will add stock solvent.\nFive labelled working vials start empty.'),
+        ('Load once and start',
+         'Load the stock holder, reservoir, reaction block,\nLC plate and tips in their mapped slots.\nImport run_screen.py; complete App checks.',
+         'One local program runs all OT-2 stages.\nFollow its numbered pauses and move prompts.\nUse the same labware and tip racks throughout.'),
+        ('Make stocks, then dose 48 reactions',
+         'At the prompts: STOCK HOLDER 1 → 10 → 1.\nLeave reaction-stock vials open; analytical\nvials capped. Inspect stocks before dosing.',
+         'Add solvent → pipette-mix → shake stocks\n750 rpm / 2 min, heater OFF → dose reactions.\n100 µL = 20 SM/IS + 30 L-A + 30 L-B + 20 Pd.'),
+        ('Seal and start the heated hold',
+         'Screw on all 48 REACTION caps.\nCover reservoir / LC plate.\nREACTION BLOCK 3 → 10; start timer at 4b.',
+         f'Heat to {c["temperature_C"]} °C; shake at {c["reaction_rpm"]} rpm.\nNominal {c["reaction_minutes"]//60}-hour hold starts at the App prompt.\nHeating / shaking continue during step 5.'),
+        ('During the hold: prepare calibration at about hour 3',
+         'At 5a: uncover reservoir / LC; open the ten\nanalytical vials. At 5b: cover reservoir / LC\nagain. Keep the LC plate in slot 6.',
+         'While reactions continue heating / shaking:\nmake analytical stocks and seven standards\nin LC wells A7–G7. Then finish the hold.'),
+        ('Cool before opening',
+         'At the prompt: SEALED BLOCK 10 → 3.\nCool passively, with all reaction caps ON.\nConfirm block / vials ≤30 °C with a probe.',
+         'Stop heating and shaking.\nWait for module ≤30 °C and staff confirmation.\nKeep the reactions capped until step 7.'),
+        ('Quench, mix, then sample',
+         'After LC diluent is added: uncap reactions.\nAt move prompts: OPEN BLOCK 3 → 10 → 3.\nThe robot shakes between those moves.',
+         '480 µL LC diluent / well → 400 µL quench /\nreaction → 750 rpm / 2 min, heater OFF →\nwait 15 s → transfer 20 µL extract to LC plate\nwith fresh tips.'),
+        ('Mix the completed LC plate',
+         'Recap reactions for storage.\nAt the prompt: UNCOVERED LC PLATE 6 → 10.\nRemove the plate when the App requests it.',
+         'Mix 48 samples + seven standards:\n750 rpm / 2 min, heater OFF.\nEach filled LC well contains 500 µL.'),
+        ('Take to HPLC-MS, then calculate yields',
+         'Seal / label the LC plate; mark A1.\nFinish the robot program, then carry the plate\nflat to HPLC-MS with lc-injections.csv.',
+         'LC / SOFTWARE: inject seven standards FIRST,\nthen 48 samples. Export integrated-peak CSV;\nrun calibrated yields / QC. Save data and logs.'),
+    ]
+    fig,ax=plt.subplots(figsize=(11.2,15.8))
+    fig.subplots_adjust(left=.025,right=.985,top=.895,bottom=.065)
+    ax.set(xlim=(0,11),ylim=(0,19));ax.axis('off')
+    fig.suptitle('From weighed chemicals to measured yields',x=.51,y=.975,
+                 fontsize=21,fontweight='bold',color=ink)
+    fig.text(.51,.946,'One 48-reaction screen  •  Same step numbers as the staff guide and App',
+             ha='center',fontsize=11,color=muted)
+    fig.text(.145,.916,'STAFF / HANDS-ON',fontsize=11,fontweight='bold',color='#28576c')
+    fig.text(.57,.916,'OT-2 / AUTOMATIC',fontsize=11,fontweight='bold',color='#345841')
+    for i,(title,left,right) in enumerate(stages):
+        top=18.95-i*2.10;bottom=top-1.86
+        if i<8:
+            ax.annotate('',xy=(.33,bottom-.26),xytext=(.33,top-.40),
+                        arrowprops=dict(arrowstyle='-|>',lw=1.2,color=line),zorder=0)
+        ax.add_patch(Circle((.33,top-.24),.23,facecolor=ink,edgecolor='none'))
+        ax.text(.33,top-.24,str(i+1),ha='center',va='center',fontsize=10,
+                fontweight='bold',color='white')
+        ax.text(.78,top-.24,title,va='center',fontsize=12,fontweight='bold',color=ink)
+        for x,text,color in [(0.78,left,staff),(5.91,right,warm if i in (3,4) else robot)]:
+            ax.add_patch(FancyBboxPatch((x,bottom),4.87,1.26,
+                                       boxstyle='round,pad=0.03,rounding_size=0.06',
+                                       facecolor=color,edgecolor='none'))
+            ax.text(x+.14,bottom+.64,text,va='center',fontsize=9.5,
+                    linespacing=1.45,color=ink)
+    fig.text(.10,.038,'Move labware only at the App prompts. Read both columns, then follow the numbered staff guide.',
+             fontsize=9.5,color=ink)
+    fig.text(.10,.018,'Heated hold: nominal 4 h; longer holds / waits are allowed and logged. Reaction caps stay ON during cooling.',
+             fontsize=9,color=muted)
+    for ext in ('svg','png'):
+        file=out/f'workflow.{ext}'
+        fig.savefig(file,dpi=180,facecolor='white',metadata={'Date':None} if ext=='svg' else None)
+        if ext=='svg':file.write_text('\n'.join(line.rstrip() for line in file.read_text().splitlines())+'\n')
+    plt.close(fig)
 
 
 def main():
@@ -73,6 +144,7 @@ def main():
         file=out/f'stock-map.{ext}';fig.savefig(file,dpi=180,facecolor='white',metadata={'Date':None} if ext=='svg' else None)
         if ext=='svg':file.write_text('\n'.join(line.rstrip() for line in file.read_text().splitlines())+'\n')
     plt.close(fig)
+    draw_workflow(p,out)
 
 
 if __name__=='__main__':main()

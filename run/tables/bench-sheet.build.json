@@ -1,7 +1,7 @@
 {
   "pages": 2,
   "sources": {
-    "run/README.md": "54081bd83306b3738106ace06ea0b5aa8b0143289814fe0e876520c17038d912",
+    "run/README.md": "c9490aee867a6003bd696f0df335128f335e053ac4a669e2e468ebb694751ff7",
     "run/WEIGHING.md": "56b291e959c9e958f2f394c20abaac4035ce82a2b16c51447f75537175b6ad46",
     "run/tables/plan.json": "9a01f12ffbde7f02f60f6a63ea7c1bfc94735bed258517efdf7498efe4a70fd8",
     "run/images/deck.png": "93b8bf357606b31cddcb006c2d733ec52406db577d0485fc63bb4f116cb136d2",
@@ -9,5 +9,5 @@
     "run/run_screen.py": "f1e442cf1539577717dc2d520df53812b6ed83119e077796ce55c8f1de7b0456",
     "support/scripts/build-bench-pdf.py": "b99a97085721a8bba733e8fba2c9f3bff3e607381710cfd3851b524748ced1b3"
   },
-  "pdf_sha256": "5a02a4801ab8c41d67e23279c62c687b65d5e7a7ed1904f921a0fe372da0c9fd"
+  "pdf_sha256": "666f114d4a088eb91f2fa1e447eb8114bb67725f119e3bc50f86e0406cc66830"
 }

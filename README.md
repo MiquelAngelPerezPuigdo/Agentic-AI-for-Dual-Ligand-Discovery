@@ -7,6 +7,7 @@
 | Task | File |
 |---|---|
 | Follow the experiment | **[Staff procedure](run/README.md)** |
+| See the whole sequence | **[Staff / robot flow diagram](run/images/workflow.png)** |
 | Weigh the chemicals | **[Weighing sheet](run/WEIGHING.md)** |
 | Run every OT-2 stage | **[Download ready Python file](https://raw.githubusercontent.com/MiquelAngelPerezPuigdo/Agentic-AI-for-Dual-Ligand-Discovery/main/run/run_screen.py)** · [view code](run/run_screen.py) |
 | Print the instructions | [Two-page bench sheet](run/bench-sheet.pdf) |
@@ -17,6 +18,15 @@ Plan for staff to be present during loading/dosing, at about **three hours** for
 **Ready for the local Opentrons App:** save the Python download as `run_screen.py`, import it, complete the App's setup/labware checks and start. The file already includes all custom labware definitions, stock volumes and the 48-pair dosing plan. HTE can use it directly without generating protocols or uploading CSV/JSON files to the robot.
 
 Everything for the bench is in **`run/`**. Its `images/` and `tables/` subfolders support the linked instructions. No API key is needed.
+
+<details>
+<summary>See the nine-step workflow: staff actions and robot actions</summary>
+
+[![Nine-step workflow from weighing through LC analysis, with separate staff and robot actions](run/images/workflow.png)](run/images/workflow.png)
+
+Click the diagram to open it at full size. Calibration preparation in step 5 happens **during** the heated reaction hold.
+
+</details>
 
 **Stock-vial loading map — deck slot 1.** A1 is at the back-left. Each cell shows the vial position, reagent ID, name and mass to weigh; the five working vials in B7–F7 start empty.
 

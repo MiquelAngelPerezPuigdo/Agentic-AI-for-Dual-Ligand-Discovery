@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="806.4pt" height="1137.6pt" viewBox="0 0 806.4 1137.6" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 1137.6
+L 806.4 1137.6
+L 806.4 0
+L 0 0
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 43.38432 143.811549
+Q 43.38432 184.549145 43.38432 223.945101
+" style="fill: none; stroke: #bcc5c9; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 45.38432 219.945101
+L 43.38432 223.945101
+L 41.38432 219.945101
+z
+" style="fill: #bcc5c9; stroke: #bcc5c9; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 43.38432 248.17138
+Q 43.38432 288.908977 43.38432 328.304933
+" style="fill: none; stroke: #bcc5c9; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 45.38432 324.304933
+L 43.38432 328.304933
+L 41.38432 324.304933
+z
+" style="fill: #bcc5c9; stroke: #bcc5c9; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 43.38432 352.531212
+Q 43.38432 393.268808 43.38432 432.664764
+" style="fill: none; stroke: #bcc5c9; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 45.38432 428.664764
+L 43.38432 432.664764
+L 41.38432 428.664764
+z
+" style="fill: #bcc5c9; stroke: #bcc5c9; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 43.38432 456.891043
+Q 43.38432 497.62864 43.38432 537.024596
+" style="fill: none; stroke: #bcc5c9; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 45.38432 533.024596
+L 43.38432 537.024596
+L 41.38432 533.024596
+z
+" style="fill: #bcc5c9; stroke: #bcc5c9; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 43.38432 561.250875
+Q 43.38432 601.988472 43.38432 641.384427
+" style="fill: none; stroke: #bcc5c9; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 45.38432 637.384427
+L 43.38432 641.384427
+L 41.38432 637.384427
+z
+" style="fill: #bcc5c9; stroke: #bcc5c9; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 43.38432 665.610706
+Q 43.38432 706.348303 43.38432 745.744259
+" style="fill: none; stroke: #bcc5c9; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 45.38432 741.744259
+L 43.38432 745.744259
+L 41.38432 741.744259
+z
+" style="fill: #bcc5c9; stroke: #bcc5c9; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 43.38432 769.970538
+Q 43.38432 810.708135 43.38432 850.104091
+" style="fill: none; stroke: #bcc5c9; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 45.38432 846.104091
+L 43.38432 850.104091
+L 41.38432 846.104091
+z
+" style="fill: #bcc5c9; stroke: #bcc5c9; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 43.38432 874.33037
+Q 43.38432 915.067966 43.38432 954.463922
+" style="fill: none; stroke: #bcc5c9; stroke-width: 1.2; stroke-linecap: round"/>
+    <path d="M 45.38432 950.463922
+L 43.38432 954.463922
+L 41.38432 950.463922
+z
+" style="fill: #bcc5c9; stroke: #bcc5c9; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 43.38432 145.289482
+C 47.677069 145.289482 51.794576 144.085157 54.830008 141.941746
+C 57.86544 139.798335 59.570967 136.890837 59.570967 133.859596
+C 59.570967 130.828355 57.86544 127.920857 54.830008 125.777446
+C 51.794576 123.634034 47.677069 122.429709 43.38432 122.429709
+C 39.091571 122.429709 34.974064 123.634034 31.938632 125.777446
+C 28.9032 127.920857 27.197673 130.828355 27.197673 133.859596
+C 27.197673 136.890837 28.9032 139.798335 31.938632 141.941746
+C 34.974064 144.085157 39.091571 145.289482 43.38432 145.289482
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #202a30"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 77.165149 215.856606
+L 415.677207 215.856606
+Q 419.899811 215.856606 419.899811 212.874897
+L 419.899811 153.240707
+Q 419.899811 150.258998 415.677207 150.258998
+L 77.165149 150.258998
+Q 72.942545 150.258998 72.942545 153.240707
+L 72.942545 212.874897
+Q 72.942545 215.856606 77.165149 215.856606
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #e4eef6"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 438.19776 215.856606
+L 776.709818 215.856606
+Q 780.932422 215.856606 780.932422 212.874897
+L 780.932422 153.240707
+Q 780.932422 150.258998 776.709818 150.258998
+L 438.19776 150.258998
+Q 433.975156 150.258998 433.975156 153.240707
+L 433.975156 212.874897
+Q 433.975156 215.856606 438.19776 215.856606
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #e3eee6"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 43.38432 249.649314
+C 47.677069 249.649314 51.794576 248.444989 54.830008 246.301577
+C 57.86544 244.158166 59.570967 241.250669 59.570967 238.219427
+C 59.570967 235.188186 57.86544 232.280689 54.830008 230.137277
+C 51.794576 227.993866 47.677069 226.789541 43.38432 226.789541
+C 39.091571 226.789541 34.974064 227.993866 31.938632 230.137277
+C 28.9032 232.280689 27.197673 235.188186 27.197673 238.219427
+C 27.197673 241.250669 28.9032 244.158166 31.938632 246.301577
+C 34.974064 248.444989 39.091571 249.649314 43.38432 249.649314
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #202a30"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 77.165149 320.216438
+L 415.677207 320.216438
+Q 419.899811 320.216438 419.899811 317.234728
+L 419.899811 257.600539
+Q 419.899811 254.618829 415.677207 254.618829
+L 77.165149 254.618829
+Q 72.942545 254.618829 72.942545 257.600539
+L 72.942545 317.234728
+Q 72.942545 320.216438 77.165149 320.216438
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #e4eef6"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 438.19776 320.216438
+L 776.709818 320.216438
+Q 780.932422 320.216438 780.932422 317.234728
+L 780.932422 257.600539
+Q 780.932422 254.618829 776.709818 254.618829
+L 438.19776 254.618829
+Q 433.975156 254.618829 433.975156 257.600539
+L 433.975156 317.234728
+Q 433.975156 320.216438 438.19776 320.216438
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #e3eee6"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 43.38432 354.009145
+C 47.677069 354.009145 51.794576 352.80482 54.830008 350.661409
+C 57.86544 348.517998 59.570967 345.6105 59.570967 342.579259
+C 59.570967 339.548018 57.86544 336.64052 54.830008 334.497109
+C 51.794576 332.353698 47.677069 331.149373 43.38432 331.149373
+C 39.091571 331.149373 34.974064 332.353698 31.938632 334.497109
+C 28.9032 336.64052 27.197673 339.548018 27.197673 342.579259
+C 27.197673 345.6105 28.9032 348.517998 31.938632 350.661409
+C 34.974064 352.80482 39.091571 354.009145 43.38432 354.009145
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #202a30"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 77.165149 424.576269
+L 415.677207 424.576269
+Q 419.899811 424.576269 419.899811 421.59456
+L 419.899811 361.960371
+Q 419.899811 358.978661 415.677207 358.978661
+L 77.165149 358.978661
+Q 72.942545 358.978661 72.942545 361.960371
+L 72.942545 421.59456
+Q 72.942545 424.576269 77.165149 424.576269
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #e4eef6"/>
+   </g>
+   <g id="patch_18">
+    <path d="M 438.19776 424.576269
+L 776.709818 424.576269
+Q 780.932422 424.576269 780.932422 421.59456
+L 780.932422 361.960371
+Q 780.932422 358.978661 776.709818 358.978661
+L 438.19776 358.978661
+Q 433.975156 358.978661 433.975156 361.960371
+L 433.975156 421.59456
+Q 433.975156 424.576269 438.19776 424.576269
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #e3eee6"/>
+   </g>
+   <g id="patch_19">
+    <path d="M 43.38432 458.368977
+C 47.677069 458.368977 51.794576 457.164652 54.830008 455.021241
+C 57.86544 452.877829 59.570967 449.970332 59.570967 446.939091
+C 59.570967 443.907849 57.86544 441.000352 54.830008 438.85694
+C 51.794576 436.713529 47.677069 435.509204 43.38432 435.509204
+C 39.091571 435.509204 34.974064 436.713529 31.938632 438.85694
+C 28.9032 441.000352 27.197673 443.907849 27.197673 446.939091
+C 27.197673 449.970332 28.9032 452.877829 31.938632 455.021241
+C 34.974064 457.164652 39.091571 458.368977 43.38432 458.368977
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #202a30"/>
+   </g>
+   <g id="patch_20">
+    <path d="M 77.165149 528.936101
+L 415.677207 528.936101
+Q 419.899811 528.936101 419.899811 525.954392
+L 419.899811 466.320202
+Q 419.899811 463.338493 415.677207 463.338493
+L 77.165149 463.338493
+Q 72.942545 463.338493 72.942545 466.320202
+L 72.942545 525.954392
+Q 72.942545 528.936101 77.165149 528.936101
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #e4eef6"/>
+   </g>
+   <g id="patch_21">
+    <path d="M 438.19776 528.936101
+L 776.709818 528.936101
+Q 780.932422 528.936101 780.932422 525.954392
+L 780.932422 466.320202
+Q 780.932422 463.338493 776.709818 463.338493
+L 438.19776 463.338493
+Q 433.975156 463.338493 433.975156 466.320202
+L 433.975156 525.954392
+Q 433.975156 528.936101 438.19776 528.936101
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #fbefd9"/>
+   </g>
+   <g id="patch_22">
+    <path d="M 43.38432 562.728808
+C 47.677069 562.728808 51.794576 561.524483 54.830008 559.381072
+C 57.86544 557.237661 59.570967 554.330163 59.570967 551.298922
+C 59.570967 548.267681 57.86544 545.360183 54.830008 543.216772
+C 51.794576 541.073361 47.677069 539.869036 43.38432 539.869036
+C 39.091571 539.869036 34.974064 541.073361 31.938632 543.216772
+C 28.9032 545.360183 27.197673 548.267681 27.197673 551.298922
+C 27.197673 554.330163 28.9032 557.237661 31.938632 559.381072
+C 34.974064 561.524483 39.091571 562.728808 43.38432 562.728808
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #202a30"/>
+   </g>
+   <g id="patch_23">
+    <path d="M 77.165149 633.295933
+L 415.677207 633.295933
+Q 419.899811 633.295933 419.899811 630.314223
+L 419.899811 570.680034
+Q 419.899811 567.698324 415.677207 567.698324
+L 77.165149 567.698324
+Q 72.942545 567.698324 72.942545 570.680034
+L 72.942545 630.314223
+Q 72.942545 633.295933 77.165149 633.295933
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #e4eef6"/>
+   </g>
+   <g id="patch_24">
+    <path d="M 438.19776 633.295933
+L 776.709818 633.295933
+Q 780.932422 633.295933 780.932422 630.314223
+L 780.932422 570.680034
+Q 780.932422 567.698324 776.709818 567.698324
+L 438.19776 567.698324
+Q 433.975156 567.698324 433.975156 570.680034
+L 433.975156 630.314223
+Q 433.975156 633.295933 438.19776 633.295933
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #fbefd9"/>
+   </g>
+   <g id="patch_25">
+    <path d="M 43.38432 667.08864
+C 47.677069 667.08864 51.794576 665.884315 54.830008 663.740904
+C 57.86544 661.597493 59.570967 658.689995 59.570967 655.658754
+C 59.570967 652.627512 57.86544 649.720015 54.830008 647.576604
+C 51.794576 645.433192 47.677069 644.228867 43.38432 644.228867
+C 39.091571 644.228867 34.974064 645.433192 31.938632 647.576604
+C 28.9032 649.720015 27.197673 652.627512 27.197673 655.658754
+C 27.197673 658.689995 28.9032 661.597493 31.938632 663.740904
+C 34.974064 665.884315 39.091571 667.08864 43.38432 667.08864
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #202a30"/>
+   </g>
+   <g id="patch_26">
+    <path d="M 77.165149 737.655764
+L 415.677207 737.655764
+Q 419.899811 737.655764 419.899811 734.674055
+L 419.899811 675.039865
+Q 419.899811 672.058156 415.677207 672.058156
+L 77.165149 672.058156
+Q 72.942545 672.058156 72.942545 675.039865
+L 72.942545 734.674055
+Q 72.942545 737.655764 77.165149 737.655764
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #e4eef6"/>
+   </g>
+   <g id="patch_27">
+    <path d="M 438.19776 737.655764
+L 776.709818 737.655764
+Q 780.932422 737.655764 780.932422 734.674055
+L 780.932422 675.039865
+Q 780.932422 672.058156 776.709818 672.058156
+L 438.19776 672.058156
+Q 433.975156 672.058156 433.975156 675.039865
+L 433.975156 734.674055
+Q 433.975156 737.655764 438.19776 737.655764
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #e3eee6"/>
+   </g>
+   <g id="patch_28">
+    <path d="M 43.38432 771.448472
+C 47.677069 771.448472 51.794576 770.244147 54.830008 768.100735
+C 57.86544 765.957324 59.570967 763.049827 59.570967 760.018585
+C 59.570967 756.987344 57.86544 754.079846 54.830008 751.936435
+C 51.794576 749.793024 47.677069 748.588699 43.38432 748.588699
+C 39.091571 748.588699 34.974064 749.793024 31.938632 751.936435
+C 28.9032 754.079846 27.197673 756.987344 27.197673 760.018585
+C 27.197673 763.049827 28.9032 765.957324 31.938632 768.100735
+C 34.974064 770.244147 39.091571 771.448472 43.38432 771.448472
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #202a30"/>
+   </g>
+   <g id="patch_29">
+    <path d="M 77.165149 842.015596
+L 415.677207 842.015596
+Q 419.899811 842.015596 419.899811 839.033886
+L 419.899811 779.399697
+Q 419.899811 776.417987 415.677207 776.417987
+L 77.165149 776.417987
+Q 72.942545 776.417987 72.942545 779.399697
+L 72.942545 839.033886
+Q 72.942545 842.015596 77.165149 842.015596
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #e4eef6"/>
+   </g>
+   <g id="patch_30">
+    <path d="M 438.19776 842.015596
+L 776.709818 842.015596
+Q 780.932422 842.015596 780.932422 839.033886
+L 780.932422 779.399697
+Q 780.932422 776.417987 776.709818 776.417987
+L 438.19776 776.417987
+Q 433.975156 776.417987 433.975156 779.399697
+L 433.975156 839.033886
+Q 433.975156 842.015596 438.19776 842.015596
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #e3eee6"/>
+   </g>
+   <g id="patch_31">
+    <path d="M 43.38432 875.808303
+C 47.677069 875.808303 51.794576 874.603978 54.830008 872.460567
+C 57.86544 870.317156 59.570967 867.409658 59.570967 864.378417
+C 59.570967 861.347176 57.86544 858.439678 54.830008 856.296267
+C 51.794576 854.152855 47.677069 852.948531 43.38432 852.948531
+C 39.091571 852.948531 34.974064 854.152855 31.938632 856.296267
+C 28.9032 858.439678 27.197673 861.347176 27.197673 864.378417
+C 27.197673 867.409658 28.9032 870.317156 31.938632 872.460567
+C 34.974064 874.603978 39.091571 875.808303 43.38432 875.808303
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #202a30"/>
+   </g>
+   <g id="patch_32">
+    <path d="M 77.165149 946.375427
+L 415.677207 946.375427
+Q 419.899811 946.375427 419.899811 943.393718
+L 419.899811 883.759528
+Q 419.899811 880.777819 415.677207 880.777819
+L 77.165149 880.777819
+Q 72.942545 880.777819 72.942545 883.759528
+L 72.942545 943.393718
+Q 72.942545 946.375427 77.165149 946.375427
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #e4eef6"/>
+   </g>
+   <g id="patch_33">
+    <path d="M 438.19776 946.375427
+L 776.709818 946.375427
+Q 780.932422 946.375427 780.932422 943.393718
+L 780.932422 883.759528
+Q 780.932422 880.777819 776.709818 880.777819
+L 438.19776 880.777819
+Q 433.975156 880.777819 433.975156 883.759528
+L 433.975156 943.393718
+Q 433.975156 946.375427 438.19776 946.375427
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #e3eee6"/>
+   </g>
+   <g id="patch_34">
+    <path d="M 43.38432 980.168135
+C 47.677069 980.168135 51.794576 978.96381 54.830008 976.820399
+C 57.86544 974.676987 59.570967 971.76949 59.570967 968.738248
+C 59.570967 965.707007 57.86544 962.79951 54.830008 960.656098
+C 51.794576 958.512687 47.677069 957.308362 43.38432 957.308362
+C 39.091571 957.308362 34.974064 958.512687 31.938632 960.656098
+C 28.9032 962.79951 27.197673 965.707007 27.197673 968.738248
+C 27.197673 971.76949 28.9032 974.676987 31.938632 976.820399
+C 34.974064 978.96381 39.091571 980.168135 43.38432 980.168135
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #202a30"/>
+   </g>
+   <g id="patch_35">
+    <path d="M 77.165149 1050.735259
+L 415.677207 1050.735259
+Q 419.899811 1050.735259 419.899811 1047.753549
+L 419.899811 988.11936
+Q 419.899811 985.137651 415.677207 985.137651
+L 77.165149 985.137651
+Q 72.942545 985.137651 72.942545 988.11936
+L 72.942545 1047.753549
+Q 72.942545 1050.735259 77.165149 1050.735259
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #e4eef6"/>
+   </g>
+   <g id="patch_36">
+    <path d="M 438.19776 1050.735259
+L 776.709818 1050.735259
+Q 780.932422 1050.735259 780.932422 1047.753549
+L 780.932422 988.11936
+Q 780.932422 985.137651 776.709818 985.137651
+L 438.19776 985.137651
+Q 433.975156 985.137651 433.975156 988.11936
+L 433.975156 1047.753549
+Q 433.975156 1050.735259 438.19776 1050.735259
+z
+" clip-path="url(#p7d0df95e3d)" style="fill: #e3eee6"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #ffffff" x="43.38432" y="136.457252" transform="rotate(-0 43.38432 136.457252)">1</text>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="75.053847" y="136.977252" transform="rotate(-0 75.053847 136.977252)">Prepare chemicals</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 171.407257)">Weigh each ligand once into its labelled vial.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 185.182257)">Prepare the two bulk workup liquids.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 199.877569)">Load solids with NO stock solvent added.</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 179.215069)">The robot will add stock solvent.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 192.069757)">Five labelled working vials start empty.</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #ffffff" x="43.38432" y="240.817084" transform="rotate(-0 43.38432 240.817084)">2</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="75.053847" y="241.337084" transform="rotate(-0 75.053847 241.337084)">Load once and start</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 276.202752)">Load the stock holder, reservoir, reaction block,</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 289.542088)">LC plate and tips in their mapped slots.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 303.184979)">Import run_screen.py; complete App checks.</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 275.767088)">One local program runs all OT-2 stages.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 289.542088)">Follow its numbered pauses and move prompts.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 303.317088)">Use the same labware and tip racks throughout.</text>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #ffffff" x="43.38432" y="345.176915" transform="rotate(-0 43.38432 345.176915)">3</text>
+   </g>
+   <g id="text_10">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="75.053847" y="345.696915" transform="rotate(-0 75.053847 345.696915)">Make stocks, then dose 48 reactions</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 380.12692)">At the prompts: STOCK HOLDER 1 → 10 → 1.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 393.90192)">Leave reaction-stock vials open; analytical</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 407.67692)">vials capped. Inspect stocks before dosing.</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 380.12692)">Add solvent → pipette-mix → shake stocks</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 393.90192)">750 rpm / 2 min, heater OFF → dose reactions.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 407.67692)">100 µL = 20 SM/IS + 30 L-A + 30 L-B + 20 Pd.</text>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #ffffff" x="43.38432" y="449.536747" transform="rotate(-0 43.38432 449.536747)">4</text>
+   </g>
+   <g id="text_14">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="75.053847" y="450.056747" transform="rotate(-0 75.053847 450.056747)">Seal and start the heated hold</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 484.486752)">Screw on all 48 REACTION caps.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 498.261752)">Cover reservoir / LC plate.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 512.472416)">REACTION BLOCK 3 → 10; start timer at 4b.</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 484.486752)">Heat to 95 °C; shake at 500 rpm.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 498.261752)">Nominal 4-hour hold starts at the App prompt.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 512.036752)">Heating / shaking continue during step 5.</text>
+   </g>
+   <g id="text_17">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #ffffff" x="43.38432" y="553.896578" transform="rotate(-0 43.38432 553.896578)">5</text>
+   </g>
+   <g id="text_18">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="75.053847" y="554.416578" transform="rotate(-0 75.053847 554.416578)">During the hold: prepare calibration at about hour 3</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 588.846583)">At 5a: uncover reservoir / LC; open the ten</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 602.621583)">analytical vials. At 5b: cover reservoir / LC</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 616.396583)">again. Keep the LC plate in slot 6.</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 588.846583)">While reactions continue heating / shaking:</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 602.621583)">make analytical stocks and seven standards</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 617.316896)">in LC wells A7–G7. Then finish the hold.</text>
+   </g>
+   <g id="text_21">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #ffffff" x="43.38432" y="658.25641" transform="rotate(-0 43.38432 658.25641)">6</text>
+   </g>
+   <g id="text_22">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="75.053847" y="658.77641" transform="rotate(-0 75.053847 658.77641)">Cool before opening</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 693.206415)">At the prompt: SEALED BLOCK 10 → 3.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 706.981415)">Cool passively, with all reaction caps ON.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 720.756415)">Confirm block / vials ≤30 °C with a probe.</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 693.206415)">Stop heating and shaking.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 707.901727)">Wait for module ≤30 °C and staff confirmation.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 720.756415)">Keep the reactions capped until step 7.</text>
+   </g>
+   <g id="text_25">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #ffffff" x="43.38432" y="762.616242" transform="rotate(-0 43.38432 762.616242)">7</text>
+   </g>
+   <g id="text_26">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="75.053847" y="763.136242" transform="rotate(-0 75.053847 763.136242)">Quench, mix, then sample</text>
+   </g>
+   <g id="text_27">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 797.566246)">After LC diluent is added: uncap reactions.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 811.257379)">At move prompts: OPEN BLOCK 3 → 10 → 3.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 826.036559)">The robot shakes between those moves.</text>
+   </g>
+   <g id="text_28">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 790.678746)">480 µL LC diluent / well → 400 µL quench /</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 804.453746)">reaction → 750 rpm / 2 min, heater OFF →</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 818.228746)">wait 15 s → transfer 20 µL extract to LC plate</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 832.003746)">with fresh tips.</text>
+   </g>
+   <g id="text_29">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #ffffff" x="43.38432" y="866.976073" transform="rotate(-0 43.38432 866.976073)">8</text>
+   </g>
+   <g id="text_30">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="75.053847" y="867.496073" transform="rotate(-0 75.053847 867.496073)">Mix the completed LC plate</text>
+   </g>
+   <g id="text_31">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 901.926078)">Recap reactions for storage.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 915.701078)">At the prompt: UNCOVERED LC PLATE 6 → 10.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 929.476078)">Remove the plate when the App requests it.</text>
+   </g>
+   <g id="text_32">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 901.926078)">Mix 48 samples + seven standards:</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 915.701078)">750 rpm / 2 min, heater OFF.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 929.476078)">Each filled LC well contains 500 µL.</text>
+   </g>
+   <g id="text_33">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #ffffff" x="43.38432" y="971.335905" transform="rotate(-0 43.38432 971.335905)">9</text>
+   </g>
+   <g id="text_34">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="75.053847" y="971.855905" transform="rotate(-0 75.053847 971.855905)">Take to HPLC-MS, then calculate yields</text>
+   </g>
+   <g id="text_35">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 1006.285909)">Seal / label the LC plate; mark A1.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 1020.060909)">Finish the robot program, then carry the plate</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 1033.835909)">flat to HPLC-MS with lc-injections.csv.</text>
+   </g>
+   <g id="text_36">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 1006.285909)">LC / SOFTWARE: inject seven standards FIRST,</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 1020.060909)">then 48 samples. Export integrated-peak CSV;</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 1033.835909)">run calibrated yields / QC. Save data and logs.</text>
+   </g>
+  </g>
+  <g id="text_37">
+   <text style="font-weight: 700; font-size: 21px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="411.264" y="44.396719" transform="rotate(-0 411.264 44.396719)">From weighed chemicals to measured yields</text>
+  </g>
+  <g id="text_38">
+   <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #53636c" x="411.264" y="61.4304" transform="rotate(-0 411.264 61.4304)">One 48-reaction screen  •  Same step numbers as the staff guide and App</text>
+  </g>
+  <g id="text_39">
+   <text style="font-weight: 700; font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #28576c" x="116.928" y="95.5584" transform="rotate(-0 116.928 95.5584)">STAFF / HANDS-ON</text>
+  </g>
+  <g id="text_40">
+   <text style="font-weight: 700; font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #345841" x="459.648" y="95.5584" transform="rotate(-0 459.648 95.5584)">OT-2 / AUTOMATIC</text>
+  </g>
+  <g id="text_41">
+   <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="80.64" y="1094.3712" transform="rotate(-0 80.64 1094.3712)">Move labware only at the App prompts. Read both columns, then follow the numbered staff guide.</text>
+  </g>
+  <g id="text_42">
+   <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #53636c" x="80.64" y="1117.1232" transform="rotate(-0 80.64 1117.1232)">Heated hold: nominal 4 h; longer holds / waits are allowed and logged. Reaction caps stay ON during cooling.</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p7d0df95e3d">
+   <rect x="20.16" y="119.448" width="774.144" height="944.208"/>
+  </clipPath>
+ </defs>
+</svg>
