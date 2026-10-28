@@ -25,7 +25,7 @@ def main():
              '\n| Empty vial | Label | Robot prepares |\n|---|---|---|\n']
     descriptions={'HIGH':'5 mM SM + 5 mM product','LOW':'0.25 mM SM + 0.25 mM product',
                   'CHECK':'LC accuracy check: 5 mM SM + 5 mM product, from the separately weighed CHECK sources',
-                  'IS_WORK':'2 mM naphthalene','MATRIX':'100 µL toluene + 400 µL quench'}
+                  'IS_WORK':'2 mM naphthalene','MATRIX':'Solvent mix for LC standards: 100 µL toluene + 400 µL quench'}
     for key,description in descriptions.items():rows.append(f"| {plan['locations'][key][1]} | {key} | {description} |\n")
     rows.append('\nUse the vial labels and positions shown here, not an earlier two-round map. [Machine-readable weighing list](tables/weighing.csv) · [All vial positions](tables/tube-map.csv).\n')
     (out/'WEIGHING.md').write_text(''.join(rows))

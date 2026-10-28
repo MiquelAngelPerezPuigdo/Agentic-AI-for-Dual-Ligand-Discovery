@@ -89,7 +89,7 @@ def main():
     ink='#202a30';line='#bcc5c9';blue='#e4eef6';green='#e3eee6';amber='#fbefd9'
     fig,ax=plt.subplots(figsize=(9,7.4));fig.subplots_adjust(left=.04,right=.96,top=.87,bottom=.09)
     ax.set(xlim=(0,3),ylim=(0,4));ax.axis('off')
-    titles={1:'STOCK HOLDER\nHTEL 48 × 2 mL\nShake before dosing',2:'AXYGEN RESERVOIR\n12 × 12 mL, V-bottom\nHigh profile; stays in place',
+    titles={1:'STOCK HOLDER\nHTEL 48 × 2 mL\nShake before dosing',2:'AXYGEN RESERVOIR\nA1–A2 toluene / A3–A5 quench\nA6–A10 LC diluent / A11 ACN\n12 × 12 mL; A12 empty',
             3:'REACTION BLOCK\n48 × 2 mL Para-Dox\n100 µL per reaction',4:'EMPTY',5:'300 µL TIPS\nLeft single-channel',
             6:'VWR 96 DEEP-WELL\n2.2 mL, square V-bottom\n48 samples + 7 standards',7:'EMPTY',8:'300 µL TIPS\nLeft single-channel',
             9:'300 µL TIPS\nRight eight-channel',10:'HEATER-SHAKER\nUniversal flat adapter\nStaff load at App prompts',11:'EMPTY',12:'FIXED TIP WASTE'}
@@ -119,7 +119,7 @@ def main():
                   'LOW':'Dilute calibration\nmixture; robot fills',
                   'CHECK':'LC accuracy check\nRobot fills',
                   'IS_WORK':'Naphthalene dilution\nRobot fills',
-                  'MATRIX':'Solvent mixture\nRobot fills'}
+                  'MATRIX':'LC standard solvents\nRobot fills'}
     for col in range(8):
         ax.text(col+.5,6.18,str(col+1),ha='center',fontsize=13,fontweight='bold',color=ink)
         for row,letter in enumerate('ABCDEF'):

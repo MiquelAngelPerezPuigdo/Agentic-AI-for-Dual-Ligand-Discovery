@@ -49,6 +49,6 @@ Only the vials below receive weighed material. There are **30 ligands**: unavail
 | C7 | LOW | 0.25 mM SM + 0.25 mM product |
 | D7 | CHECK | LC accuracy check: 5 mM SM + 5 mM product, from the separately weighed CHECK sources |
 | E7 | IS_WORK | 2 mM naphthalene |
-| F7 | MATRIX | 100 µL toluene + 400 µL quench |
+| F7 | MATRIX | Solvent mix for LC standards: 100 µL toluene + 400 µL quench |
 
 Use the vial labels and positions shown here, not an earlier two-round map. [Machine-readable weighing list](tables/weighing.csv) · [All vial positions](tables/tube-map.csv).
