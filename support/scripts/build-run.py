@@ -21,10 +21,10 @@ def main():
         mass=f"{s['mass_mg']:.1f}"
         if s['stock_id']=='SM_IS':mass+=' SM **+ 7.7 naphthalene**'
         rows.append(f"| {s['location'][1]} | {s['stock_id']} | {s['name']} | {mass} |\n")
-    rows += ['\n**SM_IS:** weigh both listed solids into the same vial. **FIT and CHECK:** separate, independent standard weighings. Weigh liquid 2-fluoropyridine by difference. Weigh ligands in the glovebox and retain the original bottles there.\n',
+    rows += ['\n**SM_IS:** weigh both listed solids into the same vial. **FIT:** sources for the LC calibration curve. **CHECK:** separate weighings for an LC accuracy check; the software checks whether the calibration correctly measures a known-concentration sample. Staff only weigh the amounts above; the robot makes the dilutions. Weigh liquid 2-fluoropyridine by difference. Weigh ligands in the glovebox and retain the original bottles there.\n',
              '\n| Empty vial | Label | Robot prepares |\n|---|---|---|\n']
     descriptions={'HIGH':'5 mM SM + 5 mM product','LOW':'0.25 mM SM + 0.25 mM product',
-                  'CHECK':'5 mM SM + 5 mM product, from independent CHECK masters',
+                  'CHECK':'LC accuracy check: 5 mM SM + 5 mM product, from the separately weighed CHECK sources',
                   'IS_WORK':'2 mM naphthalene','MATRIX':'100 µL toluene + 400 µL quench'}
     for key,description in descriptions.items():rows.append(f"| {plan['locations'][key][1]} | {key} | {description} |\n")
     rows.append('\nUse the vial labels and positions shown here, not an earlier two-round map. [Machine-readable weighing list](tables/weighing.csv) · [All vial positions](tables/tube-map.csv).\n')

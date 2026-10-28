@@ -2,12 +2,12 @@
   "pages": 2,
   "sources": {
     "run/README.md": "7f31180f920b8dd00c6022a401dbb48d08593d1972e7f4b51df74e1d0a3b91a3",
-    "run/WEIGHING.md": "56b291e959c9e958f2f394c20abaac4035ce82a2b16c51447f75537175b6ad46",
+    "run/WEIGHING.md": "e5f6a0224a5ed43212b99b3976d5d9956107259f2c04b393b530ed98987c5254",
     "run/tables/plan.json": "00b35d740c30e5ad8176f345e518713cc2fa737a32b0df6b94367da181777671",
     "run/images/deck.png": "ab5d7f22cd9c4bd117467d72df9edd3623bc6fc7f779b6e81a2b04faeb0ce030",
-    "run/images/stock-map.png": "62006e1031f905593320fcb63779788d9b5756612dc60d26fea8d972366c5c1d",
+    "run/images/stock-map.png": "ec2df40e2801ba61059d0827f0c483f0dbdebd79ab8d6cede88dc6da57d67761",
     "run/run_screen.py": "073ef14a2cd16a3d7a42fb3632c6168d27208a1abd9b0f433df2a253449e284d",
-    "support/scripts/build-bench-pdf.py": "5ba26019820aff4f65b304cbe5967c770f376f66da9fcff7021be9fb601989b5"
+    "support/scripts/build-bench-pdf.py": "6fd26db89b56e4527e761ded23f3123f003ad7ff13e438d594b540df6bfd8df1"
   },
-  "pdf_sha256": "c35d0675c44177d1d01ef4f054cc1a0e8abc28c5c1c4de46292d4fe3e83519bc"
+  "pdf_sha256": "8a9fa5e808f43ee10425c8bbadff3f96782d7f0b08d776a3ac696a1159ac039b"
 }

@@ -41,13 +41,13 @@ Only the vials below receive weighed material. There are **30 ligands**: unavail
 | F6 | P_FIT | 2-Fluoropyridine | 5.0 |
 | A7 | P_CHECK | 2-Fluoropyridine | 5.0 |
 
-**SM_IS:** weigh both listed solids into the same vial. **FIT and CHECK:** separate, independent standard weighings. Weigh liquid 2-fluoropyridine by difference. Weigh ligands in the glovebox and retain the original bottles there.
+**SM_IS:** weigh both listed solids into the same vial. **FIT:** sources for the LC calibration curve. **CHECK:** separate weighings for an LC accuracy check; the software checks whether the calibration correctly measures a known-concentration sample. Staff only weigh the amounts above; the robot makes the dilutions. Weigh liquid 2-fluoropyridine by difference. Weigh ligands in the glovebox and retain the original bottles there.
 
 | Empty vial | Label | Robot prepares |
 |---|---|---|
 | B7 | HIGH | 5 mM SM + 5 mM product |
 | C7 | LOW | 0.25 mM SM + 0.25 mM product |
-| D7 | CHECK | 5 mM SM + 5 mM product, from independent CHECK masters |
+| D7 | CHECK | LC accuracy check: 5 mM SM + 5 mM product, from the separately weighed CHECK sources |
 | E7 | IS_WORK | 2 mM naphthalene |
 | F7 | MATRIX | 100 µL toluene + 400 µL quench |
 

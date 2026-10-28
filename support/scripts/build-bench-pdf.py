@@ -70,7 +70,7 @@ def main():
         if s['stock_id']=='SM_IS':mass='96.7 SM<br/>+7.7 IS';name='Pyridine-2-sulfonyl fluoride + naphthalene'
         rows.append([s['location'][1],s['stock_id'],name,mass])
     story+=[table(rows,[34,75,335,66],7.5),Spacer(1,7),
-            para('<b>Five empty working vials:</b> B7 HIGH, C7 LOW, D7 CHECK, E7 IS_WORK, F7 MATRIX. Weigh FIT/CHECK standards separately; weigh liquid product by difference. Weigh ligands in the glovebox and retain original reagent bottles there.',small),
+            para('<b>Five empty working vials:</b> B7 HIGH, C7 LOW, D7 CHECK, E7 IS_WORK, F7 MATRIX. <b>FIT</b> supplies the LC calibration; separately weighed <b>CHECK</b> sources supply an LC accuracy check. The robot makes all dilutions. Weigh liquid product by difference. Weigh ligands in the glovebox and retain original reagent bottles there.',small),
             para('Full procedure, maps, Python files and LC instructions: <link href="https://github.com/MiquelAngelPerezPuigdo/Agentic-AI-for-Dual-Ligand-Discovery/tree/main/run" color="#28576c">github.com/MiquelAngelPerezPuigdo/Agentic-AI-for-Dual-Ligand-Discovery / run</link>',small)]
     def footer(canvas,doc):
         canvas.setFont('Helvetica',7);canvas.setFillColor(colors.HexColor('#555555'))
