@@ -39,6 +39,14 @@ These are approximate target masses for the current 48-pair + 22-pair campaign, 
 
 **L03 RockPhos:** 7.50 mg is the pure-equivalent target; at 97% assay, weigh approximately 7.73 mg. Maximum available: 10 mg. L07 is unavailable and excluded.
 
+### Containers for ligand stocks
+
+- **29 ligands:** weigh each ligand into its own labeled, solvent-compatible bulk source container. The planned ligand stocks are approximately **2.8–3.6 mL each**. HTE must choose short, robot-accessible containers and a matching rack definition; confirm capacity, solvent compatibility and pipette reach. The configured deep 15 mL Falcon sources cannot be released for live use. The generated `bulk_carriers.csv` gives each container's carrier and position; regenerate it after choosing the labware.
+- **L03 RockPhos:** weigh directly into its labeled **2 mL working tube**, rack in slot 1, well C1. The robot prepares approximately 0.8 mL in that tube; retain it for both rounds.
+- **Working tubes for the other ligands:** the robot transfers prepared stock into labeled **2 mL tubes** in the racks at slots 1 and 4. The generated `deck_loads.csv` gives their working positions. The configured rack uses an Opentrons 24-position 2 mL Eppendorf-tube definition; confirm that the actual tubes and rack are compatible with the solvent and match the definition.
+
+Other bulk sources, including the analytical matrix, require capacity for up to approximately **8 mL**; HTE should include those when choosing the bulk containers and rack.
+
 ## Other reaction stocks
 
 | Material | Separate charge | Target mass (mg) |
