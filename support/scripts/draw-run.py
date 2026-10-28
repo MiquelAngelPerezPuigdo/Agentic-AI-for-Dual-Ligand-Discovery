@@ -2,6 +2,7 @@
 """Two uncluttered maps, both read from the active run plan."""
 from pathlib import Path
 import json
+import textwrap
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -31,27 +32,45 @@ def main():
     fig.text(.5,.91,'LEFT: p300 single GEN2     |     RIGHT: p300 eight-channel GEN2',ha='center',fontsize=10,color=ink)
     fig.text(.5,.04,'FRONT / OPERATOR    •    Only the reaction block and final LC plate move to the shaker.',ha='center',fontsize=9,color=ink)
     for ext in ('svg','png'):
-        file=out/f'deck.{ext}';fig.savefig(file,dpi=180,facecolor='white')
+        file=out/f'deck.{ext}';fig.savefig(file,dpi=180,facecolor='white',metadata={'Date':None} if ext=='svg' else None)
         if ext=='svg':file.write_text('\n'.join(line.rstrip() for line in file.read_text().splitlines())+'\n')
     plt.close(fig)
-    fig,ax=plt.subplots(figsize=(10,6.1));fig.subplots_adjust(left=.065,right=.98,top=.83,bottom=.16)
+    fig,ax=plt.subplots(figsize=(16,10));fig.subplots_adjust(left=.045,right=.985,top=.83,bottom=.15)
     ax.set(xlim=(-.35,8),ylim=(-.15,6.4));ax.axis('off')
     positions={loc[1]:key for key,loc in p['locations'].items()}
-    short={'IS_MASTER':'IS master','SM_CHECK':'SM check','P_CHECK':'P check','SM_FIT':'SM fit','P_FIT':'P fit','IS_WORK':'IS work'}
+    stocks={s['stock_id']:s for s in p['stocks']}
+    descriptions={'SM_IS':'SM + naphthalene','Pd':'Pd(COD)(DQ)','IS_MASTER':'Naphthalene',
+                  'SM_FIT':'SM fit master','SM_CHECK':'SM check master',
+                  'P_FIT':'Product fit master','P_CHECK':'Product check master',
+                  'HIGH':'SM + product\n5 mM each','LOW':'SM + product\n0.25 mM each',
+                  'CHECK':'Independent check\n5 mM each','IS_WORK':'Naphthalene\n2 mM',
+                  'MATRIX':'Solvent matrix'}
     for col in range(8):
-        ax.text(col+.5,6.18,str(col+1),ha='center',fontsize=11,fontweight='bold',color=ink)
+        ax.text(col+.5,6.18,str(col+1),ha='center',fontsize=13,fontweight='bold',color=ink)
         for row,letter in enumerate('ABCDEF'):
-            if col==0:ax.text(-.2,5.5-row,letter,ha='center',va='center',fontsize=11,fontweight='bold',color=ink)
-            key=positions.get(letter+str(col+1),'')
-            fill=green if key.startswith('L') and key!='LOW' else amber if key in ('SM_IS','Pd') else blue if key else '#f4f4f2'
+            if col==0:ax.text(-.2,5.5-row,letter,ha='center',va='center',fontsize=13,fontweight='bold',color=ink)
+            address=letter+str(col+1);key=positions.get(address,'')
+            ligand=key.startswith('L') and key!='LOW'
+            fill=green if ligand else amber if key in ('SM_IS','Pd') else blue if key else '#f4f4f2'
             ax.add_patch(Rectangle((col+.04,5-row+.04),.92,.92,facecolor=fill,edgecolor=line,lw=.9))
-            ax.text(col+.5,5.5-row,short.get(key,key) or 'empty',ha='center',va='center',fontsize=10,color=ink,fontweight='bold' if key else 'normal')
-    fig.suptitle('Stock-vial holder — slot 1',y=.97,fontsize=20,fontweight='bold',color=ink)
-    fig.text(.5,.89,'HTEL 48 × 2 mL glass vials     •     A1 at the back-left     •     Single-channel pipetting only',ha='center',fontsize=10,color=ink)
-    fig.text(.07,.085,'GREEN: ligands, weighed once     AMBER: reaction SM/IS and Pd     BLUE: analytical sources / dilutions',fontsize=9,color=ink)
-    fig.text(.07,.04,'HIGH, LOW, CHECK, IS work and MATRIX start empty. Column 8 stays empty. Masses: WEIGHING.md.',fontsize=9,color=ink)
+            ax.text(col+.10,5-row+.85,address,ha='left',va='center',fontsize=8,color='#53636c')
+            if not key:
+                ax.text(col+.5,5.5-row,'EMPTY',ha='center',va='center',fontsize=10,color='#7b868b');continue
+            name=textwrap.fill(stocks[key]['name'],width=18,break_long_words=False,break_on_hyphens=True) if ligand else descriptions[key]
+            if key=='L27':name='tris(3-chlorophenyl)\nphosphine'
+            ax.text(col+.5,5-row+.69,key,ha='center',va='center',fontsize=12,fontweight='bold',color=ink)
+            ax.text(col+.5,5-row+.43,name,ha='center',va='center',fontsize=9,color=ink,linespacing=1.2)
+            mass=(f"{stocks[key]['mass_mg']:.1f} mg" if key in stocks else 'START EMPTY')
+            if key=='SM_IS':mass='96.7 mg SM + 7.7 mg IS'
+            ax.text(col+.5,5-row+.12,mass,ha='center',va='center',fontsize=8.5,fontweight='bold',color=ink)
+    fig.suptitle('Load the stock vials — deck slot 1',y=.965,fontsize=25,fontweight='bold',color=ink)
+    fig.text(.5,.91,'HTEL 48 × 2 mL holder  |  30 ligands, weighed once  |  A1 at the back-left',ha='center',fontsize=13,color=ink)
+    fig.text(.5,.875,'BACK OF ROBOT',ha='center',fontsize=10,fontweight='bold',color='#53636c')
+    fig.text(.5,.125,'FRONT / OPERATOR',ha='center',fontsize=10,fontweight='bold',color='#53636c')
+    fig.text(.045,.08,'GREEN: ligand stocks     AMBER: reaction SM/IS and Pd     BLUE: analytical sources / working vials',fontsize=11,color=ink)
+    fig.text(.045,.045,'Weigh the shown chemicals into these vials. The robot adds solvent. B7–F7 start empty; column 8 is unused.',fontsize=10.5,color=ink)
     for ext in ('svg','png'):
-        file=out/f'stock-map.{ext}';fig.savefig(file,dpi=180,facecolor='white')
+        file=out/f'stock-map.{ext}';fig.savefig(file,dpi=180,facecolor='white',metadata={'Date':None} if ext=='svg' else None)
         if ext=='svg':file.write_text('\n'.join(line.rstrip() for line in file.read_text().splitlines())+'\n')
     plt.close(fig)
 
