@@ -11,7 +11,7 @@ Local OT-2 dosing, calibrated LC quantification and Claude-guided selection for 
 | Staff actions at the bench | **[Two-page checklist](docs/HTE-staff-checklist.pdf)** |
 | Install, prepare files and process R1/R2 results | **[Local pipeline commands](docs/start-here.md)** |
 | Complete operator reference | [Four-page handbook](docs/HTE-operator-handbook.pdf) |
-| Weighed charges and calibration | [Stock recipes](docs/stocks-and-calibration.md) |
+| Amounts to weigh for stocks and standards | **[Complete weighing list](docs/weighing-list.md)** · [Stock recipes](docs/stocks-and-calibration.md) |
 | LC import, quantification and QC | [Analytical workflow](docs/htel-lc-import.md) |
 | Scientific method and selection | [ML/LLM strategy](docs/ml-strategy.md) · [Initialization map/statistics](docs/initialization-review.md) |
 | Test, reproduce or maintain the code | [Development guide](docs/development.md) · [Update PDFs](docs/updating-the-handbook.md) |

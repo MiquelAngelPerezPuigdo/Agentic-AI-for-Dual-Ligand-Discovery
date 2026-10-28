@@ -1,10 +1,10 @@
 {
-  "edition_date": "2026-10-22",
+  "edition_date": "2026-10-28",
   "edition_timezone": "Europe/Zurich",
-  "source_sha256": "1a956e5f34e63d337ea08f8c5ca7a02bd43a8cfd45c8ea12239828735afe7e3f",
+  "source_sha256": "dba03f278055cbb8e553cc6ed6bd16e38416e66d636f0e664c7d8934b11ea68c",
   "sources": {
-    "docs/hte-staff-checklist.md": "abb77f9ed7c7583003e51311809b8101211433a0208a65e2a788a743ad0e341e",
-    "docs/stocks-and-calibration.md": "6002fa19d566305024740b6faaa4c8399542857bc56613b741cc51bd777539d0",
+    "docs/hte-staff-checklist.md": "73e45f309c63bb1c87894b49f1715e3b339a3e77e6ffa7c764d88d335354f479",
+    "docs/stocks-and-calibration.md": "56b574f27a15057fc52d84cced64415001a68427515cc208b24fd3a75042c9d8",
     "hte_inputs/campaign.json": "d0dda2faac063835f4b295c3ab23a80ab256597432a922edd25c5e8fb72f5753",
     "hte_inputs/calibration_template.csv": "9aab903969587dbc6d2045aa18669cfe03eecb54209fe59afde1932fe6322d4e",
     "hte_inputs/ligands.csv": "a24c186b814eaeb8b5950e7a059e21b8df001764e83b19f127a3da179f4a5876",
@@ -34,7 +34,7 @@
     "campaigns/hackathon2026/round1_design.csv": "3c68d4fe7429cd5b880cdbec25debd4fd6d6e794e95022c88c317c07c5d5dd27",
     "campaigns/hackathon2026/scoring/campaign_provenance.json": "a97c2eec55f40228c5002f197a074dee898f26eacf24fdf2f61424707cca13fb"
   },
-  "pdf_sha256": "d4a23f80d8210ecc98580740d733bf416aad2cea8b4883259f65f0814ffc6b94",
+  "pdf_sha256": "4d5512ceaaca5956d4f6540945a167c9ac322e02139b68a676bd4c69b379fd4e",
   "pages": 2,
   "editable_master": "docs/hte-staff-checklist.md; rebuild with scripts/build-hte-pdf.py --staff",
   "private_email_included": false,

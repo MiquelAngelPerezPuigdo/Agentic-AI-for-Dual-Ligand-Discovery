@@ -4,7 +4,7 @@
 
 ## Load chemicals
 
-- Weigh labeled charges from **`weighed_charges_template.csv`**; enter actual masses/assays. Weigh ligands in the glovebox. Robot adjusts solvent addition; respect mass limits.
+- Weigh labeled charges from the **[weighing list](weighing-list.md)**; enter actual masses/assays. Weigh ligands in the glovebox. Robot adjusts solvent addition; respect mass limits.
 - Coarse-load raw solvents to CSV minimum fills. Supplied **8 ×30 mL A1-H1 reservoir: single-channel ONLY**. No manual aliquoting or volumetric top-up.
 - **Release blocked:** default bulk sources fail the conservative no-nozzle-entry check. Supply actual short, solvent-compatible stock containers/rack JSON; regenerate and check reach. Carrier slots **3/6**; retain capped reserves and original working tubes.
 - Have **three compatible 96-well LC plates**, 2.2 mL geometry, 1 mL/sample, carrier/seals. Confirm offsets, mounting, caps and actual 1.7-min method/cycle. Import/simulate locally.

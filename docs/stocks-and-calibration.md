@@ -1,6 +1,6 @@
 # Stocks and calibration
 
-**Staff weigh; the OT-2 measures liquids.** Enter actual masses/assays; follow `bulk_carriers.csv`. Concentrations use nominal solvent addition. **Naphthalene is available at HTEL; planned charge: 60 mg.**
+**Staff weigh; the OT-2 measures liquids.** See the [complete weighing list](weighing-list.md) for all 30 ligands, other reaction stocks and calibration standards. Enter actual masses/assays; follow `bulk_carriers.csv`. Concentrations use nominal solvent addition. **Naphthalene is available at HTEL; planned charge: 60 mg.**
 
 ## Reaction stocks
 

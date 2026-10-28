@@ -1,10 +1,10 @@
 {
-  "edition_date": "2026-10-22",
+  "edition_date": "2026-10-28",
   "edition_timezone": "Europe/Zurich",
-  "source_sha256": "569cfdee939d1ae98dfa22e327689ea66b844325d85e342e90f6356e10a8262a",
+  "source_sha256": "4dda507a52ea86aa692d6cb4b6dfba63f4df20ce9fe7ccbcd4c64e13c2404588",
   "sources": {
     "docs/hte-runbook.md": "81af3f665c55c07f00a8e893242dc9afaaaff73044d8a6d5255495e2716dd05e",
-    "docs/stocks-and-calibration.md": "6002fa19d566305024740b6faaa4c8399542857bc56613b741cc51bd777539d0",
+    "docs/stocks-and-calibration.md": "56b574f27a15057fc52d84cced64415001a68427515cc208b24fd3a75042c9d8",
     "docs/start-here.md": "30ad6abc81acd3ee0dab00b025f3674cfbaecf1dee1535f3abdbc1bf20524125",
     "hte_inputs/campaign.json": "d0dda2faac063835f4b295c3ab23a80ab256597432a922edd25c5e8fb72f5753",
     "hte_inputs/calibration_template.csv": "9aab903969587dbc6d2045aa18669cfe03eecb54209fe59afde1932fe6322d4e",
@@ -35,7 +35,7 @@
     "campaigns/hackathon2026/round1_design.csv": "3c68d4fe7429cd5b880cdbec25debd4fd6d6e794e95022c88c317c07c5d5dd27",
     "campaigns/hackathon2026/scoring/campaign_provenance.json": "a97c2eec55f40228c5002f197a074dee898f26eacf24fdf2f61424707cca13fb"
   },
-  "pdf_sha256": "2c327ba4e9988a38ca2b12a96d5c9b5783b2fda1ac00932a27ad2f93ead3ee9c",
+  "pdf_sha256": "a26157a68e895dec4936008dd61de314ddc889349d2bae61cb1d2f43dae05262",
   "pages": 4,
   "editable_master": "docs/hte-runbook.md, docs/stocks-and-calibration.md, docs/start-here.md; rebuild with scripts/build-hte-pdf.py",
   "private_email_included": false,
