@@ -5,9 +5,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "catalyst-hte"
 version = "0.1.0"
-description = "Local OT-2 dual-ligand screening and audited LC-to-LLM iteration"
+description = "One local OT-2 ligand screen and calibrated LC quantification"
 requires-python = ">=3.10"
-dependencies = ["numpy>=1.26,<3", "scipy>=1.14,<2", "scikit-learn>=1.5,<2", "rdkit>=2024.3", "anthropic>=0.125,<1"]
+dependencies = ["numpy>=1.26,<3", "openpyxl>=3.1"]
 
 [project.optional-dependencies]
 sources = ["openpyxl>=3.1"]
@@ -15,13 +15,14 @@ robot = ["opentrons==8.8.2"]
 test = ["pytest>=8", "opentrons==8.8.2", "pypdf>=5,<7"]
 embeddings = ["torch>=2.3", "transformers>=4.43,<5"]
 reports = ["matplotlib>=3.8,<4", "plotly>=6,<7"]
-docs = ["reportlab>=4.4,<5", "mistune>=3.1,<4", "pypdf>=5,<7"]
+docs = ["reportlab>=4.4,<5", "matplotlib>=3.8,<4", "pypdf>=5,<7"]
+research = ["scipy>=1.14,<2", "scikit-learn>=1.5,<2", "rdkit>=2024.3", "anthropic>=0.125,<1"]
 
 [project.scripts]
-hte = "hte.cli:main"
+hte-analyze = "hte.run_analysis:main"
 
 [tool.setuptools.packages.find]
 include = ["hte*"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests/hte"]
+testpaths = ["tests"]

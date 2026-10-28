@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="648pt" height="532.8pt" viewBox="0 0 648 532.8" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-10-28T17:13:08.000279</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 532.8
+L 648 532.8
+L 648 0
+L 0 0
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 31.8816 481.21164
+L 218.6784 481.21164
+L 218.6784 384.58836
+L 31.8816 384.58836
+z
+" clip-path="url(#p39cb3d78c4)" style="fill: #e3eee6; stroke: #bcc5c9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 230.6016 481.21164
+L 417.3984 481.21164
+L 417.3984 384.58836
+L 230.6016 384.58836
+z
+" clip-path="url(#p39cb3d78c4)" style="fill: #e4eef6; stroke: #bcc5c9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 429.3216 481.21164
+L 616.1184 481.21164
+L 616.1184 384.58836
+L 429.3216 384.58836
+z
+" clip-path="url(#p39cb3d78c4)" style="fill: #fbefd9; stroke: #bcc5c9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 31.8816 377.31564
+L 218.6784 377.31564
+L 218.6784 280.69236
+L 31.8816 280.69236
+z
+" clip-path="url(#p39cb3d78c4)" style="fill: #f5f5f3; stroke: #bcc5c9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 230.6016 377.31564
+L 417.3984 377.31564
+L 417.3984 280.69236
+L 230.6016 280.69236
+z
+" clip-path="url(#p39cb3d78c4)" style="fill: #f5f5f3; stroke: #bcc5c9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 429.3216 377.31564
+L 616.1184 377.31564
+L 616.1184 280.69236
+L 429.3216 280.69236
+z
+" clip-path="url(#p39cb3d78c4)" style="fill: #e4eef6; stroke: #bcc5c9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 31.8816 273.41964
+L 218.6784 273.41964
+L 218.6784 176.79636
+L 31.8816 176.79636
+z
+" clip-path="url(#p39cb3d78c4)" style="fill: #f5f5f3; stroke: #bcc5c9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 230.6016 273.41964
+L 417.3984 273.41964
+L 417.3984 176.79636
+L 230.6016 176.79636
+z
+" clip-path="url(#p39cb3d78c4)" style="fill: #f5f5f3; stroke: #bcc5c9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 429.3216 273.41964
+L 616.1184 273.41964
+L 616.1184 176.79636
+L 429.3216 176.79636
+z
+" clip-path="url(#p39cb3d78c4)" style="fill: #f5f5f3; stroke: #bcc5c9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 31.8816 169.52364
+L 218.6784 169.52364
+L 218.6784 72.90036
+L 31.8816 72.90036
+z
+" clip-path="url(#p39cb3d78c4)" style="fill: #fbefd9; stroke: #bcc5c9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 230.6016 169.52364
+L 417.3984 169.52364
+L 417.3984 72.90036
+L 230.6016 72.90036
+z
+" clip-path="url(#p39cb3d78c4)" style="fill: #f5f5f3; stroke: #bcc5c9; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 429.3216 169.52364
+L 616.1184 169.52364
+L 616.1184 72.90036
+L 429.3216 72.90036
+z
+" clip-path="url(#p39cb3d78c4)" style="fill: #f5f5f3; stroke: #bcc5c9; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="43.8048" y="398.61432" transform="rotate(-0 43.8048 398.61432)">1</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(92.480781 427.812564)">STOCK VIALS</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.774531 443.812564)">HTEL 48 × 2 mL</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(90.328437 458.932095)">Stays in place</text>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="242.5248" y="398.61432" transform="rotate(-0 242.5248 398.61432)">2</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(283.189062 427.812564)">ONE RESERVOIR</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(293.658594 443.900845)">12 channels</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(289.048437 458.932095)">Stays in place</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="441.2448" y="398.61432" transform="rotate(-0 441.2448 398.61432)">3</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(478.723125 427.812564)">REACTION BLOCK</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(472.480937 443.812564)">48 × 2 mL Para-Dox</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(473.723125 458.932095)">100 µL per reaction</text>
+   </g>
+   <g id="text_7">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="43.8048" y="294.71832" transform="rotate(-0 43.8048 294.71832)">4</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="125.28" y="339.922033" transform="rotate(-0 125.28 339.922033)">EMPTY</text>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="242.5248" y="294.71832" transform="rotate(-0 242.5248 294.71832)">5</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(294.592969 330.947814)">300 µL TIPS</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(276.611719 347.036095)">Left single-channel</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="441.2448" y="294.71832" transform="rotate(-0 441.2448 294.71832)">6</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(487.267656 323.916564)">ONE LC PLATE</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(457.06375 339.036095)">48 samples + 7 standards</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(470.424687 355.036095)">500 µL per filled well</text>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="43.8048" y="190.82232" transform="rotate(-0 43.8048 190.82232)">7</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="125.28" y="236.026033" transform="rotate(-0 125.28 236.026033)">EMPTY</text>
+   </g>
+   <g id="text_15">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="242.5248" y="190.82232" transform="rotate(-0 242.5248 190.82232)">8</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(294.592969 227.051814)">300 µL TIPS</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(276.611719 243.140095)">Left single-channel</text>
+   </g>
+   <g id="text_17">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="441.2448" y="190.82232" transform="rotate(-0 441.2448 190.82232)">9</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(493.312969 227.051814)">300 µL TIPS</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(473.606719 243.140095)">Right eight-channel</text>
+   </g>
+   <g id="text_19">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="43.8048" y="86.92632" transform="rotate(-0 43.8048 86.92632)">10</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(83.772187 124.124564)">HEATER-SHAKER</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(70.993281 139.244095)">Universal flat adapter</text>
+   </g>
+   <g id="text_21">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="242.5248" y="86.92632" transform="rotate(-0 242.5248 86.92632)">11</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="324" y="132.130032" transform="rotate(-0 324 132.130032)">EMPTY</text>
+   </g>
+   <g id="text_23">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="441.2448" y="86.92632" transform="rotate(-0 441.2448 86.92632)">12</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="522.72" y="132.124564" transform="rotate(-0 522.72 132.124564)">FIXED TIP WASTE</text>
+   </g>
+  </g>
+  <g id="text_25">
+   <text style="font-weight: 700; font-size: 19px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="324" y="30.421031" transform="rotate(-0 324 30.421031)">Load once — one 48-reaction run</text>
+  </g>
+  <g id="text_26">
+   <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="324" y="47.952" transform="rotate(-0 324 47.952)">LEFT: p300 single GEN2     |     RIGHT: p300 eight-channel GEN2</text>
+  </g>
+  <g id="text_27">
+   <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="324" y="511.488" transform="rotate(-0 324 511.488)">FRONT / OPERATOR    •    Only the reaction block and final LC plate move to the shaker.</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p39cb3d78c4">
+   <rect x="25.92" y="69.264" width="596.16" height="415.584"/>
+  </clipPath>
+ </defs>
+</svg>

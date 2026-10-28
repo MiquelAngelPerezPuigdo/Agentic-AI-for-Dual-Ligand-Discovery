@@ -8,7 +8,7 @@
 
 David's ALICE-inspired initialization first computes the existing 48-pair consensus batch (equal Claude-rank and raw-T5-diversity weights). It retains a diverse 24-pair subset that covers all available ligands, then matches 24 Sobol targets to distinct remaining candidates without a Claude-score floor. The retained subset is selected in the transformed embedding space; it is not simply the 24 highest Claude scores.
 
-The sampling transform is standardization → 16-component PCA → 0–1 scaling, retaining 89.4% of standardized embedding variance. This is an initialization policy; no pair-yield model or Gaussian process is fitted. Measured R1 yields inform Claude-only R2 selection. ALICE provides methodological precedent, not evidence that this exact hybrid outperforms alternatives.
+The sampling transform is standardization → 16-component PCA → 0–1 scaling, retaining 89.4% of standardized embedding variance. This is an initialization policy; no pair-yield model or Gaussian process is fitted. The current campaign executes this one fixed batch only. ALICE provides methodological precedent, not evidence that this exact hybrid outperforms alternatives.
 
 ## Official-batch statistics
 
@@ -50,13 +50,8 @@ Hybrid previews change the Claude weight in the preliminary consensus selector o
 
 Lower mean nearest squared distance indicates broader coverage in this particular representation; higher Claude scores indicate stronger model preference. Neither establishes experimental performance or the information value of a batch. Finite-candidate matching and coverage constraints do not preserve exact continuous Sobol balance guarantees.
 
-Generate the self-contained interactive report and machine-readable statistics locally:
+These are frozen initialization diagnostics. The earlier interactive-report generator is preserved in Git history at commit `dba4824`; it is not part of the current bench workflow.
 
-    python -m pip install -e '.[reports]'
-    python scripts/initialization-report.py --output output/initialization-review
-
-Open output/initialization-review/initialization-review.html. The folder also contains SVG/PNG, statistics.json, comparison.csv and ligand_counts.csv. No API key, GPU or paid calls are needed.
-
-[ML strategy](ml-strategy.md) · [Exact official ligand coverage](../campaigns/hackathon2026/round1_design.csv.ligand_coverage.csv) · [ALICE paper](https://arxiv.org/abs/2609.11790) · [ALICE initializer](https://github.com/schwallergroup/alice/blob/cda460d627e074d3cd57c47df13df08cea9346c6/src/alice/initialization/initializers.py)
+[ML strategy](METHOD.md) · [Exact official ligand coverage](../campaigns/hackathon2026/round1_design.csv.ligand_coverage.csv) · [ALICE paper](https://arxiv.org/abs/2609.11790) · [ALICE initializer](https://github.com/schwallergroup/alice/blob/cda460d627e074d3cd57c47df13df08cea9346c6/src/alice/initialization/initializers.py)
 
 Design SHA-256: 3c68d4fe7429cd5b880cdbec25debd4fd6d6e794e95022c88c317c07c5d5dd27

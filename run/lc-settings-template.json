@@ -1,0 +1,22 @@
+{
+  "method_id": null,
+  "channel": null,
+  "references": {
+    "substrate": {
+      "retention_time_min": null,
+      "window_min": null
+    },
+    "product": {
+      "retention_time_min": null,
+      "window_min": null
+    },
+    "internal_standard": {
+      "retention_time_min": null,
+      "window_min": null
+    }
+  },
+  "quantification_limit_uM": {
+    "substrate": null,
+    "product": null
+  }
+}
