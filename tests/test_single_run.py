@@ -94,7 +94,7 @@ def test_published_files_are_current(tmp_path):
     generate(tmp_path)
     for name in read_json(ROOT/'run/files.sha256.json'):
         assert digest(tmp_path/name)==digest(ROOT/'run'/name),name
-    tree=ast.parse((tmp_path/'01_prepare_dose_react.py').read_text())
+    tree=ast.parse((tmp_path/'run_screen.py').read_text())
     definitions=next(ast.literal_eval(n.value) for n in tree.body if isinstance(n,ast.Assign)
                      and any(isinstance(t,ast.Name) and t.id=='DEFINITIONS' for t in n.targets))
     supplied=read_json(ROOT/'hte_inputs/labware/htel_vialholder_48_2mL.json')
@@ -102,21 +102,26 @@ def test_published_files_are_current(tmp_path):
     assert definitions['stocks']['dimensions']['zDimension']==45
 
 
-def test_real_sdk_protocols_and_continuing_tip_positions():
+def test_real_sdk_continuous_protocol_and_tip_positions():
     from opentrons.simulate import simulate
-    logs=[]
-    for file in ['01_prepare_dose_react.py','02_workup.py']:
-        with (ROOT/'run'/file).open() as stream:log,_=simulate(stream)
-        logs.append(log)
-    picks=[[e['payload']['text'] for e in log if e['level']==0 and 'Picking up tip' in e['payload'].get('text','')] for log in logs]
-    assert len(picks[0])==121 and len(picks[1])==50
-    assert not set(picks[0])&set(picks[1])  # No attempts to pick tips consumed in file 1.
-    assert 'B4' in picks[1][1] and 'slot 8' in picks[1][1]
-    assert not any('Replace empty tip racks' in e['payload'].get('text','') for log in logs for e in log)
-    assert all('1.5 mm' in (ROOT/'run'/p).read_text() for p in ['01_prepare_dose_react.py','02_workup.py'])
-    moves=[[e['payload']['text'] for e in log if e['payload'].get('text','').startswith('Moving ')] for log in logs]
-    assert [len(group) for group in moves]==[2,4]
-    assert not any('htelvialholder' in text or 'axygen' in text for group in moves for text in group)
+    with (ROOT/'run/run_screen.py').open() as stream:log,_=simulate(stream)
+    texts=[e['payload'].get('text','') for e in log]
+    picks=[e['payload']['text'] for e in log if e['level']==0 and 'Picking up tip' in e['payload'].get('text','')]
+    assert len(picks)==len(set(picks))==171  # 170 single tips + one eight-tip column; no reuse or rack refill.
+    assert 'B4' in picks[122] and 'slot 8' in picks[122]
+    assert not any('Replace empty tip racks' in text for text in texts)
+    source=(ROOT/'run/run_screen.py').read_text()
+    assert '1.5 mm' in source
+    assert 'starting_tip' not in source and 'STAGE=' not in source
+    moves=[text for text in texts if text.startswith('Moving ')]
+    assert len(moves)==6
+    assert not any('htelvialholder' in text or 'axygen' in text for text in moves)
+    # Workup follows the completed hold in the same simulation, without a restart.
+    phases=['Reaction stocks prepared', 'REACTION HOLD START', 'Three hours into the reaction',
+            'Four-hour hold complete', 'Confirm the SEALED reaction vials have cooled',
+            'Now unscrew all 48', 'Recap reaction vials for storage', 'Seal the LC plate']
+    positions=[next(i for i,text in enumerate(texts) if phase in text) for phase in phases]
+    assert positions==sorted(positions)
 
 
 def test_staff_links_and_one_authoritative_protocol_folder():
@@ -126,7 +131,7 @@ def test_staff_links_and_one_authoritative_protocol_folder():
             p=urlsplit(link)
             if not p.scheme and p.path:assert (file.parent/p.path).exists(),(file,link)
     assert not (ROOT/'protocols').exists()
-    assert set(p.name for p in (ROOT/'run').glob('*.py'))=={'01_prepare_dose_react.py','02_workup.py'}
+    assert set(p.name for p in (ROOT/'run').glob('*.py'))=={'run_screen.py'}
 
 
 def test_larger_dead_volume_cannot_silently_drain_sources(monkeypatch):

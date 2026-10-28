@@ -1728,7 +1728,7 @@
     }
   ],
   "tips": {
-    "single_after_first": 121,
+    "single_before_workup": 121,
     "single_total": 170,
     "multi_columns": 1
   },

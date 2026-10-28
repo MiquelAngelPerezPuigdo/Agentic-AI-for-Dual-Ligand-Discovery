@@ -1,6 +1,8 @@
 # Superseded material — do not use for the current run
 
-The **only current HTE procedure is [run/README.md](../run/README.md)**. Its two Python files, masses, vial map and volumes belong together.
+The **only current HTE procedure is [run/README.md](../run/README.md)**. Its single Python program, masses, vial map and volumes belong together.
+
+`two-file-single-run/` preserves the earlier split preparation/reaction and workup programs. These have been replaced by one continuous program in `run/`; do not start them for the current screen.
 
 `previous-two-round/` preserves the replaced operational files and tests byte-for-byte so the cleanup does not discard previous work. These use the earlier two-round plan, different stock amounts, more labware and different volumes. **Do not import these old protocols or use their weighing lists for the current screen.**
 

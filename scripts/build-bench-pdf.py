@@ -8,7 +8,7 @@ from xml.sax.saxutils import escape
 
 ROOT=Path(__file__).resolve().parents[1]
 FILES=['run/README.md','run/WEIGHING.md','run/plan.json','run/deck.png','run/stock-map.png',
-       'run/01_prepare_dose_react.py','run/02_workup.py','scripts/build-bench-pdf.py']
+       'run/run_screen.py','scripts/build-bench-pdf.py']
 
 
 def fingerprint():
@@ -44,15 +44,15 @@ def main():
         return t
     story=[para('Dual-ligand screen / Bench sheet',title),
            para('One run · 48 pairs · 30 ligands · 100 µL reactions',heading),
-           para('95 °C / 500 rpm / 4 h. 0.1 M SM; 6 mol% each ligand; 12 mol% Pd; naphthalene 10 mol%. Use only the current one-run Python files. Source vials are glass, in the supplied HTEL holder.'),
+           para('95 °C / 500 rpm / 4 h. 0.1 M SM; 6 mol% each ligand; 12 mol% Pd; naphthalene 10 mol%. One program runs from stocks through sampling. Source vials are glass, in the supplied HTEL holder.'),
            table([['Slot','Load'],['1','HTEL 48-position stock holder: weighing and vial map on page 2.'],['2','One prefilled 12-channel reservoir; loads below.'],['3','Para-Dox block with 48 empty reaction vials.'],['5, 8','300 µL tips for LEFT p300 single GEN2.'],['6','One empty 96-well LC plate; retain it throughout.'],['9','300 µL tips for RIGHT p300 eight-channel GEN2.'],['10','Heater-shaker / universal flat adapter. Slots 4, 7 and 11 empty.']],[45,465]),
            para('Bulk liquids / reservoir',heading),
            para('<b>Quench, 40 mL:</b> 36 mL ACN + 3.95 mL water + 50 µL formic acid. <b>LC diluent, 60 mL:</b> 30 mL ACN + 29.94 mL water + 60 µL formic acid.'),
            table([['Channels','Liquid','Load per channel'],['A1-A2','Toluene','9 mL'],['A3-A5','Quench','9 mL'],['A6-A10','LC diluent','10 mL'],['A11 / A12','ACN / empty','3.5 mL / empty']],[85,255,170]),
            para('Run in this order',heading),
-           para('<b>1.</b> Weigh each ligand once into its source vial. Load all vials and liquids. Import <b>01_prepare_dose_react.py</b> locally; check offsets and simulate. Robot prepares stocks and doses 20 µL SM/IS + 30 µL A + 30 µL B + 20 µL Pd.'),
+           para('<b>1.</b> Weigh each ligand once into its source vial. Load all vials and liquids. Import <b>run_screen.py</b> locally; check offsets and simulate. Start once. Robot prepares stocks and doses 20 µL SM/IS + 30 µL A + 30 µL B + 20 µL Pd.'),
            para('<b>2.</b> At pauses: hand-cap reaction vials; cap sources and cover liquids. Move block 3 → 10. Start an external 4 h timer. At 3 h, uncover reservoir/LC plate and uncap analytical vials as requested. Robot prepares seven mixed standards in A7-G7; cover/recap in place. Stop heat/shaking at 4 h if an App pause blocks the program.'),
-           para('<b>3.</b> Move sealed block 10 → 3 and cool. Run <b>02_workup.py</b> using the SAME reservoir and LC plate. Robot preloads 480 µL LC diluent/well. Uncap at the prompt; robot adds 400 µL quench/vial. Open block: 750 rpm / 2 min, heater OFF; return to 3. Fresh-tip sampling: 20 µL/well.'),
+           para('<b>3.</b> Move sealed block 10 → 3 and cool. Resume the SAME program; keep all labware and tip racks in place. Robot preloads 480 µL LC diluent/well. Uncap at the prompt; robot adds 400 µL quench/vial. Open block: 750 rpm / 2 min, heater OFF; return to 3. Fresh-tip sampling: 20 µL/well.'),
            para('<b>4.</b> Recap reaction vials. LC plate: 6 → cooled 10; shake uncovered 750 rpm / 2 min, heater OFF. Seal and hand to LC once: seven standards FIRST, then 48 samples. Preserve actual injection map, original LC/MS files and robot logs.'),
            para('<b>Margins:</b> source vials ≤1.6 mL; ≥150 µL left. Reservoir channels retain ≥1.5 mL. Reaction vials end at 500 µL; LC wells at 500 µL. Aspiration 1.5 mm above bottom. Pause for liquid-handling faults.',small),PageBreak(),
            para('Weighing / stock-holder positions',title),

@@ -1,6 +1,6 @@
 # HTE: one 48-reaction run
 
-**Use this page and these two Python files.** This plan replaces the previous two-round workflow. Each ligand is weighed **once** into a glass vial in the supplied HTEL holder. The robot adds solvent and doses directly from the same vials. No bulk ligand reservoirs, stock transfers, refills or pipette changes.
+**Load the deck once and run [run_screen.py](run_screen.py) once.** This single program prepares stocks, doses and runs the reaction, prepares analytical standards during the hold, then quenches and samples. Follow App pauses for caps, covers and manual shaker moves. Each ligand is weighed **once** into its final glass source vial. No stock transfers, refills, pipette changes or second program.
 
 **100 µL per reaction:** 0.1 M SM in toluene, 6 mol% of each ligand, 12 mol% Pd(COD)(DQ), 10 mol% naphthalene; **95 °C, 500 rpm, four hours**. The original 48 selected pairs and all 30 ligands are retained.
 
@@ -42,11 +42,11 @@ HTE prepares these by ordinary lab preparation:
 
 These are coarse loading amounts. The program leaves at least **1.5 mL per used reservoir channel**, at least **150 µL per stock vial**, and fills source vials to at most **1.6 mL**. Reaction vials contain only **500 µL after quenching**; final LC wells contain **500 µL**. Aspiration is **1.5 mm above the defined bottom**, with fresh tips for each reaction sample.
 
-## 3. Run the first Python file
+## 3. Start the one program
 
-Download **[01_prepare_dose_react.py](01_prepare_dose_react.py)** using GitHub's **Download raw file**, import it into the local Opentrons App, simulate and start it with the loading above. It is self-contained; no API key or Python installation is needed on the robot.
+Download **[run_screen.py](run_screen.py)** using GitHub's **Download raw file**, import it into the local Opentrons App, simulate and start it with the loading above. It is self-contained; no API key or Python installation is needed on the robot. Use this file through the final sampling and LC mixing; resume the same run at each pause.
 
-Start with the ligand vials in A1–F5 and SM_IS A6 / Pd B6 open. Keep analytical vials C6–F7 capped until the three-hour prompt. **Keep the same tip racks between the two files:** workup continues at the next unused tip automatically.
+Start with the ligand vials in A1–F5 and SM_IS A6 / Pd B6 open. Keep analytical vials C6–F7 capped until the three-hour prompt. **Keep the same labware and tip racks throughout:** tip tracking continues automatically within this one program. Do not restart it after the reaction hold.
 
 1. The robot adds toluene to the 30 ligand vials and to the SM/IS and Pd vials, then mixes them. **No weighing or precision liquid transfers during the run.** Pause for a visibly unsuitable stock or transfer fault.
 2. It doses each reaction: **20 µL combined SM/IS + 30 µL ligand A + 30 µL ligand B + 20 µL Pd**. Vials use the single-channel pipette because their pitch is 13 mm.
@@ -55,9 +55,9 @@ Start with the ligand vials in A1–F5 and SM_IS A6 / Pd B6 open. Keep analytica
 5. **After three hours**, the App requests removal of the reservoir/LC covers and the ten analytical-vial caps specified on screen. The robot prepares the standards in **LC wells A7–G7**. It then requests covering the plate/reservoir and recapping those sources. No labware is exchanged.
 6. At four hours, heating/shaking stops. Move the sealed block **10 → 3** when prompted and let it cool. Leave the source holder, reservoir and LC plate in place.
 
-## 4. Run workup after cooling
+## 4. Continue the same program after cooling
 
-Import **[02_workup.py](02_workup.py)**. Use the **same reservoir with the remaining liquids** and the **same LC plate**; never replace either with an empty one.
+The program waits for cooling and operator confirmation, then continues directly to workup. Use the **same reservoir with the remaining liquids** and the **same LC plate**; leave all tip racks in place.
 
 1. Confirm cooling. Remove the reservoir/LC covers; leave the reaction vials capped while the robot adds **480 µL LC diluent** to sample wells A1–H6 using the eight-channel pipette.
 2. At the pause, unscrew the 48 reaction caps. The robot adds **400 µL quench per vial**. Move the open block **3 → 10** when prompted; shake **750 rpm for two minutes, heater off**, using the locally confirmed containment setting. Return **10 → 3**.

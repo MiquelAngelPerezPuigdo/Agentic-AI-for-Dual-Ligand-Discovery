@@ -53,6 +53,7 @@ def test_full_htel_export_to_calibrated_yields_with_mixed_standards(lc):
     assert len(read_csv(tmp_path/'result/calibration.csv'))==14  # Two analytes, seven physical standards.
     assert len(read_csv(tmp_path/'result/reviewed-blanks.csv'))==2
     assert (tmp_path/'result/inputs/vendor-export.csv').read_bytes()==lc[0]['export'].read_bytes()
+    assert (tmp_path/'result/inputs/run_screen.py').read_bytes()==(ROOT/'run/run_screen.py').read_bytes()
     assert (tmp_path/'result/files.sha256.json').is_file()
 
 

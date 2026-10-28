@@ -60,7 +60,7 @@ def process(export_path, mapping_path, settings_path, output, reviewed_blanks=No
     for name, path in [('vendor-export'+Path(export_path).suffix, export_path), ('injections.csv', mapping_path),
                        ('lc-settings.json', settings_path), ('dosing.csv', run_dir/'dosing.csv'),
                        ('calibration-plan.csv', run_dir/'calibration-plan.csv'),('robot-plan.json',run_dir/'plan.json'),
-                       ('01_prepare_dose_react.py',run_dir/'01_prepare_dose_react.py'),('02_workup.py',run_dir/'02_workup.py')]:
+                       ('run_screen.py',run_dir/'run_screen.py')]:
         before=digest(path)
         shutil.copyfile(path, inputs/name)
         if digest(inputs/name)!=before or digest(path)!=before:

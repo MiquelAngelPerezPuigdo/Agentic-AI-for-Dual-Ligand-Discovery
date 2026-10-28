@@ -180,7 +180,7 @@ def build_plan():
     total_tips=sum(op['type']=='mix' or op['type']=='transfer' and op['channels']==1 and op['fresh'] for op in steps)
     if not first_tips < total_tips <= 192:raise ValueError('Single-channel tip budget exceeds two racks')
     return dict(config=c, locations=locations, stocks=stocks, dosing=dosing, calibration=calibration,
-                tips=dict(single_after_first=first_tips,single_total=total_tips,multi_columns=1),
+                tips=dict(single_before_workup=first_tips,single_total=total_tips,multi_columns=1),
                 reservoir=[dict(well=w, liquid=k, load_ul=v, final_remaining_ul=liquids[('res',w)]) for w,k,v in RESERVOIR],
                 steps_before_reaction=steps[:split_reaction], steps_during_hold=steps[split_reaction:split_hold],
                 steps_quench=steps[split_hold:split_quench], steps_sample=steps[split_quench:],
@@ -205,9 +205,6 @@ def run(ctx: protocol_api.ProtocolContext):
     rt = ctx.load_labware('opentrons_96_tiprack_300ul', 9)
     single = ctx.load_instrument('p300_single_gen2', 'left', tip_racks=lt)
     multi = ctx.load_instrument('p300_multi_gen2', 'right', tip_racks=[rt])
-    if STAGE=='workup':
-        consumed=PLAN['tips']['single_after_first']
-        single.starting_tip=lt[consumed//96].wells()[consumed%96]
     def drop():
         for p in (single, multi):
             if p.has_tip: p.drop_tip()
@@ -261,48 +258,47 @@ def run(ctx: protocol_api.ProtocolContext):
         while not ctx.is_simulating() and (hs.current_temperature is None or hs.current_temperature>30):
             ctx.pause('Wait for heater-shaker to cool to <=30 C before open workup/LC mixing. Separately confirm vial cooling. Resume afterward.')
     ctx.pause('Use ONLY the one-run loading sheet. Stock holder in 1, ONE reservoir and SAME LC plate stay on deck. Check offsets, 1.5 mm bottom clearance and capped stock-vial height <=45 mm. Slots 4/7/11 empty. p300 single LEFT; p300 eight-channel RIGHT. No pipette change. Confirm actual labware/solvent compatibility before resuming.')
-    if STAGE=='prepare-dose-react':
-        ctx.pause('Load weighed solids directly in their listed final glass vials. Five working vials start EMPTY. Open ligand vials A1:F5 plus SM_IS A6 and Pd B6 in the STOCK holder. Keep analytical vials C6:F7 capped until the three-hour prompt. Load 48 EMPTY UNCAPPED reaction vials and an EMPTY LC plate. Reservoir: staff-sheet loads. Do not use earlier two-round files.')
-        steps(PLAN['steps_before_reaction']);drop()
-        ctx.pause('Hand-tighten ALL 48 reaction-vial screw caps. Cap the stock vials and cover the reservoir and empty LC plate in place. Move block 3 -> heater-shaker 10 at the next prompt. No source-holder or reservoir swaps. The App will request uncapping the analytical sources after three hours.')
-        move_block_to_module()
-        try:
-            hs.set_and_wait_for_temperature(95);hs.set_and_wait_for_shake_speed(500)
-            start=time.monotonic();deadline=start+240*60
-            ctx.pause('REACTION HOLD START: start an external FOUR-HOUR timer NOW. Resume promptly to prepare standards on deck. If any App prompt remains paused at the deadline, stop heat/shaking manually and record the actual time.')
-            # Make aqueous standards in the last hour rather than leaving them for four hours.
-            ctx.delay(seconds=180*60 if ctx.is_simulating() else max(0,start+180*60-time.monotonic()))
-            ctx.pause('Three hours into the reaction: REMOVE reservoir and LC plate covers in place. Uncap analytical source/working vials C6,D6,E6,F6,A7,B7,C7,D7,E7,F7 in the STOCK holder. Keep ligand vials, SM_IS A6 and Pd B6 capped. Resume promptly to prepare standards; monitor the external four-hour endpoint.')
-            steps(PLAN['steps_during_hold'],deadline);drop()
-            ctx.pause('Seven mixed-analyte standards prepared in LC wells A7:G7. Cover the LC plate and reservoir IN PLACE against evaporation. Cap the ten analytical source/working vials. Resume promptly; monitor the independent four-hour timer. Remove covers only when 02_workup asks. One final LC handoff.')
-            if not ctx.is_simulating() and time.monotonic()>=deadline:
-                raise RuntimeError('Four-hour endpoint passed while preparing or covering standards; record the deviation.')
-            ctx.delay(seconds=60*60 if ctx.is_simulating() else max(0,deadline-time.monotonic()))
-        finally:
-            hs.deactivate_shaker();hs.deactivate_heater()
-        ctx.pause('Four-hour hold complete. Move the SEALED block back to slot 3 at the next prompt using approved thermal handling. Keep vials capped while cooling. Run 02_workup.py after cooling; retain the stock-vial holder, reservoir and LC plate in place.')
-        move_block_back()
-    else:
-        cool_module()
-        ctx.pause('Confirm the SEALED reaction vials have cooled before opening. Use the SAME reservoir, LC plate and partly used tip racks; standards occupy A7:G7. Workup automatically continues single tips at B4 of rack 8. REMOVE LC/reservoir covers. Keep reaction vials capped while LC diluent is added. Stock-vial caps remain closed.')
-        # First fill LC destinations, then request uncapping before any quench.
-        dilution=[op for op in PLAN['steps_quench'] if op.get('chemical')=='lc_diluent']
-        steps(dilution);drop()
-        ctx.pause('Now unscrew all 48 cooled reaction-vial caps. Robot adds 400 uL quench per vial. Keep all vials OPEN for the following 750 rpm / 2 minute mixing and sampling.')
-        quench=[op for op in PLAN['steps_quench'] if op.get('chemical')=='quench']
-        steps(quench);drop();move_block_to_module()
-        try:
-            hs.set_and_wait_for_shake_speed(750);ctx.delay(seconds=120)
-        finally:hs.deactivate_shaker();hs.deactivate_heater()
-        move_block_back();ctx.delay(seconds=15)
-        steps(PLAN['steps_sample']);drop()
-        ctx.pause('Recap reaction vials for storage. Leave LC plate UNCOVERED. Move ONLY the LC plate from 6 to the cooled heater-shaker at the next prompt; preserve A1 orientation. Stock-vial holder and reservoir remain in place.')
-        hs.open_labware_latch();ctx.move_labware(lw['lc'],adapter,use_gripper=False);hs.close_labware_latch()
-        try:
-            hs.set_and_wait_for_shake_speed(750);ctx.delay(seconds=120)
-        finally:hs.deactivate_shaker();hs.deactivate_heater()
-        hs.open_labware_latch();ctx.move_labware(lw['lc'],protocol_api.OFF_DECK,use_gripper=False)
-        ctx.pause('Seal the LC plate and hand it to LC ONCE. Inject the seven standards FIRST, followed by the 48 samples, using lc-injections.csv and the actual 1.7-minute method settings. Never inject unused wells. Archive real export, actual injection map and robot logs. There is no second reaction batch.')
+    ctx.pause('Load weighed solids directly in their listed final glass vials. Five working vials start EMPTY. Open ligand vials A1:F5 plus SM_IS A6 and Pd B6 in the STOCK holder. Keep analytical vials C6:F7 capped until the three-hour prompt. Load 48 EMPTY UNCAPPED reaction vials and an EMPTY LC plate. Reservoir: staff-sheet loads. Do not use earlier two-round files.')
+    steps(PLAN['steps_before_reaction']);drop()
+    ctx.pause('Hand-tighten ALL 48 reaction-vial screw caps. Cap the stock vials and cover the reservoir and empty LC plate in place. Move block 3 -> heater-shaker 10 at the next prompt. No source-holder or reservoir swaps. The App will request uncapping the analytical sources after three hours.')
+    move_block_to_module()
+    try:
+        hs.set_and_wait_for_temperature(95);hs.set_and_wait_for_shake_speed(500)
+        start=time.monotonic();deadline=start+240*60
+        ctx.pause('REACTION HOLD START: start an external FOUR-HOUR timer NOW. Resume now; the program requests standards preparation after three hours. If any App prompt remains paused at the deadline, stop heat/shaking manually and record the actual time.')
+        # Make aqueous standards in the last hour rather than leaving them for four hours.
+        ctx.delay(seconds=180*60 if ctx.is_simulating() else max(0,start+180*60-time.monotonic()))
+        ctx.pause('Three hours into the reaction: REMOVE reservoir and LC plate covers in place. Uncap analytical source/working vials C6,D6,E6,F6,A7,B7,C7,D7,E7,F7 in the STOCK holder. Keep ligand vials, SM_IS A6 and Pd B6 capped. Resume promptly to prepare standards; monitor the external four-hour endpoint.')
+        steps(PLAN['steps_during_hold'],deadline);drop()
+        ctx.pause('Seven mixed-analyte standards prepared in LC wells A7:G7. Cover the LC plate and reservoir IN PLACE against evaporation. Cap the ten analytical source/working vials. Resume promptly; monitor the independent four-hour timer. Remove covers only at the workup prompt. One final LC handoff.')
+        if not ctx.is_simulating() and time.monotonic()>=deadline:
+            raise RuntimeError('Four-hour endpoint passed while preparing or covering standards; record the deviation.')
+        ctx.delay(seconds=60*60 if ctx.is_simulating() else max(0,deadline-time.monotonic()))
+    finally:
+        hs.deactivate_shaker();hs.deactivate_heater()
+    ctx.pause('Four-hour hold complete. Move the SEALED block back to slot 3 at the next prompt using approved thermal handling. Keep vials capped while cooling. Continue this SAME program after cooling; retain all labware and tip racks in place.')
+    move_block_back()
+    # Same context and pipettes: preserve deck state and used tips through workup.
+    cool_module()
+    ctx.pause('Confirm the SEALED reaction vials have cooled before opening. Use the SAME reservoir, LC plate and partly used tip racks; standards occupy A7:G7. Tip tracking continues automatically; do not restart the program or replace tip racks. REMOVE LC/reservoir covers. Keep reaction vials capped while LC diluent is added. Stock-vial caps remain closed.')
+    # First fill LC destinations, then request uncapping before any quench.
+    dilution=[op for op in PLAN['steps_quench'] if op.get('chemical')=='lc_diluent']
+    steps(dilution);drop()
+    ctx.pause('Now unscrew all 48 cooled reaction-vial caps. Robot adds 400 uL quench per vial. Keep all vials OPEN for the following 750 rpm / 2 minute mixing and sampling.')
+    quench=[op for op in PLAN['steps_quench'] if op.get('chemical')=='quench']
+    steps(quench);drop();move_block_to_module()
+    try:
+        hs.set_and_wait_for_shake_speed(750);ctx.delay(seconds=120)
+    finally:hs.deactivate_shaker();hs.deactivate_heater()
+    move_block_back();ctx.delay(seconds=15)
+    steps(PLAN['steps_sample']);drop()
+    ctx.pause('Recap reaction vials for storage. Leave LC plate UNCOVERED. Move ONLY the LC plate from 6 to the cooled heater-shaker at the next prompt; preserve A1 orientation. Stock-vial holder and reservoir remain in place.')
+    hs.open_labware_latch();ctx.move_labware(lw['lc'],adapter,use_gripper=False);hs.close_labware_latch()
+    try:
+        hs.set_and_wait_for_shake_speed(750);ctx.delay(seconds=120)
+    finally:hs.deactivate_shaker();hs.deactivate_heater()
+    hs.open_labware_latch();ctx.move_labware(lw['lc'],protocol_api.OFF_DECK,use_gripper=False)
+    ctx.pause('Seal the LC plate and hand it to LC ONCE. Inject the seven standards FIRST, followed by the 48 samples, using lc-injections.csv and the actual 1.7-minute method settings. Never inject unused wells. Archive real export, actual injection map and robot logs. There is no second reaction batch.')
 '''
 
 
@@ -314,10 +310,9 @@ def generate(output):
     # Neighboring stock vials can be capped while analytical sources are open.
     # Raise only the travel envelope; retain HTEL's supplied well coordinates.
     defs['stocks']['dimensions']['zDimension']=max(45,defs['stocks']['dimensions']['zDimension'])
-    for stage, filename in [('prepare-dose-react','01_prepare_dose_react.py'),('workup','02_workup.py')]:
-        (output / filename).write_text('# Generated by hte.single_run; self-contained, local OT-2 only.\n'
-                                      + f'STAGE={stage!r}\nPLAN={plan!r}\nDEFINITIONS={defs!r}\n'
-                                      +RUNTIME.replace('"protocolName": "Single 48-reaction screen"', '"protocolName": '+repr('Single 48-reaction screen / '+stage)))
+    (output / 'run_screen.py').write_text(
+        '# Generated by hte.single_run; self-contained, local OT-2 only.\n'
+        + f'PLAN={plan!r}\nDEFINITIONS={defs!r}\n' + RUNTIME)
     write_json(output/'plan.json',plan)
     write_csv(output/'dosing.csv',plan['dosing'])
     write_csv(output/'calibration-plan.csv',plan['calibration'])
@@ -332,7 +327,7 @@ def generate(output):
     injections=[dict(inj_no=i,sample_id=row['sample_id'],well=row['well'] if i<=len(cal_unique) else row['lc_well'],method_id='')
                 for i,row in enumerate([*cal_unique,*plan['dosing']],1)]
     write_csv(output/'lc-injections.csv',injections)
-    generated=['01_prepare_dose_react.py','02_workup.py','plan.json','dosing.csv','calibration-plan.csv',
+    generated=['run_screen.py','plan.json','dosing.csv','calibration-plan.csv',
                'weighing.csv','tube-map.csv','reservoir.csv','lc-injections.csv']
     write_json(output/'files.sha256.json',{name:digest(output/name) for name in generated})
     return plan

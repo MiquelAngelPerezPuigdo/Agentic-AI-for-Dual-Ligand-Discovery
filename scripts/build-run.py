@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rebuild the one-run protocols, tables and browser weighing sheet."""
+"""Rebuild the one-run protocol, tables and browser weighing sheet."""
 import sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
