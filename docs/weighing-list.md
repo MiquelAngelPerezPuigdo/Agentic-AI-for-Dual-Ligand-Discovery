@@ -47,6 +47,10 @@ These are approximate target masses for the current 48-pair + 22-pair campaign, 
 
 Other bulk sources, including the analytical matrix, require capacity for up to approximately **8 mL**; HTE should include those when choosing the bulk containers and rack.
 
+**Possible option for HTE to assess:** the supplied 12-channel Axygen reservoir definition can hold the planned volumes. A provisional six-carrier layout passed software reach checks and six OT-2 SDK simulations (R2 used a synthetic design). It is **not released for live use**: confirm the exact reservoir, a suitable cover, solvent compatibility over the campaign and physical aspiration at the lowest remaining volumes. In the current plan the combined SM stock has only about **109 µL** left in its bulk source after filling the working tube. The reach check and simulation do not prove that this liquid is accessible. The actual Axygen reservoirs and the configured 2 mL working tubes must both be assessed for toluene exposure; polypropylene is [only conditionally resistant](https://www.eppendorf.com/product-media/doc/en/114794_Userguide/Eppendorf_Consumables_Userguide_023_Tubes_Tips_Chemical-stability-consumables.pdf).
+
+The supplied Sarstedt 6- and 12-well **cell-culture** plate definitions correspond to polystyrene plates; they are **not suitable for the toluene stocks**. Their [manufacturer's specified working volumes](https://www.sarstedt.com/en/RUS/c/life-science/cell-culture/cell-culture-plates/p/cell-culture-plates-12-wells/83.3921.300) are also lower than the nominal total well capacities.
+
 ## Other reaction stocks
 
 | Material | Separate charge | Target mass (mg) |
