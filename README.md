@@ -12,6 +12,7 @@ Local OT-2 dosing, calibrated LC quantification and Claude-guided selection for 
 |---|---|
 | Follow the campaign step by step | **[HTE start guide](docs/HTE-START-HERE.md)** |
 | Solvent amounts and deck positions | **[Deck loading](docs/deck-loading.md)** |
+| OT-2 files for the first round and follow-up instructions | **[OT-2 protocols](protocols/round1-preview/README.md)** |
 | Staff actions at the bench | **[Two-page checklist](docs/HTE-staff-checklist.pdf)** |
 | Install, prepare files and process R1/R2 results | **[Local pipeline commands](docs/start-here.md)** |
 | Complete operator reference | [Four-page handbook](docs/HTE-operator-handbook.pdf) |
@@ -36,7 +37,7 @@ uv run hte check
 uv run hte rehearse-loop --output output/practice
 ```
 
-The rehearsal uses synthetic measurements and mocked Claude responses, with no paid calls. It exercises calibration, both rounds and the feedback decision. Normal operation uses the prepared first batch; no GPU or model download is needed. Generated files stay in ignored `output/`; actual settings/data go in ignored `local_data/`. Follow the [local pipeline](docs/start-here.md) to generate current protocols and process real measurements.
+The rehearsal uses synthetic measurements and mocked Claude responses, with no paid calls. It exercises calibration, both rounds and the feedback decision. Normal operation uses the prepared first batch; no GPU or model download is needed. First-round simulation files are provided in [OT-2 protocols](protocols/round1-preview/README.md). Locally generated files stay in ignored `output/`; actual settings/data go in ignored `local_data/`. Follow the [local pipeline](docs/start-here.md) to generate current live protocols and process real measurements.
 
 **API key:** copy [anthropic.key.example](anthropic.key.example) to **`anthropic.key` in the repository root**, then replace the placeholder with the raw Claude key. Preserve any existing key. The pipeline reads it automatically; `ANTHROPIC_API_KEY` takes precedence. Keys stay local and are excluded from Git and data packages.
 
