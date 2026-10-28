@@ -16,6 +16,7 @@
     "aliquot_ul": 20,
     "lc_diluent_ul": 480,
     "lc_method_minutes": 3,
+    "lc_method_polarity": "medium",
     "open_mix_rpm": 750,
     "open_mix_seconds": 120,
     "tube_dead_ul": 150,
