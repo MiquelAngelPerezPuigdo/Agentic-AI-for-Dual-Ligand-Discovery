@@ -14,6 +14,12 @@ Load once and start one program: stocks → dosing → reaction and analytical s
 
 Everything for the bench is in **`run/`**. Its `images/` and `tables/` subfolders support the linked instructions. No API key is needed.
 
+**Stock-vial loading map — deck slot 1.** A1 is at the back-left. Each cell shows the vial position, reagent ID, name and mass to weigh; the five working vials in B7–F7 start empty.
+
+![Stock-vial positions, ligand names and weighing amounts](run/images/stock-map.png)
+
+**Smallest liquid dose: 20 µL.** Each 100 µL reaction receives **20 µL SM/internal-standard stock + 30 µL ligand A + 30 µL ligand B + 20 µL Pd stock**.
+
 <details>
 <summary>Software and scientific records</summary>
 
