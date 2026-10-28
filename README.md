@@ -15,6 +15,8 @@
 
 Plan for staff to be present during loading/dosing and from the **end of the heated hold through cooling, calibration preparation, sampling and LC handoff**. There is no mid-reaction visit. The same labware and tip racks are used throughout.
 
+**HPLC-MS:** one HTEL **3-minute method**, selected by the LC operator for the compounds. Seven standards plus 48 samples take **165 minutes (2 h 45 min)**, plus instrument overhead. The four-hour heated hold and nominal LC time total **6 h 45 min**.
+
 **Ready for the local Opentrons App:** save the Python download as `run_screen.py`, import it, complete the App's setup/labware checks and start. The file already includes all custom labware definitions, stock volumes and the 48-pair dosing plan. HTE can use it directly without generating protocols or uploading CSV/JSON files to the robot.
 
 Everything for the bench is in **`run/`**. Its `images/` and `tables/` subfolders support the linked instructions. No API key is needed.

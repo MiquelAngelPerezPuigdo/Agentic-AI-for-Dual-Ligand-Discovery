@@ -4,6 +4,8 @@ This step is for the person handling the LC export and quantification, after [st
 
 **LC operator hands over:** the integrated-peak CSV, original LC/MS files, actual injection list and method, measured peak assignments/UV channel and quantification limits. **Quantification operator returns:** the complete results/QC folder below, together with the robot log and run notes. These roles can be handled by the same person. No API key is needed.
 
+The requested assay is **one HTEL 3-minute method for all 55 injections**. HTE selects its appropriate polarity variant from the authentic standards. Enter the actual method ID and measured retention windows below; the requested duration is not a retention-time assignment.
+
 1. Install Python 3.12 and run `uv sync --locked --python 3.12` from the repository root.
 2. Copy [lc-settings-template.json](tables/lc-settings-template.json) to **`local_data/lc-settings.json`**. Enter the actual method ID, quantitative UV channel (`UV_VIS_1` to `UV_VIS_4`), measured SM/product/naphthalene retention windows and measured LOQs. Do not use guessed retention times.
 3. Copy [lc-injections.csv](tables/lc-injections.csv) to **`local_data/actual-injections.csv`**. Update injection numbers/order to what actually ran and fill its `method_id` column. Keep each `sample_id` paired with its supplied `well`: that is where the robot put it. The export's physical `vial_position` must match that well; HTEL positions such as `B:C1` are supported. The accepted sequence is seven standards plus all 48 samples from this one LC plate; reinjections require an explicit reviewed map.

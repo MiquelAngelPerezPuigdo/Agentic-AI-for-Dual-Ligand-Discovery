@@ -598,9 +598,10 @@ z
     <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 1033.835909)">flat to HPLC-MS with lc-injections.csv.</text>
    </g>
    <g id="text_36">
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 1006.285909)">LC / SOFTWARE: inject seven standards FIRST,</text>
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 1020.060909)">then 48 samples. Export integrated-peak CSV;</text>
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 1033.835909)">run calibrated yields / QC. Save data and logs.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 999.834073)">LC: 3-min method; 7 standards FIRST,</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 1013.173409)">then 48 samples. 55 injections = 165 min.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 1027.868722)">Allow instrument overhead.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 1040.723409)">SOFTWARE: yields / QC; save data and logs.</text>
    </g>
   </g>
   <g id="text_37">

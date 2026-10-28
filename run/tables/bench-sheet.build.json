@@ -1,13 +1,13 @@
 {
   "pages": 2,
   "sources": {
-    "run/README.md": "7f31180f920b8dd00c6022a401dbb48d08593d1972e7f4b51df74e1d0a3b91a3",
+    "run/README.md": "9193e163a3ca0d85c0561ed4d7da6fbbd4978d58b140909091cf8b759d2f1abd",
     "run/WEIGHING.md": "e4cd569d08728f5e1b5507dcb40f8f17b7488110100df26318509976164b62c8",
-    "run/tables/plan.json": "00b35d740c30e5ad8176f345e518713cc2fa737a32b0df6b94367da181777671",
+    "run/tables/plan.json": "04d90d625ccfd33b93ad86c53fbd446e8327d87abee34a3490b74616bbf58cee",
     "run/images/deck.png": "be94e4eddca56e9d0fc6d49d133fd9a7e25302aebd0025d166163fa323b19eef",
     "run/images/stock-map.png": "8b2918efb09107bd3ce0922dd80cb71c97a07e1b16062dab8682232adea299f4",
-    "run/run_screen.py": "073ef14a2cd16a3d7a42fb3632c6168d27208a1abd9b0f433df2a253449e284d",
-    "support/scripts/build-bench-pdf.py": "6fd26db89b56e4527e761ded23f3123f003ad7ff13e438d594b540df6bfd8df1"
+    "run/run_screen.py": "05639dafd33d27e725186bb86d554eca893945903e14e2ae4c14ab830c8004de",
+    "support/scripts/build-bench-pdf.py": "a810e0fd674709b7e3593341196f9fe603b1dfad6d1674e7e2a9869640fdf5e6"
   },
-  "pdf_sha256": "08b4f252148c5b0c19a682af051167cec7c7a8c8a0c2ffc3a615113951d5ec04"
+  "pdf_sha256": "a4f07c476f2a9b1c714d3d86fcf1cfdd88004e934876ab17865b3d8f3b18cda8"
 }

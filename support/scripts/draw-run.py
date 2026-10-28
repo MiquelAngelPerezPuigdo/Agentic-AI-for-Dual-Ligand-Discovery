@@ -45,7 +45,7 @@ def draw_workflow(plan, out):
          'Mix 48 samples + seven standards:\n750 rpm / 2 min, heater OFF.\nEach filled LC well contains 500 µL.'),
         ('Take to HPLC-MS, then calculate yields',
          'Seal / label the LC plate; mark A1.\nFinish the robot program, then carry the plate\nflat to HPLC-MS with lc-injections.csv.',
-         'LC / SOFTWARE: inject seven standards FIRST,\nthen 48 samples. Export integrated-peak CSV;\nrun calibrated yields / QC. Save data and logs.'),
+         f'LC: {c["lc_method_minutes"]:g}-min method; 7 standards FIRST,\nthen 48 samples. 55 injections = {55*c["lc_method_minutes"]:g} min.\nAllow instrument overhead.\nSOFTWARE: yields / QC; save data and logs.'),
     ]
     fig,ax=plt.subplots(figsize=(11.2,15.8))
     fig.subplots_adjust(left=.025,right=.985,top=.895,bottom=.065)

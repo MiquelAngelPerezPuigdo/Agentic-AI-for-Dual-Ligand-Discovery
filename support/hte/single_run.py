@@ -15,6 +15,7 @@ CONFIG = {
     "temperature_C": 95, "reaction_minutes": 240, "reaction_rpm": 500,
     "stock_mix_rpm": 750, "stock_mix_seconds": 120,
     "workup_ul": 400, "aliquot_ul": 20, "lc_diluent_ul": 480,
+    "lc_method_minutes": 3,
     "open_mix_rpm": 750, "open_mix_seconds": 120,
     "tube_dead_ul": 150, "tube_max_ul": 1600, "reservoir_dead_ul": 1500,
     "ligand_consumption_margin": 1.15, "minimum_ligand_mass_mg": 2,
@@ -348,7 +349,7 @@ def run(ctx: protocol_api.ProtocolContext):
     hs.open_labware_latch();ctx.move_labware(lw['lc'],protocol_api.OFF_DECK,use_gripper=False)
     operator_pause('9. Hand the sample plate to HPLC-MS',
         'Robot pipetting and final mixing are complete: 7 standards plus 48 samples, all in this LC plate.',
-        'Seal the removed plate, label it with the run/date and mark A1. Give the LC operator tables/lc-injections.csv: seven standards FIRST, then 48 samples, using the agreed 1.7-minute method.',
+        f'Seal the removed plate, label it with the run/date and mark A1. Give the LC operator tables/lc-injections.csv: seven standards FIRST, then 48 samples, using one HTEL {c["lc_method_minutes"]:g}-minute method. The LC operator selects the polarity variant and confirms suitable separation of SM/product/naphthalene from interference, including toluene.',
         'The plate is sealed and labelled. Resume to finish the OT-2 program, then carry it flat to HPLC-MS. Save the LC/MS files, actual injection list/method, robot log and run notes; follow ANALYSIS.md for yields.')
 '''
 

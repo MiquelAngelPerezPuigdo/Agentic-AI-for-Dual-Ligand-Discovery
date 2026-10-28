@@ -99,7 +99,9 @@ The **quench** was added to the reaction vials in step 6. The liquid added on to
 | A1–H6 | 48 reaction samples | **Then: 48 injections** |
 | All other wells | Empty | Leave uninjected |
 
-**LC operator:** run the standards and reaction samples **together in one LC sequence**, using the provided injection list and its LC plate positions. Use the requested **1.7-minute method** and establish SM/product/naphthalene peak assignments and quantitative UV settings from the authentic standards. Naphthalene is **80 µM** in every prepared LC well; product at 100% yield is **800 µM**. The 55 injections take nominally **93.5 minutes**, plus instrument overhead.
+**LC operator:** run the standards and reaction samples **together in one LC sequence**, using the provided injection list and its LC plate positions. Use **one of HTEL's standard 3-minute methods for all 55 injections**. Select the appropriate polarity variant using the authentic standards, confirm suitable separation of SM/product/naphthalene from interference (including toluene), and establish the quantitative UV settings. Record the actual method ID for analysis. Naphthalene is **80 µM** in every prepared LC well; product at 100% yield is **800 µM**. The 55 injections take nominally **165 minutes (2 h 45 min)**, plus instrument overhead and any additional method-setup injections.
+
+For planning, the nominal four-hour heated hold and 165-minute LC sequence total **6 h 45 min**, leaving **5 h 15 min within a 12-hour allowance** for stock preparation, dosing, cooling, calibration/sample preparation, handling and instrument overhead. This is a time budget; record actual elapsed times.
 
 Export the integrated-peak CSV and retain the original LC/MS files. The person handling quantification follows [ANALYSIS.md](ANALYSIS.md). Return the **LC/MS files, actual injection list/method, calculated yields/QC, robot logs and run notes** privately to Miquel.
 
