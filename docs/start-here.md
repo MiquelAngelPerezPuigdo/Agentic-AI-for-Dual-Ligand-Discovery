@@ -1,5 +1,7 @@
 # Local pipeline
 
+For the guided menu, start with [HTE campaign: start here](HTE-START-HERE.md). The commands below are the detailed reference.
+
 Frozen R1: **48 pairs, all 30 ligands**. No paid R1 rerun. Regenerate stocks/protocols/maps after updating the repository. Physical actions: [bench sheet](HTE-staff-checklist.pdf).
 
 ## Install and configure

@@ -14,6 +14,7 @@ on:
       - 'software_validation.json'
       - 'scripts/build-hte-pdf.py'
       - 'scripts/hte-lc-results.py'
+      - 'scripts/hte-guide.py'
       - 'pyproject.toml'
       - 'uv.lock'
       - '.github/workflows/handbook.yml'

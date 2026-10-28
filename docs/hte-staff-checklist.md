@@ -1,6 +1,6 @@
 # Bench sheet - setup
 
-**48 pairs, then 22 pairs + L17 reference.** One 48 × 2 mL Para-Dox, 71 fresh reaction vials. Manual caps and labware moves. **All precise liquid handling is robotic**, including stocks, standards, each round's dosing and ligand refills.
+**48 pairs, then 22 pairs + L17 reference.** One 48 × 2 mL Para-Dox, 71 fresh reaction vials. Manual caps and labware moves. **All precise liquid handling is robotic**, including stocks, standards, each round's dosing and ligand refills. Start the local [HTE guide](HTE-START-HERE.md).
 
 ## Load chemicals
 

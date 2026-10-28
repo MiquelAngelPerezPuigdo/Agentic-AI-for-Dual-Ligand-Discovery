@@ -3,20 +3,20 @@
   "schema_version": 6,
   "validation_scope": {
     "baseline_revision": "02943a1ba120fe33a7d4e15bf84b87988ea2e366",
-    "scope": "2026-10-28 target-mass workflow: full tests, six-stage SDK simulations and release-contract test. Historical reviews retain their dates. Physical release requires local validation.",
+    "scope": "2026-10-28 local operator guide: full tests and a synthetic menu rehearsal. Earlier stock-layout SDK simulations and calibration practices retain their stated scope. Physical release requires local validation.",
     "superseded_audits": "Earlier audit records remain recoverable in Git history.",
     "reports": "output/ paths identify ignored local evidence, not bundled public files. Retained test and rehearsal commands regenerate their reports.",
     "source_hashes": "Current tracked runtime, configuration, tests and scripts are listed in source_sha256. PDF builds and frozen campaign have separate manifests."
   },
   "tests": {
-    "tests": 368,
+    "tests": 377,
     "failures": 0,
     "errors": 0,
     "skipped": 0,
     "warnings": 30,
     "warning_scope": "SDK and other dependency warnings",
-    "duration_seconds": 59.03,
-    "scope": "Full tests/hte suite against target-mass workflow; live preparation and R1 export without a mass CSV were also retested after adding the assertion."
+    "duration_seconds": 63.07,
+    "scope": "Full tests/hte suite, including nine guide tests; source-fingerprint and PDF rebuild checks were run separately after minor handbook input-list updates."
   },
   "versions": {
     "anthropic": "0.125.0",
@@ -599,7 +599,7 @@
     "retry_rejects_changed_source_or_archive": true
   },
   "source_sha256": {
-    ".github/workflows/handbook.yml": "83549acbce05c2020224641eef30263c51def492d3743cfa5d613fd029f570be",
+    ".github/workflows/handbook.yml": "5a4d7081dcdd2f53e53c6254f2649d831ee722b132d18cf125cc8c6c004ff5c3",
     ".github/workflows/tests.yml": "2a106ffa474eb436b26f7e74a9d2cdad07ac7926c46866b11c1548dc457d1020",
     "hte/__init__.py": "f7115236038072601738e1f90ffbc1c3e9af449a367f58221b8f25d1b3b86542",
     "hte/analytical_practice.py": "6356ea324a2bdac1cb30e844458de39b5cd55bdf579977cfb6fd009fb3a3780e",
@@ -633,7 +633,7 @@
     "hte_inputs/pair_embeddings_t5-base.npz": "22d626dea637cb4aaf43fd56c94b05ecf602ba1a3272af675c20cc760d4a0caa",
     "hte_inputs/pair_embeddings_t5-base.npz.metadata.json": "108fa20ef4429be734504a2f17c23dc1a5d8878c3b587b4b4c40499c86abac18",
     "pyproject.toml": "c71ae4b0e674bd2f72e9a019291ac307831526046f81ee88106cfe2de370a7ac",
-    "scripts/build-hte-pdf.py": "4b5f4aa4f0ed8179cb55e2a7a5e6601217b4ac8879bfe364e26b16e77772bc05",
+    "scripts/build-hte-pdf.py": "f9d6240ac31b3661b9491f0192f370d9cd50acd6b39d1d015c1400cd99ef2786",
     "scripts/draw-deck-setup.py": "1e0c90b55bf242c842751a5f963c27abadb92e5c7849079406af656f9bfd3a4c",
     "scripts/hte-lc-results.py": "ec93906dd68a861a3d53aede52ec2469a8780698f09527a4ac2f64fc65262c3d",
     "scripts/hte-return-package.py": "9f5f563510bc172fc28c051e6da07d8cba58b6f560260ba4823b38909b8e5e86",
@@ -666,7 +666,9 @@
     "tests/hte/test_staff_resume.py": "735561a2677aee2a5ae3605657fa78aef19605232d0e59ea071eacec63a29de6",
     "tests/hte/test_toluene_inventory.py": "e6781653883cd4e2e2cf37b08cbb945fb6a70a6d5ccbfe46508e7799aa1fb041",
     "tests/hte/test_transfer.py": "baff19aa4b65dbb003581d12d4d26c250d94b4b255e31dd920a7996b0891e74b",
-    "uv.lock": "aa781a38974aa7830c5fa48cc714b04acfd05d08d308e333a607f9b915e01d26"
+    "uv.lock": "aa781a38974aa7830c5fa48cc714b04acfd05d08d308e333a607f9b915e01d26",
+    "scripts/hte-guide.py": "6e35584b2f88d0d5e2eeaffa224dfde7822e1a2f7638635a0767c2b0c2e0f246",
+    "tests/hte/test_operator_guide.py": "823f4a783fa82304b7d07f0429c8142f4add4bda2249b33708935cc387bd18b0"
   },
   "review_date": "2026-10-28",
   "submission_checks": {
@@ -751,5 +753,17 @@
     "live_preparation_and_round1_export_tested_without_csv": true,
     "physical_execution": false,
     "paid_api_calls": 0
+  },
+  "operator_guide_review_2026_10_28": {
+    "guide": "scripts/hte-guide.py",
+    "start_page": "docs/HTE-START-HERE.md",
+    "full_tests_passed": 377,
+    "guide_tests_passed": 9,
+    "menu_practice_report": "output/guide-menu-practice/output/guide-practice-20261028T142142884195Z/rehearsal_report.json",
+    "synthetic_round1_qc_passed": true,
+    "synthetic_round2_qc_passed": true,
+    "paid_calls": 0,
+    "physical_execution": false,
+    "scope": "Guide exercises the existing guarded pipeline; physical setup, validated LC settings, local file mapping and operator actions remain required."
   }
 }
