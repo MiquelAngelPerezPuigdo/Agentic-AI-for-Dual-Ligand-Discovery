@@ -16,7 +16,11 @@ Everything for the bench is in **`run/`**. Its `images/` and `tables/` subfolder
 
 **Stock-vial loading map — deck slot 1.** A1 is at the back-left. Each cell shows the vial position, reagent ID, name and mass to weigh; the five working vials in B7–F7 start empty.
 
-![Stock-vial positions, ligand names and weighing amounts](run/images/stock-map.png)
+| Stock-vial map — slot 1 | Robot deck |
+|---|---|
+| [![Stock-vial positions, ligand names and weighing amounts](run/images/stock-map.png)](run/images/stock-map.png) | [![OT-2 deck layout](run/images/deck.png)](run/images/deck.png) |
+
+Click either map to open it at full size.
 
 Before dosing, leave the 30 ligand vials and SM_IS/Pd vials **open**, with analytical vials capped. Follow the App prompts to move the holder **1 → 10 → 1**. The robot shakes the stocks **750 rpm for two minutes, heater off**.
 
