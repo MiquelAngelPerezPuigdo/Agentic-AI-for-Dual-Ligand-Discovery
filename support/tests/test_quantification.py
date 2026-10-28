@@ -106,3 +106,53 @@ def test_zero_product_is_an_upper_bound_not_an_invented_yield(lc):
     row=next(r for r in read_csv(tmp_path/'result/results.csv') if r['sample_id']=='R1-001')
     assert row['yield_percent']==''
     assert float(row['yield_upper_bound_percent'])==pytest.approx(1.25)
+
+
+def test_htel_plate_prefixed_vial_positions_are_accepted(lc):
+    paths,rows,_,_,_,_=lc
+    for row in rows:row['vial_position']='B:'+row['vial_position']
+    write_csv(paths['export'],rows)
+    assert invoke(lc)['batch_qc_pass']
+
+
+def test_export_cannot_mix_physical_lc_plates(lc):
+    paths,rows,_,_,_,_=lc
+    for row in rows:
+        prefix='C:' if row['injection_name']=='R1-001' else 'B:'
+        row['vial_position']=prefix+row['vial_position']
+    write_csv(paths['export'],rows)
+    with pytest.raises(ValueError,match='plate prefix .* differs from .*one LC plate'):
+        invoke(lc)
+
+
+def test_changed_injection_order_requires_the_correct_physical_map(lc):
+    paths,rows,mapping,_,truth,tmp_path=lc
+    first,last='R1-001','R1-048'
+    original={r['sample_id']:r['inj_no'] for r in mapping}
+    # Real specimens retain their names/wells but are injected in a different order.
+    for row in rows:
+        if row['injection_name']==first:row['inj_no']=original[last]
+        elif row['injection_name']==last:row['inj_no']=original[first]
+    write_csv(paths['export'],rows)
+    with pytest.raises(ValueError,match='physical well .* differs from mapped well'):
+        invoke(lc)
+    # Updating only injection numbers, as instructed, restores the correct assignment.
+    for row in mapping:
+        if row['sample_id']==first:row['inj_no']=original[last]
+        elif row['sample_id']==last:row['inj_no']=original[first]
+    write_csv(paths['mapping'],mapping)
+    report=process(paths['export'],paths['mapping'],paths['settings'],tmp_path/'corrected-result',
+                   'Test reviewer',ROOT/'run')
+    assert report['batch_qc_pass']
+    for row in read_csv(tmp_path/'corrected-result/results.csv'):
+        assert float(row['yield_percent'])==pytest.approx(truth[row['sample_id']],abs=1e-8)
+
+
+def test_map_cannot_relabel_physical_wells_to_another_pair(lc):
+    paths,_,mapping,_,_,_=lc
+    a=next(r for r in mapping if r['sample_id']=='R1-001')
+    b=next(r for r in mapping if r['sample_id']=='R1-048')
+    a['well'],b['well']=b['well'],a['well']
+    write_csv(paths['mapping'],mapping)
+    with pytest.raises(ValueError,match='Injection map well differs from the robot LC plate'):
+        invoke(lc)

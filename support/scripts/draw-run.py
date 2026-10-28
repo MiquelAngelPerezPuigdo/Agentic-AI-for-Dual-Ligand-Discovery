@@ -20,7 +20,7 @@ def draw_workflow(plan, out):
     # Their sequence is explicit where hands-on actions interrupt robot work.
     stages=[
         ('Prepare chemicals',
-         'Weigh each ligand once into its labelled vial.\nPrepare the two bulk workup liquids.\nLoad solids with NO stock solvent added.',
+         'Weigh each ligand once into its labelled vial.\nPrepare the two bulk workup liquids.\nLoad weighed chemicals; NO stock solvent yet.',
          'The robot will add stock solvent.\nFive labelled working vials start empty.'),
         ('Load once and start',
          'Load the stock holder, reservoir, reaction block,\nLC plate and tips in their mapped slots.\nImport run_screen.py; complete App checks.',
@@ -89,9 +89,9 @@ def main():
     ink='#202a30';line='#bcc5c9';blue='#e4eef6';green='#e3eee6';amber='#fbefd9'
     fig,ax=plt.subplots(figsize=(9,7.4));fig.subplots_adjust(left=.04,right=.96,top=.87,bottom=.09)
     ax.set(xlim=(0,3),ylim=(0,4));ax.axis('off')
-    titles={1:'STOCK HOLDER\nHTEL 48 × 2 mL\nShake before dosing',2:'SOLVENT RESERVOIR\n12 channels\nStays in place',
+    titles={1:'STOCK HOLDER\nHTEL 48 × 2 mL\nShake before dosing',2:'AXYGEN RESERVOIR\n12 × 12 mL, V-bottom\nHigh profile; stays in place',
             3:'REACTION BLOCK\n48 × 2 mL Para-Dox\n100 µL per reaction',4:'EMPTY',5:'300 µL TIPS\nLeft single-channel',
-            6:'LC SAMPLE PLATE\n48 samples + 7 standards\nTake to HPLC-MS at the end',7:'EMPTY',8:'300 µL TIPS\nLeft single-channel',
+            6:'VWR 96 DEEP-WELL\n2.2 mL, square V-bottom\n48 samples + 7 standards',7:'EMPTY',8:'300 µL TIPS\nLeft single-channel',
             9:'300 µL TIPS\nRight eight-channel',10:'HEATER-SHAKER\nUniversal flat adapter\nStaff load at App prompts',11:'EMPTY',12:'FIXED TIP WASTE'}
     for slot in range(1,13):
         x=(slot-1)%3;y=(slot-1)//3

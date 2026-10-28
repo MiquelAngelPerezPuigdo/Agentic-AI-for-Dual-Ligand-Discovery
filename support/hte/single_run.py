@@ -289,8 +289,8 @@ def run(ctx: protocol_api.ProtocolContext):
         ctx.delay(seconds=15)
     operator_pause('2. Check loading before making stocks',
         'The robot will ADD STOCK SOLVENT to the weighed chemicals. Use the numbered staff guide and its deck/stock maps.',
-        'Load weighed source chemicals with NO stock solvent yet. Open ligand vials A1:F5 and SM_IS A6 / Pd B6; keep the ten analytical vials capped. Load empty open reaction vials in slot 3, an empty LC plate in 6, and the prefilled reservoir in 2.',
-        'App setup/offset checks are complete: p300 single LEFT, eight-channel RIGHT; heater-shaker 10; slots 4/7/11 empty; 1.5 mm aspiration clearance; capped source height <=45 mm; confirmed holder/adapter fit.')
+        'Load weighed source chemicals with NO stock solvent yet. Open ligand vials A1:F5 and SM_IS A6 / Pd B6; keep the ten analytical vials capped. Load empty open reaction vials in slot 3, the empty VWR 96 deep-well 2.2 mL V-bottom square-well LC plate in 6, and the prefilled Axygen 12-channel 12 mL high-profile V-bottom reservoir in 2.',
+        'App setup/offset checks are complete: p300 single LEFT, eight-channel RIGHT; heater-shaker 10; slots 4/7/11 empty; 1.5 mm bottom clearance and submerged pickup verified with 150 uL in a separate representative source vial; highest caps on BOTH stock holder and reaction block <=45 mm above each assembly base; confirmed holder/adapter fit.')
     steps(PLAN['steps_before_reaction']);drop()
     operator_pause('4a. Seal the reactions',
         'All 48 reactions are dosed, 100 uL each. The reaction stocks are finished and may stay open.',

@@ -4,7 +4,7 @@ from collections import defaultdict
 from pathlib import Path
 import numpy as np
 
-from .io import digest, finite, object_digest, read_csv, read_json, write_csv, write_json
+from .io import digest, finite, object_digest, read_csv, read_json, well_name, write_csv, write_json
 
 
 def calibration_identity(config):
@@ -76,7 +76,7 @@ def normalize_chromeleon(config, raw, injections_path):
     if channel not in area_columns or not settings.get("method_id"):
         raise ValueError("Chromeleon requires an explicit method_id and UV_VIS_1..4 quantitative channel")
     if not injections_path:
-        raise ValueError("Chromeleon requires --injections: inj_no,sample_id,method_id mapping; names can repeat")
+        raise ValueError("Chromeleon requires an injection map with inj_no,sample_id,well,method_id; names can repeat")
     def text(value):
         # Excel stores numeric identifiers as numbers and empty padding as None.
         return "" if value is None else str(value).strip()
@@ -95,12 +95,14 @@ def normalize_chromeleon(config, raw, injections_path):
             raise ValueError("Injection mapping requires unique positive inj_no and nonempty sample_id")
         if row.get("method_id") != settings["method_id"] or row["sample_id"] in sample_ids:
             raise ValueError("Injection mapping requires matching method_id and unique accepted sample IDs")
+        row["well"] = well_name(row.get("well", ""))
         mapping[key] = row
         sample_ids.add(row["sample_id"])
     if not mapping:
         raise ValueError("Injection mapping is empty")
     na = {"", "n.a.", "n/a", "na"}
     normalized, identities, reported, peaks = [], {}, {}, defaultdict(set)
+    plate_prefix = None
     placeholders = 0
     column = area_columns[channel]
     for line, row in enumerate(raw, 2):
@@ -120,6 +122,30 @@ def normalize_chromeleon(config, raw, injections_path):
         if key in identities and identities[key] != identity:
             raise ValueError("Conflicting Chromeleon identity within an injection")
         identities[key] = identity
+        # The generated map uses `well`, whereas the vendor export calls this
+        # `vial_position` and may prefix it with the autosampler plate (B:C1).
+        # Bind each injection to its physical well before assigning a sample ID.
+        position = text(row["vial_position"]).split(":")
+        try:
+            if len(position) not in (1, 2) or any(not part.strip() for part in position):
+                raise ValueError("Unsupported vial position")
+            actual_well = well_name(position[-1])
+        except ValueError:
+            raise ValueError(f"Chromeleon injection {key}: unrecognized vial_position "
+                             f"{row['vial_position']!r}; reconcile the injection map with the actual LC sequence. "
+                             "Use an explicit well such as C1 or B:C1; do not guess.") from None
+        if len(position) == 2:
+            actual_prefix = position[0].strip().upper()
+            if plate_prefix is None:
+                plate_prefix = actual_prefix
+            elif actual_prefix != plate_prefix:
+                raise ValueError(f"Chromeleon injection {key}: plate prefix {actual_prefix!r} differs from "
+                                 f"{plate_prefix!r}; this run uses one LC plate. "
+                                 "Reconcile the export and injection map with the actual LC sequence.")
+        if actual_well != mapping[key]["well"]:
+            raise ValueError(f"Chromeleon injection {key}: physical well {actual_well} differs from "
+                             f"mapped well {mapping[key]['well']} for {mapping[key]['sample_id']}; "
+                             "reconcile the injection map with the actual LC sequence before analysis.")
         for vendor in ("injection_name", "vial_position", "type"):
             if mapping[key].get(vendor) and text(mapping[key][vendor]) != text(row[vendor]):
                 raise ValueError(f"Injection mapping {vendor} differs from Chromeleon injection {key}")

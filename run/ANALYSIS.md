@@ -6,7 +6,7 @@ This step is for the person handling the LC export and quantification, after [st
 
 1. Install Python 3.12 and run `uv sync --locked --python 3.12` from the repository root.
 2. Copy [lc-settings-template.json](tables/lc-settings-template.json) to **`local_data/lc-settings.json`**. Enter the actual method ID, quantitative UV channel (`UV_VIS_1` to `UV_VIS_4`), measured SM/product/naphthalene retention windows and measured LOQs. Do not use guessed retention times.
-3. Copy [lc-injections.csv](tables/lc-injections.csv) to **`local_data/actual-injections.csv`**. Update injection numbers/order to what actually ran and fill its `method_id` column. The accepted sequence is seven standards plus all 48 samples; reinjections require an explicit reviewed map.
+3. Copy [lc-injections.csv](tables/lc-injections.csv) to **`local_data/actual-injections.csv`**. Update injection numbers/order to what actually ran and fill its `method_id` column. Keep each `sample_id` paired with its supplied `well`: that is where the robot put it. The export's physical `vial_position` must match that well; HTEL positions such as `B:C1` are supported. The accepted sequence is seven standards plus all 48 samples from this one LC plate; reinjections require an explicit reviewed map.
 4. Export the HTEL integrated-peak CSV for that accepted sequence and save it as **`local_data/lc-export.csv`**. Keep the original LC/MS files too.
 
 ```bash
@@ -14,6 +14,8 @@ uv run hte-analyze --export local_data/lc-export.csv \
   --map local_data/actual-injections.csv \
   --settings local_data/lc-settings.json --output output/results
 ```
+
+For a corrected rerun, choose a fresh output folder, for example **`--output output/results-02`**. Existing results are preserved.
 
 If the LC software omits an analyte peak from the zero-analyte calibration blank, inspect that blank first. After confirming that the SM/product peaks are absent in their reference windows, add **`--reviewed-blanks "REVIEWER NAME"`**. This records that review; it never fabricates a peak or retention time.
 

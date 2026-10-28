@@ -136,9 +136,9 @@ z
     <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="242.5248" y="398.61432" transform="rotate(-0 242.5248 398.61432)">2</text>
    </g>
    <g id="text_4">
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(271.303906 427.812564)">SOLVENT RESERVOIR</text>
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(293.658594 443.900845)">12 channels</text>
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(289.048437 458.932095)">Stays in place</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(273.351562 427.812564)">AXYGEN RESERVOIR</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(268.46875 443.390689)">12 × 12 mL, V-bottom</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(257.469531 458.932095)">High profile; stays in place</text>
    </g>
    <g id="text_5">
     <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="441.2448" y="398.61432" transform="rotate(-0 441.2448 398.61432)">3</text>
@@ -165,9 +165,9 @@ z
     <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="441.2448" y="294.71832" transform="rotate(-0 441.2448 294.71832)">6</text>
    </g>
    <g id="text_12">
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(478.141875 323.916564)">LC SAMPLE PLATE</text>
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(457.06375 339.036095)">48 samples + 7 standards</text>
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(453.677031 356.004845)">Take to HPLC-MS at the end</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(472.991094 323.916564)">VWR 96 DEEP-WELL</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(460.7075 339.036095)">2.2 mL, square V-bottom</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(457.06375 355.036095)">48 samples + 7 standards</text>
    </g>
    <g id="text_13">
     <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="43.8048" y="190.82232" transform="rotate(-0 43.8048 190.82232)">7</text>

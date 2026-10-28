@@ -6,7 +6,7 @@ import shutil
 from pathlib import Path
 
 from .analytics import normalize_export, calibration_from_peaks, complete_export, analyze
-from .io import read_json, read_csv, write_json, write_csv, digest, new_output
+from .io import read_json, read_csv, well_name, write_json, write_csv, digest, new_output
 
 SETTINGS_TEMPLATE = {
     "method_id": None, "channel": None,
@@ -56,6 +56,13 @@ def process(export_path, mapping_path, settings_path, output, reviewed_blanks=No
     mappings = read_csv(mapping_path)
     if len(mappings) != 55 or {r['sample_id'] for r in mappings} != expected:
         raise ValueError('Actual injection map must contain exactly the seven mixed standards and 48 planned reactions')
+    expected_wells = {r['sample_id']: r['well'] for r in plan}
+    expected_wells.update({r['sample_id']: r['lc_well'] for r in dosing})
+    for row in mappings:
+        if well_name(row.get('well', '')) != expected_wells[row['sample_id']]:
+            raise ValueError('Injection map well differs from the robot LC plate for '+row['sample_id']+
+                             '; reconcile the injection order with the actual LC sequence. '
+                             'Do not relabel physical sample wells to make a sequence match.')
     out = new_output(output)
     inputs = out / 'inputs';inputs.mkdir()
     for name, path in [('vendor-export'+Path(export_path).suffix, export_path), ('injections.csv', mapping_path),
