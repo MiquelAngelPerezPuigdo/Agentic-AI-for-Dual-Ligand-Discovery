@@ -1,5 +1,5 @@
 # Weigh these chemicals into the stock vials
-Use the **HTEL 48-position 2 mL glass-vial holder in slot 1**. Weigh each ligand once. The robot adds solvent in these same vials; do not make another set of working stocks. [Stock map](stock-map.png) · [Procedure](README.md).
+Use the **HTEL 48-position 2 mL glass-vial holder in slot 1**. Weigh each ligand once. The robot adds solvent in these same vials; do not make another set of working stocks. [Stock map](images/stock-map.png) · [Procedure](README.md).
 Only the vials below receive weighed material. There are **30 ligands**: unavailable L07 is omitted and original ID numbering is retained. The five labeled dilution/matrix vials start empty; column 8 remains empty.
 | Vial | Label | Chemical | Weigh (mg) |
 |---|---|---|---:|
@@ -51,4 +51,4 @@ Only the vials below receive weighed material. There are **30 ligands**: unavail
 | E7 | IS_WORK | 2 mM naphthalene |
 | F7 | MATRIX | 100 µL toluene + 400 µL quench |
 
-Use the vial labels and positions shown here, not an earlier two-round map. [Machine-readable weighing list](weighing.csv) · [All vial positions](tube-map.csv).
+Use the vial labels and positions shown here, not an earlier two-round map. [Machine-readable weighing list](tables/weighing.csv) · [All vial positions](tables/tube-map.csv).

@@ -7,11 +7,12 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
-ROOT=Path(__file__).resolve().parents[1]
+ROOT=Path(__file__).resolve().parents[2]
 
 
 def main():
-    out=ROOT/'run';p=json.loads((out/'plan.json').read_text())
+    p=json.loads((ROOT/'run/tables/plan.json').read_text())
+    out=ROOT/'run/images';out.mkdir(exist_ok=True)
     plt.rcParams.update({'font.family':'DejaVu Sans','svg.fonttype':'none','svg.hashsalt':'one-run'})
     ink='#202a30';line='#bcc5c9';blue='#e4eef6';green='#e3eee6';amber='#fbefd9'
     fig,ax=plt.subplots(figsize=(9,7.4));fig.subplots_adjust(left=.04,right=.96,top=.87,bottom=.09)

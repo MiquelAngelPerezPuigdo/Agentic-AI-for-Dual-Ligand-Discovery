@@ -6,7 +6,7 @@ import pytest
 from hte.io import read_csv,write_csv,write_json,read_json
 from hte.run_analysis import process
 
-ROOT=Path(__file__).resolve().parents[1]
+ROOT=Path(__file__).resolve().parents[2]
 
 
 @pytest.fixture
@@ -15,10 +15,10 @@ def lc(tmp_path):
               'references':{name:dict(retention_time_min=rt,window_min=.03) for name,rt in
                             [('substrate',.3),('product',.7),('internal_standard',1.2)]},
               'quantification_limit_uM':{'substrate':10,'product':10}}
-    mapping=read_csv(ROOT/'run/lc-injections.csv')
+    mapping=read_csv(ROOT/'run/tables/lc-injections.csv')
     for row in mapping:row['method_id']=settings['method_id']
-    truth={r['sample_id']:25+i%51 for i,r in enumerate(read_csv(ROOT/'run/dosing.csv'))}
-    cal={r['sample_id']:float(r['concentration_uM']) for r in read_csv(ROOT/'run/calibration-plan.csv')}
+    truth={r['sample_id']:25+i%51 for i,r in enumerate(read_csv(ROOT/'run/tables/dosing.csv'))}
+    cal={r['sample_id']:float(r['concentration_uM']) for r in read_csv(ROOT/'run/tables/calibration-plan.csv')}
     rows=[]
     for index,inj in enumerate(mapping):
         key=inj['sample_id']

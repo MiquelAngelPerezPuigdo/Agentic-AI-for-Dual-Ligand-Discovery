@@ -6,9 +6,9 @@ import json
 from pathlib import Path
 from xml.sax.saxutils import escape
 
-ROOT=Path(__file__).resolve().parents[1]
-FILES=['run/README.md','run/WEIGHING.md','run/plan.json','run/deck.png','run/stock-map.png',
-       'run/run_screen.py','scripts/build-bench-pdf.py']
+ROOT=Path(__file__).resolve().parents[2]
+FILES=['run/README.md','run/WEIGHING.md','run/tables/plan.json','run/images/deck.png','run/images/stock-map.png',
+       'run/run_screen.py','support/scripts/build-bench-pdf.py']
 
 
 def fingerprint():
@@ -17,7 +17,7 @@ def fingerprint():
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--check',action='store_true');args=parser.parse_args()
-    target=ROOT/'run/bench-sheet.pdf';manifest=ROOT/'run/bench-sheet.build.json'
+    target=ROOT/'run/bench-sheet.pdf';manifest=ROOT/'run/tables/bench-sheet.build.json'
     if args.check:
         m=json.loads(manifest.read_text())
         if m['sources']!=fingerprint() or m['pdf_sha256']!=hashlib.sha256(target.read_bytes()).hexdigest():
@@ -28,7 +28,7 @@ def main():
     from reportlab.lib.styles import ParagraphStyle
     from reportlab.platypus import SimpleDocTemplate,Paragraph,Table,TableStyle,Spacer,PageBreak
     from pypdf import PdfReader
-    p=json.loads((ROOT/'run/plan.json').read_text())
+    p=json.loads((ROOT/'run/tables/plan.json').read_text())
     base=ParagraphStyle('base',fontName='Helvetica',fontSize=9,leading=12,spaceAfter=6)
     title=ParagraphStyle('title',parent=base,fontName='Times-Roman',fontSize=22,leading=26,spaceAfter=9)
     heading=ParagraphStyle('heading',parent=base,fontName='Helvetica-Bold',fontSize=11,leading=15,spaceBefore=8)

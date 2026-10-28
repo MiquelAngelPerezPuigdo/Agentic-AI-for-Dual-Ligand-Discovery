@@ -22,7 +22,8 @@ research = ["scipy>=1.14,<2", "scikit-learn>=1.5,<2", "rdkit>=2024.3", "anthropi
 hte-analyze = "hte.run_analysis:main"
 
 [tool.setuptools.packages.find]
-include = ["hte*"]
+where = ["support"]
+include = ["hte", "hte.*"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["support/tests"]

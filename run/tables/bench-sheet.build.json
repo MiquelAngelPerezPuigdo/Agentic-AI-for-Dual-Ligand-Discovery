@@ -1,0 +1,13 @@
+{
+  "pages": 2,
+  "sources": {
+    "run/README.md": "9ff928da3bf2e098404445fddd13eddd4f50bba7b2146c92ab6330d17dc88d78",
+    "run/WEIGHING.md": "c79a10474deb5d5da5a47e637c9d31215fdde0955a92af7b2bc900e4fb076753",
+    "run/tables/plan.json": "2d4db7bfa672209e13b603a50bd47fe8e5acd1b23f2c6cc7794055e84e5ee9b1",
+    "run/images/deck.png": "8df37ddc4f7cad0ecb8382d20c0b9e19c062a13c34719baaa70c79bf8b476dad",
+    "run/images/stock-map.png": "b477ebe116e19d65c92334e286053dff12e98f2003c70fe23eb03458b563da86",
+    "run/run_screen.py": "c2e3afd318fd56eb3dc8b4be611e9567ac137b6b24d6b18bbb189dd8cc17a681",
+    "support/scripts/build-bench-pdf.py": "9a1d363a7e2881a3d9cddfb406f1bfd1f6198400add24b4b4c5fa55d3c4d7054"
+  },
+  "pdf_sha256": "412c5f090421ace48d08d46f482f223b0cd94f5dd4009009e6f898e904008a15"
+}

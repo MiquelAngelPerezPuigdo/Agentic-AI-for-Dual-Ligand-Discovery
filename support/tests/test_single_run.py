@@ -9,7 +9,7 @@ import pytest
 from hte.io import read_json, read_csv, digest
 from hte.single_run import build_plan, generate, RESERVOIR
 
-ROOT=Path(__file__).resolve().parents[1]
+ROOT=Path(__file__).resolve().parents[2]
 
 
 @pytest.fixture(scope='module')
@@ -92,12 +92,12 @@ def test_molar_and_solvent_balance_through_every_liquid_transfer(plan):
 
 def test_published_files_are_current(tmp_path):
     generate(tmp_path)
-    for name in read_json(ROOT/'run/files.sha256.json'):
+    for name in read_json(ROOT/'run/tables/files.sha256.json'):
         assert digest(tmp_path/name)==digest(ROOT/'run'/name),name
     tree=ast.parse((tmp_path/'run_screen.py').read_text())
     definitions=next(ast.literal_eval(n.value) for n in tree.body if isinstance(n,ast.Assign)
                      and any(isinstance(t,ast.Name) and t.id=='DEFINITIONS' for t in n.targets))
-    supplied=read_json(ROOT/'hte_inputs/labware/htel_vialholder_48_2mL.json')
+    supplied=read_json(ROOT/'support/hte_inputs/labware/htel_vialholder_48_2mL.json')
     assert definitions['stocks']['wells']==supplied['wells']
     assert definitions['stocks']['dimensions']['zDimension']==45
 
@@ -125,13 +125,15 @@ def test_real_sdk_continuous_protocol_and_tip_positions():
 
 
 def test_staff_links_and_one_authoritative_protocol_folder():
-    files=[ROOT/'README.md',ROOT/'DEVELOPMENT.md',*(ROOT/'run').glob('*.md'),*(ROOT/'docs').glob('*.md')]
+    files=[ROOT/'README.md',ROOT/'support/README.md',*(ROOT/'run').glob('*.md'),*(ROOT/'support/docs').glob('*.md'),ROOT/'support/research/README.md',ROOT/'support/research/METHOD.md',ROOT/'support/archive/README.md']
     for file in files:
         for link in re.findall(r'\]\(([^)]+)\)',file.read_text()):
             p=urlsplit(link)
             if not p.scheme and p.path:assert (file.parent/p.path).exists(),(file,link)
     assert not (ROOT/'protocols').exists()
     assert set(p.name for p in (ROOT/'run').glob('*.py'))=={'run_screen.py'}
+    assert {p.name for p in (ROOT/'run').iterdir() if p.is_file()}=={
+        'README.md','WEIGHING.md','ANALYSIS.md','run_screen.py','bench-sheet.pdf'}
 
 
 def test_larger_dead_volume_cannot_silently_drain_sources(monkeypatch):

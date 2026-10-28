@@ -22,10 +22,10 @@
     "minimum_ligand_mass_mg": 2,
     "aspirate_height_mm": 1.5,
     "sample_aspirate_height_mm": 1.5,
-    "reaction_definition": "hte_inputs/labware/paradox_48_wellplate_2000ul_hs.json",
-    "lc_definition": "hte_inputs/labware/vwr_96_wellplate_2200ul_hs.json",
-    "reservoir_definition": "hte_inputs/labware/axygen_12_reservoir_12000ul.json",
-    "stock_definition": "hte_inputs/labware/htel_vialholder_48_2mL.json"
+    "reaction_definition": "support/hte_inputs/labware/paradox_48_wellplate_2000ul_hs.json",
+    "lc_definition": "support/hte_inputs/labware/vwr_96_wellplate_2200ul_hs.json",
+    "reservoir_definition": "support/hte_inputs/labware/axygen_12_reservoir_12000ul.json",
+    "stock_definition": "support/hte_inputs/labware/htel_vialholder_48_2mL.json"
   },
   "locations": {
     "L01": [
@@ -12148,11 +12148,11 @@
     }
   ],
   "source_files": {
-    "hte_inputs/ligands.csv": "b594e0869c21c83d7bf0268a3a87024511667ba6dccf29bbc367f263ff9529e5",
-    "campaigns/hackathon2026/round1_design.csv": "3c68d4fe7429cd5b880cdbec25debd4fd6d6e794e95022c88c317c07c5d5dd27",
-    "hte_inputs/labware/htel_vialholder_48_2mL.json": "361da35ee9e0addafb1fcf5ac65a050472aee0d8e10f8d4f5c192936956228e5",
-    "hte_inputs/labware/paradox_48_wellplate_2000ul_hs.json": "74b7171376dc7c54562acd13b3c405b9c9854b700d0f4acc5f431fb9f8a9bf0c",
-    "hte_inputs/labware/vwr_96_wellplate_2200ul_hs.json": "8d3b15f7936ed68f097da6b92c80751abc8f27fb9bef41f25040f263c3f25ad4",
-    "hte_inputs/labware/axygen_12_reservoir_12000ul.json": "15ec62b2d7bc696e3449f67ce77c1ab477b8f958dd3a76da8c0fb602c37bb650"
+    "support/hte_inputs/ligands.csv": "b594e0869c21c83d7bf0268a3a87024511667ba6dccf29bbc367f263ff9529e5",
+    "support/campaigns/hackathon2026/round1_design.csv": "3c68d4fe7429cd5b880cdbec25debd4fd6d6e794e95022c88c317c07c5d5dd27",
+    "support/hte_inputs/labware/htel_vialholder_48_2mL.json": "361da35ee9e0addafb1fcf5ac65a050472aee0d8e10f8d4f5c192936956228e5",
+    "support/hte_inputs/labware/paradox_48_wellplate_2000ul_hs.json": "74b7171376dc7c54562acd13b3c405b9c9854b700d0f4acc5f431fb9f8a9bf0c",
+    "support/hte_inputs/labware/vwr_96_wellplate_2200ul_hs.json": "8d3b15f7936ed68f097da6b92c80751abc8f27fb9bef41f25040f263c3f25ad4",
+    "support/hte_inputs/labware/axygen_12_reservoir_12000ul.json": "15ec62b2d7bc696e3449f67ce77c1ab477b8f958dd3a76da8c0fb602c37bb650"
   }
 }

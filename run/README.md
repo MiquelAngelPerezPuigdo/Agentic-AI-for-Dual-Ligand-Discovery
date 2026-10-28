@@ -4,7 +4,7 @@
 
 **100 µL per reaction:** 0.1 M SM in toluene, 6 mol% of each ligand, 12 mol% Pd(COD)(DQ), 10 mol% naphthalene; **95 °C, 500 rpm, four hours**. The original 48 selected pairs and all 30 ligands are retained.
 
-[What to weigh](WEIGHING.md) · [Source-vial map](stock-map.png) · [Deck map](deck.png) · [Printable bench sheet](bench-sheet.pdf)
+[What to weigh](WEIGHING.md) · [Source-vial map](images/stock-map.png) · [Deck map](images/deck.png) · [Printable bench sheet](bench-sheet.pdf)
 
 ## 1. Load once
 
@@ -21,7 +21,7 @@ Have **48 empty reaction vials with screw caps**, **42 stock/working vials**, on
 | **10** | Heater-shaker with the universal flat adapter. |
 | **4, 7 and 11** | Empty. |
 
-![Deck loading](deck.png)
+![Deck loading](images/deck.png)
 
 The source holder is **not** the heated reaction block. The source holder and reservoir stay on deck. Only the reaction block and, at the end, the LC plate move to the shaker.
 
@@ -80,7 +80,7 @@ Use the requested **1.7-minute method**, with its actual quantitative UV channel
 
 Naphthalene is **80 µM in every standard and reaction LC sample**. The reaction samples occupy **LC wells A1–H6**; their LC coordinates come from the injection map, rather than the separate 6 × 8 reaction-block layout.
 
-Inject the standards first, then samples, using [lc-injections.csv](lc-injections.csv). Record the **actual** injection numbers and method ID; leave all unused wells uninjected. Standards and samples now run together at the end because one four-hour reaction leaves enough room to avoid an intermediate plate trip. At 1.7 minutes per injection, the analytical sequence itself is nominally **93.5 minutes**, plus any actual wash/re-equilibration overhead.
+Inject the standards first, then samples, using [lc-injections.csv](tables/lc-injections.csv). Record the **actual** injection numbers and method ID; leave all unused wells uninjected. Standards and samples now run together at the end because one four-hour reaction leaves enough room to avoid an intermediate plate trip. At 1.7 minutes per injection, the analytical sequence itself is nominally **93.5 minutes**, plus any actual wash/re-equilibration overhead.
 
 The software operator follows [ANALYSIS.md](ANALYSIS.md) to calculate calibrated yields from the HTEL CSV. **No second reaction batch and no paid Claude call.** Save the original LC/MS data, actual map, robot logs and notes with the analysis output and return them privately to Miquel.
 

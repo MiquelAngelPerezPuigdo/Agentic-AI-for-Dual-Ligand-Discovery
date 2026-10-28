@@ -2,9 +2,9 @@
 
 This step is for the software/LC operator. It calculates calibrated yields; it does not select or dose another batch. No Claude key or Chromeleon installation is needed on the workstation.
 
-1. Install Python 3.12 and run `uv sync --locked` from the repository root.
-2. Copy [lc-settings-template.json](lc-settings-template.json) to **`local_data/lc-settings.json`**. Enter the actual method ID, quantitative UV channel (`UV_VIS_1` to `UV_VIS_4`), measured SM/product/naphthalene retention windows and measured LOQs. Do not use guessed retention times.
-3. Copy [lc-injections.csv](lc-injections.csv) to **`local_data/actual-injections.csv`**. Update injection numbers/order to what actually ran and fill its `method_id` column. The accepted sequence is seven standards plus all 48 samples; reinjections require an explicit reviewed map.
+1. Install Python 3.12 and run `uv sync --locked --python 3.12` from the repository root.
+2. Copy [lc-settings-template.json](tables/lc-settings-template.json) to **`local_data/lc-settings.json`**. Enter the actual method ID, quantitative UV channel (`UV_VIS_1` to `UV_VIS_4`), measured SM/product/naphthalene retention windows and measured LOQs. Do not use guessed retention times.
+3. Copy [lc-injections.csv](tables/lc-injections.csv) to **`local_data/actual-injections.csv`**. Update injection numbers/order to what actually ran and fill its `method_id` column. The accepted sequence is seven standards plus all 48 samples; reinjections require an explicit reviewed map.
 4. Export the HTEL integrated-peak CSV for that accepted sequence and save it as **`local_data/lc-export.csv`**. Keep the original LC/MS files too.
 
 ```bash

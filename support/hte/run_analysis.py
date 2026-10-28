@@ -42,15 +42,16 @@ def analysis_config(settings):
 
 def process(export_path, mapping_path, settings_path, output, reviewed_blanks=None, run_dir='run'):
     run_dir = Path(run_dir)
-    checksums=read_json(run_dir/'files.sha256.json')
+    tables = run_dir/'tables'
+    checksums=read_json(tables/'files.sha256.json')
     for name in ('dosing.csv','calibration-plan.csv'):
-        if digest(run_dir/name)!=checksums[name]:
+        if digest(tables/name)!=checksums['tables/'+name]:
             raise ValueError('Published run table changed: '+name+'; reconcile with the actual robot protocol before analysis')
     config = analysis_config(read_json(settings_path))
     from .analytics import validate_analytics_settings
     validate_analytics_settings(config)
-    plan = read_csv(run_dir / 'calibration-plan.csv')
-    dosing = read_csv(run_dir / 'dosing.csv')
+    plan = read_csv(tables / 'calibration-plan.csv')
+    dosing = read_csv(tables / 'dosing.csv')
     expected = {r['sample_id'] for r in [*plan, *dosing]}
     mappings = read_csv(mapping_path)
     if len(mappings) != 55 or {r['sample_id'] for r in mappings} != expected:
@@ -58,8 +59,8 @@ def process(export_path, mapping_path, settings_path, output, reviewed_blanks=No
     out = new_output(output)
     inputs = out / 'inputs';inputs.mkdir()
     for name, path in [('vendor-export'+Path(export_path).suffix, export_path), ('injections.csv', mapping_path),
-                       ('lc-settings.json', settings_path), ('dosing.csv', run_dir/'dosing.csv'),
-                       ('calibration-plan.csv', run_dir/'calibration-plan.csv'),('robot-plan.json',run_dir/'plan.json'),
+                       ('lc-settings.json', settings_path), ('dosing.csv', tables/'dosing.csv'),
+                       ('calibration-plan.csv', tables/'calibration-plan.csv'),('robot-plan.json',tables/'plan.json'),
                        ('run_screen.py',run_dir/'run_screen.py')]:
         before=digest(path)
         shutil.copyfile(path, inputs/name)

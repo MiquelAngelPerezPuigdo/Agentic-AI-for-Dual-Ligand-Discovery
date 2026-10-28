@@ -1,6 +1,6 @@
 # Superseded material — do not use for the current run
 
-The **only current HTE procedure is [run/README.md](../run/README.md)**. Its single Python program, masses, vial map and volumes belong together.
+The **only current HTE procedure is [run/README.md](../../run/README.md)**. Its single Python program, masses, vial map and volumes belong together.
 
 `two-file-single-run/` preserves the earlier split preparation/reaction and workup programs. These have been replaced by one continuous program in `run/`; do not start them for the current screen.
 
