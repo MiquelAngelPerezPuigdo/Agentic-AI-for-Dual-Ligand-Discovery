@@ -6,7 +6,7 @@ Use the [bench sheet](HTE-staff-checklist.pdf). Staff weigh/coarse-load chemical
 
 **Pyridine-2-sulfonyl fluoride → 2-fluoropyridine.** Nominal per vial: 25 µmol SM, 1.5 µmol each ligand, 3 µmol Pd(COD)(DQ), 2.5 µmol naphthalene; 250 µL toluene, 95 °C, 500 rpm, 4 h under air. No base/external fluoride. Solvent addition defines nominal concentrations; solute displacement/contraction are accepted approximations.
 
-R1: **48 pairs covering all 30 ligands**, official 24-consensus +24-Sobol design; L07 excluded. Regenerate stocks/protocols/maps. R2: **22 pairs +L17 tBuBrettPhos at 12 mol% total ligand**; L03 at most four wells. No repeats. Higher yield identifies a preliminary candidate; batch effects, reproducibility and cooperativity need later matched controls.
+R1: **48 pairs covering all 30 ligands**, official 24-consensus +24-Sobol design; L07 excluded. Use the [fixed protocols and matching maps](../protocols/fixed-campaign/README.md). R2: **22 pairs +L17 tBuBrettPhos at 12 mol% total ligand**; L03 at most four wells. No repeats. Higher yield identifies a preliminary candidate; batch effects, reproducibility and cooperativity need later matched controls.
 
 ## Robot stock preparation
 

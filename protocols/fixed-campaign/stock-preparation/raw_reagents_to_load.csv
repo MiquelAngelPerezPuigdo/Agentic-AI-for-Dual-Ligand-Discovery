@@ -1,0 +1,8 @@
+phase,reagent,slot,well,minimum_load_ul,instruction
+stocks,toluene,2,A1,27500,Pour at least this amount; no precise manual pipetting. Keep below 29 mL/channel.
+stocks,toluene,2,B1,27500,Pour at least this amount; no precise manual pipetting. Keep below 29 mL/channel.
+stocks,toluene,2,C1,27500,Pour at least this amount; no precise manual pipetting. Keep below 29 mL/channel.
+stocks,toluene,2,D1,27500,Pour at least this amount; no precise manual pipetting. Keep below 29 mL/channel.
+stocks,water,2,E1,27500,Pour at least this amount; no precise manual pipetting. Keep below 29 mL/channel.
+stocks,ACN,2,F1,27500,Pour at least this amount; no precise manual pipetting. Keep below 29 mL/channel.
+stocks,FA,2,G1,2000,Pour at least this amount; no precise manual pipetting. Keep below 29 mL/channel.

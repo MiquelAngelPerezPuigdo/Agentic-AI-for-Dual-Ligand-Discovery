@@ -1,9 +1,9 @@
 {
   "edition_date": "2026-10-28",
   "edition_timezone": "Europe/Zurich",
-  "source_sha256": "79fae26cbb318d970378bcacbda37c3d501d3c1e1c5bc061df906b9bb4384682",
+  "source_sha256": "962d01e2f371bf3d66a6c14f3c548e4a075f55758c2e016d5e35e1b4b6e4c211",
   "sources": {
-    "docs/hte-staff-checklist.md": "8e5ee1ddaabab6816c3270002795459040f4505d96263a9dd0789bfe121678e1",
+    "docs/hte-staff-checklist.md": "d1bec3e00e70f581a6ea2a16c6b59498dc34cf04cb9fef05518230c095b79450",
     "docs/stocks-and-calibration.md": "28806dcce20d2ec590c27a5a1a8c784249deebd7eed1b6fe523ee1db563bc10f",
     "hte_inputs/campaign.json": "f01f5d207c54853875aa2498aad203a77c105481286b91f08492ad9b245e4379",
     "hte_inputs/calibration_template.csv": "9aab903969587dbc6d2045aa18669cfe03eecb54209fe59afde1932fe6322d4e",
@@ -25,7 +25,7 @@
     "uv.lock": "aa781a38974aa7830c5fa48cc714b04acfd05d08d308e333a607f9b915e01d26",
     "hte/analytical_stocks.py": "abde42b9b988af9bcfca01fd9e622eb2abffc73185209df6b54798440ac237c4",
     "scripts/hte-lc-results.py": "ec93906dd68a861a3d53aede52ec2469a8780698f09527a4ac2f64fc65262c3d",
-    "docs/HTE-START-HERE.md": "d7f1c2161243f7976e102ddbc96d25fa6a301b1a2e4515b55cbecc0fa8373632",
+    "docs/HTE-START-HERE.md": "688f483578f08d75c8b6acfe97295d43a8e08fca379b2e93594eeb36cff10b32",
     "docs/deck-loading.md": "de11c1ba8a7e168d5857eb1d05cc353a2cf17710f7063be814ff6a9a538ebbe6",
     "scripts/hte-guide.py": "6e35584b2f88d0d5e2eeaffa224dfde7822e1a2f7638635a0767c2b0c2e0f246",
     "hte/transfer.py": "9deb44eef9c218fa7e35ef9931d69462e13d0a6545229e85755331366b1811cf",
@@ -37,7 +37,7 @@
     "campaigns/hackathon2026/round1_design.csv": "3c68d4fe7429cd5b880cdbec25debd4fd6d6e794e95022c88c317c07c5d5dd27",
     "campaigns/hackathon2026/scoring/campaign_provenance.json": "a97c2eec55f40228c5002f197a074dee898f26eacf24fdf2f61424707cca13fb"
   },
-  "pdf_sha256": "ccab5fe9197bf19ce694d879765a7abc5c6f42d2d8a172a62b97498309c23016",
+  "pdf_sha256": "b9d1e44c0d69235d51e91451cf17b0f859b78b73a3d5ed3cbd038ee40b6546ae",
   "pages": 2,
   "editable_master": "docs/hte-staff-checklist.md; rebuild with scripts/build-hte-pdf.py --staff",
   "private_email_included": false,

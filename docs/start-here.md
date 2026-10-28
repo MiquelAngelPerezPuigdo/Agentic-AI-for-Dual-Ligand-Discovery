@@ -2,7 +2,7 @@
 
 Browser: [experimental procedure](HTE-START-HERE.md). Commands below are for the pipeline operator.
 
-Frozen R1: **48 pairs, all 30 ligands**. No paid R1 rerun. Regenerate stocks/protocols/maps after updating the repository. Physical actions: [bench sheet](HTE-staff-checklist.pdf).
+Frozen R1: **48 pairs, all 30 ligands**. No paid R1 rerun. The [fixed OT-2 files](../protocols/fixed-campaign/README.md) are ready for local App import after the operator's equipment check. Physical actions: [bench sheet](HTE-staff-checklist.pdf).
 
 ## Install and configure
 
@@ -12,24 +12,16 @@ Use schema **6** and **fresh naphthalene calibration**; old mesitylene calibrati
 
 ## Robot preparation, then R1
 
-Use the [weighing list](weighing-list.md), then generate a guarded preview. `output/prep-preview/` contains `bulk_carriers.csv` and `raw_reagents_to_load.csv`. After local checks, generate the live protocol; no mass-entry CSV is needed:
+Use the [weighing list](weighing-list.md) and the published fixed stock preparation and R1 protocols. For the later R2 software, create a local preparation manifest with the confirmed configuration; **this generates files only, and does not run stock preparation again**. No mass-entry CSV is needed:
 
 ```bash
-python -m hte.cli --config local_data/campaign.json prepare-stocks \
-  --output output/prep-preview
 python -m hte.cli --config local_data/campaign.json prepare-stocks \
   --output local_data/stock-prep --live
+python scripts/check-fixed-campaign.py \
+  --preparation local_data/stock-prep/preparation_manifest.json
 ```
 
-Run **`local_data/stock-prep/prepare_stocks.py`** locally: p300 single left /p1000 single right. Preserve its manifest at the default configured path. Follow swaps; afterward change right to p300 multi and tips 8/9 to 300 µL through the App installation/calibration workflow.
-
-```bash
-python -m hte.cli --config local_data/campaign.json export \
-  --design campaigns/hackathon2026/round1_design.csv \
-  --output output/r1-dose --live --stage dose_and_react
-```
-
-Start with **48 NEW EMPTY R1 vials**. Retain **SM/IS tube 4 D2**, capped between rounds. Send the robot-prepared calibration plate to LC using its map. [Import/calibrate](htel-lc-import.md); set `lc_calibration_validated=true` after success. Export R1 workup with the SAME command/design, changing to **`--output output/r1-workup --stage workup`**. Keep reservoir 2; use a fresh final LC plate.
+If the check fails, reconcile the actual stock recipe before R2. Run the [published fixed protocols](../protocols/fixed-campaign/README.md) locally: p300 single left /p1000 single right for stock preparation, then change right to p300 multi and tips 8/9 to 300 µL through the App installation/calibration workflow. Preserve the matching manifest at its default path. Start R1 with **48 NEW EMPTY vials**. Retain **SM/IS tube 4 D2**, capped between rounds. Send the robot-prepared calibration plate to LC using its map. [Import/calibrate](htel-lc-import.md); set `lc_calibration_validated=true` after success. Run the published R1 workup after cooling. Keep reservoir 2; use a fresh final LC plate.
 
 ## R2 and finish
 
@@ -37,7 +29,7 @@ Complete actual injection maps. After ALL 48 results:
 
 ```bash
 python scripts/hte-lc-results.py next \
-  --dosing output/r1-dose/dosing.csv \
+  --dosing protocols/fixed-campaign/round1/dosing.csv \
   --exports local_data/r1-batch*.csv \
   --injections local_data/r1-map*.csv --output output/r1-decision
 ```

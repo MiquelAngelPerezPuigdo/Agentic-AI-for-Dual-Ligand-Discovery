@@ -1,5 +1,7 @@
 # OT-2 protocols for the first round
 
+For the preplanned executable files, use the **[fixed-campaign folder](../fixed-campaign/README.md)**. This folder is retained for simulation-only previews.
+
 These are generated from the committed campaign settings and the selected 48-pair design. Download the `.py` files to import them into the local Opentrons App for **simulation and review**:
 
 1. [prepare_stocks.py](stock-preparation/prepare_stocks.py) — solvent addition, stock mixing and transfer to working tubes. Its maps are [bulk carriers](stock-preparation/bulk_carriers.csv) and [raw solvents](stock-preparation/raw_reagents_to_load.csv).

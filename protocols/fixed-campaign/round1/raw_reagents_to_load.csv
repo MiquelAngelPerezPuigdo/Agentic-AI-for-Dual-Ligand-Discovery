@@ -1,0 +1,8 @@
+phase,reagent,slot,well,minimum_load_ul,instruction
+hold,ACN,3,A1,25000,Pour at least this amount; no precise manual pipetting. Keep below 29 mL/channel.
+hold,ACN,3,B1,25000,Pour at least this amount; no precise manual pipetting. Keep below 29 mL/channel.
+hold,ACN,3,C1,25000,Pour at least this amount; no precise manual pipetting. Keep below 29 mL/channel.
+hold,water,3,D1,25000,Pour at least this amount; no precise manual pipetting. Keep below 29 mL/channel.
+hold,water,3,E1,25000,Pour at least this amount; no precise manual pipetting. Keep below 29 mL/channel.
+hold,toluene,3,F1,2000,Pour at least this amount; no precise manual pipetting. Keep below 29 mL/channel.
+hold,FA,3,G1,2500,Pour at least this amount; no precise manual pipetting. Keep below 29 mL/channel.

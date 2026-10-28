@@ -41,11 +41,11 @@ Concentrations use nominal solvent addition. **No hand refills or R2 stock remak
 
 **Operator / start:** ____________________ **LC method / channel:** ____________________
 
-Use regenerated files for the current R1 design; discard earlier dosing exports. Follow App pauses and matching loading CSVs. Staff handle weighing, coarse loading, caps, moves and local starts. Preparation counts inside the campaign.
+Use the fixed-campaign files for the current R1 design; discard earlier dosing exports. Follow App pauses and matching loading CSVs. Staff handle weighing, coarse loading, caps, moves and local starts. Preparation counts inside the campaign.
 
 | Step | Action |
 |---|---|
-| 1 / Stocks | Run **`prepare_stocks.py`**. Uncover requested reservoirs; cover/store when removed. Retain the preparation manifest. Make the one right-pipette/tip-rack change after preparation. |
+| 1 / Stocks | Run **`prepare_stocks.py`**. Uncover requested reservoirs; cover/store when removed. The software operator creates and checks the matching preparation manifest for R2. Make the one right-pipette/tip-rack change after preparation. |
 | 2 / R1 setup | Load **48 NEW EMPTY vials** in the reaction block at 3. Uncap the required stock tubes; start R1 Python. |
 | 3 / R1 reaction | Robot doses **25 µL SM/IS +75 µL ligand A +75 µL ligand B +75 µL Pd**. Hand-cap; move/latch. **95 °C, 500 rpm, 4 h. Start the external timer when the App announces the hold starts.** |
 | 4 / During R1 hold | Leave reaction on 10. Load raw solvents in 3 and analytical rack in 4; **uncap its source tubes**. Robot makes **14 standards** and quench/diluent in 2. Seal/move calibration plate **6 → HPLC**; start sequence. Restore rack 4; remove raw reservoir. **Monitor the timer:** pauses do not stop heating. At deadline while paused, stop heat/shaking via App; record the overrun and do not resume dosing. |

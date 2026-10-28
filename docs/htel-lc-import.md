@@ -109,7 +109,7 @@ If the decision CSV was generated but live protocol export was blocked, resolve 
 
 ```bash
 python -m hte.cli --config local_data/campaign.json export \
-  --design "R2_DIR/next_design.csv" --history output/r1-dose/dosing.csv \
+  --design "R2_DIR/next_design.csv" --history protocols/fixed-campaign/round1/dosing.csv \
   --live --output output/r2-live
 ```
 

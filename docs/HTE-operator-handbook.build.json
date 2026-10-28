@@ -1,11 +1,11 @@
 {
   "edition_date": "2026-10-28",
   "edition_timezone": "Europe/Zurich",
-  "source_sha256": "6c3ab8279810650e8466e5420994103df8b48271bda80496199ff6e18c336433",
+  "source_sha256": "d83e8611262e30a8d7f81a408e83fd03c1a0c9a7bd741178b2ebe6b5970b101a",
   "sources": {
-    "docs/hte-runbook.md": "864d85eeab2c9309653c652431aa4581b977ec66c56389fe94fee21323f7e72a",
+    "docs/hte-runbook.md": "dd68cc260cbf1b5ec9127ff07c84bce0283f93a715b6aa6a651c35858477ffec",
     "docs/stocks-and-calibration.md": "28806dcce20d2ec590c27a5a1a8c784249deebd7eed1b6fe523ee1db563bc10f",
-    "docs/start-here.md": "8e37fa22bc7cb4d5102a30bd7642bb26fe94e6a0d46c02c4e138ead20b643e4a",
+    "docs/start-here.md": "a17e06588af81e07a74d7dd541c8818c85109a7e968573918352005a0eb0e2e6",
     "hte_inputs/campaign.json": "f01f5d207c54853875aa2498aad203a77c105481286b91f08492ad9b245e4379",
     "hte_inputs/calibration_template.csv": "9aab903969587dbc6d2045aa18669cfe03eecb54209fe59afde1932fe6322d4e",
     "hte_inputs/ligands.csv": "a24c186b814eaeb8b5950e7a059e21b8df001764e83b19f127a3da179f4a5876",
@@ -26,7 +26,7 @@
     "uv.lock": "aa781a38974aa7830c5fa48cc714b04acfd05d08d308e333a607f9b915e01d26",
     "hte/analytical_stocks.py": "abde42b9b988af9bcfca01fd9e622eb2abffc73185209df6b54798440ac237c4",
     "scripts/hte-lc-results.py": "ec93906dd68a861a3d53aede52ec2469a8780698f09527a4ac2f64fc65262c3d",
-    "docs/HTE-START-HERE.md": "d7f1c2161243f7976e102ddbc96d25fa6a301b1a2e4515b55cbecc0fa8373632",
+    "docs/HTE-START-HERE.md": "688f483578f08d75c8b6acfe97295d43a8e08fca379b2e93594eeb36cff10b32",
     "docs/deck-loading.md": "de11c1ba8a7e168d5857eb1d05cc353a2cf17710f7063be814ff6a9a538ebbe6",
     "scripts/hte-guide.py": "6e35584b2f88d0d5e2eeaffa224dfde7822e1a2f7638635a0767c2b0c2e0f246",
     "hte/transfer.py": "9deb44eef9c218fa7e35ef9931d69462e13d0a6545229e85755331366b1811cf",
@@ -38,7 +38,7 @@
     "campaigns/hackathon2026/round1_design.csv": "3c68d4fe7429cd5b880cdbec25debd4fd6d6e794e95022c88c317c07c5d5dd27",
     "campaigns/hackathon2026/scoring/campaign_provenance.json": "a97c2eec55f40228c5002f197a074dee898f26eacf24fdf2f61424707cca13fb"
   },
-  "pdf_sha256": "35cd7d4600bed129c7a4e8a62113fe68a53ec88cc34062165429d3d9fbfc8bd6",
+  "pdf_sha256": "183421f41e772879b48582de57f0c79d94e059389a77ae803fa6738b377102d2",
   "pages": 4,
   "editable_master": "docs/hte-runbook.md, docs/stocks-and-calibration.md, docs/start-here.md; rebuild with scripts/build-hte-pdf.py",
   "private_email_included": false,

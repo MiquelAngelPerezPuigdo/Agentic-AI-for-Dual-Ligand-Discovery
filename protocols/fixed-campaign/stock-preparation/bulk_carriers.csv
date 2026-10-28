@@ -1,0 +1,42 @@
+stock_id,carrier_id,slot,well,preloaded_mass_mg,preload_action,nominal_stock_mM,robot_prepared_ul
+substrate_stock,BULK-01-3,3,A1,402.9,Weigh SM ONLY; robot adds naphthalene source,1000,2500.0
+L31,BULK-01-3,3,A2,23.11474,Weigh listed amount independently,20,2900.0000000000005
+L30,BULK-01-3,3,A3,31.990828,Weigh listed amount independently,20,2900.0
+L29,BULK-01-3,3,A4,17.5389,Weigh listed amount independently,20,3000.0
+L28,BULK-01-3,3,A5,36.477648,Weigh listed amount independently,20,3600.0000000000005
+L27,BULK-01-3,3,A6,24.131382,Weigh listed amount independently,20,3299.9999999999995
+L26,BULK-01-6,6,A1,41.2551,Weigh listed amount independently,20,3000.0
+L25,BULK-01-6,6,A2,26.139758,Weigh listed amount independently,20,3100.0000000000005
+L24,BULK-01-6,6,A3,31.133297999999996,Weigh listed amount independently,20,2900.0
+L23,BULK-01-6,6,A4,23.811204,Weigh listed amount independently,20,2900.0
+L22,BULK-01-6,6,A5,27.065468,Weigh listed amount independently,20,2900.0
+L21,BULK-01-6,6,A6,26.696824,Weigh listed amount independently,20,2800.0
+L20,BULK-02-3,3,A1,34.372242,Weigh listed amount independently,20,3100.0000000000005
+L19,BULK-02-3,3,A2,25.572086,Weigh listed amount independently,20,3100.0
+L18,BULK-02-3,3,A3,32.261308,Weigh listed amount independently,20,3400.0000000000005
+L17,BULK-02-3,3,A4,32.95994,Weigh listed amount independently,20,3400.0000000000005
+L16,BULK-02-3,3,A5,37.029312,Weigh listed amount independently,20,3200.0
+L15,BULK-02-3,3,A6,27.29472,Weigh listed amount independently,20,3200.0
+L14,BULK-02-6,6,A1,23.55402,Weigh listed amount independently,20,3000.0
+L13,BULK-02-6,6,A2,21.75796,Weigh listed amount independently,20,2800.0
+L12,BULK-02-6,6,A3,19.63155,Weigh listed amount independently,20,2900.0
+L11,BULK-02-6,6,A4,27.81856,Weigh listed amount independently,20,2800.0
+L10,BULK-02-6,6,A5,30.849504,Weigh listed amount independently,20,2800.0
+L09,BULK-02-6,6,A6,33.560656,Weigh listed amount independently,20,2900.0000000000005
+L08,BULK-03-3,3,A1,19.805782,Weigh listed amount independently,20,2900.0000000000005
+L06,BULK-03-3,3,A2,27.884138,Weigh listed amount independently,20,2900.0
+L05,BULK-03-3,3,A3,42.301578,Weigh listed amount independently,20,3300.0
+L04,BULK-03-3,3,A4,48.90438,Weigh listed amount independently,20,3000.0
+L03,WORKING RACK,1,C1,7.499296,Weigh listed amount independently,20,800.0
+L02,BULK-03-3,3,A5,37.36128,Weigh listed amount independently,20,3000.0
+L01,BULK-03-3,3,A6,27.81876,Weigh listed amount independently,20,3000.0
+Pd_1,WORKING RACK,4,A3,22.8,Weigh listed amount independently,40,1504.751847940866
+Pd_2,WORKING RACK,4,B3,22.8,Weigh listed amount independently,40,1504.751847940866
+Pd_3,WORKING RACK,4,C3,22.8,Weigh listed amount independently,40,1504.751847940866
+Pd_4,WORKING RACK,4,A4,21.6,Weigh listed amount independently,40,1425.5543822597679
+SM_FIT,BULK-03-6,6,A1,6.4464,Weigh listed amount independently,10,4000.0
+SM_CHECK,BULK-03-6,6,A2,6.4464,Weigh listed amount independently,10,4000.0
+P_FIT,BULK-03-6,6,A3,5.8254,Weigh listed amount independently,10,6000.0
+P_CHECK,BULK-03-6,6,A4,5.8254,Weigh listed amount independently,10,6000.0
+IS_SOURCE,WORKING RACK,1,C2,60,Weigh listed amount independently,500,936.2565342903956
+IS_MASTER,BULK-03-6,6,A5,0,EMPTY: robot adds naphthalene source and matrix components,2,8000
