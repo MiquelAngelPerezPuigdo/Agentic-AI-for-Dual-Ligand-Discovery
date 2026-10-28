@@ -12,7 +12,7 @@ HTE staff only need **[the run folder](../run/README.md)**. This folder contains
 
 ## Build and verify
 
-The staff-facing entry is **[run/README.md](../run/README.md)**. `support/hte/single_run.py` generates one self-contained OT-2 program, source/mass/LC tables and volume ledger. The supplied stock-holder well geometry is retained; only its travel-height envelope is increased to 45 mm so neighboring capped stock vials are included in clearance planning. Confirm actual capped height locally. `support/hte/run_analysis.py` uses the existing peak importer and calibrated quantification in `support/hte/analytics.py`.
+The staff-facing entry is **[run/README.md](../run/README.md)**. `support/hte/single_run.py` generates one self-contained OT-2 program, source/mass/LC tables and volume ledger. The supplied stock-holder well geometry is retained. Its travel-height envelope is increased to 45 mm for neighboring capped vials, and its confirmed flat-adapter seating is encoded for pre-dose shaking. Confirm actual capped height locally. The stock holder moves 1 → 10 → 1 for 750 rpm / 120 s unheated shaking before dosing, with the 32 reaction-stock vials open and ten analytical/working vials capped. `support/hte/run_analysis.py` uses the existing peak importer and calibrated quantification in `support/hte/analytics.py`.
 
 Use Python 3.12:
 
@@ -34,5 +34,7 @@ The common reservoir is prefilled by HTE. Its channel allocator preserves 1.5 mL
 `run/run_screen.py` keeps one protocol context and the same loaded pipettes from stocks through sampling. Tip tracking continues automatically; no starting-tip override or protocol restart is required. Preserve all tip racks and the LC plate throughout. Do not skip operations or silently substitute stocks; record deviations and reconcile the actual source ledger before continuing.
 
 The SDK establishes software command validity, not mounting, offsets, solvent compatibility, splash containment, dissolution or LC separation. The local App/setup checks and real calibration remain necessary. An integrated-area CSV cannot detect every coelution or verify upstream peak integration.
+
+The four-hour heated hold is nominal. Standards-preparation delays extend the hold without aborting the protocol. Its log records actual elapsed heated duration and the heater-off-to-quench-start/end intervals. For a deliberately longer hold, staff can wait at the post-standards pause before resuming. Cooling of the sealed reaction block is passive in slot 3; staff independently confirm ≤30 °C before opening, in addition to the module's own ≤30 °C interlock. Analysis chemistry settings retain the planned four-hour target; preserve actual timing in the robot log and run notes.
 
 The initialization code, embeddings, scores and historical settings under `research/` are scientific provenance. Previous operational materials/tests are retained under `archive/`, outside the active package and test suite. They are not current bench instructions. The complete prior tree remains available at Git commit `dba4824`.

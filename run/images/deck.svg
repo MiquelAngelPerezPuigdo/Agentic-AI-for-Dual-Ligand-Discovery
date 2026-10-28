@@ -130,7 +130,7 @@ z
    <g id="text_2">
     <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(92.480781 427.812564)">STOCK VIALS</text>
     <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.774531 443.812564)">HTEL 48 × 2 mL</text>
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(90.328437 458.932095)">Stays in place</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(74.238594 458.932095)">Shake before dosing</text>
    </g>
    <g id="text_3">
     <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="242.5248" y="398.61432" transform="rotate(-0 242.5248 398.61432)">2</text>
@@ -216,7 +216,7 @@ z
    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="324" y="47.952" transform="rotate(-0 324 47.952)">LEFT: p300 single GEN2     |     RIGHT: p300 eight-channel GEN2</text>
   </g>
   <g id="text_27">
-   <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="324" y="511.488" transform="rotate(-0 324 511.488)">FRONT / OPERATOR    •    Only the reaction block and final LC plate move to the shaker.</text>
+   <text style="font-size: 8.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="324" y="511.488" transform="rotate(-0 324 511.488)">FRONT / OPERATOR  •  Stock holder: 1 → 10 → 1 before dosing; reaction block and LC plate use 10 later.</text>
   </g>
  </g>
  <defs>

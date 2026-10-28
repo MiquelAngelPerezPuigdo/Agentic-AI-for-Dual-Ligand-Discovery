@@ -40,6 +40,16 @@ def test_reserves_headspace_and_material_budget(plan):
                for op in plan[group] if op['type']=='transfer')
 
 
+def test_stock_shaking_after_preparation_before_any_reaction_dose(plan):
+    ops=plan['steps_before_reaction']
+    index,shake=next((i,op) for i,op in enumerate(ops) if op['type']=='shake_stocks')
+    assert sum(op['type']=='shake_stocks' for op in ops)==1
+    assert shake['rpm']==750 and shake['seconds']==120
+    assert len({tuple(op['location']) for op in ops[:index] if op['type']=='mix'})==32
+    reaction_doses=[i for i,op in enumerate(ops) if op['type']=='transfer' and op['dest'][0]=='reaction']
+    assert min(reaction_doses)>index
+
+
 def test_molar_and_solvent_balance_through_every_liquid_transfer(plan):
     # Independently propagate conserved solutes and toluene through real transfer steps.
     volume={('res',w):v for w,_,v in RESERVOIR}
@@ -100,6 +110,7 @@ def test_published_files_are_current(tmp_path):
     supplied=read_json(ROOT/'support/hte_inputs/labware/htel_vialholder_48_2mL.json')
     assert definitions['stocks']['wells']==supplied['wells']
     assert definitions['stocks']['dimensions']['zDimension']==45
+    assert definitions['stocks']['stackingOffsetWithLabware']['opentrons_universal_flat_adapter']=={'x':0,'y':0,'z':0}
 
 
 def test_real_sdk_continuous_protocol_and_tip_positions():
@@ -114,14 +125,54 @@ def test_real_sdk_continuous_protocol_and_tip_positions():
     assert '1.5 mm' in source
     assert 'starting_tip' not in source and 'STAGE=' not in source
     moves=[text for text in texts if text.startswith('Moving ')]
-    assert len(moves)==6
-    assert not any('htelvialholder' in text or 'axygen' in text for text in moves)
+    assert len(moves)==8
+    assert 'htelvialholder' in moves[0] and 'opentrons_universal_flat_adapter' in moves[0]
+    assert 'htelvialholder' in moves[1] and 'slot 1' in moves[1]
+    assert not any('htelvialholder' in text for text in moves[2:])
+    assert not any('axygen' in text for text in moves)
+    speeds=[int(re.search(r'Shake at (\d+) RPM',text)[1]) for text in texts if 'Setting Heater-Shaker to Shake at' in text]
+    assert speeds==[750,500,750,750]
     # Workup follows the completed hold in the same simulation, without a restart.
-    phases=['Reaction stocks prepared', 'REACTION HOLD START', 'Three hours into the reaction',
-            'Four-hour hold complete', 'Confirm the SEALED reaction vials have cooled',
+    phases=['STOCK SHAKE START', 'Reaction stocks prepared', 'REACTION HOLD START', 'Three hours into the nominal reaction hold',
+            'Four-hour nominal hold complete', 'Confirm the SEALED reaction vials AND block',
             'Now unscrew all 48', 'Recap reaction vials for storage', 'Seal the LC plate']
     positions=[next(i for i,text in enumerate(texts) if phase in text) for phase in phases]
     assert positions==sorted(positions)
+
+
+def test_late_heated_hold_and_cooling_wait_continue_and_are_logged():
+    # Use the SDK for robot I/O and an accelerated clock for the live timing branch.
+    from types import SimpleNamespace
+    from opentrons.simulate import get_protocol_api
+    namespace={'__name__':'timing_test'}
+    exec(compile((ROOT/'run/run_screen.py').read_text(),'run_screen.py','exec'),namespace)
+    elapsed=[0.0];comments=[];pauses=[]
+    namespace['time']=SimpleNamespace(monotonic=lambda:elapsed[0])
+    sdk=get_protocol_api('2.18',robot_type='OT-2')
+    class TimedContext:
+        def __getattr__(self,name):return getattr(sdk,name)
+        def is_simulating(self):return False
+        def delay(self,seconds=0,**kwargs):
+            assert seconds>=0
+            elapsed[0]+=seconds
+            return sdk.delay(seconds=seconds,**kwargs)
+        def pause(self,message):
+            pauses.append(message)
+            assert len(pauses)<100
+            if message.startswith('Seven mixed-analyte standards prepared'):elapsed[0]+=3*3600
+            if message.startswith('Confirm the SEALED reaction vials'):elapsed[0]+=45*60
+            return sdk.pause(message)
+        def comment(self,message):
+            comments.append(message)
+            return sdk.comment(message)
+    namespace['run'](TimedContext())
+    assert any(t.startswith('Nominal hold elapsed during standards') for t in comments)
+    heated=next(t for t in comments if t.startswith('HEATED HOLD COMPLETE: actual'))
+    assert float(re.search(r'heated hold ([\d.]+) min',heated)[1])>=360
+    quench=next(t for t in comments if t.startswith('QUENCH START:'))
+    assert float(re.search(r'QUENCH START: ([\d.]+) min',quench)[1])>=45
+    assert any(t.startswith('QUENCH COMPLETE:') for t in comments)
+    assert pauses[-1].startswith('Seal the LC plate')
 
 
 def test_staff_links_and_one_authoritative_protocol_folder():

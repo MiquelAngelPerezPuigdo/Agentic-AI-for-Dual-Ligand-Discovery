@@ -1018,7 +1018,7 @@ z
    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="51.84" y="662.4" transform="rotate(-0 51.84 662.4)">GREEN: ligand stocks     AMBER: reaction SM/IS and Pd     BLUE: analytical sources / working vials</text>
   </g>
   <g id="text_200">
-   <text style="font-size: 10.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="51.84" y="687.6" transform="rotate(-0 51.84 687.6)">Weigh the shown chemicals into these vials. The robot adds solvent. B7–F7 start empty; column 8 is unused.</text>
+   <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="51.84" y="687.6" transform="rotate(-0 51.84 687.6)">Stock shake: reaction-stock vials OPEN, analytical vials capped. 750 rpm / 2 min, heater OFF. B7–F7 start empty; column 8 unused.</text>
   </g>
  </g>
  <defs>

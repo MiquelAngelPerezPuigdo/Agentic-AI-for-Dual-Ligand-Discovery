@@ -10,6 +10,8 @@
     "temperature_C": 95,
     "reaction_minutes": 240,
     "reaction_rpm": 500,
+    "stock_mix_rpm": 750,
+    "stock_mix_seconds": 120,
     "workup_ul": 400,
     "aliquot_ul": 20,
     "lc_diluent_ul": 480,
@@ -3149,8 +3151,13 @@
       "cycles": 8
     },
     {
+      "type": "shake_stocks",
+      "rpm": 750,
+      "seconds": 120
+    },
+    {
       "type": "pause",
-      "message": "Reaction stocks prepared in their final tubes. Check liquids, bubbles and visible solids. All 48 reaction vials must be EMPTY and UNCAPPED in slot 3. No source transfers or rack changes."
+      "message": "Stock-holder shaking complete. Reaction stocks prepared in their final tubes. Confirm holder back in slot 1, A1 at back-left. Keep 30 ligand vials A1:F5 plus SM_IS A6 and Pd B6 OPEN for dosing. Keep analytical/working vials C6,D6,E6,F6,A7,B7,C7,D7,E7,F7 CAPPED until the standards-preparation prompt. Check liquids, bubbles and visible solids. All 48 reaction vials must be EMPTY and UNCAPPED in slot 3. Resume for dosing."
     },
     {
       "type": "transfer",

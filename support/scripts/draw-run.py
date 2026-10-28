@@ -18,7 +18,7 @@ def main():
     ink='#202a30';line='#bcc5c9';blue='#e4eef6';green='#e3eee6';amber='#fbefd9'
     fig,ax=plt.subplots(figsize=(9,7.4));fig.subplots_adjust(left=.04,right=.96,top=.87,bottom=.09)
     ax.set(xlim=(0,3),ylim=(0,4));ax.axis('off')
-    titles={1:'STOCK VIALS\nHTEL 48 × 2 mL\nStays in place',2:'ONE RESERVOIR\n12 channels\nStays in place',
+    titles={1:'STOCK VIALS\nHTEL 48 × 2 mL\nShake before dosing',2:'ONE RESERVOIR\n12 channels\nStays in place',
             3:'REACTION BLOCK\n48 × 2 mL Para-Dox\n100 µL per reaction',4:'EMPTY',5:'300 µL TIPS\nLeft single-channel',
             6:'ONE LC PLATE\n48 samples + 7 standards\n500 µL per filled well',7:'EMPTY',8:'300 µL TIPS\nLeft single-channel',
             9:'300 µL TIPS\nRight eight-channel',10:'HEATER-SHAKER\nUniversal flat adapter',11:'EMPTY',12:'FIXED TIP WASTE'}
@@ -30,7 +30,7 @@ def main():
         ax.text(x+.5,y+.43,titles[slot],ha='center',va='center',fontsize=10,color=ink,linespacing=1.6)
     fig.suptitle('Load once — one 48-reaction run',x=.5,y=.97,fontsize=19,fontweight='bold',color=ink)
     fig.text(.5,.91,'LEFT: p300 single GEN2     |     RIGHT: p300 eight-channel GEN2',ha='center',fontsize=10,color=ink)
-    fig.text(.5,.04,'FRONT / OPERATOR    •    Only the reaction block and final LC plate move to the shaker.',ha='center',fontsize=9,color=ink)
+    fig.text(.5,.04,'FRONT / OPERATOR  •  Stock holder: 1 → 10 → 1 before dosing; reaction block and LC plate use 10 later.',ha='center',fontsize=8.5,color=ink)
     for ext in ('svg','png'):
         file=out/f'deck.{ext}';fig.savefig(file,dpi=180,facecolor='white',metadata={'Date':None} if ext=='svg' else None)
         if ext=='svg':file.write_text('\n'.join(line.rstrip() for line in file.read_text().splitlines())+'\n')
@@ -68,7 +68,7 @@ def main():
     fig.text(.5,.875,'BACK OF ROBOT',ha='center',fontsize=10,fontweight='bold',color='#53636c')
     fig.text(.5,.125,'FRONT / OPERATOR',ha='center',fontsize=10,fontweight='bold',color='#53636c')
     fig.text(.045,.08,'GREEN: ligand stocks     AMBER: reaction SM/IS and Pd     BLUE: analytical sources / working vials',fontsize=11,color=ink)
-    fig.text(.045,.045,'Weigh the shown chemicals into these vials. The robot adds solvent. B7–F7 start empty; column 8 is unused.',fontsize=10.5,color=ink)
+    fig.text(.045,.045,'Stock shake: reaction-stock vials OPEN, analytical vials capped. 750 rpm / 2 min, heater OFF. B7–F7 start empty; column 8 unused.',fontsize=10,color=ink)
     for ext in ('svg','png'):
         file=out/f'stock-map.{ext}';fig.savefig(file,dpi=180,facecolor='white',metadata={'Date':None} if ext=='svg' else None)
         if ext=='svg':file.write_text('\n'.join(line.rstrip() for line in file.read_text().splitlines())+'\n')

@@ -2,13 +2,13 @@
 
 **Load the deck once and run [run_screen.py](run_screen.py) once.** This single program prepares stocks, doses and runs the reaction, prepares analytical standards during the hold, then quenches and samples. Follow App pauses for caps, covers and manual shaker moves. Each ligand is weighed **once** into its final glass source vial. No stock transfers, refills, pipette changes or second program.
 
-**100 µL per reaction:** 0.1 M SM in toluene, 6 mol% of each ligand, 12 mol% Pd(COD)(DQ), 10 mol% naphthalene; **95 °C, 500 rpm, four hours**. The original 48 selected pairs and all 30 ligands are retained.
+**100 µL per reaction:** 0.1 M SM in toluene, 6 mol% of each ligand, 12 mol% Pd(COD)(DQ), 10 mol% naphthalene; **95 °C, 500 rpm, nominally four hours**. The original 48 selected pairs and all 30 ligands are retained.
 
 [What to weigh](WEIGHING.md) · [Source-vial map](images/stock-map.png) · [Deck map](images/deck.png) · [Printable bench sheet](bench-sheet.pdf)
 
 ## 1. Load once
 
-Have **48 empty reaction vials with screw caps**, **42 stock/working vials**, one HTEL 48-vial source holder, the Para-Dox reaction block, one Axygen 12-channel reservoir, **one 96-well LC plate**, its cover/seal, and three 300 µL tip racks. Use the supplied vial and plate definitions; confirm offsets in the local App.
+Have **48 empty reaction vials with screw caps**, **42 stock/working vials**, one HTEL 48-vial source holder, the Para-Dox reaction block, one Axygen 12-channel reservoir, **one 96-well LC plate**, its cover/seal, and three 300 µL tip racks. Have a suitable contact temperature probe and tools for handling the hot sealed block. Use the supplied vial and plate definitions; confirm offsets in the local App.
 
 | Slot | Load |
 |---:|---|
@@ -23,7 +23,7 @@ Have **48 empty reaction vials with screw caps**, **42 stock/working vials**, on
 
 ![Deck loading](images/deck.png)
 
-The source holder is **not** the heated reaction block. The source holder and reservoir stay on deck. Only the reaction block and, at the end, the LC plate move to the shaker.
+The source holder has its home in **slot 1**. Before dosing, it makes one trip **1 → 10 → 1** for unheated stock shaking, with reaction-stock vials open and analytical vials capped. The reservoir stays in slot 2. The reaction block and, at the end, the LC plate use the shaker afterward.
 
 ## 2. Prepare two bulk liquids and fill the reservoir
 
@@ -48,16 +48,21 @@ Download **[run_screen.py](run_screen.py)** using GitHub's **Download raw file**
 
 Start with the ligand vials in A1–F5 and SM_IS A6 / Pd B6 open. Keep analytical vials C6–F7 capped until the three-hour prompt. **Keep the same labware and tip racks throughout:** tip tracking continues automatically within this one program. Do not restart it after the reaction hold.
 
-1. The robot adds toluene to the 30 ligand vials and to the SM/IS and Pd vials, then mixes them. **No weighing or precision liquid transfers during the run.** Pause for a visibly unsuitable stock or transfer fault.
-2. It doses each reaction: **20 µL combined SM/IS + 30 µL ligand A + 30 µL ligand B + 20 µL Pd**. Vials use the single-channel pipette because their pitch is 13 mm.
-3. At the App pause, hand-tighten all 48 reaction caps. Cap the stock vials and cover the reservoir and LC plate in place. Move the reaction block **3 → 10** when prompted.
-4. Start an **external four-hour timer** at the App's hold-start message. The robot heats/shakes at 95 °C/500 rpm. App pauses do not stop heating: stop heat/shaking manually at the endpoint if the App remains paused and record the actual time.
-5. **After three hours**, the App requests removal of the reservoir/LC covers and the ten analytical-vial caps specified on screen. The robot prepares the standards in **LC wells A7–G7**. It then requests covering the plate/reservoir and recapping those sources. No labware is exchanged.
-6. At four hours, heating/shaking stops. Move the sealed block **10 → 3** when prompted and let it cool. Leave the source holder, reservoir and LC plate in place.
+1. The robot adds toluene to the 30 ligand vials and to the SM/IS and Pd vials, then pipette-mixes each stock eight times. **No weighing or precision liquid transfers during the run.**
+2. At the App pause, **leave the 30 ligand vials and SM_IS A6 / Pd B6 open**; keep the ten analytical/working vials capped. Move the stock holder **1 → 10** when prompted. The robot shakes it **750 rpm for two minutes, heater off**, then requests return **10 → 1** with A1 at the back-left. Check stocks and bubbles before resuming dosing. The holder's secure fit on the universal flat adapter has been confirmed by HTE.
+3. It doses each reaction: **20 µL combined SM/IS + 30 µL ligand A + 30 µL ligand B + 20 µL Pd**. Each ligand/Pd source is pipette-mixed twice immediately before its first dose. Vials use the single-channel pipette because their pitch is 13 mm. Pause for a visibly unsuitable stock or transfer fault.
+4. At the App pause, hand-tighten all 48 reaction caps. Cap the stock vials and cover the reservoir and LC plate in place. Move the reaction block **3 → 10** when prompted.
+5. Start an **external timer** at the App's hold-start message. The nominal heated hold is **four hours at 95 °C/500 rpm**. App pauses keep heating/shaking active. Longer holds are permitted; their actual duration is recorded in the robot log.
+6. **After three hours**, the App requests removal of the reservoir/LC covers and the ten analytical-vial caps specified on screen. The robot prepares the standards in **LC wells A7–G7**. It then requests covering the plate/reservoir and recapping those sources. For an agreed longer heated hold, remain at this post-standards pause until the agreed endpoint, then resume. Otherwise resume promptly for the nominal four-hour endpoint. No labware is exchanged.
+7. At the end of the hold, heating/shaking stops. Move the **sealed** block **10 → 3** when prompted using suitable thermal handling. Leave all reaction caps on while it cools. Leave the source holder, reservoir and LC plate in place.
+
+**Timing flexibility:** four hours is the nominal heated hold. A longer heated hold or a delay between heater-off and quenching is allowed. The program continues through a late standards-preparation pause and logs the actual heated duration plus the heater-off-to-quench-start/end intervals. Keep the actual timing in the run notes too. Conversion may continue during cooling, so heater-off and quenching are separate events.
 
 ## 4. Continue the same program after cooling
 
-The program waits for cooling and operator confirmation, then continues directly to workup. Use the **same reservoir with the remaining liquids** and the **same LC plate**; leave all tip racks in place.
+**Cooling:** with heat and shaking off, let the sealed reaction block cool passively in **slot 3**. Confirm the block and reaction vials are **≤30 °C using a suitable contact temperature probe before opening**. There is no fixed cooling delay: wait until this condition is met. The program separately waits for the heater-shaker plate reading to reach ≤30 °C for unheated workup. That reading covers the module; staff confirm the reaction block/vials independently. The module has [passive cooling](https://docs.opentrons.com/python-api/reference/heater-shaker/#opentrons.protocol_api.HeaterShakerContext.deactivate_heater).
+
+The App pauses for this confirmation, then continues to workup. A longer cooling/waiting interval is allowed. Use the **same reservoir with the remaining liquids** and the **same LC plate**; leave all tip racks in place.
 
 1. Confirm cooling. Remove the reservoir/LC covers; leave the reaction vials capped while the robot adds **480 µL LC diluent** to sample wells A1–H6 using the eight-channel pipette.
 2. At the pause, unscrew the 48 reaction caps. The robot adds **400 µL quench per vial**. Move the open block **3 → 10** when prompted; shake **750 rpm for two minutes, heater off**, using the locally confirmed containment setting. Return **10 → 3**.
