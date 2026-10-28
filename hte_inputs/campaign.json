@@ -150,7 +150,7 @@
     "reservoir_dead_ul": 2000,
     "tube_max_fill_ul": 1950,
     "reservoir_max_fill_ul": 11900,
-    "substrate_storage_container": "Compatible bulk source in labeled robot preparation carrier; robot fills retained 2 mL working source",
+    "substrate_storage_container": "Axygen bulk reservoir channel; robot fills retained 2 mL working tube in slot 4 D2",
     "reservoir_source_pools": {
       "workup": [
         "A4",
@@ -318,18 +318,19 @@
     "enabled": true,
     "concentration_basis": "nominal_solvent_addition",
     "approximation_accepted": true,
-    "bulk_labware": "opentrons_10_tuberack_falcon_4x50ml_6x15ml_conical",
-    "bulk_definition_path": null,
+    "bulk_labware": "axygen_12_reservoir_12000ul",
+    "bulk_definition_path": "hte_inputs/labware/axygen_12_reservoir_12000ul.json",
     "bulk_wells": [
       "A1",
-      "B1",
-      "C1",
       "A2",
-      "B2",
-      "C2"
+      "A3",
+      "A4",
+      "A5",
+      "A6"
     ],
-    "bulk_dead_ul": 100,
+    "bulk_dead_ul": 500,
     "bulk_max_fill_ul": 12000,
+    "substrate_bulk_target_ul": 2500,
     "direct_stock_ids": [
       "L03"
     ],
@@ -346,7 +347,7 @@
     "mix_ul": 250,
     "calibration_during_round1_hold": true,
     "workup_fluids_during_hold": true,
-    "bulk_container_status": "REJECTED FOR LIVE USE: configured 117.5 mm-deep Falcon sources require 116 mm insertion at bottom(1.5), beyond attached tip reach. Supply actual short, solvent-compatible source/rack JSON and regenerate; release flags cannot override reach checks.",
+    "bulk_container_status": "Axygen 12-channel reservoirs selected. Confirm exact physical geometry against supplied definition, minimum accessible volume, cover, and solvent compatibility before live release; software simulation is not physical validation.",
     "preparation_large_pipette": "p1000_single_gen2",
     "preparation_manifest_path": "local_data/stock-prep/preparation_manifest.json",
     "prepare_optional_pilot": false,

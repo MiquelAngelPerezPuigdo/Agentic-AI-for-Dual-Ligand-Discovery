@@ -3,21 +3,20 @@
   "schema_version": 6,
   "validation_scope": {
     "baseline_revision": "02943a1ba120fe33a7d4e15bf84b87988ea2e366",
-    "scope": "Final submission review: fresh Git-archive checkout, new Python 3.12 environment installed from uv.lock, complete acceptance suite, regenerated six-stage SDK simulation, independent synthetic LC replay, mocked feedback, adversarial stock selections and private return-package roundtrip. No new software defect found; physical release remains blocked pending local facts.",
+    "scope": "2026-10-28 Axygen stock layout and 2.5 mL SM bulk preparation reviewed in the existing locked environment; full tests, six-stage SDK simulations and offline LC replay. Historical fresh-install and other records retain their dates. Physical release requires local validation.",
     "superseded_audits": "Earlier audit records remain recoverable in Git history.",
     "reports": "output/ paths identify ignored local evidence, not bundled public files. Retained test and rehearsal commands regenerate their reports.",
-    "source_hashes": "Current runtime, configuration, tests, scripts and locked dependency inputs are listed in source_sha256. PDF builds have separate manifests; frozen campaign records have their own manifest."
+    "source_hashes": "Current tracked runtime, configuration, tests and scripts are listed in source_sha256. PDF builds and frozen campaign have separate manifests."
   },
   "tests": {
-    "tests": 364,
+    "tests": 367,
     "failures": 0,
     "errors": 0,
     "skipped": 0,
     "warnings": 30,
-    "warning_scope": "Opentrons SDK deprecations",
-    "duration_seconds": 87.104,
-    "report": "output/final-review/clean-install-tests.xml",
-    "scope": "Full suite in a fresh archived checkout and locked-dependency environment; runtime/configuration unchanged by this review."
+    "warning_scope": "SDK and other dependency warnings",
+    "duration_seconds": 59.85,
+    "scope": "Full tests/hte suite against current Axygen layout in existing locked Python environment; no physical execution."
   },
   "versions": {
     "anthropic": "0.125.0",
@@ -34,13 +33,13 @@
   },
   "dependency_lock": "uv.lock; Python 3.12, uv sync --locked; includes initializer dependencies",
   "release_status": {
-    "status": "blocked_pending_stock_source_geometry_and_other_local_validation",
+    "status": "blocked_pending_physical_labware_and_other_local_validation",
     "physical_robot_runs": 0,
     "real_chemistry_yields_available": false,
     "physical_bench_validation_complete": false,
     "paid_API_calls_for_this_update": 0,
     "pending_local_facts": [
-      "Actual short solvent-compatible stock sources/rack JSON; current no-nozzle-entry reach check fails",
+      "Physical Axygen model and definition match, solvent/cover compatibility, mixing and recoverable liquid volume; default 500 uL residual is an assumption",
       "Actual p1000 generation and App pipette change/calibration",
       "Block/LC-plate fit, caps, offsets, shaking and liquid delivery",
       "Vial heating/cooling and actual whole-campaign timing",
@@ -183,23 +182,25 @@
         "stock_mM": 500,
         "robot_added_toluene_ul_at_planned_mass_and_pure_assay": 936.2565342903956,
         "actual_mass_and_assay_scale_solvent_volume": true,
-        "combined_SM_stock_addition_ul": 400,
+        "combined_SM_stock_addition_ul": 500,
         "analytical_master_addition_ul": 32,
         "surplus_discard_total_ul": 2,
-        "remaining_source_ul_at_planned_mass_and_pure_assay": 502.2565342903956,
+        "remaining_source_ul_at_planned_mass_and_pure_assay": 402.2565342903956,
         "human_precise_liquid_transfer_required": false,
         "clear_source_check_before_both_uses": true
       },
       "combined_reaction_stock": {
-        "nominal_ul": 2000,
+        "nominal_ul": 2500,
         "substrate_mM": 1000,
         "naphthalene_mM": 100,
-        "substrate_mass_mg": 322.32,
-        "naphthalene_stock_added_ul": 400,
-        "additional_toluene_ul": 1600,
+        "substrate_mass_mg": 402.9,
+        "naphthalene_stock_added_ul": 500,
+        "additional_toluene_ul": 2000,
         "dose_per_reaction_ul": 25,
         "substrate_umol_per_reaction": 25,
-        "naphthalene_umol_per_reaction": 2.5
+        "naphthalene_umol_per_reaction": 2.5,
+        "bulk_source": "BULK-01-3 A1",
+        "bulk_remaining_ul": 609
       },
       "analytical_master": {
         "nominal_ul": 8000,
@@ -288,7 +289,7 @@
       "round2_vials": 23,
       "combined_SM_IS_ul_per_vial": 25,
       "working_source": "4 D2",
-      "bulk_preparation_ul": 2000,
+      "bulk_preparation_ul": 2500,
       "initial_working_load_ul": 1890,
       "round1_consumption_including_tip_surplus_ul": 1201,
       "remaining_before_round2_ul": 689,
@@ -357,48 +358,48 @@
     }
   },
   "opentrons_simulations": {
-    "tested_revision": "02943a1ba120fe33a7d4e15bf84b87988ea2e366",
+    "tested_revision": "2026-10-28 Axygen working tree; see source_sha256",
     "SDK_version": "8.8.2",
-    "report": "output/final-review/robot/simulations/report.json",
+    "report": "output/axygen-review/final-sim (ignored local preview)",
     "stages": [
       {
         "stage": "stock_preparation",
         "passed": true,
         "command_count": 3844,
-        "protocol_sha256": "44cc917c9cfa410cfde68f83cc9e8acc2c8ac2837f0062aa7249be67d9a8a27c"
+        "protocol_sha256": "b011f631278cc4740b45dfa4af7bddad947853716fc081832a6d1b519248882b"
       },
       {
         "stage": "round1_dosing",
         "passed": true,
         "command_count": 6087,
-        "protocol_sha256": "e4b6717bfb66f4325dbe146973db815321c4d1f5bc34a99c96a7e7a661c30bc0"
+        "protocol_sha256": "d0c277e5d259969dc4c1df643e95c3355e2c05839107977b2303187e0805ac6d"
       },
       {
         "stage": "round1_workup",
         "passed": true,
         "command_count": 1736,
-        "protocol_sha256": "f6e8135951c6a7c5f4802c90b283c20da9ab24a3e22afcbdcc3820f41628e195"
+        "protocol_sha256": "096be08ace27b9728636bcdc50bbe5e53e110a22753db3d8c2d68ced224125af"
       },
       {
         "stage": "round2_refill",
         "passed": true,
-        "command_count": 1331,
-        "protocol_sha256": "4e09f413b0010bc58a437039204c0dec7c119e46aa54d896e3907cfc343e2e3e"
+        "command_count": 1826,
+        "protocol_sha256": "5585b8e247f60d4736c03f0a9d74490c36025b7a8f653baa2aa4fd5a8e16523e"
       },
       {
         "stage": "round2_dosing",
         "passed": true,
-        "command_count": 2391,
-        "protocol_sha256": "99e2f36b4e1ac85f33f40b7e6429d6d03206413d992d19c1a2ea8e4a93f9a804"
+        "command_count": 2475,
+        "protocol_sha256": "ae05415de22afd4f07be3e2d039a3b379222b27a1f1e0cb5f6d1c6e8dcc78563"
       },
       {
         "stage": "round2_workup",
         "passed": true,
         "command_count": 859,
-        "protocol_sha256": "0902ba88b9d32c947c18c06b4e270a8804ac40c8af36d24d64b973eebc19f165"
+        "protocol_sha256": "ab9651144a7811e60b59598a52c93b729b9006e787e4791e7da21053049b732b"
       }
     ],
-    "total_commands": 16248,
+    "total_commands": 16827,
     "physical_geometry_certified": false,
     "verified_sequences": [
       "direct solids loaded before preparation",
@@ -410,10 +411,10 @@
       "sealed 500 rpm and uncapped 750 rpm; heaters off during open shaking",
       "single archive recap after reaction sampling"
     ],
-    "environment": "Existing review environment: Opentrons 8.8.2; fresh locked installation additionally passed all SDK regression tests in the full suite."
+    "environment": "Existing locked Opentrons 8.8.2 environment; frozen R1 and synthetic R2; no physical robot execution."
   },
   "offline_lc_feedback_rehearsal": {
-    "source_report": "output/final-review/selection/rehearsal/rehearsal_report.json",
+    "source_report": "output/axygen-review/final-mock-loop/rehearsal_report.json",
     "synthetic_only": true,
     "paid_api_calls": 0,
     "round1_pairs": 48,
@@ -431,7 +432,7 @@
     "mocked_request_count": 660,
     "both_prompt_stages_include_17_SI_yields": true,
     "result_interpretation": "Synthetic yields and mocked rankings validate data flow only.",
-    "tested_revision": "02943a1ba120fe33a7d4e15bf84b87988ea2e366"
+    "tested_revision": "2026-10-28 Axygen working tree; see source_sha256"
   },
   "analytical_practice": {
     "synthetic_only": true,
@@ -516,15 +517,15 @@
     "stock_preparation_counts_inside_campaign": true,
     "target_minutes": 720,
     "deadline_enforced": false,
-    "initial_preparation_pumping_wait_minutes": 93.67816360625547,
+    "initial_preparation_pumping_wait_minutes": 93.79554416610881,
     "partial_serial_lower_bound": {
       "components_minutes": {
         "reaction_holds": 480,
         "LC_outside_holds": 120.7,
-        "initial_preparation": 93.67816360625547,
+        "initial_preparation": 93.79554416610881,
         "workup_pumping_waits_shaking": 33.530722222222224
       },
-      "total_minutes": 727.9088858284778,
+      "total_minutes": 728.026266388478,
       "excludes": [
         "reaction dosing",
         "R2 stock refill",
@@ -533,22 +534,19 @@
         "all operator pauses/caps/moves",
         "LLM decision"
       ],
-      "interpretation": "Programmed serial components only; physical duration unmeasured. Fewer cap actions do not alter this pumping/wait/shaking lower bound."
+      "interpretation": "Illustrative programmed serial components; not a measured whole-campaign duration. Motion, handling, ramps, dosing and decision time remain excluded."
     },
     "physical_duration_measured": false,
     "scope": "A 12-hour completion has not been demonstrated. Pumping/wait estimates exclude motion and staff handling; calibration is prepared and measured during R1."
   },
   "physical_source_blocker": {
-    "configured_bulk_container": "opentrons_10_tuberack_falcon_4x50ml_6x15ml_conical",
-    "configured_well_depth_mm": 117.5,
-    "aspiration_height_mm": 1.5,
-    "required_tip_insertion_mm": 116,
-    "stock_preparation_issue_count": 48,
-    "R2_refill_issue_count": 16,
-    "policy": "Live preparation/export rejects nozzle entry below the tube rim. Actual compatible short-source/rack geometry must be supplied; the simulator does not certify clearance or immersion.",
-    "physical_collision_proven": false,
-    "Pd_or_IS_SOURCE_uses_bulk_Falcon": false,
-    "analytical_IS_MASTER_still_uses_bulk_source": true
+    "configured_bulk_container": "Axygen 12-channel 12000 uL per supplied definition",
+    "definition": "hte_inputs/labware/axygen_12_reservoir_12000ul.json",
+    "stock_preparation_tip_reach_status": "geometric_check_passed",
+    "configured_bulk_dead_ul": 500,
+    "SM_bulk_remaining_ul_at_nominal_charge": 609,
+    "interpretation": "Tip-reach calculation and simulator do not verify exact model, solvent compatibility, liquid level, mixing, physical clearance or recovery. HTE must measure and enter conservative dead volume before live release.",
+    "physical_bench_validation_complete": false
   },
   "knowledge_transfer": {
     "return_command": "python scripts/hte-return-package.py",
@@ -604,7 +602,7 @@
     ".github/workflows/tests.yml": "2a106ffa474eb436b26f7e74a9d2cdad07ac7926c46866b11c1548dc457d1020",
     "hte/__init__.py": "f7115236038072601738e1f90ffbc1c3e9af449a367f58221b8f25d1b3b86542",
     "hte/analytical_practice.py": "6356ea324a2bdac1cb30e844458de39b5cd55bdf579977cfb6fd009fb3a3780e",
-    "hte/analytical_stocks.py": "1e4661f1a3f4a96db456d1c53c3a3bc2a3f1854e357287e3fb580c658cbc28a5",
+    "hte/analytical_stocks.py": "ebd2e1fbf19e83f901b9f9c55b097503c2f066a8686257cdef57208438e7b1f7",
     "hte/analytics.py": "2dd59c46b18fc5662cb59e72217ab79712232eaedee378768445cf10cf3cc33b",
     "hte/cli.py": "bd2c4ec2c83e18c87b63b9b54af22912399416743d644123cd1b20ff7cb94ec5",
     "hte/demo.py": "5e7b05bea253fa78e5b04d3547a32e1e7a58ee701296fa77bfb9c3478bf1f199",
@@ -614,15 +612,15 @@
     "hte/initialization.py": "8d57a98634691df11523efb5439c16f76d5f4fc9499ca06ed74939a68b6a6308",
     "hte/inventory.py": "1e5ede1973d38228c6c4aa28ab54181d503f3d653cba5f7887bc5394bee0deb6",
     "hte/io.py": "786202cab5646cd4d9d21dd73bfda7d9249704761544a11cc0406964edbf6d2a",
-    "hte/planning.py": "81fc6f70debe6c524fa91012199de2a5e0e9e3e1445c16a7013cce937a180469",
-    "hte/preparation.py": "9a012a0d21ea3f3b2a6cc57893467610fdbd1dc8409cf37255ead44f53573772",
+    "hte/planning.py": "2b055c1399457eccccaa1292d36446fc24bcae081c1b306b52aa05660e8ed885",
+    "hte/preparation.py": "9c5a3d5f5fe2a44c1942699cbf5a21cfbc294d7f2b436efb182bfbf494b7afb7",
     "hte/protocols.py": "b7964e79c8d16718bd886afc4de0e7f2b0533a3bceb090f22092869e50810ba5",
     "hte/rehearsal.py": "f57dddceb0fcb1ed79a599bba41eb3acc82a54719e9d2ec895c54250092defe6",
     "hte/scoring.py": "8b89c7d6d24e5b7f242fed961137b4ec7f20d2e9c7f2c5608a19da9887e1d52a",
     "hte/transfer.py": "9deb44eef9c218fa7e35ef9931d69462e13d0a6545229e85755331366b1811cf",
     "hte/workflow.py": "9b4b3cd21d663fe1aa02207abaadc1459dfadc8818241221eaddff0e6730abd0",
     "hte_inputs/calibration_template.csv": "9aab903969587dbc6d2045aa18669cfe03eecb54209fe59afde1932fe6322d4e",
-    "hte_inputs/campaign.json": "d0dda2faac063835f4b295c3ab23a80ab256597432a922edd25c5e8fb72f5753",
+    "hte_inputs/campaign.json": "f01f5d207c54853875aa2498aad203a77c105481286b91f08492ad9b245e4379",
     "hte_inputs/labware/axygen_12_reservoir_12000ul.json": "15ec62b2d7bc696e3449f67ce77c1ab477b8f958dd3a76da8c0fb602c37bb650",
     "hte_inputs/labware/axygen_8_reservoir_30000ul.json": "02b13259da60292dcecdacccca8872bcb389e75f56259bb8ab206835cb534880",
     "hte_inputs/labware/paradox_48_wellplate_2000ul.json": "4ec7b8fccb2c6905cff0de9899692a356ba7ad51a6e5e13e25e36d07c93f95eb",
@@ -635,16 +633,16 @@
     "hte_inputs/pair_embeddings_t5-base.npz.metadata.json": "108fa20ef4429be734504a2f17c23dc1a5d8878c3b587b4b4c40499c86abac18",
     "pyproject.toml": "c71ae4b0e674bd2f72e9a019291ac307831526046f81ee88106cfe2de370a7ac",
     "scripts/build-hte-pdf.py": "4b5f4aa4f0ed8179cb55e2a7a5e6601217b4ac8879bfe364e26b16e77772bc05",
-    "scripts/draw-deck-setup.py": "5951371eda7ca92a28a8caf279b0ae2f2405e81e1b408cbc1786b418cce12050",
+    "scripts/draw-deck-setup.py": "1e0c90b55bf242c842751a5f963c27abadb92e5c7849079406af656f9bfd3a4c",
     "scripts/hte-lc-results.py": "ec93906dd68a861a3d53aede52ec2469a8780698f09527a4ac2f64fc65262c3d",
     "scripts/hte-return-package.py": "9f5f563510bc172fc28c051e6da07d8cba58b6f560260ba4823b38909b8e5e86",
     "scripts/initialization-report.py": "a984e00a5fb5e4014dd16d721ce8fc876222440890c1edfbcf24150d21b5b67d",
     "scripts/mock-hplc-trials.py": "48068da924d1a306c271caa85bbcfa08fcd06c425c17472421fa8869165e2115",
-    "tests/hte/conftest.py": "76e5dcc811e10881e01a6cf926dbdf50a4d35b46fca1bea95522ac993dfc474c",
+    "tests/hte/conftest.py": "aee96665f4f4a2c462a86b14fab22d72e730439e4374a6a7466c9168f419370d",
     "tests/hte/test_analytical_ingestion_audit.py": "c2150e7c989d25ba2852c88bd04935e023f34602d6957cc6e26dd5572f9600f2",
     "tests/hte/test_analytical_practice.py": "22e30c71433f5797c21a2ab726c8be9a23df900f409cc1cc6d1f2dbe06d863b8",
     "tests/hte/test_calibration_quality.py": "abd224b9e58b6252d93aba4d10b106bb8a7ea602e46ee1d5f7162c3c58d764f9",
-    "tests/hte/test_campaign.py": "4feaaf4d8644b2b3317c449012125d9544ca6f8a1ddd281b510ecccaed24e4e6",
+    "tests/hte/test_campaign.py": "33f6a4528aa6fb9103b7b347e8e9f7a656cafc05ffbde71bbeafa3541938cd14",
     "tests/hte/test_embedding_conditions.py": "d792ade2e365a818a033b6308337bbdd62cf20b0bbecd148c14127542f72c220",
     "tests/hte/test_htel_update.py": "d3324f7fda4e7ae6b604e726e4a7965682c1ed9e2ec860fedbfee3871e1bd84e",
     "tests/hte/test_initialization_report.py": "5d07bc7f1c5cf1584f1cfeb2de65394ed696269ab386fe3578705dafc2389671",
@@ -653,23 +651,23 @@
     "tests/hte/test_lc_plates.py": "387e9b0865ba8f7899688b57f62fd38fd8fd65a1b210eec0ebbc43c1eb5f1bae",
     "tests/hte/test_ligand_coverage.py": "33561f4d39f0773b3179805aa8165130bf0e4e38dc6349df2c2e921495d9e5f0",
     "tests/hte/test_mock_hplc_trials.py": "725df4db011526293cfe4c2a6eab4fa88badb9e81204fd71523b45f2475dfa41",
-    "tests/hte/test_naphthalene_preparation.py": "783fbd2e71d73cd748a845290d2793badbc22b389215799eaddd40c845ff503f",
+    "tests/hte/test_naphthalene_preparation.py": "f22ccadebb91755238fdf53941e97cfa5516fa0dc1b97232422cd77e8d19ad11",
     "tests/hte/test_paradox48.py": "02849dba1f3d8aed02549409bd5baab11db0b691246dbba3392993aa08a63d16",
     "tests/hte/test_pd_and_source_mixing.py": "d3681cb6d2a501c46b963b5e3fe12cf95169c6f8fcbd2007fa803b2f873418e2",
     "tests/hte/test_pd_direct_stocks.py": "6c1356a821d33fe8f4aa61a77f058dcc47e204b19ba4d3f3af184a425785b8f1",
     "tests/hte/test_prompt_caching.py": "9eab3cad1b3888acb214eca6e3eee14a14da32323eb613692f48a899da8971b4",
     "tests/hte/test_rehearsal.py": "2cf7796922df2c57c646607f3fc758ab11062b355f078b88a863bcf03075c866",
     "tests/hte/test_repository_audit.py": "acfd70acc52dffdff118b15edf7e2abc651b365f5c76e88988ba33a1c8aa6fb3",
-    "tests/hte/test_robot_physical_guards.py": "56e084578e9ef4cd0599a8777fb3989a5851f3ed9fe0cfd5eb6fd3e0d5b38dcc",
-    "tests/hte/test_robot_preparation.py": "ff7b4d65b525669c9ad70d221ee4001e0cb56f9f0e9b39ab2408bdaf425e6a1f",
-    "tests/hte/test_round_start_dosing.py": "143c74037e645f15a13968583062c51b87b11e5fdae26bf0e64101e4d96608c6",
+    "tests/hte/test_robot_physical_guards.py": "2764e71544ee282de646ac95e5ee0f1847c1fa59e8f8d8787290fe39e1656121",
+    "tests/hte/test_robot_preparation.py": "ee805f824bcf83401707a19d18649b6b9958be76c1d5feb5e921c37414ab9607",
+    "tests/hte/test_round_start_dosing.py": "099146c593064e3427cde955990631eba60628a184a59e9246d2b73507994642",
     "tests/hte/test_sobol_initialization.py": "c86c3c255dba6344185687c8b9a97e1d43205852874f6ed6353a44897882f422",
     "tests/hte/test_staff_resume.py": "735561a2677aee2a5ae3605657fa78aef19605232d0e59ea071eacec63a29de6",
-    "tests/hte/test_toluene_inventory.py": "b258a06a69738126ddf789751a7c7e8be5b4d6fd0167baa6722d9d5ed4efbb26",
+    "tests/hte/test_toluene_inventory.py": "e6781653883cd4e2e2cf37b08cbb945fb6a70a6d5ccbfe46508e7799aa1fb041",
     "tests/hte/test_transfer.py": "baff19aa4b65dbb003581d12d4d26c250d94b4b255e31dd920a7996b0891e74b",
     "uv.lock": "aa781a38974aa7830c5fa48cc714b04acfd05d08d308e333a607f9b915e01d26"
   },
-  "review_date": "2026-10-21",
+  "review_date": "2026-10-28",
   "submission_checks": {
     "clean_locked_install": true,
     "python": "3.12.15",
@@ -679,7 +677,7 @@
     "active_ligands_covered": 30,
     "new_paid_API_calls": 0,
     "new_embedding_inference": 0,
-    "runtime_or_chemistry_changes": false,
+    "runtime_or_chemistry_changes": "2026-10-28 stock source geometry, SM bulk volume and source dead-volume guard changed; reaction conditions and frozen selection unchanged.",
     "independent_analytical_replay": {
       "samples": 48,
       "sequences": 2,
@@ -718,6 +716,31 @@
     "report": "output/final-review/sharing/helper-tests.xml",
     "new_paid_API_calls": 0,
     "physical_release_status_unchanged": true,
-    "full_suite_and_robot_simulation_evidence": "The complete locked-install and six-stage simulation records above are from 2026-10-21; this follow-up reran the 57 affected helper/resume/repository checks."
+    "full_suite_and_robot_simulation_evidence": "Historical 2026-10-21 evidence; the Axygen update is separately tested and recorded above."
+  },
+  "historical_2026_10_21_fresh_install_tests": {
+    "tests": 364,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "warnings": 30,
+    "warning_scope": "Opentrons SDK deprecations",
+    "duration_seconds": 87.104,
+    "report": "output/final-review/clean-install-tests.xml",
+    "scope": "Full suite in a fresh archived checkout and locked-dependency environment; runtime/configuration unchanged by this review."
+  },
+  "axygen_review_2026_10_28": {
+    "tests_passed": 367,
+    "sdk_stages_passed": 6,
+    "sdk_commands": 16827,
+    "real_round1_design": true,
+    "round2_synthetic": true,
+    "mock_hplc_trials_passed": 14,
+    "mock_hplc_output": "output/axygen-review/mock-lc",
+    "paid_api_calls": 0,
+    "physical_robot_execution": false,
+    "default_bulk_dead_ul_is_measured": false,
+    "full_mock_feedback_loop_passed": true,
+    "mock_feedback_calls": 660
   }
 }

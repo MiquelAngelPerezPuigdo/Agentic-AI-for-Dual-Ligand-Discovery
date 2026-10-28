@@ -652,7 +652,7 @@ def stock_plan(config, inventory, operations, reserve_round2=True):
                         "on_deck_ul": prepare if key in config.get("automation",{}).get("direct_stock_ids",[]) and reserve_round2 else math.ceil((usage[key] + dead)/10)*10,
                         "source_capacity_ul": config["stock_preparation"]["tube_max_fill_ul"],
                         "capacity_ok": usage[key] + dead <= config["stock_preparation"]["tube_max_fill_ul"]})
-    # SM uses approximately 10% extra, rounded up to practical 0.5 mL preparations.
+    # The combined SM/IS bulk stock fills a retained working tube once.
     # Working-tube dead volume and discarded surplus fit inside that budget.
     sm_per_well = n/liquid["substrate_stock_mM"]*1000
     sm_nominal = sum(op["volume_ul_per_channel"]*op["channels"] for op in operations if op["stage"] == "substrate")
@@ -667,8 +667,10 @@ def stock_plan(config, inventory, operations, reserve_round2=True):
         retained_minimum=math.ceil((sm_reserve+sm_dead)/10)*10 if reserve_wells else sm_dead
         sm_load = math.ceil((usage["substrate_stock"]+retained_minimum)/10)*10
         if reserve_round2 and config.get("automation",{}).get("enabled"):
-            bulk_required=sm_load+config["pipetting"]["surplus_ul"]+config["automation"]["bulk_dead_ul"]
-            sm_prepare=max(sm_prepare,math.ceil(bulk_required/500)*500)
+            sm_prepare=finite(config["automation"]["substrate_bulk_target_ul"], "bulk SM preparation volume", 1)
+            required=sm_load+config["pipetting"]["surplus_ul"]+config["automation"]["bulk_dead_ul"]
+            if sm_prepare+1e-7<required:
+                raise ValueError("SM bulk stock cannot fill the retained working tube and preserve the bulk residual")
         if sm_load>config["stock_preparation"]["tube_max_fill_ul"]:
             raise ValueError("Retained SM/IS working tube cannot cover both rounds")
         records.append({"reagent":"substrate_stock", "name":"Combined SM + naphthalene; retained toluene",
@@ -741,7 +743,7 @@ def stock_plan(config, inventory, operations, reserve_round2=True):
                               preparation_action="NO manual premixing; use the raw-solvent loading CSV")
             elif key == "substrate_stock":
                 record.update(storage_container="Original 2 mL SM/IS working tube; filled once and retained across both rounds",
-                              preparation_action="Robot prepares one campaign stock and fills the working tube once; cap between rounds, no R2 refill")
+                              preparation_action="Weigh SM into assigned Axygen channel; robot adds naphthalene stock and toluene, mixes and fills retained working tube; no R2 refill")
             elif key == "Pd" or key in config["automation"]["direct_stock_ids"]:
                 record.update(storage_container="Original 2 mL working tube; retained across both rounds",
                               preparation_action="Weigh into working tube once; robot adds solvent and mixes; DO NOT replace for R2")

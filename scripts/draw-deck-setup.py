@@ -144,7 +144,7 @@ def draw(output):
     text(sx,10.17,"ROBOT PREPARATION",12,weight="bold")
     ax.plot([sx,15.96],[9.91,9.91],color=LINE,lw=.9)
     text(sx,9.58,"1  Weighed chemicals + raw liquids",12,weight="bold")
-    text(sx,9.23,"Bulk carriers 3 / 6: suitable geometry PENDING.",10.3,color=AMBER)
+    text(sx,9.23,"Axygen carriers 3 / 6: verify geometry locally.",10.3,color=AMBER)
     text(sx,8.92,"Raw 8-channel reservoir in slot 2; single only.",10.3)
     text(sx,8.61,"Left p300 single + RIGHT p1000 single.",10.3)
     text(sx,8.24,"Naphthalene: 60 mg in 1 C2 → 500 mM stock.",10.3,weight="bold")
@@ -157,7 +157,7 @@ def draw(output):
     text(sx,6.80,f"4 A3/B3/C3: ~{pd_sources[0]['prepare_ul']/1000:.2f} mL; A4: ~{pd_sources[3]['prepare_ul']/1000:.2f} mL",10.3)
     text(sx,6.49,"Retain all FOUR tubes; no Pd transfer or refill.",10.3)
     text(sx,6.18,f"{budget['weigh_mg']:g} mg total; keep {budget['scope_reserved_mg']:g} mg solid for scope.",10.0,color=MUTED)
-    text(sx,5.80,"SM/naphthalene: 1 M / 100 mM; 2 mL bulk.",10.3,color=BLUE)
+    text(sx,5.80,"SM/naphthalene: 1 M / 100 mM; Axygen stock.",10.3,color=BLUE)
     text(sx,5.49,"4 D2: 1.89 mL; retain capped, no SM refill.",10.3)
     text(sx,5.18,"Each round: empty vials → SM/IS → catalysts.",10.0,weight="bold")
 
@@ -183,7 +183,7 @@ def draw(output):
     text(8.83,1.16,"Prefill 980 µL before quench; add 20 µL extract after shaking",10.6)
     text(8.83,.82,f"Shake uncovered: heater OFF / {c['liquids']['lc_mix_rpm']:g} rpm / 2 min; then seal for LC",10.1)
     text(8.83,.49,"Reaction block stays in slot 3 while the LC plate occupies the shaker.",9.1,color=MUTED)
-    text(.65,.16,"PREVIEW: other 15 mL bulk sources fail the conservative nozzle-entry check; physical clearance remains unverified. Validate containers, mounting, offsets, delivery and shaking.",8.5,color=MUTED)
+    text(.65,.16,"PREVIEW: verify Axygen reservoir geometry, toluene/cover compatibility, recovery, mounting, offsets, delivery and shaking on the actual system.",8.5,color=MUTED)
 
     output.parent.mkdir(parents=True,exist_ok=True)
     fig.savefig(output.with_suffix(".svg"),facecolor="white",metadata={"Date":None})

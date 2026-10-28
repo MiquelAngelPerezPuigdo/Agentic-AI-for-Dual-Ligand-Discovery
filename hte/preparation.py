@@ -48,7 +48,7 @@ class Plan:
         self.amounts[src]-=used;self.amounts[dst]=self.amounts.get(dst,0)+volume*channels
         limit=29000 if dst[0]=="raw" else self.config["stock_preparation"]["reservoir_max_fill_ul"] if dst[0]=="reservoir" else self.config["robot"]["lc_working_volume_ul"] if dst[0]=="cal_plate" else self.config["automation"]["bulk_max_fill_ul"] if dst[0].startswith("BULK") else self.config["stock_preparation"]["tube_max_fill_ul"]
         if self.amounts[dst]>limit+1e-7:raise ValueError("Robot preparation overfills "+str(dst))
-        self.dead.setdefault(dst,100 if dst[0].startswith(("working","BULK")) or dst[0]=="analytical" else 1500 if dst[0] in ("raw","reservoir") else 0)
+        self.dead.setdefault(dst,self.config["automation"]["bulk_dead_ul"] if dst[0].startswith("BULK") else 100 if dst[0].startswith("working") or dst[0]=="analytical" else 1500 if dst[0] in ("raw","reservoir") else 0)
         self.delivered[dst]+=volume*channels;self.discarded[src]+=p["surplus_ul"]*channels
         self.steps.append(dict(type="transfer",source=list(src),target=list(dst),volume_ul=volume,
                                label=label,channels=channels,pipette="large" if use_large else "multi" if channels==8 else "single"))
@@ -264,7 +264,7 @@ def stock_records(config,inventory,design,charges=None):
         if limit is not None and mass>limit+1e-8:raise ValueError(key+" exceeds available mass; preserve scope reserve")
         record.update(actual_mass_mg=mass,assay_fraction=assay,prepare_ul=mass*assay/record["mw"]/record["stock_mM"]*1e6)
         capacity=config["stock_preparation"]["tube_max_fill_ul"] if record["kind"]=="direct" else config["automation"]["bulk_max_fill_ul"]
-        if record["prepare_ul"]>capacity:
+        if record["prepare_ul"]>capacity+1e-7:
             raise ValueError("Stock exceeds container capacity: "+key)
         if reagent=="Pd" and record["prepare_ul"]+1e-8<record["full_campaign_required_ul"]:
             raise ValueError("Direct Pd source cannot cover both rounds and dead volume: "+key)
@@ -289,13 +289,13 @@ def stock_records(config,inventory,design,charges=None):
 def bulk_load(plan,records,config,prepared=False):
     for carrier in dict.fromkeys(r["carrier_id"] for r in records):
         rows=[r for r in records if r["carrier_id"]==carrier]
-        plan.steps.append(dict(type="pause",message=("Load EXISTING prepared stock carrier " if prepared else "Load preweighed, uncapped chemical carrier ")+carrier+" in slot "+str(rows[0]["carrier_slot"])+". Check chemical IDs against the loading CSV. UNCAP its source tubes before resuming pipetting. No manual liquid measurement."))
+        plan.steps.append(dict(type="pause",message=("Load EXISTING prepared Axygen reservoir " if prepared else "Load the Axygen reservoir with preweighed charges ")+carrier+" in slot "+str(rows[0]["carrier_slot"])+". Check channel IDs against bulk_carriers.csv. REMOVE the cover before pipetting. No manual liquid measurement."))
         plan.steps.append(dict(type="load",key=carrier,slot=rows[0]["carrier_slot"],labware=config["automation"]["bulk_labware"],definition_path=config["automation"].get("bulk_definition_path"),label=carrier))
 
 
 def bulk_off(plan,records):
     for carrier in dict.fromkeys(r["carrier_id"] for r in records):
-        plan.steps += [dict(type="pause",message="Cap all tubes in "+carrier+". Store the whole labeled carrier for automated R2 refill; no hand aliquoting."),dict(type="off",key=carrier)]
+        plan.steps += [dict(type="pause",message="Cover "+carrier+" with its solvent-compatible cover. Store the whole labeled reservoir for automated R2 refill; no hand aliquoting."),dict(type="off",key=carrier)]
 
 
 def build_stock_preparation(config,inventory,design,charges=None):
@@ -310,7 +310,8 @@ def build_stock_preparation(config,inventory,design,charges=None):
     def ensure_matrix(volume):
         if plan.amounts[("raw","H1")]-1500 < volume+1:
             matrix(plan,["raw","H1"],min(20000,29000-plan.amounts[("raw","H1")]),pools,acid)
-    for row in records:
+    # Naphthalene must be dissolved and checked before preparing the combined SM stock.
+    for row in sorted(records, key=lambda r: r["stock_id"] != "IS_SOURCE"):
         if row["kind"]!="direct":continue
         target=["working"+str(row["source_slot"]),row["source_well"]]
         plan.raw("toluene",target,row["prepare_ul"],pools);plan.mix(target)
@@ -381,11 +382,12 @@ def build_stock_preparation(config,inventory,design,charges=None):
             if row["reagent"] in ("Pd","internal_standard"):continue  # Pd demand was checked above; IS consumption is fully tracked by Plan.
             first=sum(r["consumption_ul"] for r in deck if r["reagent"]==row["stock_id"])
             reserve=sum(r["round2_reserve_ul"] for r in stocks if r["reagent"]==row["stock_id"])
-            if row["prepare_ul"] < first+reserve+100:raise ValueError("Direct stock cannot cover both rounds: "+row["stock_id"])
+            minimum=max(first+reserve+100, *(r["load_ul"] for r in deck if r["reagent"]==row["stock_id"]))
+            if row["prepare_ul"]+1e-7 < minimum:raise ValueError("Direct stock cannot cover both rounds: "+row["stock_id"])
             continue
         if row["kind"]!="reaction" or row["stock_id"]=="substrate_stock":continue
         reserved=sum(r["round2_reserve_ul"] for r in stocks if r["reagent"]==row["stock_id"])
-        if row["remaining_bulk_ul"] < reserved+100:
+        if row["remaining_bulk_ul"]+1e-7 < reserved+config["automation"]["bulk_dead_ul"]:
             raise ValueError("Prepared bulk cannot cover R2 and dead volume: "+row["stock_id"])
     report.update(stocks=records,raw_loads=raw_loads,working_loads=deck,
                   config_digest=object_digest(config),inventory_digest=object_digest(inventory),design_digest=object_digest(design),
@@ -540,7 +542,7 @@ def validate_automation(config,inventory):
     raw=read_json(a["raw_definition_path"])
     if set(raw["wells"])!={r+"1" for r in "ABCDEFGH"} or any(w["totalLiquidVolume"]<29000 or w.get("xDimension",0)<60 for w in raw["wells"].values()):
         raise ValueError("Use the supplied horizontal A1-H1 30 mL raw reservoir geometry")
-    finite(a["bulk_dead_ul"],"bulk source dead volume",100,100)
+    finite(a["bulk_dead_ul"],"bulk source dead volume",100,2000)
     if type(a.get("prepare_optional_pilot",False)) is not bool:raise ValueError("Optional pilot must be a boolean")
     if len(a["bulk_wells"])!=6 or len(set(a["bulk_wells"]))!=6:raise ValueError("Specify six distinct bulk carrier wells")
     if a.get("bulk_definition_path"):
@@ -715,7 +717,7 @@ def build_refill(config,inventory,design,history,prep):
     records={r["stock_id"]:r for r in prep["stocks"]}
     for location,volume in amounts.items():
         if location[0].startswith("working") or location[0].startswith("BULK"):
-            plan.initial_liquid(location,volume,100)
+            plan.initial_liquid(location,volume,config["automation"]["bulk_dead_ul"] if location[0].startswith("BULK") else 100)
     needed=[]
     for load in target:
         location=("working"+str(load["source_slot"]),load["source_well"])

@@ -7,7 +7,7 @@ import pytest
 from hte.inventory import campaign_inventory
 from hte.io import read_csv, read_json
 from hte.planning import required_validations
-from hte.preparation import (LIQUID_RUNTIME, build_stock_preparation, export_stock_preparation,
+from hte.preparation import (LIQUID_RUNTIME, Plan, build_stock_preparation, export_stock_preparation,
                              preparation_timing, validate_source_reach)
 from hte.protocols import export
 
@@ -22,8 +22,26 @@ def inputs():
     return config, inventory, first
 
 
-def test_deep_falcon_default_fails_reach_for_both_pipettes(inputs):
+def use_deep_falcon(config):
+    config["automation"].update(bulk_labware="opentrons_10_tuberack_falcon_4x50ml_6x15ml_conical",
+                                bulk_definition_path=None, bulk_wells=["A1", "B1", "C1", "A2", "B2", "C2"])
+
+
+def test_measured_bulk_residual_is_enforced_on_every_transfer(inputs):
     config, inventory, first = inputs
+    config["automation"]["bulk_dead_ul"] = 500
+    plan = build_stock_preparation(config, inventory, first)
+    assert plan["source_reach_assessment"]["status"] == "geometric_check_passed"
+    ledger = Plan(config)
+    ledger.initial_liquid(["raw", "A1"], 2000)
+    ledger.transfer(["raw", "A1"], ["BULK-test", "A1"], 1000, "load")
+    with pytest.raises(ValueError, match="Insufficient robot-preparation source"):
+        ledger.transfer(["BULK-test", "A1"], ["working1", "A1"], 500, "must leave residual and surplus")
+
+
+def test_deep_falcon_fails_reach_for_both_pipettes(inputs):
+    config, inventory, first = inputs
+    use_deep_falcon(config)
     plan = build_stock_preparation(config, inventory, first)
     assessment = plan["source_reach_assessment"]
     assert assessment["status"] == "blocked"
@@ -37,10 +55,9 @@ def test_deep_falcon_default_fails_reach_for_both_pipettes(inputs):
 
 
 def test_custom_shallow_geometry_is_rechecked_not_manifest_claim(inputs, tmp_path):
-    from opentrons.protocol_api.labware import get_labware_definition
     config, inventory, first = inputs
     plan = build_stock_preparation(config, inventory, first)
-    definition = get_labware_definition(config["automation"]["bulk_labware"])
+    definition = read_json(config["automation"]["bulk_definition_path"])
     definition["metadata"]["displayName"] = "SYNTHETIC reach-check fixture; never use on hardware"
     definition["parameters"]["loadName"] = "synthetic_shallow_bulk_test_only"
     definition["dimensions"]["zDimension"] = 40
@@ -61,6 +78,7 @@ def test_custom_shallow_geometry_is_rechecked_not_manifest_claim(inputs, tmp_pat
 
 def test_live_stock_and_reaction_exports_reject_deep_default_even_with_flags(inputs, tmp_path):
     config, inventory, first = inputs
+    use_deep_falcon(config)
     config["analytics"]["method_id"] = "TEST_ONLY_METHOD"
     for key in required_validations(config):
         config["validation"][key] = True

@@ -41,12 +41,12 @@ def test_weighed_source_and_both_uses_preserve_concentrations(campaign, mass, as
     assert source["kind"] == "direct" and "carrier_id" not in source
     transfers = [step for step in plan["steps"] if step["type"] == "transfer"
                  and tuple(step["source"]) == IS_LOCATION]
-    assert [step["volume_ul"] for step in transfers] == pytest.approx([400, 32])
+    assert [step["volume_ul"] for step in transfers] == pytest.approx([500, 32])
     assert all(step["label"] == "naphthalene stock" for step in transfers)
     final = {tuple(row["location"]): row["volume_ul"] for row in plan["expected_final_liquids"]}
-    assert final[IS_LOCATION] == pytest.approx(source["prepare_ul"] - 434)
+    assert final[IS_LOCATION] == pytest.approx(source["prepare_ul"] - 534)
     assert final[IS_LOCATION] >= 100
-    assert 400 * 500 / stocks["substrate_stock"]["prepare_ul"] == pytest.approx(100)
+    assert 500 * 500 / stocks["substrate_stock"]["prepare_ul"] == pytest.approx(100)
     assert 32 * 500 / stocks["IS_MASTER"]["prepare_ul"] == pytest.approx(2)
     assert final[("analytical", ANALYTICAL["IS_WORK"])] == pytest.approx(1000)
     assert not any(tuple(row["location"]) == IS_LOCATION for row in plan["initial_liquids"])

@@ -1,18 +1,18 @@
 # Stocks and calibration
 
-**Staff weigh; the OT-2 measures liquids.** See the [complete weighing list](weighing-list.md) for all 30 ligands, other reaction stocks and calibration standards. Enter actual masses/assays; follow `bulk_carriers.csv`. Concentrations use nominal solvent addition. **Naphthalene is available at HTEL; planned charge: 60 mg.**
+**Staff weigh; the OT-2 measures liquids.** See the [weighing list](weighing-list.md); record actual masses/assays and follow `bulk_carriers.csv`. Concentrations are nominal. Naphthalene charge: **60 mg**.
 
 ## Reaction stocks
 
 | Stock | Preparation target at 100% assay | Per reaction |
 |---|---|---|
 | Naphthalene source | **60 mg solid in 1 C2**; robot adds ~936 µL toluene for **500 mM**, adjusted to actual mass/assay. | Used to make stocks below |
-| SM + naphthalene | **~322.32 mg SM /2 mL: 1 M SM +100 mM IS**. Robot adds **400 µL source +1600 µL toluene** at the nominal SM charge. | **25 µL** |
+| SM + naphthalene | **403 mg SM** in **BULK-01-3 A1**; add **500 µL IS +2 mL toluene** robotically, mix and load **1.89 mL in 4 D2**. Nominal **1 M SM /100 mM IS**. | **25 µL** |
 | Each ligand | **20 mM toluene**; weighed charges/reserves in CSV. Robot prepares bulk, mixes and fills working tubes. | **75 µL each**; reference 150 µL L17 |
 | Pd(COD)(DQ) | Direct in **4 A3/B3/C3: 22.8 mg each; A4: 21.6 mg**. Robot adds ~1.50/~1.43 mL toluene for **40 mM**. Total **90 mg**, ~5.94 mL; **10 mg for scope**. | 75 µL |
 | RockPhos L03 | **~800 µL /20 mM**, 7.50 mg pure equivalent; 7.73 mg at 97%. Prepared directly in **1 C1**; retain that tube. **10 mg available, max 4 R2 wells.** | 75 µL |
 
-**Retain working tubes:** SM/IS **4 D2 starts at 1.89 mL** for both rounds; all four Pd tubes and RockPhos **1 C1** stay in use. No SM/Pd refill. Follow the [experiment](hte-runbook.md) and source ledgers for routing/losses.
+**Retain SM/IS 4 D2, all Pd tubes and RockPhos 1 C1** for both rounds; no SM/Pd refill. See [experiment](hte-runbook.md) and ledgers.
 
 ## Robot-made workup fluids
 

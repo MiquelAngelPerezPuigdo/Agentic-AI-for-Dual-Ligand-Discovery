@@ -14,10 +14,10 @@ def synthetic_shallow_bulk_sources(tmp_path):
     This deliberately artificial definition must stay in pytest's temporary
     directory. It is NOT a proposed container or validated physical geometry.
     """
-    from opentrons.protocol_api.labware import get_labware_definition
+    from hte.io import read_json
 
     def configure(config):
-        definition = copy.deepcopy(get_labware_definition(config["automation"]["bulk_labware"]))
+        definition = copy.deepcopy(read_json(config["automation"]["bulk_definition_path"]))
         definition["namespace"] = "synthetic_tests_only"
         definition["parameters"]["loadName"] = "synthetic_shallow_bulk_sources_never_run_on_hardware"
         definition["metadata"]["displayName"] = "SYNTHETIC TEST ONLY — NOT PHYSICAL LABWARE"

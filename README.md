@@ -2,7 +2,7 @@
 
 Local OT-2 dosing, calibrated LC quantification and Claude-guided selection for Pd-catalyzed desulfonylative fluorination of pyridine-2-sulfonyl fluoride to 2-fluoropyridine.
 
-**Release status: preparation preview only.** The configured deep bulk-stock tubes fail the conservative pipette-reach check. Suitable source geometry and local hardware/LC validation are required before live release. [Outstanding setup facts](docs/hte-questions.md) · [Software evidence](docs/rehearsal-results.md).
+**Release status: preparation preview only.** Axygen 12-channel reservoirs are configured for bulk stocks, including the combined SM/IS stock. Before live release, HTE must check the physical reservoir definition, solvent/cover compatibility, liquid recovery, hardware and LC method. [Weighing and loading map](docs/weighing-list.md) · [Outstanding checks](docs/hte-questions.md) · [Software evidence](docs/rehearsal-results.md).
 
 ## Run the campaign
 

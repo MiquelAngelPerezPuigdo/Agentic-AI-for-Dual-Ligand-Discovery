@@ -6,7 +6,7 @@ Frozen R1: **48 pairs, all 30 ligands**. No paid R1 rerun. Regenerate stocks/pro
 
 Python 3.12: **`uv sync --locked --python 3.12 --extra sources --extra robot`**; prefix commands with `uv run`. Create `local_data/` (`mkdir -p local_data`). Copy `hte_inputs/campaign.json` to **`local_data/campaign.json`**, `hte_inputs/calibration_template.csv` to `local_data/calibration-plan.csv`, and `anthropic.key.example` to **`anthropic.key`**. Put the raw Claude key there; preserve existing keys. Never send it to the robot/Git.
 
-Use schema **6** and **fresh naphthalene calibration**; old mesitylene calibration is invalid. Configure method/channel, cycle and RTs/LOQs. Default `reject` stops missing-analyte results; `censor` reports validated bounds. **Default bulk-source reach fails:** supply suitable short-container/rack geometry before live release. Concentrations use nominal solvent addition; record actual times.
+Use schema **6** and **fresh naphthalene calibration**; old mesitylene calibration is invalid. Start from the current configuration; discard old stock-preparation outputs. Configure method/channel, cycle and RTs/LOQs. Default `reject` stops missing-analyte results; `censor` reports validated bounds. **Axygen bulk reservoirs:** check the actual geometry, solvent/cover compatibility and recoverable residual volumes before live release. Concentrations use nominal solvent addition; record actual times.
 
 ## Robot preparation, then R1
 

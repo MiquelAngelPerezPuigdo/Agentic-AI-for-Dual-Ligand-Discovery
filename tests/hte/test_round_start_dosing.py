@@ -21,7 +21,7 @@ def test_old_predose_settings_cannot_mix_with_round_start_dosing(legacy):
         validate_config(config)
 
 
-@pytest.mark.parametrize("nominal_ul,accepted", [(1991, True), (1990, False)])
+@pytest.mark.parametrize("nominal_ul,accepted", [(2391, True), (2390, False), (2500, True)])
 def test_actual_sm_charge_must_cover_working_fill_and_both_source_residuals(nominal_ul, accepted):
     config = synthetic_config(ROOT/"hte_inputs/campaign.json")
     inventory = campaign_inventory(ROOT/"hte_inputs/ligands.csv", config)
@@ -40,6 +40,6 @@ def test_actual_sm_charge_must_cover_working_fill_and_both_source_residuals(nomi
     actual = build_stock_preparation(config, inventory, design, charges)
     source = next(r for r in actual["stocks"] if r["stock_id"] == "substrate_stock")
     assert source["prepare_ul"] == pytest.approx(nominal_ul)
-    assert source["remaining_bulk_ul"] == pytest.approx(100)
+    assert source["remaining_bulk_ul"] == pytest.approx(nominal_ul-1891)
     final = {tuple(r["location"]): r["volume_ul"] for r in actual["expected_final_liquids"]}
-    assert final[("working4", "D2")] == 1890
+    assert final[("working4", "D2")] == pytest.approx(1890)

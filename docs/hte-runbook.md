@@ -11,9 +11,9 @@ R1: **48 pairs covering all 30 ligands**, official 24-consensus +24-Sobol design
 ## Robot stock preparation
 
 1. Enter **actual masses/assays** in `weighed_charges_template.csv`. Weigh ligands in the glovebox; keep bottles there. Pd: **4 A3/B3/C3, 22.8 mg each; A4, 21.6 mg** (≤90 mg; keep 10 mg). Naphthalene: **60 mg in 1 C2**; `IS_MASTER` empty. Under air, the robot adds solvents, mixes and prepares reaction/analytical stocks. Preparation is inside campaign time.
-2. **Live release is blocked:** bottom aspiration in the configured 15 mL tubes requires unverified nozzle entry; the conservative reach check fails. Obtain actual short, solvent-compatible stock containers and matching rack JSON, then regenerate and check reach/capacity. Follow carrier/raw-load CSVs; no invented glass-vial dimensions.
+2. Use six labeled **Axygen 12-channel reservoirs** as listed in [the weighing/loading map](weighing-list.md); carriers occupy slots 3/6 in batches. Verify actual geometry, solvent and cover compatibility, liquid recovery, mixing and offsets before live release. Follow generated carrier/raw-load CSVs.
 3. Run `prepare_stocks.py`: **p300 single left, p1000 single right**; tips 5 /8-9 respectively. Carriers occupy 3/6 temporarily; working racks 1/4. The supplied horizontal 8 ×30 mL reservoir in 2 is **single-channel only**. Robot prepares analytical matrix/masters/working stocks too.
-4. Cap/store reserve carriers and the prepared analytical rack. Leave working tubes in mapped positions. Change right pipette to **p300 eight-channel GEN2**, replace tips 8/9 with 300 µL racks using the local App installation/calibration workflow. Keep left p300 single.
+4. Cover/store reserve reservoirs and cap/store the prepared analytical rack. Leave working tubes in mapped positions. Change right pipette to **p300 eight-channel GEN2**, replace tips 8/9 with 300 µL racks using the local App installation/calibration workflow. Keep left p300 single.
 
 | Slot | Reaction-stage use |
 |---|---|
@@ -27,7 +27,7 @@ Confirm block/adapter/latch, offsets, <=45 mm cap clearance and liquid immersion
 
 ## Run R1
 
-Start R1 Python with **48 NEW EMPTY vials** in the block at 3. Robot doses **25 µL SM/IS +75 µL each ligand +75 µL Pd**. Retain SM/IS tube **4 D2**, capped between rounds: its initial **1.89 mL** comes from the same nominal 2 mL stock; no additional SM stock or refill. Expected remainder after R1: **689 µL**; R2 requires **at least 680 µL**. Record any loss.
+Start R1 Python with **48 NEW EMPTY vials** in the block at 3. Robot doses **25 µL SM/IS +75 µL each ligand +75 µL Pd**. Retain SM/IS tube **4 D2**, capped between rounds: the robot fills it with **1.89 mL** from the Axygen bulk stock; no R2 refill. Expected remainder after R1 is **689 µL**; R2 requires **at least 680 µL**. Record any loss and use the actual preparation ledger.
 
 Hand-cap all R1 vials; move/latch at App prompts. Run **95 °C /500 rpm /4 h**. During this hold the robot prepares **14 standards** and quench/diluent. Swap analytical rack into 4 and **uncap its source tubes**; raw reservoir into 3. Seal/move calibration plate 6→HPLC. **Reaction stays on 10.** Restore rack 4 and remove raw reservoir when prompted.
 
@@ -48,7 +48,7 @@ Final sample: 1 mL; nominal maximum analyte **666.7 µM**, naphthalene **66.7 µ
 
 ## R2 and finish
 
-After ALL 48 R1 results pass QC, select 22 pairs +L17 reference. Run **`refill_stocks.py` before R2 dosing**. Remove block/LC plate from 3/6; present ORIGINAL bulk carriers by ID. **Uncap required bulk/working ligand tubes for top-ups.** No new weighing or hand aliquoting. Retain RockPhos; **keep SM/IS and all four Pd tubes capped during refill**. Pd routing: R1 **18/18/12 doses** from A3/B3/C3; R2 **six C3 +17 A4**. Actual mass/assay determines solvent additions and capacity.
+After ALL 48 R1 results pass QC, select 22 pairs +L17 reference. Run **`refill_stocks.py` before R2 dosing**. Remove block/LC plate from 3/6; present ORIGINAL Axygen reservoirs by ID. **Remove reservoir covers and uncap required working ligand tubes for top-ups.** No new weighing or hand aliquoting. Retain RockPhos; **keep SM/IS and all four Pd tubes capped during refill**. Pd routing: R1 **18/18/12 doses** from A3/B3/C3; R2 **six C3 +17 A4**. Actual mass/assay determines solvent additions and capacity.
 
 Load **23 NEW EMPTY vials** in the SAME block; replace reservoir 2 with a NEW EMPTY one. Uncap required stocks. R2 Python doses **25 µL SM/IS each, then catalysts**; reference receives **150 µL L17**. Hand-cap and start the reaction. During R2 hold the robot makes fresh workup fluids; no new calibration. Repeat workup and final LC analysis.
 

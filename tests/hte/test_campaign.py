@@ -93,7 +93,7 @@ def test_tip_capacity_source_ledger_and_round_start_substrate(demo, cfg, invento
     assert workup["stock_mM"] == 0
     assert workup["mass_mg"] == 0
     mixed = next(r for r in plan if r["reagent"] == "substrate_stock")
-    expected_volume = 2000 if reuse else 2500
+    expected_volume = 2500
     assert mixed["prepare_ul"] == expected_volume
     assert mixed["mass_mg"] == pytest.approx(expected_volume*161.16/1000)
     assert mixed["internal_standard_mM"]==100 and mixed["internal_standard_mass_mg"]==pytest.approx(expected_volume*128.17/10000)
@@ -180,8 +180,8 @@ def test_separate_stock_assays_apply_to_each_solute(demo, cfg, inventory):
     rows = dosing_rows(cfg, inventory, read_csv(demo/"round1_design.csv"))
     mixed = next(r for r in stock_plan(cfg, inventory, transfer_operations(cfg, inventory, rows))
                  if r["reagent"] == "substrate_stock")
-    assert mixed["mass_mg"] == pytest.approx(322.32/0.95)
-    assert mixed["internal_standard_mass_mg"]==pytest.approx(25.634/0.98)
+    assert mixed["mass_mg"] == pytest.approx(402.9/0.95)
+    assert mixed["internal_standard_mass_mg"]==pytest.approx(32.0425/0.98)
 
 
 def test_combined_stock_rejects_duplicate_is_in_workup(cfg):
@@ -344,7 +344,6 @@ def test_fresh_tip_mode_and_tip_replacement_simulate(demo, cfg, inventory, tmp_p
     from hte.protocols import export
     from opentrons.simulate import simulate
     cfg["pipetting"]["reuse_tips"] = False
-    cfg["stock_preparation"]["substrate_margin_factor"] = 1.2  # Fresh-tip alternative needs a larger bulk; campaign default stays 2 mL.
     export(cfg,inventory,read_csv(demo/"round1_design.csv"),tmp_path/"fresh")
     with (tmp_path/"fresh/dose_and_react.py").open() as handle:
         commands,_=simulate(handle)

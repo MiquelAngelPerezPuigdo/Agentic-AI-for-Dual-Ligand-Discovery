@@ -42,11 +42,27 @@ def test_preparation_preserves_all_volume_and_finite_reagent_budgets(setup):
     stocks={r["stock_id"]:r for r in plan["stocks"]}
     assert sum(r["actual_mass_mg"] for r in plan["stocks"] if r["reagent"]=="Pd")==pytest.approx(90)
     assert stocks["L03"]["actual_mass_mg"]<10
-    assert stocks["substrate_stock"]["prepare_ul"]==pytest.approx(2000)
+    assert stocks["substrate_stock"]["prepare_ul"]==pytest.approx(2500)
+    assert stocks["substrate_stock"]["kind"]=="reaction"
+    assert stocks["substrate_stock"]["remaining_bulk_ul"]==pytest.approx(609)
     assert stocks["L03"]["kind"]=="direct"
     assert "solute displacement" in plan["concentration_basis"]
     assert not plan["actual_weighed_charges_supplied"] and not plan["physical_run_completed"]
     assert len([s for s in plan["steps"] if s["type"]=="transfer" and s["label"]=="naphthalene stock"])==2
+
+
+def test_published_ligand_weighing_map_matches_generated_carrier_plan(setup):
+    directory, _, inventory, *_ = setup
+    plan = read_json(directory/"preparation/preparation_manifest.json")
+    text = (ROOT/"docs/weighing-list.md").read_text()
+    for row in plan["stocks"]:
+        if row["stock_id"] not in inventory:
+            continue
+        label = row.get("carrier_id", "Working rack 1")
+        position = f"{label} / {row['source_well']}"
+        line = next(line for line in text.splitlines() if line.startswith(f"| {row['stock_id']} |"))
+        assert position in line
+        assert f"{row['planned_mass_mg']:.2f}" in line
 
 
 def test_every_calibration_well_has_the_expected_analyte_and_constant_is(setup):
@@ -199,8 +215,8 @@ def test_actual_sdk_executes_automated_preparation_and_holds(setup,stage):
     if stage == "r2/refill_stocks":
         first_aspiration = next(i for i, message in enumerate(text) if message.startswith("Aspirating"))
         assert any("UNCAP the ligand working tubes" in message for message in text[:first_aspiration])
-        loads = [message for message in text if "Load EXISTING prepared stock carrier" in message]
-        assert loads and all("UNCAP its source tubes" in message for message in loads)
+        loads = [message for message in text if "Load EXISTING prepared Axygen reservoir" in message]
+        assert loads and all("REMOVE the cover" in message for message in loads)
     if stage.endswith("dose_and_react"):
         number = int(stage[1])
         expected = 48 if number == 1 else 23

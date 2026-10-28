@@ -6,7 +6,7 @@
 
 - Weigh labeled charges from the **[weighing list](weighing-list.md)**; enter actual masses/assays. Weigh ligands in the glovebox. Robot adjusts solvent addition; respect mass limits.
 - Coarse-load raw solvents to CSV minimum fills. Supplied **8 ×30 mL A1-H1 reservoir: single-channel ONLY**. No manual aliquoting or volumetric top-up.
-- **Release blocked:** default bulk sources fail the conservative no-nozzle-entry check. Supply actual short, solvent-compatible stock containers/rack JSON; regenerate and check reach. Carrier slots **3/6**; retain capped reserves and original working tubes.
+- **Before live release:** verify Axygen geometry, working volumes, toluene compatibility and covers, low-volume recovery, offsets and mixing locally. Six labeled reservoirs use slots **3/6** in batches; cover and retain stocks and original working tubes for R2. [Weighing and loading map](weighing-list.md).
 - Have **three compatible 96-well LC plates**, 2.2 mL geometry, 1 mL/sample, carrier/seals. Confirm offsets, mounting, caps and actual 1.7-min method/cycle. Import/simulate locally.
 
 ## Pipettes
@@ -21,7 +21,7 @@
 | RockPhos L03 | **~7.50 mg pure equivalent**, assay-corrected; 10 mg available. Robot makes **~800 µL in 1 C1**. Retain SAME tube; **max 4 R2 wells**. |
 | Pd(COD)(DQ) | Direct in **4 A3/B3/C3: 22.8 mg each; A4: 21.6 mg**. Robot adds ~1.50/~1.43 mL toluene, **40 mM**. **90 mg total; 10 mg for scope.** Retain all four; no Pd refill. |
 | Naphthalene source | Weigh **60 mg in 1 C2**. Robot adds ~936 µL toluene for **500 mM**, adjusted to actual mass/assay. **IS_MASTER starts empty.** |
-| SM + naphthalene | **~322.32 mg SM**; robot adds **400 µL IS source +1600 µL toluene**: nominal **1 M /100 mM**. **4 D2: 1.89 mL** for both rounds; retain capped, **no SM refill**. |
+| SM + naphthalene | Weigh **~403 mg SM** in **BULK-01-3 A1**. Robot adds **500 µL IS source +2000 µL toluene**, mixes and transfers **1.89 mL** to tube **4 D2**; retain for both rounds, **no SM refill**. Nominal **1 M /100 mM**; actual mass/assay determine additions. |
 
 Concentrations use nominal solvent addition. **No hand refills or R2 stock remake.**
 
@@ -45,14 +45,14 @@ Use regenerated files for the current R1 design; discard earlier dosing exports.
 
 | Step | Action |
 |---|---|
-| 1 / Stocks | Run **`prepare_stocks.py`** from actual weights. Load requested carriers uncapped; cap/store when removed. Retain the preparation manifest. Make the one right-pipette/tip-rack change after preparation. |
+| 1 / Stocks | Run **`prepare_stocks.py`** from actual weights. Uncover requested reservoirs; cover/store when removed. Retain the preparation manifest. Make the one right-pipette/tip-rack change after preparation. |
 | 2 / R1 setup | Load **48 NEW EMPTY vials** in the reaction block at 3. Uncap the required stock tubes; start R1 Python. |
 | 3 / R1 reaction | Robot doses **25 µL SM/IS +75 µL ligand A +75 µL ligand B +75 µL Pd**. Hand-cap; move/latch. **95 °C, 500 rpm, 4 h. Start the external timer when the App announces the hold starts.** |
 | 4 / During R1 hold | Leave reaction on 10. Load raw solvents in 3 and analytical rack in 4; **uncap its source tubes**. Robot makes **14 standards** and quench/diluent in 2. Seal/move calibration plate **6 → HPLC**; start sequence. Restore rack 4; remove raw reservoir. **Monitor the timer:** pauses do not stop heating. At deadline while paused, stop heat/shaking via App; record the overrun and do not resume dosing. |
 | 5 / Cool / quench | Sealed block to 3; cool. **Uncover reservoir 2. Keep vials capped while robot pre-fills LC wells with 980 µL diluent.** Then uncap; robot adds **500 µL quench**. Leave vials **OPEN; shake 750 rpm, 2 min**, heater off; return to 3. |
 | 6 / LC samples | Let bubbles clear; keep indicated vials open. Robot promptly adds **20 µL extract to prefilled LC wells**, fresh sample tips. Recap reaction vials. |
 | 7 / Final plate | Move **6 → cooled shaker 10**. Robot shakes **UNCOVERED, heater OFF, 750 rpm, 2 min** at confirmed splash-free speed. Move **10 → HPLC**, seal and inject directly. No manual dilution/vial transfers. |
-| 8 / R2 select/refill | After all **48 valid R1 results**, Claude selects **22 new pairs +L17 reference**. Run **`refill_stocks.py` FIRST**; uncap required bulk/working ligand tubes for top-ups. Retain RockPhos. Keep SM/IS **4 D2** and all FOUR Pd tubes capped; **no SM/Pd refill**. |
+| 8 / R2 select/refill | After all **48 valid R1 results**, Claude selects **22 new pairs +L17 reference**. Run **`refill_stocks.py` FIRST**; uncover required Axygen reservoirs and uncap working ligand tubes for top-ups. Retain RockPhos. Keep SM/IS **4 D2** and all FOUR Pd tubes capped; **no SM/Pd refill**. |
 | 9 / R2 | Load **23 NEW EMPTY vials** in the SAME block; replace reservoir 2 with a NEW EMPTY one. Uncap required stocks; run R2 Python: **25 µL SM/IS each, then catalysts**. Reference uses **150 µL L17**, no B. Hand-cap; repeat reaction/workup, with fresh robot-made workup fluids during the hold. **R2 H3 is diluent only: do not inject.** |
 
 Calibration: each analyte blank +**10, 50, 150, 350, 800 µM**, independent **666.7 µM** check; constant **66.7 µM naphthalene**. Python calculates calibrated yields from integrated UV areas. Stop the clock after all 23 final injections and quantitative analysis.

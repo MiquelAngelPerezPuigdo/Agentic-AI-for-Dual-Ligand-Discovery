@@ -4,9 +4,9 @@
 
 The **22 October sharing review** found one operator handoff gap: R2 workup/map paths and the final-analysis command needed to be explicit. These are now provided; **57 relevant helper/resume/repository checks passed again**. Chemistry, selection, quantification and generated robot behavior are unchanged.
 
-All **six newly regenerated Opentrons 8.8.2 simulations passed** (16,248 commands), alongside a fresh complete mock feedback loop and analytical challenges. Thirty adversarial R2 selections, maximizing each ligand's demand in turn, preserved stock reserves and the Pd/RockPhos limits. An independent 48-sample synthetic LC replay across two acquisition sequences recovered known yields within numerical precision and rejected all five tested faults. No API spending or hardware execution. Earlier review records remain in Git history.
+On **28 October**, all **367 tests passed** and six regenerated Opentrons 8.8.2 simulations passed (**16,827 commands**) with the Axygen layout, the frozen R1 design and a synthetic R2. The complete mock feedback loop and fourteen synthetic LC challenge scenarios also passed. No API spending or hardware execution occurred. Earlier review records remain in Git history.
 
-**No physical robot experiment, real calibration or 95 °C pair measurement has been performed.** All physical release flags remain false. The configured deep stock sources fail the conservative nozzle-clearance check, so the default plan is blocked from hardware release pending suitable local geometry.
+**No physical robot experiment, real calibration or 95 °C pair measurement has been performed.** All physical release flags remain false. The Axygen layout replaces the earlier deep-tube plan; local geometry, liquid recovery, compatibility and hardware validation remain necessary before live release.
 
 ## Campaign checks
 
@@ -43,9 +43,9 @@ Historical paid prompts described mesitylene and glovebox-prepared stocks. They 
 
 ## Remaining local validation and data return
 
-- **Stock geometry:** configured bulk wells are 117.5 mm deep; the planned 1.5 mm bottom clearance requires 116 mm insertion. The guard blocks nozzle entry below the rim until suitable sources/rack geometry are supplied. This is a conservative clearance/immersion concern, not a measured collision. Direct Pd and naphthalene source tubes avoid the bulk rack; the analytical master and other bulk stocks still require resolution.
+- **Stock geometry:** the supplied Axygen definition passes the conservative simulated tip-reach calculation. Verify the physical reservoir matches that definition, and measure recoverable volume: the default 500 µL bulk residual is an assumption. Confirm toluene exposure and cover effectiveness. Pd, RockPhos and the naphthalene source are prepared directly in retained 2 mL tubes; SM/IS is prepared in an Axygen channel.
 - **Robot performance:** confirm mounting, offsets, pipette generation/change, cap clearance, solvent delivery, heating/cooling and uncovered shaking locally. SDK execution does not demonstrate dissolution, homogeneous sampling, splash containment or extraction recovery.
 - **LC:** establish the actual method/channel, RTs, LOQs and naphthalene calibration with authentic standards. Quantification is local Python from integrated UV areas; the optimizer does not calculate experimental yields.
-- **Timing:** preparation counts inside the campaign. Initial pumping/waits alone take 93.7 programmed minutes, excluding motion and staff handling. The recorded partial serial lower bound is 727.9 minutes before dosing, refill, ramps, caps and decision time. A 12-hour completion has not been demonstrated. Calibration runs during R1; an external operator timer is still needed during blocking App pauses.
+- **Timing:** preparation counts inside the campaign. Initial pumping/waits alone take approximately 93 programmed minutes, excluding motion and staff handling. A 12-hour completion has not been demonstrated. Calibration runs during R1; an external operator timer is still needed during blocking App pauses.
 
 The [private return command](development.md#return-the-campaign-to-miquel) preserves source, local/run data, actual charges, preparation ledgers, decisions and SHA-256 hashes. It excludes credentials, refuses overwrites or changing files and works without Git. Copy external robot logs, LC/MS/method/sequence files and deviations into `local_data/` first; software cannot automatically capture files left on instruments.

@@ -56,10 +56,10 @@ def test_combined_stock_has_practical_rounded_margin_and_covers_source_losses():
     c, inv, first, _ = inputs()
     rows=dosing_rows(c,inv,first);ops=transfer_operations(c,inv,rows)
     stock=next(r for r in stock_plan(c,inv,ops) if r["reagent"]=="substrate_stock")
-    assert stock["prepare_ul"]==2000
-    assert stock["mass_mg"]==pytest.approx(322.32)
-    assert stock["internal_standard_mass_mg"]==pytest.approx(25.634)
-    assert stock["on_deck_ul"]+100 <= stock["prepare_ul"]
+    assert stock["prepare_ul"]==2500
+    assert stock["mass_mg"]==pytest.approx(402.9)
+    assert stock["internal_standard_mass_mg"]==pytest.approx(32.0425)
+    assert stock["on_deck_ul"] + c["automation"]["bulk_dead_ul"] + c["pipetting"]["surplus_ul"] <= stock["prepare_ul"]
     assert stock["protocol_consumption_ul"] == 48*25+1
     assert stock["round2_reserve_ul"] >= 23*25+1
     assert stock["on_deck_ul"] == 1890
@@ -101,4 +101,4 @@ def test_small_analytical_masters_have_independent_weighings_and_cover_optional_
         assert sum(r["mass_mg"] for r in masters)<13
     c["stock_preparation"]["analytical_minimum_weigh_mg"] = 10
     larger = [r for r in preparation(c) if r["stock_mM"]==10]
-    assert all(r["mass_mg"] >= 10 and "15 mL bulk" in r["storage_container"] for r in larger)
+    assert all(r["mass_mg"] >= 10 and "Axygen bulk reservoir" in r["storage_container"] for r in larger)
