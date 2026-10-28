@@ -6,11 +6,13 @@
 |---|---|
 | Follow the experiment | **[Staff procedure](run/README.md)** |
 | Weigh the chemicals | **[Weighing sheet](run/WEIGHING.md)** |
-| Run the OT-2 | **[run_screen.py](run/run_screen.py)** |
+| Run every OT-2 stage | **[Download ready Python file](https://raw.githubusercontent.com/MiquelAngelPerezPuigdo/Agentic-AI-for-Dual-Ligand-Discovery/main/run/run_screen.py)** · [view code](run/run_screen.py) |
 | Print the instructions | [Two-page bench sheet](run/bench-sheet.pdf) |
 | Calculate yields | [LC analysis instructions](run/ANALYSIS.md) |
 
 Load once and start one program: stocks → stock shaking → dosing → reaction and analytical standards → quenching → LC sampling. Staff handle caps, covers and shaker moves at the prompts. The same labware and tip racks are used throughout.
+
+**Ready for the local Opentrons App:** save the Python download as `run_screen.py`, import it, complete the App's setup/labware checks and start. The file already includes all custom labware definitions, stock volumes and the 48-pair dosing plan. HTE can use it directly without generating protocols or uploading CSV/JSON files to the robot.
 
 Everything for the bench is in **`run/`**. Its `images/` and `tables/` subfolders support the linked instructions. No API key is needed.
 
