@@ -1,43 +1,43 @@
-ID,slot,well,initial
-L01,1,A1,weighed chemicals
-L02,1,B1,weighed chemicals
-L03,1,C1,weighed chemicals
-L04,1,D1,weighed chemicals
-L05,1,E1,weighed chemicals
-L06,1,F1,weighed chemicals
-L08,1,A2,weighed chemicals
-L09,1,B2,weighed chemicals
-L10,1,C2,weighed chemicals
-L11,1,D2,weighed chemicals
-L12,1,E2,weighed chemicals
-L13,1,F2,weighed chemicals
-L14,1,A3,weighed chemicals
-L15,1,B3,weighed chemicals
-L16,1,C3,weighed chemicals
-L17,1,D3,weighed chemicals
-L18,1,E3,weighed chemicals
-L19,1,F3,weighed chemicals
-L20,1,A4,weighed chemicals
-L21,1,B4,weighed chemicals
-L22,1,C4,weighed chemicals
-L23,1,D4,weighed chemicals
-L24,1,E4,weighed chemicals
-L25,1,F4,weighed chemicals
-L26,1,A5,weighed chemicals
-L27,1,B5,weighed chemicals
-L28,1,C5,weighed chemicals
-L29,1,D5,weighed chemicals
-L30,1,E5,weighed chemicals
-L31,1,F5,weighed chemicals
-SM_IS,1,A6,weighed chemicals
-Pd,1,B6,weighed chemicals
-IS_MASTER,1,C6,weighed chemicals
-SM_FIT,1,D6,weighed chemicals
-SM_CHECK,1,E6,weighed chemicals
-P_FIT,1,F6,weighed chemicals
-P_CHECK,1,A7,weighed chemicals
-HIGH,1,B7,empty
-LOW,1,C7,empty
-CHECK,1,D7,empty
-IS_WORK,1,E7,empty
-MATRIX,1,F7,empty
+ID,slot,after_stock_shake_slot,well,initial
+L01,10,1,A1,weighed chemicals
+L02,10,1,B1,weighed chemicals
+L03,10,1,C1,weighed chemicals
+L04,10,1,D1,weighed chemicals
+L05,10,1,E1,weighed chemicals
+L06,10,1,F1,weighed chemicals
+L08,10,1,A2,weighed chemicals
+L09,10,1,B2,weighed chemicals
+L10,10,1,C2,weighed chemicals
+L11,10,1,D2,weighed chemicals
+L12,10,1,E2,weighed chemicals
+L13,10,1,F2,weighed chemicals
+L14,10,1,A3,weighed chemicals
+L15,10,1,B3,weighed chemicals
+L16,10,1,C3,weighed chemicals
+L17,10,1,D3,weighed chemicals
+L18,10,1,E3,weighed chemicals
+L19,10,1,F3,weighed chemicals
+L20,10,1,A4,weighed chemicals
+L21,10,1,B4,weighed chemicals
+L22,10,1,C4,weighed chemicals
+L23,10,1,D4,weighed chemicals
+L24,10,1,E4,weighed chemicals
+L25,10,1,F4,weighed chemicals
+L26,10,1,A5,weighed chemicals
+L27,10,1,B5,weighed chemicals
+L28,10,1,C5,weighed chemicals
+L29,10,1,D5,weighed chemicals
+L30,10,1,E5,weighed chemicals
+L31,10,1,F5,weighed chemicals
+SM_IS,10,1,A6,weighed chemicals
+Pd,10,1,B6,weighed chemicals
+IS_MASTER,10,1,C6,weighed chemicals
+SM_FIT,10,1,D6,weighed chemicals
+SM_CHECK,10,1,E6,weighed chemicals
+P_FIT,10,1,F6,weighed chemicals
+P_CHECK,10,1,A7,weighed chemicals
+HIGH,10,1,B7,empty
+LOW,10,1,C7,empty
+CHECK,10,1,D7,empty
+IS_WORK,10,1,E7,empty
+MATRIX,10,1,F7,empty

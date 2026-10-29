@@ -153,6 +153,10 @@ def test_published_files_are_current(tmp_path):
     assert definitions['stocks']['wells']==supplied['wells']
     assert definitions['stocks']['dimensions']['zDimension']==45
     assert definitions['stocks']['stackingOffsetWithLabware']['opentrons_universal_flat_adapter']=={'x':0,'y':0,'z':0}
+    for name in ('weighing.csv','tube-map.csv'):
+        rows=read_csv(tmp_path/'tables'/name)
+        assert {r['slot'] for r in rows}=={'10'}
+        assert {r['after_stock_shake_slot'] for r in rows}=={'1'}
 
 
 def test_real_sdk_continuous_protocol_and_tip_positions():
@@ -168,11 +172,16 @@ def test_real_sdk_continuous_protocol_and_tip_positions():
     assert '1.5 mm' in source
     assert 'starting_tip' not in source and 'STAGE=' not in source
     moves=[text for text in texts if text.startswith('Moving ')]
-    assert len(moves)==8
-    assert 'Stock holder' in moves[0] and 'opentrons_universal_flat_adapter' in moves[0]
-    assert 'Stock holder' in moves[1] and 'slot 1' in moves[1]
-    assert not any('Stock holder' in text for text in moves[2:])
+    assert len(moves)==7
+    assert 'Stock holder' in moves[0] and moves[0].endswith('to slot 1')
+    assert not any('Stock holder' in text for text in moves[1:])
     assert not any('Solvent reservoir' in text for text in moves)
+    first_move=texts.index(moves[0])
+    stock_preparation=[t for t in texts[:first_move] if t.startswith(('Aspirating','Dispensing','Mixing')) and 'Stock holder' in t]
+    assert stock_preparation and all(' on slot 10' in t for t in stock_preparation)
+    stock_dosing=[t for t in texts[first_move:] if t.startswith('Aspirating') and 'Stock holder' in t]
+    assert stock_dosing and all(' on slot 1 at ' in t for t in stock_dosing)
+    assert not any('Reaction block' in t and t.startswith('Dispensing') for t in texts[:first_move])
     speeds=[int(re.search(r'Shake at (\d+) RPM',text)[1]) for text in texts if 'Setting Heater-Shaker to Shake at' in text]
     assert speeds==[750,500,750,750]
     # Workup follows the completed hold in the same simulation, without a restart.

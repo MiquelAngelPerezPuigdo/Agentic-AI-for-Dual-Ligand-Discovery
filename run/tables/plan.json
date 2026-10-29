@@ -3159,7 +3159,7 @@
     },
     {
       "type": "pause",
-      "message": "3b. Check stocks before dosing\n\nWhat happened: the robot made and shook the 32 reaction stocks.\nYou: confirm the STOCK HOLDER is back in slot 1, A1 at back-left. Check stocks for bubbles, visible solids or a transfer fault. Keep ligand vials A1:F5 and SM_IS A6 / Pd B6 OPEN; the ten analytical vials stay capped.\nResume when: stocks are ready and all 48 reaction vials are empty and open in the REACTION BLOCK, slot 3. The robot will now dose the reactions."
+      "message": "3b. Check stocks before dosing\n\nWhat happened: the robot made and shook the 32 reaction stocks.\nYou: confirm the STOCK HOLDER is in slot 1, A1 at back-left. Check stocks for bubbles, visible solids or a transfer fault. Keep ligand vials A1:F5 and SM_IS A6 / Pd B6 OPEN; the ten analytical vials stay capped.\nResume when: stocks are ready and all 48 reaction vials are empty and open in the REACTION BLOCK, slot 3. The robot will now dose the reactions."
     },
     {
       "type": "transfer",

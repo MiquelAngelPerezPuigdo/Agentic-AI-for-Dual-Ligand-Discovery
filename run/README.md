@@ -29,27 +29,27 @@ Prepare these two bulk liquids manually, then fill the reservoir:
 
 These are the three pieces you will handle. Label them and keep A1 at the back-left when returning them to the deck.
 
-| Piece | What it contains | Home slot |
+| Piece | What it contains | Initial position |
 |---|---|---:|
-| **Stock holder** | 42 source/working vials: 30 ligands, SM/IS, Pd and analytical sources/dilutions | **1** |
+| **Stock holder** | 42 source/working vials: 30 ligands, SM/IS, Pd and analytical sources/dilutions | **10**, on the heater-shaker; later **1** after stock shaking |
 | **Reaction block** | Para-Dox block, 48 empty 2 mL reaction vials with screw caps available | **3** |
 | **LC sample plate** | One empty **VWR 96 deep-well plate, 2.2 mL, V-bottom square wells**, with a cover and a seal available | **6** |
 
-The **Axygen 12-channel reservoir, 12 mL/channel, high-profile V-bottom** goes in **2**. These are the plate/reservoir geometries embedded in the program. Load 300 µL tip racks in **5 and 8** for the **left p300 single GEN2**, and **9** for the **right p300 eight-channel GEN2**. Heater-shaker/flat adapter: **10**. Leave **4, 7 and 11 empty**. Have suitable hot-block handling tools.
+The **Axygen 12-channel reservoir, 12 mL/channel, high-profile V-bottom** goes in **2**. These are the plate/reservoir geometries embedded in the program. Load 300 µL tip racks in **5 and 8** for the **left p300 single GEN2**, and **9** for the **right p300 eight-channel GEN2**. Heater-shaker/flat adapter: **10**, initially holding the stock holder. Leave **1, 4, 7 and 11 empty**; slot 1 receives the stock holder after shaking. Have suitable hot-block handling tools.
 
 Start with ligand vials A1–F5 and SM_IS A6 / Pd B6 **open**; analytical/working vials **C6, D6, E6, F6, A7, B7, C7, D7, E7, F7 capped**. Reaction vials and the LC plate start empty and open. Covers stay off the reservoir and LC plate for initial pipetting.
 
-Download [run_screen.py](run_screen.py) using **Download raw file**, save it as a `.py` file and import it into the local Opentrons App. Complete the App's setup, simulation and labware-offset checks. In both the **stock holder and reaction block**, the highest fitted cap must be **≤45 mm above the holder/block base**. Check the programmed **1.5 mm bottom clearance**; with a representative source vial containing **150 µL toluene**, the tip opening must still be immersed at that height without touching the bottom. If either clearance/pickup check fails, correct the setup before starting. Use a separate test vial, then load the planned vials. Start this one program; keep the same tip racks and labware throughout.
+Download [run_screen.py](run_screen.py) using **Download raw file**, save it as a `.py` file and import it into the local Opentrons App. Complete the App's setup, simulation and labware-offset checks, including the stock holder on module 10 and later in slot 1. In both the **stock holder and reaction block**, the highest fitted cap must be **≤45 mm above the holder/block base**. Check the programmed **1.5 mm bottom clearance**; with a representative source vial containing **150 µL toluene**, the tip opening must still be immersed at that height without touching the bottom. If either clearance/pickup check fails, correct the setup before starting. Use a separate test vial, then load the planned vials. Start this one program; keep the same tip racks and labware throughout.
 
 **At each pause:** read the step number, perform the requested action and press **Resume**. For a labware move, wait for the separate App move prompt before lifting the named piece; the robot opens the latch first. Resume that prompt after the piece is seated in the stated destination.
 
 ## 3. The robot makes the stocks and doses the reactions
 
-**Robot:** adds solvent to the weighed chemicals and pipette-mixes the 32 reaction stocks.
+**Robot:** adds solvent to the weighed chemicals and pipette-mixes the 32 reaction stocks **while the stock holder is on the heater-shaker in slot 10**, with heating and shaking off.
 
-**You, at 3a:** leave those 32 vials open and the ten analytical vials capped. At the move prompts, move the **stock holder 1 → 10 → 1**. The robot shakes it **750 rpm for two minutes, heater off**. Its fit on the flat adapter has been confirmed by HTE.
+**You, at 3a:** leave the holder in slot 10, those 32 vials open and the ten analytical vials capped. Resume to shake **750 rpm for two minutes, heater off**. Its fit on the flat adapter has been confirmed by HTE. After shaking stops, move the **stock holder 10 → 1** at the App move prompt. This is the only stock-holder move.
 
-**You, at 3b:** check that the holder is back in slot 1, A1 at the back-left, and inspect the stocks for transfer faults or persistent bubbles. Resume when ready.
+**You, at 3b:** check that the holder is in slot 1, A1 at the back-left, and inspect the stocks for transfer faults or persistent bubbles. Resume when ready.
 
 **Robot:** doses all 48 reactions: **20 µL SM/naphthalene + 30 µL ligand A + 30 µL ligand B + 20 µL Pd = 100 µL**. Each ligand/Pd source is remixed before its first dose. Reaction stocks are finished afterward and may remain open.
 

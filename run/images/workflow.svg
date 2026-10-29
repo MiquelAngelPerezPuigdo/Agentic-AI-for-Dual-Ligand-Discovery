@@ -481,8 +481,8 @@ z
     <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="75.053847" y="241.337084" transform="rotate(-0 75.053847 241.337084)">Load once and start</text>
    </g>
    <g id="text_7">
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 276.202752)">Load the stock holder, reservoir, reaction block,</text>
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 289.542088)">LC plate and tips in their mapped slots.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 276.687401)">Start STOCK HOLDER on heater-shaker 10.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 289.542088)">Leave slot 1 empty; load other mapped labware.</text>
     <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 303.184979)">Import run_screen.py; complete App checks.</text>
    </g>
    <g id="text_8">
@@ -497,13 +497,13 @@ z
     <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="75.053847" y="345.696915" transform="rotate(-0 75.053847 345.696915)">Make stocks, then dose 48 reactions</text>
    </g>
    <g id="text_11">
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 380.12692)">At the prompts: STOCK HOLDER 1 → 10 → 1.</text>
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 393.90192)">Leave reaction-stock vials open; analytical</text>
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 407.67692)">vials capped. Inspect stocks before dosing.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 380.12692)">Keep stock holder on 10 for making/shaking stocks.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 393.90192)">Then move 10 → 1 at the App prompt.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.906589 407.67692)">Reaction sources open; analytical vials capped.</text>
    </g>
    <g id="text_12">
     <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 380.12692)">Add solvent → pipette-mix → shake stocks</text>
-    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 393.90192)">750 rpm / 2 min, heater OFF → dose reactions.</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 393.90192)">750 rpm / 2 min, heater OFF → move to 1 → dose.</text>
     <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(445.9392 407.67692)">100 µL = 20 SM/IS + 30 L-A + 30 L-B + 20 Pd.</text>
    </g>
    <g id="text_13">

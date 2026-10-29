@@ -1,5 +1,5 @@
 # Weigh these chemicals into the stock vials
-**Staff weigh; the OT-2 adds solvent.** Use the **HTEL 48-position 2 mL glass-vial holder in slot 1**. Weigh each ligand once into its labelled vial and load it with no stock solvent added. The robot makes the stocks there. [Stock map](images/stock-map.png) · [Staff guide](README.md).
+**Staff weigh; the OT-2 adds solvent.** Use the **HTEL 48-position 2 mL glass-vial holder: start on heater-shaker slot 10, then move to slot 1 after stock shaking**. Weigh each ligand once into its labelled vial and load it with no stock solvent added. The robot makes the stocks there. [Stock map](images/stock-map.png) · [Staff guide](README.md).
 Only the vials below receive weighed material. There are **30 ligands**: unavailable L07 is omitted and original ID numbering is retained. The five labeled dilution/matrix vials start empty; column 8 remains empty.
 | Vial | Label | Chemical | Weigh (mg) |
 |---|---|---|---:|
@@ -51,4 +51,4 @@ Only the vials below receive weighed material. There are **30 ligands**: unavail
 | E7 | IS_WORK | 2 mM naphthalene |
 | F7 | MATRIX | Solvent mix for LC standards: 100 µL toluene + 400 µL quench |
 
-Use the vial labels and positions shown here, not an earlier two-round map. [Machine-readable weighing list](tables/weighing.csv) · [All vial positions](tables/tube-map.csv).
+Vial positions stay the same when the holder moves. In the CSV lists, `slot` is the initial loading position (10), and `after_stock_shake_slot` is 1. Use the vial labels and positions shown here, not an earlier two-round map. [Machine-readable weighing list](tables/weighing.csv) · [All vial positions](tables/tube-map.csv).

@@ -45,7 +45,7 @@ def main():
     story=[para('HTE staff / Bench sheet',title),
            para('One semi-automated run · 48 pairs · 30 ligands',heading),
            para('<b>Staff weigh; the robot adds stock solvent.</b> Staff move labware and handle caps, then take the final plate to HPLC-MS. 100 µL reactions: 0.1 M SM, 6 mol% each ligand, 12 mol% Pd, 10 mol% naphthalene. 95 °C / 500 rpm / nominal 4 h.'),
-           table([['Slot','Load'],['1','HTEL stock holder: map on page 2. Moves 1 → 10 → 1 before dosing.'],['2','Axygen 12-channel, 12 mL/channel, high-profile V-bottom reservoir.'],['3','Para-Dox block with 48 empty reaction vials.'],['5, 8','300 µL tips for LEFT p300 single GEN2.'],['6','VWR 96 deep-well, 2.2 mL, V-bottom square-well LC plate.'],['9','300 µL tips for RIGHT p300 eight-channel GEN2.'],['10','Heater-shaker / universal flat adapter. Slots 4, 7 and 11 empty.']],[45,465]),
+           table([['Slot','Load'],['1','Starts empty; receives stock holder from 10 after stock shaking.'],['2','Axygen 12-channel, 12 mL/channel, high-profile V-bottom reservoir.'],['3','Para-Dox block with 48 empty reaction vials.'],['5, 8','300 µL tips for LEFT p300 single GEN2.'],['6','VWR 96 deep-well, 2.2 mL, V-bottom square-well LC plate.'],['9','300 µL tips for RIGHT p300 eight-channel GEN2.'],['10','Heater-shaker / flat adapter WITH stock holder (map on page 2). Slots 4, 7 and 11 empty.']],[45,465]),
            para('Bulk liquids / reservoir',heading),
            para('<b>Quench, 40 mL:</b> 36 mL ACN + 3.95 mL water + 50 µL formic acid. <b>LC diluent, 60 mL:</b> 30 mL ACN + 29.94 mL water + 60 µL formic acid.'),
            table([['Channels','Liquid','Load per channel'],['A1-A2','Toluene','9 mL'],['A3-A5','Quench','9 mL'],['A6-A10','LC diluent','10 mL'],['A11 / A12','ACN / empty','3.5 mL / empty']],[85,255,170]),
@@ -53,7 +53,7 @@ def main():
            table([['Step','Staff action','Robot / result'],
                   ['1','Weigh into labelled vials (page 2). Make bulk liquids above. Load weighed chemicals with <b>no stock solvent added</b>.','Stock solvents are added by the robot.'],
                   ['2','Load deck. Open A1-F5 and A6/B6; keep ten analytical vials capped. Check offsets, 150 µL source pickup and both capped assemblies ≤45 mm. Import <b>run_screen.py</b>.','Follow staff-guide setup checks, then start. Numbered pauses give the next action.'],
-                  ['3','At move prompts: <b>stock holder 1 → 10 → 1</b>. Inspect stocks; leave reaction sources open.','Makes/mixes stocks; shakes 750 rpm / 2 min, heater OFF; doses 48 reactions.'],
+                  ['3','Stocks start on 10. After shaking, move <b>stock holder 10 → 1</b> at prompt. Inspect stocks; reaction sources open.','Makes/mixes stocks; shakes 750 rpm / 2 min, heater OFF; doses 48 reactions.'],
                   ['4','Cap all <b>48 reaction vials</b>. Cover reservoir/LC. Move <b>reaction block 3 → 10</b>. Start timer at hold-start prompt.','95 °C / 500 rpm; nominal 4 h heated hold.'],
                   ['5','After heating stops: <b>sealed block 10 → 3</b>. Uncover reservoir/LC; open ten analytical vials. Reaction caps stay on.','Makes seven standards A7-G7 while sealed reactions cool. LC plate stays in 6.'],
                   ['6','Operator decides when safe to open and module ready for unheated workup. Uncap reactions; <b>open block 3 → 10 → 3</b> at prompts.','400 µL quench/vial (500 µL total); 750 rpm / 2 min, heater OFF; settle 15 s.'],
@@ -62,7 +62,7 @@ def main():
                   ['9','Seal/label plate and mark A1. Finish robot program. Carry flat to <b>HPLC-MS with lc-injections.csv</b>.',f'{p["config"]["lc_method_polarity"].capitalize()}-polarity {p["config"]["lc_method_minutes"]:g}-min LC: check 7 standards FIRST, then 48 samples. {55*p["config"]["lc_method_minutes"]:g} min + overhead.']],[30,285,195]),
            para('<b>Timing:</b> longer holds and pre-quench waits are allowed/logged. For a longer hold, remain at 4b until the agreed endpoint; heating/shaking stay on there. Return LC/MS files, actual injection map/method, yields/QC, robot log and run notes.',small),PageBreak(),
            para('Weighing / stock-holder positions',title),
-           para('All positions are in the HTEL stock holder in <b>slot 1</b>. Ligands occupy columns 1-5. Column 8 stays empty. The robot adds solvent directly in these vials. No stock transfers or refills.'),]
+           para('All vial positions are in the HTEL stock holder: <b>start on heater-shaker 10; move to slot 1 after stock shaking</b>. Ligands occupy columns 1-5. Column 8 stays empty. The robot adds solvent directly in these vials. No stock transfers or refills.'),]
     rows=[['Vial','Label','Material','mg']]
     for s in p['stocks']:
         mass=f"{s['mass_mg']:.1f}"
@@ -74,7 +74,7 @@ def main():
             para('Full procedure, maps, Python files and LC instructions: <link href="https://github.com/MiquelAngelPerezPuigdo/Agentic-AI-for-Dual-Ligand-Discovery/tree/main/run" color="#28576c">github.com/MiquelAngelPerezPuigdo/Agentic-AI-for-Dual-Ligand-Discovery / run</link>',small)]
     def footer(canvas,doc):
         canvas.setFont('Helvetica',7);canvas.setFillColor(colors.HexColor('#555555'))
-        canvas.drawString(40,24,'HTEL · One 48-reaction screen · 28 October 2026')
+        canvas.drawString(40,24,'HTEL · One 48-reaction screen · 29 October 2026')
         canvas.drawRightString(A4[0]-40,24,str(doc.page))
     SimpleDocTemplate(str(target),pagesize=A4,leftMargin=40,rightMargin=40,topMargin=34,bottomMargin=36).build(story,onFirstPage=footer,onLaterPages=footer)
     pages=len(PdfReader(target).pages)

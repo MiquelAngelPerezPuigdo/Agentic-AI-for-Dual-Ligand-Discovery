@@ -21,9 +21,9 @@ Plan for staff to be present during loading/dosing and from the **end of the hea
 
 Everything for the bench is in **`run/`**. Its `images/` and `tables/` subfolders support the linked instructions. No API key is needed.
 
-**Stock-vial loading map — deck slot 1.** A1 is at the back-left. Label each vial with its position and ID. Each coloured cell states what to weigh, or tells you to leave the vial empty for the robot to fill. Column 8 is unused. The robot adds all stock solvents.
+**Stock-vial map — start on heater-shaker slot 10, then move to slot 1 after shaking.** A1 is at the back-left. Label each vial with its position and ID. Each coloured cell states what to weigh, or tells you to leave the vial empty for the robot to fill. Column 8 is unused. The robot adds all stock solvents.
 
-| Stock-vial map — slot 1 | Robot deck |
+| Stock-vial map — starts in slot 10 | Initial robot deck |
 |---|---|
 | [![Stock-vial positions, ligand names and weighing amounts](run/images/stock-map.png)](run/images/stock-map.png) | [![OT-2 deck layout](run/images/deck.png)](run/images/deck.png) |
 
@@ -35,7 +35,7 @@ Click either map to open it at full size.
 
 Click the workflow to open it at full size. Calibration standards and reaction samples are prepared **after** the heated hold, then analyzed together in one LC sequence. The **LC accuracy check** is a known-concentration sample prepared from separate SM/product weighings; the software uses it to check the calibration.
 
-Before dosing, leave the 30 ligand vials and SM_IS/Pd vials **open**, with analytical vials capped. Follow the App prompts to move the holder **1 → 10 → 1**. The robot shakes the stocks **750 rpm for two minutes, heater off**.
+Load the stock holder **directly on the heater-shaker in slot 10**; leave **slot 1 empty**. Keep the 30 ligand vials and SM_IS/Pd vials **open**, with analytical vials capped. The robot adds stock solvents, mixes and shakes **750 rpm for two minutes, heater off**. At the App prompt, move the holder **10 → 1** for reaction dosing.
 
 Used reaction stocks may remain open after dosing. Analytical vials stay capped until standards preparation, then may also remain open. Keep the reservoir and LC plate covered at the App prompts.
 

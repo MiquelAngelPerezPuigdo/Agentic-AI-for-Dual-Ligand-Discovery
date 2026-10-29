@@ -1,38 +1,38 @@
-ID,material,mass_mg,naphthalene_in_same_tube_mg,slot,well,robot_adds_ul,solvent,remaining_ul
-L01,MorDal Phos,2.4,,1,A1,258.8,toluene,167.8
-L02,racBINAP,3.2,,1,B1,257.0,toluene,166.0
-L03,RockPhos,2.1,,1,C1,224.0,toluene,163.0
-L04,Alphos,4.2,,1,D1,257.6,toluene,166.6
-L05,AdBrettPhos,4.6,,1,E1,358.9,toluene,177.9
-L06,Me4t-BuXPhos,2.2,,1,F1,228.8,toluene,167.8
-L08,t-BuDave Phos,2.0,,1,A2,292.8,toluene,231.8
-L09,Xantphos,2.6,,1,B2,224.7,toluene,163.7
-L10,OTIPS DalPhos,2.1,,1,C2,190.6,toluene,159.6
-L11,Me3OMe-t-BuXPhos,2.0,,1,D2,201.3,toluene,170.3
-L12,VBRIDP,2.0,,1,E2,295.4,toluene,234.4
-L13,Trimesityl phosphine,2.0,,1,F2,257.4,toluene,226.4
-L14,CataCXium ABn,2.0,,1,A3,254.7,toluene,163.7
-L15,dppb,2.8,,1,B3,328.3,toluene,177.3
-L16,dcypf,3.8,,1,C3,328.4,toluene,177.4
-L17,t-BuBrettPhos,3.2,,1,D3,330.1,toluene,179.1
-L18,dtbpf,3.8,,1,E3,400.5,toluene,189.5
-L19,dppp,2.4,,1,F3,290.9,toluene,169.9
-L20,dppf,3.3,,1,A4,297.6,toluene,176.6
-L21,Xphos,2.0,,1,B4,209.8,toluene,178.8
-L22,RuPhos,2.1,,1,C4,225.0,toluene,164.0
-L23,SPhos,2.0,,1,D4,243.6,toluene,182.6
-L24,BrettPhos,2.4,,1,E4,223.6,toluene,162.6
-L25,MeDalPhos,2.5,,1,F4,296.5,toluene,175.5
-L26,Taniaphos SL-T001-2,3.5,,1,A5,254.5,toluene,163.5
-L27,tris(3-chlorophenyl)phosphine,2.7,,1,B5,369.2,toluene,188.2
-L28,BippyPhos,4.4,,1,C5,434.2,toluene,193.2
-L29,meCgPPh,2.0,,1,D5,342.1,toluene,251.1
-L30,N-XantPhos,2.5,,1,E5,226.6,toluene,165.6
-L31,Trixie Phos,2.0,,1,F5,250.9,toluene,189.9
-SM_IS,Pyridine-2-sulfonyl fluoride + naphthalene,96.7,7.7,1,A6,1200,toluene,239.0
-Pd,Pd(COD)(DQ),27.3,,1,B6,1200,toluene,239.0
-IS_MASTER,Naphthalene (analytical master),10,,1,C6,1560.4,acetonitrile,1539.4
-SM_FIT,Pyridine-2-sulfonyl fluoride,5,,1,D6,1551.3,lc_diluent,1450.3
-SM_CHECK,Pyridine-2-sulfonyl fluoride,5,,1,E6,1551.3,lc_diluent,1450.3
-P_FIT,2-Fluoropyridine,5,,1,F6,1287.5,lc_diluent,1236.5
-P_CHECK,2-Fluoropyridine,5,,1,A7,1287.5,lc_diluent,1236.5
+ID,material,mass_mg,naphthalene_in_same_tube_mg,slot,after_stock_shake_slot,well,robot_adds_ul,solvent,remaining_ul
+L01,MorDal Phos,2.4,,10,1,A1,258.8,toluene,167.8
+L02,racBINAP,3.2,,10,1,B1,257.0,toluene,166.0
+L03,RockPhos,2.1,,10,1,C1,224.0,toluene,163.0
+L04,Alphos,4.2,,10,1,D1,257.6,toluene,166.6
+L05,AdBrettPhos,4.6,,10,1,E1,358.9,toluene,177.9
+L06,Me4t-BuXPhos,2.2,,10,1,F1,228.8,toluene,167.8
+L08,t-BuDave Phos,2.0,,10,1,A2,292.8,toluene,231.8
+L09,Xantphos,2.6,,10,1,B2,224.7,toluene,163.7
+L10,OTIPS DalPhos,2.1,,10,1,C2,190.6,toluene,159.6
+L11,Me3OMe-t-BuXPhos,2.0,,10,1,D2,201.3,toluene,170.3
+L12,VBRIDP,2.0,,10,1,E2,295.4,toluene,234.4
+L13,Trimesityl phosphine,2.0,,10,1,F2,257.4,toluene,226.4
+L14,CataCXium ABn,2.0,,10,1,A3,254.7,toluene,163.7
+L15,dppb,2.8,,10,1,B3,328.3,toluene,177.3
+L16,dcypf,3.8,,10,1,C3,328.4,toluene,177.4
+L17,t-BuBrettPhos,3.2,,10,1,D3,330.1,toluene,179.1
+L18,dtbpf,3.8,,10,1,E3,400.5,toluene,189.5
+L19,dppp,2.4,,10,1,F3,290.9,toluene,169.9
+L20,dppf,3.3,,10,1,A4,297.6,toluene,176.6
+L21,Xphos,2.0,,10,1,B4,209.8,toluene,178.8
+L22,RuPhos,2.1,,10,1,C4,225.0,toluene,164.0
+L23,SPhos,2.0,,10,1,D4,243.6,toluene,182.6
+L24,BrettPhos,2.4,,10,1,E4,223.6,toluene,162.6
+L25,MeDalPhos,2.5,,10,1,F4,296.5,toluene,175.5
+L26,Taniaphos SL-T001-2,3.5,,10,1,A5,254.5,toluene,163.5
+L27,tris(3-chlorophenyl)phosphine,2.7,,10,1,B5,369.2,toluene,188.2
+L28,BippyPhos,4.4,,10,1,C5,434.2,toluene,193.2
+L29,meCgPPh,2.0,,10,1,D5,342.1,toluene,251.1
+L30,N-XantPhos,2.5,,10,1,E5,226.6,toluene,165.6
+L31,Trixie Phos,2.0,,10,1,F5,250.9,toluene,189.9
+SM_IS,Pyridine-2-sulfonyl fluoride + naphthalene,96.7,7.7,10,1,A6,1200,toluene,239.0
+Pd,Pd(COD)(DQ),27.3,,10,1,B6,1200,toluene,239.0
+IS_MASTER,Naphthalene (analytical master),10,,10,1,C6,1560.4,acetonitrile,1539.4
+SM_FIT,Pyridine-2-sulfonyl fluoride,5,,10,1,D6,1551.3,lc_diluent,1450.3
+SM_CHECK,Pyridine-2-sulfonyl fluoride,5,,10,1,E6,1551.3,lc_diluent,1450.3
+P_FIT,2-Fluoropyridine,5,,10,1,F6,1287.5,lc_diluent,1236.5
+P_CHECK,2-Fluoropyridine,5,,10,1,A7,1287.5,lc_diluent,1236.5

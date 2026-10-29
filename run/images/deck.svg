@@ -34,7 +34,7 @@ L 218.6784 481.21164
 L 218.6784 384.58836
 L 31.8816 384.58836
 z
-" clip-path="url(#p39cb3d78c4)" style="fill: #e3eee6; stroke: #bcc5c9; stroke-linejoin: miter"/>
+" clip-path="url(#p39cb3d78c4)" style="fill: #f5f5f3; stroke: #bcc5c9; stroke-linejoin: miter"/>
    </g>
    <g id="patch_3">
     <path d="M 230.6016 481.21164
@@ -106,7 +106,7 @@ L 218.6784 169.52364
 L 218.6784 72.90036
 L 31.8816 72.90036
 z
-" clip-path="url(#p39cb3d78c4)" style="fill: #fbefd9; stroke: #bcc5c9; stroke-linejoin: miter"/>
+" clip-path="url(#p39cb3d78c4)" style="fill: #e3eee6; stroke: #bcc5c9; stroke-linejoin: miter"/>
    </g>
    <g id="patch_12">
     <path d="M 230.6016 169.52364
@@ -128,9 +128,9 @@ z
     <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="43.8048" y="398.61432" transform="rotate(-0 43.8048 398.61432)">1</text>
    </g>
    <g id="text_2">
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(85.790937 427.812564)">STOCK HOLDER</text>
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(84.774531 443.812564)">HTEL 48 × 2 mL</text>
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(74.238594 458.932095)">Shake before dosing</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(91.670625 427.812564)">START EMPTY</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(62.019844 443.900845)">Receives STOCK HOLDER</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(72.212031 458.932095)">after shaking: 10 → 1</text>
    </g>
    <g id="text_3">
     <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="242.5248" y="398.61432" transform="rotate(-0 242.5248 398.61432)">2</text>
@@ -194,9 +194,10 @@ z
     <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="43.8048" y="86.92632" transform="rotate(-0 43.8048 86.92632)">10</text>
    </g>
    <g id="text_20">
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(83.772187 116.124564)">HEATER-SHAKER</text>
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(70.993281 131.244095)">Universal flat adapter</text>
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(61.012812 147.244095)">Staff load at App prompts</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(56.295625 108.124564)">HEATER-SHAKER + STOCKS</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(70.993281 123.244095)">Universal flat adapter</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(67.262031 140.212845)">HTEL 48 × 2 mL holder</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; fill: #202a30" transform="translate(58.628437 155.702689)">Start here; then move to 1</text>
    </g>
    <g id="text_21">
     <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="242.5248" y="86.92632" transform="rotate(-0 242.5248 86.92632)">11</text>
@@ -212,7 +213,7 @@ z
    </g>
   </g>
   <g id="text_25">
-   <text style="font-weight: 700; font-size: 18px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="324" y="29.661188" transform="rotate(-0 324 29.661188)">Staff loading — one semi-automated run</text>
+   <text style="font-weight: 700; font-size: 18px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="324" y="29.661188" transform="rotate(-0 324 29.661188)">Initial loading — one semi-automated run</text>
   </g>
   <g id="text_26">
    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="324" y="47.952" transform="rotate(-0 324 47.952)">LEFT: p300 single GEN2     |     RIGHT: p300 eight-channel GEN2</text>

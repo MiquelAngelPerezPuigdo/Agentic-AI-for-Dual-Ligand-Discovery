@@ -124,7 +124,7 @@ def build_plan():
     steps.append(dict(type='pause', message=chr(10).join([
         '3b. Check stocks before dosing', '',
         'What happened: the robot made and shook the 32 reaction stocks.',
-        'You: confirm the STOCK HOLDER is back in slot 1, A1 at back-left. Check stocks for bubbles, visible solids or a transfer fault. Keep ligand vials A1:F5 and SM_IS A6 / Pd B6 OPEN; the ten analytical vials stay capped.',
+        'You: confirm the STOCK HOLDER is in slot 1, A1 at back-left. Check stocks for bubbles, visible solids or a transfer fault. Keep ligand vials A1:F5 and SM_IS A6 / Pd B6 OPEN; the ten analytical vials stay capped.',
         'Resume when: stocks are ready and all 48 reaction vials are empty and open in the REACTION BLOCK, slot 3. The robot will now dose the reactions.'])))
     for key, volume in [('SM_IS', 20), *[(k, 30) for k in ligands], ('Pd', 20)]:
         affected = design if key in ('SM_IS', 'Pd') else [r for r in design if key in (r['ligand_a'], r['ligand_b'])]
@@ -214,10 +214,13 @@ def run(ctx: protocol_api.ProtocolContext):
     c = PLAN['config']
     hs = ctx.load_module('heaterShakerModuleV1', 10)
     adapter = hs.load_adapter('opentrons_universal_flat_adapter')
-    labels={'stocks':'Stock holder (home slot 1)', 'res':'Solvent reservoir (slot 2)',
+    labels={'stocks':'Stock holder (start slot 10; dose from slot 1)', 'res':'Solvent reservoir (slot 2)',
             'reaction':'Reaction block (home slot 3)', 'lc':'LC sample plate (home slot 6)'}
     lw = {name: ctx.load_labware_from_definition(DEFINITIONS[name], slot, label=labels[name])
-          for name, slot in [('stocks',1),('res', 2), ('reaction', 3), ('lc', 6)]}
+          for name, slot in [('res', 2), ('reaction', 3), ('lc', 6)]}
+    lw['stocks'] = adapter.load_labware_from_definition(DEFINITIONS['stocks'], label=labels['stocks'])
+    hs.close_labware_latch()
+    hs.deactivate_shaker();hs.deactivate_heater()
     lt = [ctx.load_labware('opentrons_96_tiprack_300ul', s) for s in (5, 8)]
     rt = ctx.load_labware('opentrons_96_tiprack_300ul', 9)
     single = ctx.load_instrument('p300_single_gen2', 'left', tip_racks=lt)
@@ -276,11 +279,8 @@ def run(ctx: protocol_api.ProtocolContext):
         hs.deactivate_shaker();hs.deactivate_heater()
         operator_pause('3a. Shake the stock holder',
             'Stock solvent addition and pipette mixing are complete. The holder will shake at 750 rpm for 2 minutes, heater OFF.',
-            'Leave the 30 ligand vials and SM_IS A6 / Pd B6 OPEN. Keep the ten analytical vials capped. Resume; the App will then ask you to move the STOCK HOLDER 1 -> 10 and, after shaking, back to 1.',
-            'The stock holder is ready to move and the module is ready for unheated shaking. Move it only at the separate App move prompt.')
-        hs.open_labware_latch()
-        ctx.move_labware(lw['stocks'],adapter,use_gripper=False)
-        hs.close_labware_latch()
+            'Leave the STOCK HOLDER on the heater-shaker in slot 10, with the 30 ligand vials and SM_IS A6 / Pd B6 OPEN and the ten analytical vials capped. Resume to shake. After shaking, the App will ask you to move the holder 10 -> 1.',
+            'The holder is securely seated on the module, its latch is closed, and it is ready for unheated shaking. Move it only at the later App move prompt.')
         ctx.comment('STOCK SHAKE START: reaction-stock vials OPEN; analytical vials capped; heater off; before all reaction dosing.')
         try:
             hs.set_and_wait_for_shake_speed(op['rpm']);ctx.delay(seconds=op['seconds'])
@@ -291,8 +291,8 @@ def run(ctx: protocol_api.ProtocolContext):
         ctx.delay(seconds=15)
     operator_pause('2. Check loading before making stocks',
         'The robot will ADD STOCK SOLVENT to the weighed chemicals. Use the numbered staff guide and its deck/stock maps.',
-        'Load weighed source chemicals with NO stock solvent yet. Open ligand vials A1:F5 and SM_IS A6 / Pd B6; keep the ten analytical vials capped. Load empty open reaction vials in slot 3, the empty VWR 96 deep-well 2.2 mL V-bottom square-well LC plate in 6, and the prefilled Axygen 12-channel 12 mL high-profile V-bottom reservoir in 2.',
-        'App setup/offset checks are complete: p300 single LEFT, eight-channel RIGHT; heater-shaker 10; slots 4/7/11 empty; 1.5 mm bottom clearance and submerged pickup verified with 150 uL in a separate representative source vial; highest caps on BOTH stock holder and reaction block <=45 mm above each assembly base; confirmed holder/adapter fit.')
+        'Load the STOCK HOLDER directly on the heater-shaker/flat adapter in slot 10, with NO stock solvent yet. Leave slot 1 empty to receive it after shaking. Open ligand vials A1:F5 and SM_IS A6 / Pd B6; keep the ten analytical vials capped. Load empty open reaction vials in slot 3, the empty VWR 96 deep-well 2.2 mL V-bottom square-well LC plate in 6, and the prefilled Axygen 12-channel 12 mL high-profile V-bottom reservoir in 2.',
+        'App setup/offset checks are complete for the stock holder on module 10 and later in slot 1: p300 single LEFT, eight-channel RIGHT; slots 1/4/7/11 initially empty; 1.5 mm bottom clearance and submerged pickup verified with 150 uL in a separate representative source vial; highest caps on BOTH stock holder and reaction block <=45 mm above each assembly base; confirmed holder/adapter fit.')
     steps(PLAN['steps_before_reaction']);drop()
     operator_pause('4a. Seal the reactions',
         'All 48 reactions are dosed, 100 uL each. The reaction stocks are finished and may stay open.',
@@ -365,12 +365,13 @@ def generate(output):
     # Use a conservative travel envelope; retain HTEL's well coordinates.
     defs['stocks']['dimensions']['zDimension']=max(45,defs['stocks']['dimensions']['zDimension'])
     # HTEL confirmed the holder seats securely on the universal flat adapter.
-    # No pipetting occurs while this holder is on the module.
+    # Stock solvent addition/mixing occur on the module before the move to slot 1.
     defs['stocks']['stackingOffsetWithLabware']={'opentrons_universal_flat_adapter':{'x':0,'y':0,'z':0}}
     (output / 'run_screen.py').write_text(
         '# Generated by hte.single_run; self-contained, local OT-2 only.\n'
         '# STAFF: weigh chemicals into labelled vials; the ROBOT adds stock solvent.\n'
         '# Load stocks with no solvent added yet. Follow staff-guide steps 1-9 and App pauses.\n'
+        '# Start the stock holder on heater-shaker slot 10; move it to slot 1 only after stock shaking.\n'
         '# Staff handle caps/labware moves and carry the finished LC plate to HPLC-MS.\n'
         + f'PLAN={plan!r}\nDEFINITIONS={defs!r}\n' + RUNTIME)
     write_json(tables/'plan.json',plan)
@@ -378,10 +379,10 @@ def generate(output):
     write_csv(tables/'calibration-plan.csv',plan['calibration'])
     write_csv(tables/'weighing.csv',[
         dict(ID=s['stock_id'],material=s['name'],mass_mg=s['mass_mg'],
-             naphthalene_in_same_tube_mg=s.get('naphthalene_mass_mg',''),slot=1,well=s['location'][1],
+             naphthalene_in_same_tube_mg=s.get('naphthalene_mass_mg',''),slot=10,after_stock_shake_slot=1,well=s['location'][1],
              robot_adds_ul=round(s['add_solvent_ul'],1),solvent=s['solvent'],remaining_ul=round(s['final_remaining_ul'],1))
         for s in plan['stocks']])
-    write_csv(tables/'tube-map.csv',[dict(ID=key,slot=1,well=loc[1],initial='weighed chemicals' if key in {s['stock_id'] for s in plan['stocks']} else 'empty') for key,loc in plan['locations'].items()])
+    write_csv(tables/'tube-map.csv',[dict(ID=key,slot=10,after_stock_shake_slot=1,well=loc[1],initial='weighed chemicals' if key in {s['stock_id'] for s in plan['stocks']} else 'empty') for key,loc in plan['locations'].items()])
     write_csv(tables/'reservoir.csv',plan['reservoir'])
     cal_unique=list({r['sample_id']:r for r in plan['calibration']}.values())
     injections=[dict(inj_no=i,sample_id=row['sample_id'],well=row['well'] if i<=len(cal_unique) else row['lc_well'],method_id='')

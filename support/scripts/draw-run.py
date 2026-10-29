@@ -23,11 +23,11 @@ def draw_workflow(plan, out):
          'Weigh each ligand once into its labelled vial.\nPrepare the two bulk workup liquids.\nLoad weighed chemicals; NO stock solvent yet.',
          'The robot will add stock solvent.\nFive labelled working vials start empty.'),
         ('Load once and start',
-         'Load the stock holder, reservoir, reaction block,\nLC plate and tips in their mapped slots.\nImport run_screen.py; complete App checks.',
+         'Start STOCK HOLDER on heater-shaker 10.\nLeave slot 1 empty; load other mapped labware.\nImport run_screen.py; complete App checks.',
          'One local program runs all OT-2 stages.\nFollow its numbered pauses and move prompts.\nUse the same labware and tip racks throughout.'),
         ('Make stocks, then dose 48 reactions',
-         'At the prompts: STOCK HOLDER 1 → 10 → 1.\nLeave reaction-stock vials open; analytical\nvials capped. Inspect stocks before dosing.',
-         'Add solvent → pipette-mix → shake stocks\n750 rpm / 2 min, heater OFF → dose reactions.\n100 µL = 20 SM/IS + 30 L-A + 30 L-B + 20 Pd.'),
+         'Keep stock holder on 10 for making/shaking stocks.\nThen move 10 → 1 at the App prompt.\nReaction sources open; analytical vials capped.',
+         'Add solvent → pipette-mix → shake stocks\n750 rpm / 2 min, heater OFF → move to 1 → dose.\n100 µL = 20 SM/IS + 30 L-A + 30 L-B + 20 Pd.'),
         ('Seal and start the heated hold',
          'Screw on all 48 REACTION caps.\nCover reservoir / LC plate.\nREACTION BLOCK 3 → 10; start timer at 4b.',
          f'Heat to {c["temperature_C"]} °C; shake at {c["reaction_rpm"]} rpm.\nNominal {c["reaction_minutes"]//60}-hour hold starts at the App prompt.\nThen stop heating and shaking.'),
@@ -89,17 +89,17 @@ def main():
     ink='#202a30';line='#bcc5c9';blue='#e4eef6';green='#e3eee6';amber='#fbefd9'
     fig,ax=plt.subplots(figsize=(9,7.4));fig.subplots_adjust(left=.04,right=.96,top=.87,bottom=.09)
     ax.set(xlim=(0,3),ylim=(0,4));ax.axis('off')
-    titles={1:'STOCK HOLDER\nHTEL 48 × 2 mL\nShake before dosing',2:'AXYGEN RESERVOIR\nA1–A2 toluene / A3–A5 quench\nA6–A10 LC diluent / A11 ACN\n12 × 12 mL; A12 empty',
+    titles={1:'START EMPTY\nReceives STOCK HOLDER\nafter shaking: 10 → 1',2:'AXYGEN RESERVOIR\nA1–A2 toluene / A3–A5 quench\nA6–A10 LC diluent / A11 ACN\n12 × 12 mL; A12 empty',
             3:'REACTION BLOCK\n48 × 2 mL Para-Dox\n100 µL per reaction',4:'EMPTY',5:'300 µL TIPS\nLeft single-channel',
             6:'VWR 96 DEEP-WELL\n2.2 mL, square V-bottom\n48 samples + 7 standards',7:'EMPTY',8:'300 µL TIPS\nLeft single-channel',
-            9:'300 µL TIPS\nRight eight-channel',10:'HEATER-SHAKER\nUniversal flat adapter\nStaff load at App prompts',11:'EMPTY',12:'FIXED TIP WASTE'}
+            9:'300 µL TIPS\nRight eight-channel',10:'HEATER-SHAKER + STOCKS\nUniversal flat adapter\nHTEL 48 × 2 mL holder\nStart here; then move to 1',11:'EMPTY',12:'FIXED TIP WASTE'}
     for slot in range(1,13):
         x=(slot-1)%3;y=(slot-1)//3
-        color=green if slot==1 else blue if slot in (2,6) else amber if slot in (3,10) else '#f5f5f3'
+        color=green if slot==10 else blue if slot in (2,6) else amber if slot in (3,10) else '#f5f5f3'
         ax.add_patch(Rectangle((x+.03,y+.035),.94,.93,facecolor=color,edgecolor=line,lw=1))
         ax.text(x+.09,y+.83,str(slot),fontsize=12,fontweight='bold',color=ink)
         ax.text(x+.5,y+.43,titles[slot],ha='center',va='center',fontsize=10,color=ink,linespacing=1.6)
-    fig.suptitle('Staff loading — one semi-automated run',x=.5,y=.97,fontsize=18,fontweight='bold',color=ink)
+    fig.suptitle('Initial loading — one semi-automated run',x=.5,y=.97,fontsize=18,fontweight='bold',color=ink)
     fig.text(.5,.91,'LEFT: p300 single GEN2     |     RIGHT: p300 eight-channel GEN2',ha='center',fontsize=10,color=ink)
     fig.text(.5,.04,'FRONT / OPERATOR  •  Staff move labware at App prompts. The robot pipettes, heats and shakes.',ha='center',fontsize=8.5,color=ink)
     for ext in ('svg','png'):
@@ -139,7 +139,7 @@ def main():
             mass=(f"WEIGH {stocks[key]['mass_mg']:.1f} mg" if key in stocks else 'LEAVE VIAL EMPTY')
             if key=='SM_IS':mass='WEIGH 96.7 mg SM\n+ 7.7 mg naphthalene'
             ax.text(col+.5,5-row+(.17 if key=='SM_IS' else .14),mass,ha='center',va='center',fontsize=8.5 if key=='SM_IS' else 9,fontweight='bold',color=ink,linespacing=1.1)
-    fig.suptitle('Load the stock vials — deck slot 1',y=.965,fontsize=25,fontweight='bold',color=ink)
+    fig.suptitle('Stock-vial map — start on slot 10',y=.965,fontsize=25,fontweight='bold',color=ink)
     fig.text(.5,.915,'Label each vial with its position + ID (for example, A1 / L01). Add only the stated chemical; the robot adds solvent.',ha='center',fontsize=12,color=ink)
     fig.text(.5,.88,'HTEL 48 × 2 mL holder  |  42 vials: 37 receive chemicals, 5 start empty  |  A1 at the back-left',ha='center',fontsize=12,color=ink)
     fig.text(.5,.85,'BACK OF ROBOT',ha='center',fontsize=10,fontweight='bold',color='#53636c')
@@ -148,7 +148,7 @@ def main():
     fig.text(.045,.125,'SM = pyridine-2-sulfonyl fluoride. Product = 2-fluoropyridine (liquid; weigh by difference). Naphthalene is the internal standard.',fontsize=11,color=ink)
     fig.text(.045,.095,'SM_FIT / P_FIT: calibration sources. SM_CHECK / P_CHECK: separate weighings for the LC accuracy check.',fontsize=11,color=ink)
     fig.text(.045,.065,'HIGH / LOW / CHECK / IS_WORK / MATRIX: the robot makes these mixtures; staff add nothing to their empty vials.',fontsize=11,color=ink)
-    fig.text(.045,.03,'Stock shake: 32 reaction-stock vials OPEN; ten analytical vials capped. 750 rpm / 2 min, heater OFF. Follow the staff guide / App prompts.',fontsize=10,color=ink)
+    fig.text(.045,.03,'Start on heater-shaker 10. Make/shake stocks there; move 10 → 1 after shaking. Keep the same vial positions and A1 orientation.',fontsize=10,color=ink)
     for ext in ('svg','png'):
         file=out/f'stock-map.{ext}';fig.savefig(file,dpi=180,facecolor='white',metadata={'Date':None} if ext=='svg' else None)
         if ext=='svg':file.write_text('\n'.join(line.rstrip() for line in file.read_text().splitlines())+'\n')

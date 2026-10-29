@@ -14,7 +14,7 @@ def main():
     plan=generate(out)
     write_json(out/'tables/lc-settings-template.json',SETTINGS_TEMPLATE)
     rows=['# Weigh these chemicals into the stock vials\n',
-          '**Staff weigh; the OT-2 adds solvent.** Use the **HTEL 48-position 2 mL glass-vial holder in slot 1**. Weigh each ligand once into its labelled vial and load it with no stock solvent added. The robot makes the stocks there. [Stock map](images/stock-map.png) · [Staff guide](README.md).\n',
+          '**Staff weigh; the OT-2 adds solvent.** Use the **HTEL 48-position 2 mL glass-vial holder: start on heater-shaker slot 10, then move to slot 1 after stock shaking**. Weigh each ligand once into its labelled vial and load it with no stock solvent added. The robot makes the stocks there. [Stock map](images/stock-map.png) · [Staff guide](README.md).\n',
           'Only the vials below receive weighed material. There are **30 ligands**: unavailable L07 is omitted and original ID numbering is retained. The five labeled dilution/matrix vials start empty; column 8 remains empty.\n',
           '| Vial | Label | Chemical | Weigh (mg) |\n|---|---|---|---:|\n']
     for s in plan['stocks']:
@@ -27,7 +27,7 @@ def main():
                   'CHECK':'LC accuracy check: 5 mM SM + 5 mM product, from the separately weighed CHECK sources',
                   'IS_WORK':'2 mM naphthalene','MATRIX':'Solvent mix for LC standards: 100 µL toluene + 400 µL quench'}
     for key,description in descriptions.items():rows.append(f"| {plan['locations'][key][1]} | {key} | {description} |\n")
-    rows.append('\nUse the vial labels and positions shown here, not an earlier two-round map. [Machine-readable weighing list](tables/weighing.csv) · [All vial positions](tables/tube-map.csv).\n')
+    rows.append('\nVial positions stay the same when the holder moves. In the CSV lists, `slot` is the initial loading position (10), and `after_stock_shake_slot` is 1. Use the vial labels and positions shown here, not an earlier two-round map. [Machine-readable weighing list](tables/weighing.csv) · [All vial positions](tables/tube-map.csv).\n')
     (out/'WEIGHING.md').write_text(''.join(rows))
     print(out)
 

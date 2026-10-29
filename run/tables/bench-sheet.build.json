@@ -1,13 +1,13 @@
 {
   "pages": 2,
   "sources": {
-    "run/README.md": "7469f467af2c74ca8dab0c75c2b92739dc0bb71b5a4ddaca6c0811c7fe40be8e",
-    "run/WEIGHING.md": "e4cd569d08728f5e1b5507dcb40f8f17b7488110100df26318509976164b62c8",
-    "run/tables/plan.json": "17114a4171a419f1ff5d545b6efe9dc84b0de725475ce4deb5cbd60459b817a4",
-    "run/images/deck.png": "be94e4eddca56e9d0fc6d49d133fd9a7e25302aebd0025d166163fa323b19eef",
-    "run/images/stock-map.png": "8b2918efb09107bd3ce0922dd80cb71c97a07e1b16062dab8682232adea299f4",
-    "run/run_screen.py": "91b4184fb984bee5fe1c2184edc5c7a08a8165d326172cc59fd1c404eead31bf",
-    "support/scripts/build-bench-pdf.py": "1cd72ee0a705e87fd3a2277abc4acf471794298564759242f3749b73d971a339"
+    "run/README.md": "226bdaa3738c175def12e28a6dfdd5a3751e340016b2e7a7f73aa41d3bbc4e61",
+    "run/WEIGHING.md": "df6b660e61eeafadf43c10473f5c9eeb81239922aab2db518db6cb33f717dc4a",
+    "run/tables/plan.json": "a76483595642110dba7aa34de2e783494c727ad79ebf61e4a45e48b103204411",
+    "run/images/deck.png": "f13f86065506924bcf627066925440ea272ceb48cff6e5f6df05e0b0ce9ce70f",
+    "run/images/stock-map.png": "b534da126662d87c2028ad13744b9fced7c9afc9697875cfc3a090d9590a8a03",
+    "run/run_screen.py": "87f8b3f6e617e12d8a38881d504446a87ced6c19d45fabf4d84bb30b7d3c7566",
+    "support/scripts/build-bench-pdf.py": "b9a055cc77b5a5b6b76eea772412e3daf35ca01008745b031831816579359a77"
   },
-  "pdf_sha256": "d2bf0bcb0fa1324e4039233b3446649c7d24515a1cfe082af4726e960a29d586"
+  "pdf_sha256": "e46eea3e703dc6c5a4abbdfc9e7fa0cc484aaa40a4ff9b81bce5ea5f2aaeca4b"
 }

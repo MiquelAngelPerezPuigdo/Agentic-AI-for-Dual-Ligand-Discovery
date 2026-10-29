@@ -1014,7 +1014,7 @@ z
    </g>
   </g>
   <g id="text_195">
-   <text style="font-weight: 700; font-size: 25px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="648" y="49.236094" transform="rotate(-0 648 49.236094)">Load the stock vials — deck slot 1</text>
+   <text style="font-weight: 700; font-size: 25px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="648" y="49.236094" transform="rotate(-0 648 49.236094)">Stock-vial map — start on slot 10</text>
   </g>
   <g id="text_196">
    <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #202a30" x="648" y="73.44" transform="rotate(-0 648 73.44)">Label each vial with its position + ID (for example, A1 / L01). Add only the stated chemical; the robot adds solvent.</text>
@@ -1041,7 +1041,7 @@ z
    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="58.32" y="807.84" transform="rotate(-0 58.32 807.84)">HIGH / LOW / CHECK / IS_WORK / MATRIX: the robot makes these mixtures; staff add nothing to their empty vials.</text>
   </g>
   <g id="text_204">
-   <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="58.32" y="838.08" transform="rotate(-0 58.32 838.08)">Stock shake: 32 reaction-stock vials OPEN; ten analytical vials capped. 750 rpm / 2 min, heater OFF. Follow the staff guide / App prompts.</text>
+   <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #202a30" x="58.32" y="838.08" transform="rotate(-0 58.32 838.08)">Start on heater-shaker 10. Make/shake stocks there; move 10 → 1 after shaking. Keep the same vial positions and A1 orientation.</text>
   </g>
  </g>
  <defs>
