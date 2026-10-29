@@ -1,9 +1,10 @@
 import copy
+import shutil
 from pathlib import Path
 
 import pytest
 
-from hte.io import read_csv,write_csv,write_json,read_json
+from hte.io import read_csv,write_csv,write_json,read_json,digest
 from hte.run_analysis import process
 
 ROOT=Path(__file__).resolve().parents[2]
@@ -54,6 +55,10 @@ def test_full_htel_export_to_calibrated_yields_with_mixed_standards(lc):
     assert len(read_csv(tmp_path/'result/reviewed-blanks.csv'))==2
     assert (tmp_path/'result/inputs/vendor-export.csv').read_bytes()==lc[0]['export'].read_bytes()
     assert (tmp_path/'result/inputs/run_screen.py').read_bytes()==(ROOT/'run/run_screen.py').read_bytes()
+    published=read_json(tmp_path/'result/inputs/run-files.sha256.json')
+    for archived,name in [('run_screen.py','run_screen.py'),('robot-plan.json','tables/plan.json'),
+                          ('dosing.csv','tables/dosing.csv'),('calibration-plan.csv','tables/calibration-plan.csv')]:
+        assert digest(tmp_path/'result/inputs'/archived)==published[name]
     assert (tmp_path/'result/files.sha256.json').is_file()
 
 
@@ -156,3 +161,72 @@ def test_map_cannot_relabel_physical_wells_to_another_pair(lc):
     write_csv(paths['mapping'],mapping)
     with pytest.raises(ValueError,match='Injection map well differs from the robot LC plate'):
         invoke(lc)
+
+
+@pytest.mark.parametrize('name',['run_screen.py','tables/plan.json','tables/dosing.csv','tables/calibration-plan.csv'])
+def test_analysis_rejects_machine_files_that_disagree_with_published_manifest(lc,name):
+    paths,_,_,_,_,tmp_path=lc
+    run=tmp_path/'run';shutil.copytree(ROOT/'run',run)
+    target=run/name
+    # A valid-text edit preserves parseability but breaks the published identity.
+    target.write_bytes(target.read_bytes()+b'\n')
+    with pytest.raises(ValueError,match='Published run file changed'):
+        process(paths['export'],paths['mapping'],paths['settings'],tmp_path/'result','Test reviewer',run)
+    assert not (tmp_path/'result/results.csv').exists()
+
+
+@pytest.mark.parametrize('role',['mapping','settings','export'])
+def test_source_changes_during_input_snapshot_are_rejected(lc,monkeypatch,role):
+    import hte.run_analysis as module
+    paths,_,_,_,_,tmp_path=lc
+    original=module.shutil.copyfile
+    # Mapping/settings change before their copy; export changes after its copy.
+    trigger='lc-settings.json' if role=='export' else 'vendor-export.csv'
+    def changed(source,destination):
+        result=original(source,destination)
+        if Path(destination).name==trigger:
+            paths[role].write_bytes(paths[role].read_bytes()+b'\n')
+        return result
+    monkeypatch.setattr(module.shutil,'copyfile',changed)
+    with pytest.raises(ValueError,match='Input changed during snapshot'):
+        invoke(lc)
+    assert not (tmp_path/'result/results.csv').exists()
+
+
+def test_completed_snapshot_is_the_only_source_for_settings_mapping_and_measurements(lc,monkeypatch):
+    import hte.run_analysis as module
+    paths,_,_,_,truth,tmp_path=lc
+    original=module.read_json
+    changed=[]
+    def edited_originals(path):
+        if Path(path)==tmp_path/'result/inputs/lc-settings.json':
+            # Simulate staff starting edits for their next analysis after copying
+            # finished. The current run must use its retained original snapshot.
+            for role in ('settings','mapping','export'):
+                paths[role].write_text('changed after snapshot\n')
+            changed.append(True)
+        return original(path)
+    monkeypatch.setattr(module,'read_json',edited_originals)
+    assert invoke(lc)['batch_qc_pass'] and changed
+    effective=read_json(tmp_path/'result/analysis-config.json')['analytics']
+    retained=read_json(tmp_path/'result/inputs/lc-settings.json')
+    assert effective['method_id']==retained['method_id']=='SYNTHETIC_TEST_ONLY'
+    assert len(read_csv(tmp_path/'result/inputs/injections.csv'))==55
+    for row in read_csv(tmp_path/'result/results.csv'):
+        assert float(row['yield_percent'])==pytest.approx(truth[row['sample_id']],abs=1e-8)
+
+
+def test_archived_input_edit_after_parsing_cannot_receive_success_manifest(lc,monkeypatch):
+    import hte.run_analysis as module
+    tmp_path=lc[-1]
+    original=module.read_csv
+    def changed(path):
+        rows=original(path)
+        if Path(path)==tmp_path/'result/inputs/dosing.csv':
+            Path(path).write_bytes(Path(path).read_bytes()+b'\n')
+        return rows
+    monkeypatch.setattr(module,'read_csv',changed)
+    with pytest.raises(ValueError,match='Archived analysis input changed'):
+        invoke(lc)
+    assert not (tmp_path/'result/files.sha256.json').exists()
+    assert not (tmp_path/'result/results.csv').exists()

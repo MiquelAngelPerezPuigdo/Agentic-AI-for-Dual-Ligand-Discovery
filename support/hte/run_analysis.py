@@ -43,17 +43,42 @@ def analysis_config(settings):
 def process(export_path, mapping_path, settings_path, output, reviewed_blanks=None, run_dir='run'):
     run_dir = Path(run_dir)
     tables = run_dir/'tables'
-    checksums=read_json(tables/'files.sha256.json')
-    for name in ('dosing.csv','calibration-plan.csv'):
-        if digest(tables/name)!=checksums['tables/'+name]:
-            raise ValueError('Published run table changed: '+name+'; reconcile with the actual robot protocol before analysis')
-    config = analysis_config(read_json(settings_path))
+    sources = [('vendor-export'+Path(export_path).suffix, export_path), ('injections.csv', mapping_path),
+               ('lc-settings.json', settings_path), ('dosing.csv', tables/'dosing.csv'),
+               ('calibration-plan.csv', tables/'calibration-plan.csv'), ('robot-plan.json', tables/'plan.json'),
+               ('run_screen.py', run_dir/'run_screen.py'), ('run-files.sha256.json', tables/'files.sha256.json')]
+    # Pin the entire input set before copying or parsing any of it. A source
+    # edited before its turn in the copy loop must not silently become accepted.
+    hashes = {name: digest(path) for name, path in sources}
+    out = new_output(output)
+    inputs = out / 'inputs';inputs.mkdir()
+    for name, path in sources:
+        shutil.copyfile(path, inputs/name)
+        if digest(inputs/name) != hashes[name] or digest(path) != hashes[name]:
+            raise ValueError('Input changed during snapshot: '+str(path))
+    if any(digest(path) != hashes[name] for name, path in sources):
+        raise ValueError('Input changed during snapshot; finish editing/exporting before analysis')
+
+    def stable_snapshot():
+        if any(digest(inputs/name) != hashes[name] for name, _ in sources):
+            raise ValueError('Archived analysis input changed; use a fresh output folder')
+
+    checksums = read_json(inputs/'run-files.sha256.json')
+    for name, published in [('dosing.csv', 'tables/dosing.csv'),
+                            ('calibration-plan.csv', 'tables/calibration-plan.csv'),
+                            ('robot-plan.json', 'tables/plan.json'), ('run_screen.py', 'run_screen.py')]:
+        if hashes[name] != checksums[published]:
+            raise ValueError('Published run file changed: '+published+
+                             '; reconcile with the actual robot protocol before analysis')
+    # All effective settings/tables come from the exact copies returned to the
+    # user, never from originals that can be edited while analysis is running.
+    config = analysis_config(read_json(inputs/'lc-settings.json'))
     from .analytics import validate_analytics_settings
     validate_analytics_settings(config)
-    plan = read_csv(tables / 'calibration-plan.csv')
-    dosing = read_csv(tables / 'dosing.csv')
+    plan = read_csv(inputs/'calibration-plan.csv')
+    dosing = read_csv(inputs/'dosing.csv')
     expected = {r['sample_id'] for r in [*plan, *dosing]}
-    mappings = read_csv(mapping_path)
+    mappings = read_csv(inputs/'injections.csv')
     if len(mappings) != 55 or {r['sample_id'] for r in mappings} != expected:
         raise ValueError('Actual injection map must contain exactly the seven mixed standards and 48 planned reactions')
     expected_wells = {r['sample_id']: r['well'] for r in plan}
@@ -63,16 +88,7 @@ def process(export_path, mapping_path, settings_path, output, reviewed_blanks=No
             raise ValueError('Injection map well differs from the robot LC plate for '+row['sample_id']+
                              '; reconcile the injection order with the actual LC sequence. '
                              'Do not relabel physical sample wells to make a sequence match.')
-    out = new_output(output)
-    inputs = out / 'inputs';inputs.mkdir()
-    for name, path in [('vendor-export'+Path(export_path).suffix, export_path), ('injections.csv', mapping_path),
-                       ('lc-settings.json', settings_path), ('dosing.csv', tables/'dosing.csv'),
-                       ('calibration-plan.csv', tables/'calibration-plan.csv'),('robot-plan.json',tables/'plan.json'),
-                       ('run_screen.py',run_dir/'run_screen.py')]:
-        before=digest(path)
-        shutil.copyfile(path, inputs/name)
-        if digest(inputs/name)!=before or digest(path)!=before:
-            raise ValueError('Input changed during snapshot: '+str(path))
+    stable_snapshot()
     write_json(out/'software.json',{name:digest(Path(__file__).parent/name) for name in ['analytics.py','run_analysis.py','single_run.py','io.py']})
     write_json(out/'analysis-config.json',config)
     normalize_export(config, inputs/('vendor-export'+Path(export_path).suffix), out/'all-peaks.csv', inputs/'injections.csv')
@@ -93,7 +109,9 @@ def process(export_path, mapping_path, settings_path, output, reviewed_blanks=No
             write_csv(review_path,reviews)
     calibration_from_peaks(config,out/'calibration-peaks.csv',inputs/'calibration-plan.csv',out/'calibration.csv',review_path)
     complete_export(config,out/'reaction-peaks.csv',inputs/'dosing.csv',out/'complete.json')
+    stable_snapshot()
     _,report = analyze(config,dosing,read_csv(out/'reaction-peaks.csv'),read_csv(out/'calibration.csv'),out)
+    stable_snapshot()
     write_json(out/'files.sha256.json',{p.relative_to(out).as_posix():digest(p) for p in out.rglob('*') if p.is_file() and p.name!='files.sha256.json'})
     return report
 
